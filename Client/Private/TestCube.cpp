@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\TestCube.h"
 #include "GameInstance.h"
+#include "MathUtils.h"
 
 CTestCube::CTestCube(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -28,7 +29,24 @@ HRESULT CTestCube::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Go_Right(3);
+	m_pTransformCom->Go_Right(0.2);
+	
+	_float4 i;
+	XMStoreFloat4(&i, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_vector v;
+	_float4 k;
+	k = _float4(1.f, 1.f, 1.f, 1.f);
+	v = XMLoadFloat4(&k);
+	_float4 j;
+	XMStoreFloat4(&j, v);
+	
+	_float b = CMathUtils::Distance(i, j);
+
+	_float4 result;
+
+	result = CMathUtils::Max(i, j);
+
+	result;
 
 	return S_OK;
 }
@@ -36,6 +54,15 @@ HRESULT CTestCube::Init(void * pArg)
 void CTestCube::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	m_fTimeDelta += 0.001f;
+	if (m_fTimeDelta > 1.f)
+		m_fTimeDelta = 0.f;
+
+	XMVECTOR v = XMLoadFloat4(&CMathUtils::Hermite(_float4(0.f, 0.f, 0.f, 1.f),
+		_float4(10.f, 10.f, 10.f, 0.f), _float4(0.f, 0.f, 0.f, 1.f), _float4(20.f, 20.f, 20.f, 0.f), m_fTimeDelta));
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, v);
 }
 
 void CTestCube::Late_Tick(_double TimeDelta)

@@ -2,7 +2,6 @@
 
 #include "Base.h"
 #include "Client_Define.h"
-#include "TestTool.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -32,9 +31,6 @@ private:
 private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
-
-private:
-	CTestTool* pTool = nullptr;
 
 public:
 	HRESULT Start_Level(LEVEL eLevelID);

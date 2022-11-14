@@ -1,5 +1,6 @@
 #include "..\Public\GameObject.h"
 #include "GameInstance.h"
+#include "GameUtils.h"
 
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:m_pDevice(pDevice),
@@ -39,6 +40,19 @@ void CGameObject::Late_Tick(_double TimeDelta)
 HRESULT CGameObject::Render()
 {
 	return S_OK;
+}
+
+void CGameObject::Imgui_RenderComponentProperties()
+{
+	for (const auto& com : m_Components)
+	{
+		ImGui::Separator();
+		char szName[128];
+		CGameUtils::wc2c(com.first.c_str(), szName);
+
+		ImGui::Text("%s", szName);
+		com.second->Imgui_RenderProperty();
+	}
 }
 
 HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, CComponent ** ppOut, void * pArg)

@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
+#include "ImGui_PropertyEditor.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -20,6 +21,9 @@ HRESULT CLevel_Logo::Init()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
+	CGameInstance::GetInstance()->Clear_ImguiObjects();
+	CGameInstance::GetInstance()->Add_ImguiTabObject(CImgui_PropertyEditor::Create());
+	
 	return S_OK;
 }
 

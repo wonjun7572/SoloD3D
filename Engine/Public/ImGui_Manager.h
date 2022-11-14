@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Base.h"
-#include "Tool.h"
 
 BEGIN(Engine)
+
+class CImguiObject;
 
 class CImGui_Manager : public CBase
 {
@@ -14,20 +15,32 @@ private:
 	virtual ~CImGui_Manager() = default;
 
 public:
-	HRESULT	Ready_ImGui(HWND hWnd, ID3D11Device* pGraphicDev, ID3D11DeviceContext* pDeviceContext);
-	void		ImGui_NewFrame(_double dTimeDelta);
-	void		ImGui_Render();
-	void		ImGui_Render_Update();
+	void Ready_Imgui(HWND hWnd, ID3D11Device* pDeviceOut, ID3D11DeviceContext* pDeviceContextOut);
+	void Tick_Imgui();
+	void Render_Imgui();
 
-public:
-	HRESULT	Add_Tool(CTool* pTool);
+	// imgui object를 tab에 추가한다.
+	void Add_ImguiTabObject(CImguiObject* ImguiObject);
 
-public:
-	virtual		void	Free() override;
+	// imgui object를 새로운 window로 추가한다.
+	void Add_ImguiWindowObject(CImguiObject* ImguiObject);
+
+	// 현재 사용중인 imgui object를 모두 삭제한다.
+	void Clear_ImguiObjects();
 
 private:
-	_double					m_dTimeDelta;
-	vector<CTool*>		m_vecTool;
+	void RenderTab();
+	void RenderWindow();
+
+private:
+	ID3D11Device*			m_pDevice = nullptr;
+	ID3D11DeviceContext*	m_pDeviceContext = nullptr;
+
+	vector<CImguiObject*>	m_vecTab;
+	vector<CImguiObject*>	m_vecWin;
+
+public:
+	virtual void Free() override;
 };
 
 END

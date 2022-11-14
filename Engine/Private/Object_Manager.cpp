@@ -2,6 +2,7 @@
 
 #include "Layer.h"
 #include "GameObject.h"
+#include "GameUtils.h"
 
 IMPLEMENT_SINGLETON(CObject_Manager);
 
@@ -98,6 +99,55 @@ void CObject_Manager::Late_Tick(_double TimeDelta)
 				Pair.second->Late_Tick(TimeDelta);
 		}
 	}
+}
+
+void CObject_Manager::Imgui_ProtoViewer(OUT const _tchar *& szSelectedProto)
+{
+}
+
+void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelectedObject)
+{
+	bool bFound = false;
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	const LAYERS& targetLevel = m_pLayers[iLevel];
+
+	if (ImGui::TreeNode("ObjectViewer"))
+	{
+		for (auto& Pair : targetLevel) // for layer loop
+		{
+			char szLayerTag[128];
+			CGameUtils::wc2c(Pair.first.c_str(), szLayerTag);
+			if (ImGui::TreeNode(szLayerTag))  // for object loop listbox
+			{
+				if (ImGui::BeginListBox("##"))
+				{
+					for (auto& obj : Pair.second->GetGameObjects())
+					{
+						const bool bSelected = pSelectedObject == obj;
+						if (bSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+							bFound = true;
+						}
+
+						if (ImGui::Selectable(typeid(*obj).name(), bSelected))
+						{
+							pSelectedObject = obj;
+							bFound = true;
+						}
+					}
+					ImGui::EndListBox();
+				}
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
+
+	if (bFound == false)
+		pSelectedObject = nullptr;
 }
 
 CGameObject * CObject_Manager::Find_Prototype(const wstring& pPrototypeTag)

@@ -34,9 +34,8 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pGraphicDev->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWinMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
-	if (FAILED(m_pImGuiMgr->Ready_ImGui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut)))
-		return E_FAIL;
-
+	m_pImGuiMgr->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
+		
 	if (FAILED(m_pInputDev->Ready_Input_Device(GraphicDesc.hInstance, GraphicDesc.hWnd)))
 		return E_FAIL;
 
@@ -59,6 +58,8 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 
 	m_pInputDev->Invalidate_Input_Device();
 
+	m_pImGuiMgr->Tick_Imgui();
+
 	m_pObjectMgr->Tick(TimeDelta);
 	m_pLevelMgr->Tick(TimeDelta);
 	
@@ -68,8 +69,6 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 	m_pLevelMgr->Late_Tick(TimeDelta);
 
 	m_pInputDev->Reset_EveryKey();
-
-	m_pImGuiMgr->ImGui_NewFrame(TimeDelta);
 }
 
 void CGameInstance::Clear_Level(_uint iLevelIndex)
@@ -89,10 +88,10 @@ HRESULT CGameInstance::Clear_Graphic_Device(const _float4 * pColor)
 		return E_FAIL;
 
 	HRESULT hr = 0;
-
+	
 	hr = m_pGraphicDev->Clear_BackBuffer_View(*pColor);
 	hr = m_pGraphicDev->Clear_DepthStencil_View();
-
+	
 	return hr;
 }
 
@@ -100,6 +99,8 @@ HRESULT CGameInstance::Present()
 {
 	if (m_pGraphicDev == nullptr)
 		return E_FAIL;
+
+	m_pImGuiMgr->Render_Imgui();
 
 	return m_pGraphicDev->Present();
 }
@@ -232,34 +233,22 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pP
 	return m_pComponetMgr->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 }
 
-void CGameInstance::ImGui_Render()
+void CGameInstance::Add_ImguiTabObject(CImguiObject* ImguiObject)
 {
-	if (m_pImGuiMgr == nullptr)
-	{
-		assert((m_pImGuiMgr != nullptr) && "CGameInstance : ImGui_Render");
-		return;
-	}
-
-	m_pImGuiMgr->ImGui_Render();
+	if (m_pImGuiMgr == nullptr) return;
+	m_pImGuiMgr->Add_ImguiTabObject(ImguiObject);
 }
 
-void CGameInstance::ImGui_Render_Update()
+void CGameInstance::Add_ImguiWindowObject(CImguiObject* ImguiObject)
 {
-	if (m_pImGuiMgr == nullptr)
-	{
-		assert((m_pImGuiMgr != nullptr) && "CGameInstance : ImGui_Render_Update");
-		return;
-	}
-
-	m_pImGuiMgr->ImGui_Render_Update();
+	if (m_pImGuiMgr == nullptr) return;
+	m_pImGuiMgr->Add_ImguiWindowObject(ImguiObject);
 }
 
-HRESULT CGameInstance::Add_Tool(CTool * pTool)
+void CGameInstance::Clear_ImguiObjects()
 {
-	if (m_pImGuiMgr == nullptr)
-		return E_FAIL;
-
-	return m_pImGuiMgr->Add_Tool(pTool);
+	if (m_pImGuiMgr == nullptr) return;
+	m_pImGuiMgr->Clear_ImguiObjects();
 }
 
 void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)

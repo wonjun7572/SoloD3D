@@ -15,6 +15,10 @@ public:
 	virtual HRESULT Init_Prototype();
 	virtual HRESULT Init(void* pArg);
 
+public: /* imgui */
+		// 이 컴포넌트에서 보여줄 데이터를 imgui로 작성한다.
+	virtual void Imgui_RenderProperty() {}
+
 protected:
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pContext = nullptr;

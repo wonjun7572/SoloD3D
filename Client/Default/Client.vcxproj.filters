@@ -43,9 +43,6 @@
     <Filter Include="ShaderFile">
       <UniqueIdentifier>{0078ebc8-5e4c-4207-a41a-6918e5bbce98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Tool">
-      <UniqueIdentifier>{71ef7893-8630-436b-b2c1-5fc944d61526}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Figure">
       <UniqueIdentifier>{0d65759b-800a-4b0d-b33f-f87be0aae6dd}</UniqueIdentifier>
     </Filter>
@@ -87,9 +84,6 @@
     <ClInclude Include="..\Public\BackGround.h">
       <Filter>GameObject\BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestTool.h">
-      <Filter>Tool</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\TestSphere.h">
       <Filter>GameObject\Figure</Filter>
     </ClInclude>
@@ -127,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGround.cpp">
       <Filter>GameObject\BackGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\TestTool.cpp">
-      <Filter>Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestSphere.cpp">
       <Filter>GameObject\Figure</Filter>

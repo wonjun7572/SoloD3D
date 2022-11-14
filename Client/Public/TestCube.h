@@ -32,6 +32,8 @@ private:
 	CVIBuffer_Cube*			m_pVIBufferCom = nullptr;
 	CTransform*				m_pTransformCom = nullptr;
 
+	double					m_fTimeDelta = 0;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

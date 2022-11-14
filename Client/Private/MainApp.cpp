@@ -36,8 +36,6 @@ HRESULT CMainApp::Init()
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
-	pTool = CTestTool::Create();
-
 	return S_OK;
 }
 
@@ -54,13 +52,9 @@ HRESULT CMainApp::Render()
 	if (m_pGameInstance == nullptr)
 		return E_FAIL;
 
-	m_pGameInstance->ImGui_Render();
-
 	m_pGameInstance->Clear_Graphic_Device(&_float4(0.f, 0.f, 1.f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
-
-	m_pGameInstance->ImGui_Render_Update();
 
 	m_pGameInstance->RenderLevel();
 

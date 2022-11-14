@@ -2,7 +2,6 @@
 
 #include "Base.h"
 #include "Component_Manager.h"
-#include "Tool.h"
 #include "PipeLine.h"
 
 BEGIN(Engine)
@@ -18,7 +17,7 @@ private:
 public: // GameInstance
 	HRESULT		Init_Engine(_uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
 	void		Tick_Engine(_double TimeDelta);
-	void Clear_Level(_uint iLevelIndex);
+	void		Clear_Level(_uint iLevelIndex);
 
 public: // Graphic_Device
 	HRESULT				 Clear_Graphic_Device(const _float4* pColor);
@@ -50,9 +49,9 @@ public: /* For.Component_Manager */
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
 
 public:		/* For ImGui_Manager */
-	void		ImGui_Render();
-	void		ImGui_Render_Update();
-	HRESULT		Add_Tool(CTool* pTool);
+	void Add_ImguiTabObject(class CImguiObject* ImguiObject);
+	void Add_ImguiWindowObject(class CImguiObject* ImguiObject);
+	void Clear_ImguiObjects();
 
 public: /* For.PipeLine */
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);

@@ -1,11 +1,12 @@
-﻿  Transform.cpp
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(59): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(69): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(79): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(89): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(99): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(107): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\Engine\Default\../Bin\Engine.dll
+﻿  MathUtils.cpp
+     ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
+Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+  Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
   1개 파일이 복사되었습니다.
@@ -24,17 +25,20 @@ c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(107): warning C
   .\Engine\Public\Engine_Typedef.h
   .\Engine\Public\GameInstance.h
   .\Engine\Public\GameObject.h
+  .\Engine\Public\GameUtils.h
   .\Engine\Public\Graphic_Device.h
+  .\Engine\Public\ImGuiObject.h
   .\Engine\Public\ImGui_Manager.h
+  .\Engine\Public\ImGui_PropertyEditor.h
   .\Engine\Public\Input_Device.h
   .\Engine\Public\Layer.h
   .\Engine\Public\Level.h
   .\Engine\Public\Level_Manager.h
+  .\Engine\Public\MathUtils.h
   .\Engine\Public\Object_Manager.h
   .\Engine\Public\PipeLine.h
   .\Engine\Public\Renderer.h
   .\Engine\Public\Shader.h
-  .\Engine\Public\Tool.h
   .\Engine\Public\Transform.h
   .\Engine\Public\VIBuffer.h
   .\Engine\Public\VIBuffer_Cube.h
@@ -42,22 +46,34 @@ c:\users\sam51\desktop\brightmemory\engine\private\transform.cpp(107): warning C
   .\Engine\Public\VIBuffer_Sphere.h
   .\Engine\Public\Effects11\d3dx11effect.h
   .\Engine\Public\Effects11\d3dxGlobal.h
-  29개 파일이 복사되었습니다.
-  .\Engine\ImGui\dirent.h
-  .\Engine\ImGui\GraphEditor.h
-  .\Engine\ImGui\imconfig.h
-  .\Engine\ImGui\ImCurveEdit.h
-  .\Engine\ImGui\ImGradient.h
-  .\Engine\ImGui\imgui.h
-  .\Engine\ImGui\ImGuiFileDialog.h
-  .\Engine\ImGui\ImGuiFileDialogConfig.h
-  .\Engine\ImGui\ImGuizmo.h
-  .\Engine\ImGui\imgui_impl_dx11.h
-  .\Engine\ImGui\imgui_impl_win32.h
-  .\Engine\ImGui\imgui_internal.h
-  .\Engine\ImGui\ImSequencer.h
-  .\Engine\ImGui\imstb_rectpack.h
-  .\Engine\ImGui\imstb_textedit.h
-  .\Engine\ImGui\imstb_truetype.h
-  .\Engine\ImGui\ImZoomSlider.h
-  17개 파일이 복사되었습니다.
+  .\Engine\Public\ImGui\dirent.h
+  .\Engine\Public\ImGui\GraphEditor.cpp
+  .\Engine\Public\ImGui\GraphEditor.h
+  .\Engine\Public\ImGui\imconfig.h
+  .\Engine\Public\ImGui\ImCurveEdit.cpp
+  .\Engine\Public\ImGui\ImCurveEdit.h
+  .\Engine\Public\ImGui\ImGradient.cpp
+  .\Engine\Public\ImGui\ImGradient.h
+  .\Engine\Public\ImGui\imgui.cpp
+  .\Engine\Public\ImGui\imgui.h
+  .\Engine\Public\ImGui\ImGuiFileDialog.cpp
+  .\Engine\Public\ImGui\ImGuiFileDialog.h
+  .\Engine\Public\ImGui\ImGuiFileDialogConfig.h
+  .\Engine\Public\ImGui\ImGuizmo.cpp
+  .\Engine\Public\ImGui\ImGuizmo.h
+  .\Engine\Public\ImGui\imgui_demo.cpp
+  .\Engine\Public\ImGui\imgui_draw.cpp
+  .\Engine\Public\ImGui\imgui_impl_dx11.cpp
+  .\Engine\Public\ImGui\imgui_impl_dx11.h
+  .\Engine\Public\ImGui\imgui_impl_win32.cpp
+  .\Engine\Public\ImGui\imgui_impl_win32.h
+  .\Engine\Public\ImGui\imgui_internal.h
+  .\Engine\Public\ImGui\imgui_tables.cpp
+  .\Engine\Public\ImGui\imgui_widgets.cpp
+  .\Engine\Public\ImGui\ImSequencer.cpp
+  .\Engine\Public\ImGui\ImSequencer.h
+  .\Engine\Public\ImGui\imstb_rectpack.h
+  .\Engine\Public\ImGui\imstb_textedit.h
+  .\Engine\Public\ImGui\imstb_truetype.h
+  .\Engine\Public\ImGui\ImZoomSlider.h
+  62개 파일이 복사되었습니다.

@@ -1,4 +1,4 @@
-﻿  BackGround.cpp
-c:\users\sam51\desktop\brightmemory\client\private\background.cpp(44): warning C4244: '인수': 'unsigned int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\Client\Default\..\Bin\Debug\Client.exe
+﻿  TestCube.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\client\private\testcube.cpp(63): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

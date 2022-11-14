@@ -14,8 +14,8 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 bool		g_bFullScreen = false;
 bool		g_bNeedResizeSwapChain = false;
-unsigned int g_iWinSizeX = 800;
-unsigned int g_iWinSizeY = 600;
+unsigned int g_iWinSizeX = 1920;
+unsigned int g_iWinSizeY = 1080;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -36,26 +36,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
+	// TODO: 여기에 코드를 입력합니다.
+	CMainApp*			pMainApp = nullptr;
 
-    // TODO: 여기에 코드를 입력합니다.
-	CMainApp* pMainApp = nullptr;
+	// 전역 문자열을 초기화합니다.
+	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
+	MyRegisterClass(hInstance);
 
-    // 전역 문자열을 초기화합니다.
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_CLIENT, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+	// 응용 프로그램 초기화를 수행합니다.
+	if (!InitInstance(hInstance, nCmdShow))
+	{
+		return FALSE;
+	}
 
-    // 응용 프로그램 초기화를 수행합니다.
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
+	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
+	MSG msg;
 
+	// 기본 메시지 루프입니다.
 	pMainApp = CMainApp::Create();
-	
-    MSG msg;
+	if (nullptr == pMainApp)
+		return FALSE;
 
 	// 기본 메시지 루프입니다.
 	while (true)
@@ -191,6 +193,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
+
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			DestroyWindow(g_hWnd);
+			break;
+		}
+		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
