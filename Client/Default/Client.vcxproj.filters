@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Default">
+      <UniqueIdentifier>{9f94acda-e85a-41d7-bf59-4730d651aec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainApp">
+      <UniqueIdentifier>{e5a51233-7c60-40cc-bf47-7ea256f97668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Define">
+      <UniqueIdentifier>{0cb91991-7f6f-4d5d-a68a-fabdbdb5d654}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Text">
+      <UniqueIdentifier>{f0d4bcb3-1d50-4ba3-b998-46cb5e9539a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign">
+      <UniqueIdentifier>{16a7b9a1-9f77-4d11-a4e9-8c14c419441d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Loading">
+      <UniqueIdentifier>{36f487e8-2a47-4062-b956-a5af0917c2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Loading\Loader">
+      <UniqueIdentifier>{5cba3b15-3f4b-4bf7-96d7-bb8bfc5c1af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Logo">
+      <UniqueIdentifier>{7e7cf417-d7a5-4779-8bcd-28a667d65922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Chapter">
+      <UniqueIdentifier>{c3da6fa7-58a3-456a-9c99-3f1431c82065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Chapter\1">
+      <UniqueIdentifier>{1bfdec82-f761-4a93-a110-940ba6625170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelDesign\Chapter\2">
+      <UniqueIdentifier>{241973b6-1816-4247-bf26-2629b313e226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{344ffd3f-2b0c-44a3-913a-de00aa5b643d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\BackGround">
+      <UniqueIdentifier>{54c18a98-7a08-4db7-b510-3e03a0b6fd2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderFile">
+      <UniqueIdentifier>{0078ebc8-5e4c-4207-a41a-6918e5bbce98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{71ef7893-8630-436b-b2c1-5fc944d61526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Figure">
+      <UniqueIdentifier>{0d65759b-800a-4b0d-b33f-f87be0aae6dd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Define.h">
+      <Filter>Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Logo.h">
+      <Filter>LevelDesign\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>LevelDesign\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loader.h">
+      <Filter>LevelDesign\Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_ChapOne.h">
+      <Filter>LevelDesign\Chapter\1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_ChapTwo.h">
+      <Filter>LevelDesign\Chapter\2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BackGround.h">
+      <Filter>GameObject\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestTool.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestSphere.h">
+      <Filter>GameObject\Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestCube.h">
+      <Filter>GameObject\Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Dynamic.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Logo.cpp">
+      <Filter>LevelDesign\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>LevelDesign\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loader.cpp">
+      <Filter>LevelDesign\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_ChapOne.cpp">
+      <Filter>LevelDesign\Chapter\1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_ChapTwo.cpp">
+      <Filter>LevelDesign\Chapter\2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGround.cpp">
+      <Filter>GameObject\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestTool.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestSphere.cpp">
+      <Filter>GameObject\Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestCube.cpp">
+      <Filter>GameObject\Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Dynamic.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>Text</Filter>
+    </Text>
+    <Text Include="Study.txt">
+      <Filter>Text</Filter>
+    </Text>
+    <Text Include="ToDoList.txt">
+      <Filter>Text</Filter>
+    </Text>
+    <Text Include="Learn.txt">
+      <Filter>Text</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

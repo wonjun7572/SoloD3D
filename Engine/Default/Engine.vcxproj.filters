@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Base">
+      <UniqueIdentifier>{1806d3d6-7048-44ad-91dd-63558e76de99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{bb10681e-1272-44aa-99ea-c9b09ee4582d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton">
+      <UniqueIdentifier>{60cdaf74-e335-4422-8900-81d1a1ec69fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\GraphicDevice">
+      <UniqueIdentifier>{560c83fa-afa9-4703-abca-938d08b9c5e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\GameInstance">
+      <UniqueIdentifier>{9c62808c-dca4-4fe8-8567-80682c7923bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\InputDevice">
+      <UniqueIdentifier>{1169d306-2150-4594-9c6e-e7c712044fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\LevelDesign">
+      <UniqueIdentifier>{e13ff98c-d7a1-4ad3-9885-a48c95c740ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\LevelDesign\Level">
+      <UniqueIdentifier>{80dcbfa0-f592-4354-8312-f7ea540528ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ObjectManager">
+      <UniqueIdentifier>{143c8e6c-46cb-4bac-a98c-e57414c6aa2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ObjectManager\Layer">
+      <UniqueIdentifier>{7c64af3c-dd43-4e5a-be60-83d38fb6a651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ObjectManager\GameObject">
+      <UniqueIdentifier>{78d51806-76b3-4849-8e79-aa32a48036f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager">
+      <UniqueIdentifier>{0ba4e92b-c705-4fc7-8b8b-117be075d93d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component">
+      <UniqueIdentifier>{f12b8635-470b-4a87-aaf6-15d32f016907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Renderer">
+      <UniqueIdentifier>{0e7d3128-ba52-4d90-8787-325162ac45ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer">
+      <UniqueIdentifier>{2df07d15-7ac5-4ca2-a670-851cb9148edf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Rect">
+      <UniqueIdentifier>{38d93961-aa53-4c58-b0d8-4d1dcf1e7800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Shader">
+      <UniqueIdentifier>{1281dfc4-454c-4f10-9104-529e7ddc05aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{8757eaff-3916-4b3a-8ab2-388195e427db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui\ImGui">
+      <UniqueIdentifier>{df975b80-2ca5-4832-921e-aecd48eb822f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui\Manager">
+      <UniqueIdentifier>{120676be-0645-46d9-ab32-105380ee8d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cube">
+      <UniqueIdentifier>{ccbc1d4d-e02d-4dab-887d-4362b9093e51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Sphere">
+      <UniqueIdentifier>{8ab12dfd-fa44-4fb9-9780-5450ff980f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Transform">
+      <UniqueIdentifier>{7414cf25-1d73-4192-a8b6-7dcf0a559b7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{b2065ae8-7a55-4b1a-a09e-7812f72de619}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PipeLine">
+      <UniqueIdentifier>{1adb3b8f-ded3-4944-8d2a-d68b08e37157}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Public\Base.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Struct.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Define.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Macro.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Typedef.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Function.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameInstance.h">
+      <Filter>Singleton\GameInstance</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Graphic_Device.h">
+      <Filter>Singleton\GraphicDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Input_Device.h">
+      <Filter>Singleton\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Manager.h">
+      <Filter>Singleton\LevelDesign</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level.h">
+      <Filter>Singleton\LevelDesign\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Object_Manager.h">
+      <Filter>Singleton\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject.h">
+      <Filter>Singleton\ObjectManager\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Layer.h">
+      <Filter>Singleton\ObjectManager\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>Singleton\ComponentManager\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Renderer.h">
+      <Filter>Singleton\ComponentManager\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component_Manager.h">
+      <Filter>Singleton\ComponentManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Rect.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shader.h">
+      <Filter>Singleton\ComponentManager\Component\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\dirent.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\GraphEditor.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imconfig.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImCurveEdit.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImGradient.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imgui.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imgui_impl_dx11.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imgui_impl_win32.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imgui_internal.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImGuiFileDialog.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImGuiFileDialogConfig.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImGuizmo.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImSequencer.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imstb_rectpack.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imstb_textedit.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\imstb_truetype.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ImGui\ImZoomSlider.h">
+      <Filter>ImGui\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tool.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_Manager.h">
+      <Filter>ImGui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cube.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Sphere.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PipeLine.h">
+      <Filter>PipeLine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Transform.h">
+      <Filter>Singleton\ComponentManager\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Private\Base.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameInstance.cpp">
+      <Filter>Singleton\GameInstance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Graphic_Device.cpp">
+      <Filter>Singleton\GraphicDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Input_Device.cpp">
+      <Filter>Singleton\InputDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Manager.cpp">
+      <Filter>Singleton\LevelDesign</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level.cpp">
+      <Filter>Singleton\LevelDesign\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Object_Manager.cpp">
+      <Filter>Singleton\ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject.cpp">
+      <Filter>Singleton\ObjectManager\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Layer.cpp">
+      <Filter>Singleton\ObjectManager\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Component.cpp">
+      <Filter>Singleton\ComponentManager\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Renderer.cpp">
+      <Filter>Singleton\ComponentManager\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Component_Manager.cpp">
+      <Filter>Singleton\ComponentManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shader.cpp">
+      <Filter>Singleton\ComponentManager\Component\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Engine_Struct.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\GraphEditor.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\ImCurveEdit.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\ImGradient.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_demo.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_draw.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_impl_dx11.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_impl_win32.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_tables.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\imgui_widgets.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\ImGuiFileDialog.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\ImGuizmo.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ImGui\ImSequencer.cpp">
+      <Filter>ImGui\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tool.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_Manager.cpp">
+      <Filter>ImGui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cube.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Sphere.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PipeLine.cpp">
+      <Filter>PipeLine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Transform.cpp">
+      <Filter>Singleton\ComponentManager\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

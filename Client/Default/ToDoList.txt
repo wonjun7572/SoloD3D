@@ -1,0 +1,17 @@
+*Bright Memory*
+
+chracter
+
+Level_Logo
+
+캐릭터의 애니메이션과 그냥 스카이박스 배경 약간의 역동적으로 움직이게끔
+
+start
+custom -> 가능하면 이것도 -> Level_Custom으로 하고 바로 스타트 눌러서 게임 시작
+(급한 작업은 아님)
+exit
+
+
+Level_Chap1
+
+
