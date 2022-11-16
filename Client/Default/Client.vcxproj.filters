@@ -46,20 +46,11 @@
     <Filter Include="GameObject\Figure">
       <UniqueIdentifier>{0d65759b-800a-4b0d-b33f-f87be0aae6dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Terrain">
+      <UniqueIdentifier>{0fb4cd8b-cccf-4f72-813a-3a9a35fdc179}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Default</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MainApp.h">
       <Filter>MainApp</Filter>
     </ClInclude>
@@ -93,14 +84,23 @@
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain.h">
+      <Filter>GameObject\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp">
-      <Filter>Default</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Default</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MainApp.cpp">
       <Filter>MainApp</Filter>
     </ClCompile>
@@ -131,6 +131,15 @@
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>GameObject\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -141,11 +150,9 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Client.rc">
-      <Filter>Default</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
+    <Text Include="Learn.txt">
+      <Filter>Text</Filter>
+    </Text>
     <Text Include="ReadMe.txt">
       <Filter>Text</Filter>
     </Text>
@@ -155,12 +162,23 @@
     <Text Include="ToDoList.txt">
       <Filter>Text</Filter>
     </Text>
-    <Text Include="Learn.txt">
-      <Filter>Text</Filter>
-    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>Default</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpecularMapping.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_UVAnimation.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

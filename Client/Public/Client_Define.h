@@ -13,3 +13,5 @@ extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
 
 using namespace Client;
+
+#include "MathUtils.h"

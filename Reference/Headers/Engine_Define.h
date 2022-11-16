@@ -1,10 +1,10 @@
 #pragma once
 
-#include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
-//#include "ImGuizmo.h"
-//#include "ImGuiFileDialog.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_dx11.h"
+#include "ImGui/imgui_impl_win32.h"
+#include "ImGui/ImGuizmo.h"
+#include "ImGui/ImGuiFileDialog.h"
 
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
@@ -17,6 +17,13 @@ using namespace DirectX;
 #include <math.h>
 
 #include <Effects11//d3dx11effect.h>
+
+#include <DirectXTK/DDSTextureLoader.h>
+#include <DirectXTK/WICTextureLoader.h>
+
+// 난 사용할래
+#include <DirectXTK/SimpleMath.h>
+
 #include <d3dcompiler.h>
 
 #define DIRECTINPUT_VERSION 0x0800

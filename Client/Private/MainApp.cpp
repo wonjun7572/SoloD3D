@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#include "Camera_Dynamic.h"
+
 CMainApp::CMainApp()
 	:m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -17,7 +19,7 @@ HRESULT CMainApp::Init()
 
 	GRAPHIC_DESC			GraphicDesc;
 	ZeroMemory(&GraphicDesc, sizeof(GRAPHIC_DESC));
-
+	
 	GraphicDesc.hWnd = g_hWnd;
 	GraphicDesc.hInstance = g_hInst;
 	GraphicDesc.iViewportSizeX = g_iWinSizeX;
@@ -52,9 +54,13 @@ HRESULT CMainApp::Render()
 	if (m_pGameInstance == nullptr)
 		return E_FAIL;
 
-	m_pGameInstance->Clear_Graphic_Device(&_float4(0.f, 0.f, 1.f, 1.f));
+	m_pGameInstance->Render_ImGui();
+
+	m_pGameInstance->Clear_Graphic_Device(&_float4(0.5f, 0.5f, 0.5f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
+
+	m_pGameInstance->Render_Update_ImGui();
 
 	m_pGameInstance->RenderLevel();
 
@@ -134,11 +140,14 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+
 	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Prototype_GameObject()
 {
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"), CCamera_Dynamic::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -159,10 +168,10 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
-	Safe_Release(m_pGameInstance);
 
 	CGameInstance::Release_Engine();
 }

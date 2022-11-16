@@ -100,3 +100,23 @@ setvalue로 전치행렬받고 하는 것이 아닌 setMatrix에 매트릭스로 던지므로써 전치행�
 
 함수인자로 사용할때  FXMVECTOR를 활용한다. (1개 ~ 3개) 함수인자가 벡터인 것에 대해서만~
 
+
+-------------------------------------------------------
+2022-11-15
+transform 강화
+texture 
+format format -> generate mipmap -> 그담에 저장~ 
+DxTex.exe
+
+TK 개발환경에 따른 솔루션켜고 빌드 debug x64 release x64 모두 
+bin -> debug DirectxTK.lib DirectxTKd.lib로 이름변경
+release 
+
+-------------------------------------------------------
+2022-11-16
+hlsl 수업 
+sampler AddressU,AddressV
+wrap은  1보다 커지면 0부터 다시시작
+clamp는 1보다 커지면 1고정
+
+terrain

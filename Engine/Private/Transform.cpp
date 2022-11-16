@@ -1,4 +1,5 @@
 #include "..\Public\Transform.h"
+#include "Shader.h"
 
 CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -9,31 +10,33 @@ CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
-	, m_Scale(rhs.m_Scale)
 {
 
 }
 
-void CTransform::Set_Scale(STATE eState, _float fScale)
+void CTransform::Set_Scaled(STATE eState, _float fScale)
 {
-	_matrix			WorldMatrix = XMLoadFloat4x4(&m_WorldMatrix);
-	//STATE_RIGHT, STATE_UP, STATE_LOOK
-	if (STATE_RIGHT == eState)
-	{
-		m_Scale.x *= fScale;
-	}
-	else if (STATE_UP == eState)
-	{
-		m_Scale.y *= fScale;
-	}
-	else if (STATE_LOOK == eState)
-	{
-		m_Scale.z *= fScale;
-	}
+	if (eState == STATE_TRANSLATION)
+		return;
 
-	WorldMatrix.r[eState] = XMVector3Normalize(WorldMatrix.r[eState]) * fScale;
+	_vector vState = Get_State(eState);
+	vState = XMVector3Normalize(vState) * fScale;
+	Set_State(eState, vState);
+}
 
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+void CTransform::Set_Scaled(_float3 vScale)
+{
+	Set_State(CTransform::STATE_RIGHT, XMVector3Normalize(Get_State(STATE_RIGHT)) * vScale.x);
+	Set_State(CTransform::STATE_UP, XMVector3Normalize(Get_State(STATE_UP)) * vScale.y);
+	Set_State(CTransform::STATE_LOOK, XMVector3Normalize(Get_State(STATE_LOOK)) * vScale.z);
+}
+
+void CTransform::Scaling(STATE eState, _float fScale)
+{
+	if (eState == STATE_TRANSLATION)
+		return;
+
+	Set_State(eState, Get_State(eState) * fScale);
 }
 
 HRESULT CTransform::Init_Prototype()
@@ -101,7 +104,6 @@ void CTransform::Go_Up(_double TimeDelta)
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }
 
-
 void CTransform::Turn(_fvector vAxis, _double TimeDelta)
 {
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_TransformDesc.fRotationPerSec * TimeDelta);
@@ -111,21 +113,49 @@ void CTransform::Turn(_fvector vAxis, _double TimeDelta)
 	Set_State(CTransform::STATE_LOOK, XMVector3TransformNormal(Get_State(CTransform::STATE_LOOK), RotationMatrix));
 }
 
-void CTransform::LookAt(_fvector vAt)
+void CTransform::Rotation(_fvector vAxis, _float fRadian)
 {
-	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
+	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, fRadian);
 
-	_vector		vLook = vAt - vPosition;
-	_vector		vAxisY = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-
-	_vector		vRight = XMVector3Cross(vAxisY, vLook);
-	_vector		vUp = XMVector3Cross(vLook, vRight);
-
-	Set_State(STATE_RIGHT, XMVector3Normalize(vRight) * Get_Scale(CTransform::STATE_RIGHT));
-	Set_State(STATE_UP, XMVector3Normalize(vUp) * Get_Scale(CTransform::STATE_UP));
-	Set_State(STATE_LOOK, XMVector3Normalize(vLook) * Get_Scale(CTransform::STATE_LOOK));
+	Set_State(CTransform::STATE_RIGHT, XMVector4Transform(XMVectorSet(1.f, 0.f, 0.f, 0.f), RotationMatrix));
+	Set_State(CTransform::STATE_UP, XMVector4Transform(XMVectorSet(0.f, 1.f, 0.f, 0.f), RotationMatrix));
+	Set_State(CTransform::STATE_LOOK, XMVector4Transform(XMVectorSet(0.f, 0.f, 1.f, 0.f), RotationMatrix));
 }
 
+void CTransform::LookAt(_fvector vTargetPos)
+{
+	_float3		vScale = Get_Scaled();
+
+	_vector		vLook = XMVector3Normalize(vTargetPos - Get_State(CTransform::STATE_TRANSLATION)) * vScale.z;
+	_vector		vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook)) * vScale.x;
+	_vector		vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight)) * vScale.y;
+
+	Set_State(CTransform::STATE_RIGHT, vRight);
+	Set_State(CTransform::STATE_UP, vUp);
+	Set_State(CTransform::STATE_LOOK, vLook);
+}
+
+void CTransform::Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit)
+{
+	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
+	_vector		vDir = vTargetPos - vPosition;
+
+	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
+
+	if (fDistance > fLimit)
+	{
+		vPosition += XMVector3Normalize(vDir) * m_TransformDesc.fSpeedPerSec * TimeDelta;
+		Set_State(CTransform::STATE_TRANSLATION, vPosition);
+	}
+}
+
+HRESULT CTransform::Bind_ShaderResource(CShader * pShaderCom, const char * pConstantName)
+{
+	if (nullptr == pShaderCom)
+		return E_FAIL;
+
+	return pShaderCom->Set_Matrix(pConstantName, &m_WorldMatrix);
+}
 
 CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
@@ -139,7 +169,6 @@ CTransform * CTransform::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pC
 
 	return pInstance;
 }
-
 
 CComponent * CTransform::Clone(void * pArg)
 {

@@ -49,6 +49,8 @@ public: /* For.Component_Manager */
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
 
 public:		/* For ImGui_Manager */
+	void Render_ImGui();
+	void Render_Update_ImGui();
 	void Add_ImguiTabObject(class CImguiObject* ImguiObject);
 	void Add_ImguiWindowObject(class CImguiObject* ImguiObject);
 	void Clear_ImguiObjects();

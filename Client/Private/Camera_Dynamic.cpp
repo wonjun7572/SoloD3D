@@ -34,22 +34,22 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 
 	if (GetKeyState('W') < 0)
 	{
-		m_pTransform->Go_Straight(TimeDelta);
+		m_pTransform->Go_Straight(TimeDelta * 0.1);
 	}
 
 	if (GetKeyState('S') < 0)
 	{
-		m_pTransform->Go_Backward(TimeDelta);
+		m_pTransform->Go_Backward(TimeDelta* 0.1);
 	}
 
 	if (GetKeyState('A') < 0)
 	{
-		m_pTransform->Go_Left(TimeDelta);
+		m_pTransform->Go_Left(TimeDelta* 0.1);
 	}
 
 	if (GetKeyState('D') < 0)
 	{
-		m_pTransform->Go_Right(TimeDelta);
+		m_pTransform->Go_Right(TimeDelta* 0.1);
 	}
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();

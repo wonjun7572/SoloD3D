@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Level_Logo.h"
 
+#include "Level_Loading.h"
+
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
 #include "ImGui_PropertyEditor.h"
@@ -29,12 +31,23 @@ HRESULT CLevel_Logo::Init()
 
 void CLevel_Logo::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
+	__super::Tick(TimeDelta); 
 }
 
 void CLevel_Logo::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
+
+	if (GetKeyState(VK_F1) & 0x8000)
+	{
+		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+
+		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP1))))
+			return;
+
+		Safe_Release(pGameInstance);
+	}
 }
 
 HRESULT CLevel_Logo::Render()
@@ -53,18 +66,6 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const wstring& pLayerTag)
 	Safe_AddRef(pGameInstance);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_BackGround"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_TestSphere"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-	
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_TestCube"))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

@@ -18,6 +18,7 @@ public:
 	void Ready_Imgui(HWND hWnd, ID3D11Device* pDeviceOut, ID3D11DeviceContext* pDeviceContextOut);
 	void Tick_Imgui();
 	void Render_Imgui();
+	void Render_Update_ImGui();
 
 	// imgui object를 tab에 추가한다.
 	void Add_ImguiTabObject(CImguiObject* ImguiObject);

@@ -82,6 +82,15 @@
     <Filter Include="ImGui\ImGuiObj">
       <UniqueIdentifier>{1903e1db-c382-47c5-b84d-5d3bdfcdf8d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Texture">
+      <UniqueIdentifier>{ed38da8e-262d-4be0-96fd-8c77af7a0201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\RigidBody">
+      <UniqueIdentifier>{75a1b689-298e-40e0-958f-2246d487e13a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Terrain">
+      <UniqueIdentifier>{af3ddb2b-26bd-4f12-95f5-4b4ca2d0a487}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -225,6 +234,15 @@
     <ClInclude Include="..\public\MathUtils.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DirectXTK\SimpleMath.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Texture.h">
+      <Filter>Singleton\ComponentManager\Component\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Terrain.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -344,5 +362,16 @@
     <ClCompile Include="..\private\MathUtils.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Texture.cpp">
+      <Filter>Singleton\ComponentManager\Component\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Terrain.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Public\DirectXTK\SimpleMath.inl">
+      <Filter>Util</Filter>
+    </None>
   </ItemGroup>
 </Project>

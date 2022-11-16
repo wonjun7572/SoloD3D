@@ -55,7 +55,6 @@ HRESULT CShader::Init_Prototype(const wstring& pShaderFilePath, const D3D11_INPU
 		m_InputLayouts.push_back(pInputLayout);
 	}
 
-
 	return S_OK;
 }
 
@@ -108,6 +107,19 @@ HRESULT CShader::Set_Matrix(const char * pConstantName, const _float4x4* pMatrix
 		return E_FAIL;
 
 	return pVariable->SetMatrix(reinterpret_cast<const _float*>(pMatrix));
+}
+
+HRESULT CShader::Set_ShaderResourceView(const char * pConstantName, ID3D11ShaderResourceView * pSRV)
+{
+	if (m_pEffect == nullptr)
+		return E_FAIL;
+
+	ID3DX11EffectShaderResourceVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName)->AsShaderResource();
+
+	if (pVariable == nullptr)
+		return E_FAIL;
+
+	return pVariable->SetResource(pSRV);
 }
 
 HRESULT CShader::Set_MatrixArray(const char * pConstantName, const _float4x4 * pData, _uint iNumMatrices)

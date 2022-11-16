@@ -6,8 +6,7 @@
 #include "BackGround.h"
 #include "TestSphere.h"
 #include "TestCube.h"
-
-#include "Camera_Dynamic.h"
+#include "Terrain.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -70,6 +69,10 @@ HRESULT CLoader::Loading_ForLogo()
 
 	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default0.dds")))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
@@ -78,13 +81,8 @@ HRESULT CLoader::Loading_ForLogo()
 
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
 
-	pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"), CCamera_Dynamic::Create(m_pDevice, m_pContext));
-
-	pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"), CBackGround::Create(m_pDevice, m_pContext));
-
-	pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestSphere"), CTestSphere::Create(m_pDevice, m_pContext));
-	
-	pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestCube"), CTestCube::Create(m_pDevice, m_pContext));
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"), CBackGround::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 
@@ -102,13 +100,53 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
 
+	/* For.Prototype_Component_Texture_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile0.jpg"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Test */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Test"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default0.dds")))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
+	
+	/* For.Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
+	/* For.Prototype_Component_Shader_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_Terrain"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxSpecularMapping */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxSpecularMapping"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpecularMapping.hlsl"), VTXSPECMAPPING_DECLARATION::Elements, VTXSPECMAPPING_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_UVAnimation */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_UVAnimation"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UVAnimation.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestSphere"), CTestSphere::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestCube"), CTestCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Terrain */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"), CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 

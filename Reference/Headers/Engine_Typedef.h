@@ -33,4 +33,10 @@ namespace Engine
 	typedef	    XMMATRIX				_matrix;
 	typedef	    FXMMATRIX				_fmatrix;
 	typedef	    CXMMATRIX				_cmatrix;
+
+	typedef		SimpleMath::Vector2		_vec2;
+	typedef		SimpleMath::Vector3		_vec3;
+	typedef		SimpleMath::Vector4		_vec4;
+	typedef		SimpleMath::Matrix		_mat;
+	typedef		SimpleMath::Quaternion	_quaternion;
 }

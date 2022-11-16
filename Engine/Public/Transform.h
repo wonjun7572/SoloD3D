@@ -40,18 +40,13 @@ public:
 	/* 리턴받은 행렬보관해야할 때  */
 	_float4x4 Get_World4x4() const { return m_WorldMatrix; }
 
-	/* 리턴받은 행렬을 셰이더에 던지기위해.  */
-	/*_float4x4 Get_World4x4_TP() const 
+	_float3 Get_Scaled() const 
 	{
-		_float4x4	TransposeMatrix;
-		XMStoreFloat4x4(&TransposeMatrix, XMMatrixTranspose(Get_WorldMatrix()));
-		return TransposeMatrix;
-	}*/
-
-	_float3 Get_Scale()	{ return m_Scale; }
-
-	_float Get_Scale(STATE eState) { return XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_WorldMatrix).r[eState]));}
-
+		return _float3(XMVectorGetX(XMVector3Length(Get_State(STATE_RIGHT))),
+					   XMVectorGetX(XMVector3Length(Get_State(STATE_UP))),
+					   XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
+	}
+	
 	void Set_State(STATE eState, _fvector vState) 
 	{
 		_float4		vTmp;
@@ -59,7 +54,10 @@ public:
 		memcpy(&m_WorldMatrix.m[eState][0], &vTmp, sizeof vTmp);
 	}
 	
-	void Set_Scale(STATE eState, _float fScale);
+	void Set_Scaled(STATE eState, _float fScale); /* fScale값으로 길이를 변형한다. */
+	void Set_Scaled(_float3 vScale); /* fScale값으로 길이를 변형한다. */
+	void Scaling(STATE eState, _float fScale); /* fScale배수로 늘린다. */
+
 	void Set_TransformDesc(const TRANSFORMDESC& TransformDesc) { m_TransformDesc = TransformDesc; }
 
 public:
@@ -73,16 +71,24 @@ public:
 	void Go_Right(_double TimeDelta);
 	void Go_Up(_double TimeDelta);
 
+	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	void Turn(_fvector vAxis, _double TimeDelta); /* Dynamic */
+	void Rotation(_fvector vAxis, _float fRadian); /* Static */
+
+	/* 쳐다본다. */
+	/*void LookAt(const CTransform* pTarget);*/
+	void LookAt(_fvector vTargetPos);
+
+	/* 추적한다 .*/
+	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f);
+
 public:
-	void Turn(_fvector vAxis, _double TimeDelta);
-	void LookAt(_fvector vAt);
-	void Record_Scale(_float3 _Scale) { m_Scale = _Scale; }
+	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
 
 private:
 	_float4x4				m_WorldMatrix;
 	TRANSFORMDESC			m_TransformDesc;
-	_float3					m_Scale = { 1.0f,1.0f,1.0f };
-
+	
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr) override;

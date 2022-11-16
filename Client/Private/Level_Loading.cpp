@@ -45,35 +45,32 @@ void CLevel_Loading::Late_Tick(_double TimeDelta)
 
 	if (true == m_pLoader->isFinished())
 	{
-		if (GetKeyState(VK_RETURN) & 0x8000)
+		CLevel*		pLevel = nullptr;
+
+		switch (m_eNextLevelID)
 		{
-			CLevel*		pLevel = nullptr;
+		case LEVEL_LOGO:
+			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL_CHAP1:
+			pLevel = CLevel_ChapOne::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL_CHAP2:
+			pLevel = CLevel_ChapTwo::Create(m_pDevice, m_pContext);
+			break;
+		}
 
-			switch (m_eNextLevelID)
-			{
-			case LEVEL_LOGO:
-				pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
-				break;
-			case LEVEL_CHAP1:
-				pLevel = CLevel_ChapOne::Create(m_pDevice, m_pContext);
-				break;
-			case LEVEL_CHAP2:
-				pLevel = CLevel_ChapTwo::Create(m_pDevice, m_pContext);
-				break;
-			}
+		if (nullptr == pLevel)
+		{
+			assert(pLevel != nullptr && "CLevel_Loading::Late_Tick");
+			Safe_Release(pGameInstance);
+			return;
+		}
 
-			if (nullptr == pLevel)
-			{
-				assert(pLevel != nullptr && "CLevel_Loading::Late_Tick");
-				Safe_Release(pGameInstance);
-				return;
-			}
-
-			if (FAILED(pGameInstance->OpenLevel(m_eNextLevelID, pLevel)))
-			{
-				Safe_Release(pGameInstance);
-				return;
-			}
+		if (FAILED(pGameInstance->OpenLevel(m_eNextLevelID, pLevel)))
+		{
+			Safe_Release(pGameInstance);
+			return;
 		}
 	}
 

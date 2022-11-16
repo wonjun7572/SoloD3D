@@ -29,40 +29,12 @@ HRESULT CTestCube::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Go_Right(0.2);
-	
-	_float4 i;
-	XMStoreFloat4(&i, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	_vector v;
-	_float4 k;
-	k = _float4(1.f, 1.f, 1.f, 1.f);
-	v = XMLoadFloat4(&k);
-	_float4 j;
-	XMStoreFloat4(&j, v);
-	
-	_float b = CMathUtils::Distance(i, j);
-
-	_float4 result;
-
-	result = CMathUtils::Max(i, j);
-
-	result;
-
 	return S_OK;
 }
 
 void CTestCube::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	m_fTimeDelta += 0.001f;
-	if (m_fTimeDelta > 1.f)
-		m_fTimeDelta = 0.f;
-
-	XMVECTOR v = XMLoadFloat4(&CMathUtils::Hermite(_float4(0.f, 0.f, 0.f, 1.f),
-		_float4(10.f, 10.f, 10.f, 0.f), _float4(0.f, 0.f, 0.f, 1.f), _float4(20.f, 20.f, 20.f, 0.f), m_fTimeDelta));
-
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, v);
 }
 
 void CTestCube::Late_Tick(_double TimeDelta)
@@ -105,8 +77,7 @@ HRESULT CTestCube::SetUp_Components()
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Transform"), TEXT("Com_Transform"),
 		(CComponent**)&m_pTransformCom, &TransformDesc)))
 		return E_FAIL;
-
-
+	
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
@@ -115,6 +86,11 @@ HRESULT CTestCube::SetUp_Components()
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
+		return E_FAIL;
+
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Test"), TEXT("Com_Texture"),
+		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -134,6 +110,9 @@ HRESULT CTestCube::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -168,7 +147,8 @@ CGameObject * CTestCube::Clone(void * pArg)
 void CTestCube::Free()
 {
 	__super::Free();
-
+	
+	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);

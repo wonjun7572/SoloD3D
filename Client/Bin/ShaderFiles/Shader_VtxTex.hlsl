@@ -3,6 +3,12 @@
 /* 11 : 특정 구성을 가진 정점들로 이루어진 모델을 그리기위한 셰이더다. */
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+texture2D		g_Texture;
+
+sampler	DefaultSampler = sampler_state
+{
+
+};
 
 struct VS_IN
 {
@@ -31,7 +37,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	//Out.vPosition = float4(In.vPosition, 1.f);
 	Out.vTexUV = In.vTexUV;
 
 	return Out;
@@ -58,16 +63,33 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = vector(1.f, 0.f, 0.f, 1.f);
+	Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexUV);
 	
 	return Out;
 }
+
+RasterizerState rsSolidframe { FillMode = Solid; };
+RasterizerState rsWireframe { FillMode = WireFrame; };
 
 technique11 DefaultTechnique
 {
 	pass Rect
 	{
+		SetRasterizerState(rsSolidframe);
 		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass WireFrame
+	{
+		SetRasterizerState(rsWireframe);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 }

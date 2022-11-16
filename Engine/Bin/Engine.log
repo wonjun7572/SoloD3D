@@ -1,11 +1,5 @@
-﻿  MathUtils.cpp
-     ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
-Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+﻿  VIBuffer_Terrain.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\private\vibuffer_terrain.cpp(75): warning C4244: '인수': 'Engine::_uint'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
@@ -39,11 +33,34 @@ Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Ef
   .\Engine\Public\PipeLine.h
   .\Engine\Public\Renderer.h
   .\Engine\Public\Shader.h
+  .\Engine\Public\Texture.h
   .\Engine\Public\Transform.h
   .\Engine\Public\VIBuffer.h
   .\Engine\Public\VIBuffer_Cube.h
   .\Engine\Public\VIBuffer_Rect.h
   .\Engine\Public\VIBuffer_Sphere.h
+  .\Engine\Public\VIBuffer_Terrain.h
+  .\Engine\Public\DirectXTK\Audio.h
+  .\Engine\Public\DirectXTK\CommonStates.h
+  .\Engine\Public\DirectXTK\DDSTextureLoader.h
+  .\Engine\Public\DirectXTK\DirectXHelpers.h
+  .\Engine\Public\DirectXTK\Effects.h
+  .\Engine\Public\DirectXTK\GamePad.h
+  .\Engine\Public\DirectXTK\GeometricPrimitive.h
+  .\Engine\Public\DirectXTK\GraphicsMemory.h
+  .\Engine\Public\DirectXTK\Keyboard.h
+  .\Engine\Public\DirectXTK\Model.h
+  .\Engine\Public\DirectXTK\Mouse.h
+  .\Engine\Public\DirectXTK\PostProcess.h
+  .\Engine\Public\DirectXTK\PrimitiveBatch.h
+  .\Engine\Public\DirectXTK\ScreenGrab.h
+  .\Engine\Public\DirectXTK\SimpleMath.h
+  .\Engine\Public\DirectXTK\SimpleMath.inl
+  .\Engine\Public\DirectXTK\SpriteBatch.h
+  .\Engine\Public\DirectXTK\SpriteFont.h
+  .\Engine\Public\DirectXTK\VertexTypes.h
+  .\Engine\Public\DirectXTK\WICTextureLoader.h
+  .\Engine\Public\DirectXTK\XboxDDSTextureLoader.h
   .\Engine\Public\Effects11\d3dx11effect.h
   .\Engine\Public\Effects11\d3dxGlobal.h
   .\Engine\Public\ImGui\dirent.h
@@ -76,4 +93,4 @@ Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Ef
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  62개 파일이 복사되었습니다.
+  85개 파일이 복사되었습니다.

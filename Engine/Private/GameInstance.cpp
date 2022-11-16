@@ -34,6 +34,8 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pGraphicDev->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWinMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
 	m_pImGuiMgr->Ready_Imgui(GraphicDesc.hWnd, *ppDeviceOut, *ppContextOut);
 		
 	if (FAILED(m_pInputDev->Ready_Input_Device(GraphicDesc.hInstance, GraphicDesc.hWnd)))
@@ -99,8 +101,6 @@ HRESULT CGameInstance::Present()
 {
 	if (m_pGraphicDev == nullptr)
 		return E_FAIL;
-
-	m_pImGuiMgr->Render_Imgui();
 
 	return m_pGraphicDev->Present();
 }
@@ -233,6 +233,22 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pP
 	return m_pComponetMgr->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 }
 
+void CGameInstance::Render_ImGui()
+{
+	if (nullptr == m_pImGuiMgr)
+		return;
+
+	m_pImGuiMgr->Render_Imgui();
+}
+
+void CGameInstance::Render_Update_ImGui()
+{
+	if (nullptr == m_pImGuiMgr)
+		return;
+
+	m_pImGuiMgr->Render_Update_ImGui();
+}
+
 void CGameInstance::Add_ImguiTabObject(CImguiObject* ImguiObject)
 {
 	if (m_pImGuiMgr == nullptr) return;
@@ -293,6 +309,8 @@ _float4 CGameInstance::Get_CamPosition()
 
 void CGameInstance::Release_Engine()
 {
+	CImGui_Manager::GetInstance()->DestroyInstance();
+
 	CGameInstance::GetInstance()->DestroyInstance();
 
 	CObject_Manager::GetInstance()->DestroyInstance();
@@ -304,8 +322,6 @@ void CGameInstance::Release_Engine()
 	CPipeLine::GetInstance()->DestroyInstance();
 
 	CInput_Device::GetInstance()->DestroyInstance();
-
-	CImGui_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
 }

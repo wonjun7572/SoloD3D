@@ -1,6 +1,6 @@
 #include "..\public\Imgui_Manager.h"
 #include "Graphic_Device.h"
-#include "ImGuiFileDialog.h"
+#include "ImGui/ImGuiFileDialog.h"
 #include "ImguiObject.h"
 
 IMPLEMENT_SINGLETON(CImGui_Manager)
@@ -19,7 +19,7 @@ void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;		// Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-	io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoAutoMerge = true;
 	io.ConfigViewportsNoTaskBarIcon = true;
 
 	ImGui::StyleColorsDark();
@@ -40,7 +40,6 @@ void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 	ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext);
 }
 
-
 void CImGui_Manager::Tick_Imgui()
 {
 	ImGui_ImplDX11_NewFrame();
@@ -55,6 +54,10 @@ void CImGui_Manager::Render_Imgui()
 
 	ImGui::EndFrame();
 	ImGui::Render();
+}
+
+void CImGui_Manager::Render_Update_ImGui()
+{
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -69,7 +72,6 @@ void CImGui_Manager::Add_ImguiTabObject(CImguiObject* ImguiObject)
 	if (ImguiObject == nullptr)
 		return;
 
-	Safe_AddRef(ImguiObject);
 	m_vecTab.push_back(ImguiObject);
 }
 
@@ -78,7 +80,6 @@ void CImGui_Manager::Add_ImguiWindowObject(CImguiObject* ImguiObject)
 	if (ImguiObject == nullptr)
 		return;
 
-	Safe_AddRef(ImguiObject);
 	m_vecWin.push_back(ImguiObject);
 }
 
