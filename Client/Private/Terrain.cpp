@@ -37,7 +37,7 @@ void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_fTimeDelta += TimeDelta * 0.15f;
+	m_fTimeDelta += TimeDelta * 0.01f;
 }
 
 void CTerrain::Late_Tick(_double TimeDelta)
