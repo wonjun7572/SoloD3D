@@ -1,15 +1,20 @@
+
+#include "Shader_Define.hpp"
+
 matrix         g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D	   g_Texture;
 
 vector         g_vWorldLightPosition = { 500.f, 500.f,-500.f, 1.f };
+
 vector         g_vCamPosition;
 
-float		    gTime = 1 / 60;
-float			gWaveHeight = 3;
-float			gSpeed = 2;
-float			gWaveFrequency = 10;
-float			gUVSpeed = 0.25;
+float			gTime;
+
+float			gWaveHeight;
+float			gSpeed;
+float			gWaveFrequency;
+float			gUVSpeed;
 
 struct VS_IN
 {
@@ -56,27 +61,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
-sampler DiffuseSampler = sampler_state
-{
-	filter = min_mag_mip_linear;
-	AddressU = wrap;
-	AddressV = wrap;
-};
-
-sampler SpecularSampler = sampler_state
-{
-	filter = min_mag_mip_linear;
-	AddressU = wrap;
-	AddressV = wrap;
-};
-
-sampler NormalSampler = sampler_state
-{
-	filter = min_mag_mip_linear;
-	AddressU = wrap;
-	AddressV = wrap;
-};
-
 struct PS_IN
 {
 	float4      vPosition	: SV_POSITION;
@@ -91,7 +75,7 @@ struct PS_OUT
 	float4      vColor : SV_TARGET0;
 };
 
-float3 gLightColor = { 1.f, 0.f, 1.f };
+float3 gLightColor = { 1.f, 1.f, 1.f };
 
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -117,9 +101,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor = float4(ambient + diffuse + specular, 1);
 	return Out;
 }
-
-RasterizerState rsSolidframe { FillMode = Solid; };
-RasterizerState rsWireframe { FillMode = WireFrame; };
 
 technique11 DefaultTechnique
 {

@@ -17,7 +17,7 @@ HRESULT CVIBuffer_Sphere::Init_Prototype(_float _radius)
 		return E_FAIL;
 
 	m_iNumVertexBuffers = 1;
-	m_iStride = sizeof(VTXMODEL);
+	m_iStride = sizeof(VTXNORTEX);
 	m_eTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_iIndicesSizePerPrimitive = sizeof(FACEINDICES32);
@@ -30,15 +30,15 @@ HRESULT CVIBuffer_Sphere::Init_Prototype(_float _radius)
 	unsigned __int32 iStackCount = 20;
 	unsigned __int32 iSliceCount = 20;
 
-	vector<VTXMODEL> vecVtxSphere;
+	vector<VTXNORTEX> vecVtxSphere;
 
-	VTXMODEL v;
+	VTXNORTEX v;
 
 	v.vPosition = _float3(0.f, fRadius, 0.f);
 	v.vTexUV = _float2(0.5f, 0.f);
 	v.vNormal = v.vPosition;
 	v.vNormal = CMathUtils::Normalize(v.vNormal);
-	v.vTangent = _float3(1.f, 0.f, 1.f);
+	//v.vTangent = _float3(1.f, 0.f, 1.f);
 
 	vecVtxSphere.push_back(v);
 	m_iNumVertices++;
@@ -67,10 +67,10 @@ HRESULT CVIBuffer_Sphere::Init_Prototype(_float _radius)
 			v.vNormal = CMathUtils::Normalize(v.vNormal);
 			vecVtxSphere.push_back(v);
 
-			v.vTangent.x = -fRadius * sinf(fPi) * sinf(fTheta);
-			v.vTangent.y = 0.0f;
-			v.vTangent.z = fRadius * sinf(fPi) * cosf(fTheta);
-			v.vTangent = CMathUtils::Normalize(v.vTangent);
+			//v.vTangent.x = -fRadius * sinf(fPi) * sinf(fTheta);
+			//v.vTangent.y = 0.0f;
+			//v.vTangent.z = fRadius * sinf(fPi) * cosf(fTheta);
+			//v.vTangent = CMathUtils::Normalize(v.vTangent);
 
 			m_iNumVertices++;
 		}
@@ -80,7 +80,7 @@ HRESULT CVIBuffer_Sphere::Init_Prototype(_float _radius)
 	v.vTexUV = _float2(0.5f, 1.f);
 	v.vNormal = v.vPosition;
 	v.vNormal = CMathUtils::Normalize(v.vNormal);
-	v.vTangent = _vec3(1.f, 0.f, 0.f);
+	//v.vTangent = _vec3(1.f, 0.f, 0.f);
 	vecVtxSphere.push_back(v);
 	m_iNumVertices++;
 
@@ -132,10 +132,10 @@ HRESULT CVIBuffer_Sphere::Init_Prototype(_float _radius)
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
 
-	VTXMODEL*			pVertices = new VTXMODEL[m_iNumVertices];
-	ZeroMemory(pVertices, sizeof(VTXMODEL));
+	VTXNORTEX*			pVertices = new VTXNORTEX[m_iNumVertices];
+	ZeroMemory(pVertices, sizeof(VTXNORTEX));
 
-	memcpy(pVertices, vecVtxSphere.data(), sizeof(VTXMODEL) * vecVtxSphere.size());
+	memcpy(pVertices, vecVtxSphere.data(), sizeof(VTXNORTEX) * vecVtxSphere.size());
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;

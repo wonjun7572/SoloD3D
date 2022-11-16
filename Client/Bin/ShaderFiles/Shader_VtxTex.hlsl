@@ -1,21 +1,17 @@
 
+#include "Shader_Define.hpp"
+
 /* 9 : 네모, 지형, 모델을 그리기 위한 셰이더다. */
 /* 11 : 특정 구성을 가진 정점들로 이루어진 모델을 그리기위한 셰이더다. */
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_Texture;
 
-sampler	DefaultSampler = sampler_state
-{
-
-};
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 };
-
 
 struct VS_OUT
 {
@@ -67,9 +63,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	
 	return Out;
 }
-
-RasterizerState rsSolidframe { FillMode = Solid; };
-RasterizerState rsWireframe { FillMode = WireFrame; };
 
 technique11 DefaultTechnique
 {

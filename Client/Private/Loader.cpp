@@ -110,6 +110,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default0.dds")))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/water.jpg")))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 	
 	/* For.Prototype_Component_VIBuffer_Terrain */
@@ -126,14 +130,14 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxSpecularMapping */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxSpecularMapping"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpecularMapping.hlsl"), VTXSPECMAPPING_DECLARATION::Elements, VTXSPECMAPPING_DECLARATION::iNumElements))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Shader_UVAnimation */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_UVAnimation"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UVAnimation.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_Specular */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_Specular"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpecularMapping.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");

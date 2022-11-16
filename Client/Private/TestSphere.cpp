@@ -77,13 +77,13 @@ HRESULT CTestSphere::SetUp_Components()
 
 	TransformDesc.fSpeedPerSec = 5.f;
 	TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
+	
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Transform"), TEXT("Com_Transform"), 
 		(CComponent**)&m_pTransformCom, &TransformDesc)))
 		return E_FAIL;
 	
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxSpecularMapping"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_Specular"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 

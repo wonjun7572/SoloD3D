@@ -82,14 +82,6 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 
 #pragma region INDEX_BUFFER
 
-	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
-	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	m_BufferDesc.StructureByteStride = 0;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
 
 	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
 	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
@@ -151,6 +143,15 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pPixel);
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iIndicesSizePerPrimitive * m_iNumPrimitive;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_BufferDesc.StructureByteStride = 0;
+	m_BufferDesc.CPUAccessFlags = 0;
+	m_BufferDesc.MiscFlags = 0;
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pIndices;

@@ -1,19 +1,12 @@
+
+#include "Shader_Define.hpp"
+
 matrix         g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D	   g_Texture;
 
 vector         g_vWorldLightPosition = { 500.f, 500.f,-500.f, 1.f };
 vector         g_vCamPosition;
-
-sampler DiffuseSampler = sampler_state
-{
-
-};
-
-sampler SpecularSampler = sampler_state
-{
-
-};
 
 struct VS_IN
 {
@@ -97,8 +90,6 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	return Out;
 }
-RasterizerState rsSolidframe { FillMode = Solid; };
-RasterizerState rsWireframe { FillMode = WireFrame; };
 
 technique11 DefaultTechnique
 {

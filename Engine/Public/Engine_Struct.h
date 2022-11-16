@@ -63,18 +63,4 @@ namespace Engine
 		static const unsigned int iNumElements = 4;
 		static const D3D11_INPUT_ELEMENT_DESC Elements[iNumElements];
 	}VTXMODEL_DECLARATION;
-
-
-	typedef struct tagVertexSpecularMappingShader
-	{
-		XMFLOAT3		vPosition;
-		XMFLOAT3		vNormal;
-		XMFLOAT2		vTexUV;
-	}VTXSPECMAPPING;
-
-	typedef struct ENGINE_DLL tagVertexSpecularMappingShader_Declaration
-	{
-		static const unsigned int iNumElements = 3;
-		static const D3D11_INPUT_ELEMENT_DESC Elements[iNumElements];
-	}VTXSPECMAPPING_DECLARATION;
 }

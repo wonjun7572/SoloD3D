@@ -37,6 +37,8 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
+	float m_fTimeDelta = 0.f;
+
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

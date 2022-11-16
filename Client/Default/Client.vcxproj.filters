@@ -99,6 +99,9 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>GameObject\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.hpp">
+      <Filter>ShaderFile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
