@@ -36,8 +36,6 @@ HRESULT CTerrain::Init(void * pArg)
 void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	m_fTimeDelta += static_cast<float>(TimeDelta * 0.2f);
 }
 
 void CTerrain::Late_Tick(_double TimeDelta)
@@ -56,7 +54,7 @@ HRESULT CTerrain::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(1);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Render();
 
@@ -81,7 +79,7 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -91,26 +89,6 @@ HRESULT CTerrain::SetUp_Components()
 HRESULT CTerrain::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	float			gWaveHeight = 3.f;
-	float			gSpeed = 2.f;
-	float			gWaveFrequency = 10.f;
-	float			gUVSpeed = 0.25f;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("gTime", &m_fTimeDelta, sizeof _float)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("gWaveHeight", &gWaveHeight, sizeof _float)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("gSpeed", &gSpeed, sizeof _float)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("gWaveFrequency", &gWaveFrequency, sizeof _float)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("gUVSpeed", &gUVSpeed, sizeof _float)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_pTransformCom->Get_World4x4())))

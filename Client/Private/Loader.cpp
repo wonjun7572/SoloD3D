@@ -7,6 +7,7 @@
 #include "TestSphere.h"
 #include "TestCube.h"
 #include "Terrain.h"
+#include "Ocean.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -110,8 +111,9 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default0.dds")))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Water */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/water.jpg")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_Seafoam_01.dds")))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
@@ -120,6 +122,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Ocean */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Ocean"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_H.bmp")))))
+		return E_FAIL;
+
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
@@ -135,6 +143,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"), CTerrain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Ocean */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");

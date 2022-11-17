@@ -49,6 +49,9 @@
     <Filter Include="GameObject\Terrain">
       <UniqueIdentifier>{0fb4cd8b-cccf-4f72-813a-3a9a35fdc179}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Ocean">
+      <UniqueIdentifier>{7b35a4c7-8787-4734-b6ff-db672eac71eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.hpp">
       <Filter>ShaderFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Ocean.h">
+      <Filter>GameObject\Ocean</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -143,6 +149,9 @@
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>GameObject\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Ocean.cpp">
+      <Filter>GameObject\Ocean</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -176,6 +185,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

@@ -5,7 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
 
-vector          g_vWorldLightPosition = { 500.f, 500.f, 500.f, 1.f };
+vector          g_vWorldLightPosition = { 0.f, 500.f, 500.f, 1.f };
 
 vector          g_vCamPosition;
 
@@ -142,7 +142,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN_DVR In)
 {
 	PS_OUT         Out = (PS_OUT)0;
 
-	float4 albedo = g_Texture.Sample(DiffuseSampler, In.vTexUV * 200.f);
+	float4 albedo = g_Texture.Sample(DiffuseSampler, In.vTexUV);
 	float3 diffuse = g_LightColor * albedo.rgb * saturate(In.vDiffuse);
 
 	float3 reflection = normalize(In.vReflection);
@@ -154,7 +154,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN_DVR In)
 		specular = saturate(dot(reflection, -viewDir));
 		specular = pow(specular, 20.f);
 
-		float4 specularIntensity = g_Texture.Sample(SpecularSampler, In.vTexUV * 200.f);
+		float4 specularIntensity = g_Texture.Sample(SpecularSampler, In.vTexUV);
 		specular *= specularIntensity.rgb * g_LightColor;
 	}
 

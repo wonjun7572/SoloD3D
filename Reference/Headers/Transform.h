@@ -70,6 +70,7 @@ public:
 	void Go_Left(_double TimeDelta);
 	void Go_Right(_double TimeDelta);
 	void Go_Up(_double TimeDelta);
+	void Go_Down(_double TimeDelta);
 
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _double TimeDelta); /* Dynamic */

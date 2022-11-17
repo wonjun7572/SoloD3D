@@ -29,7 +29,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
 	else
 	{
-		CameraDesc.vEye = _float4(0.f, 0.f, -10.f, 1.f);
+		CameraDesc.vEye = _float4(0.f, 10.f, -10.f, 1.f);
 		CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 
