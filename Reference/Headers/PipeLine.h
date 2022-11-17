@@ -1,7 +1,5 @@
 #pragma once
 
-/* 카메라에서 갱신해주는 뷰행렬, 투영행려을 보관한다. */
-/* 상황에 따라 리턶나다. */
 #include "Base.h"
 
 BEGIN(Engine)
