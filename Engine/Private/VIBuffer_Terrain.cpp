@@ -72,7 +72,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
 
-			pVertices[iIndex].vPosition = _float3(j, (pPixel[iIndex] & 0x000000ff) / 15.f, i);
+			pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (pPixel[iIndex] & 0x000000ff) / 15.f, static_cast<float>(i));
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}

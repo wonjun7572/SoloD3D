@@ -22,8 +22,31 @@ HRESULT CCamera_Dynamic::Init_Prototype()
 
 HRESULT CCamera_Dynamic::Init(void* pArg)
 {
-	if (FAILED(__super::Init(&((CAMERADESC_DERIVED*)pArg)->CameraDesc)))
+	CCamera::CAMERADESC			CameraDesc;
+	ZeroMemory(&CameraDesc, sizeof CameraDesc);
+
+	if (nullptr != pArg)
+		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
+	else
+	{
+		CameraDesc.vEye = _float4(0.f, 0.f, -10.f, 1.f);
+		CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+
+		CameraDesc.fFovy = XMConvertToRadians(60.f);
+		
+		CameraDesc.fAspect = static_cast<_float>( g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
+
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
+
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	}
+
+	if (FAILED(__super::Init(&CameraDesc)))
 		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -32,45 +55,52 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if (GetKeyState('W') < 0)
-	{
-		m_pTransform->Go_Straight(TimeDelta * 0.1);
-	}
-
-	if (GetKeyState('S') < 0)
-	{
-		m_pTransform->Go_Backward(TimeDelta* 0.1);
-	}
-
-	if (GetKeyState('A') < 0)
-	{
-		m_pTransform->Go_Left(TimeDelta* 0.1);
-	}
-
-	if (GetKeyState('D') < 0)
-	{
-		m_pTransform->Go_Right(TimeDelta* 0.1);
-	}
-
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	_long			MouseMove = 0;
-
-	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+	if (pGameInstance->Get_DIKeyState(DIK_W))
 	{
-		m_pTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
+		m_pTransformCom->Go_Straight(TimeDelta);
 	}
 
-	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+	if (pGameInstance->Get_DIKeyState(DIK_S))
 	{
-		m_pTransform->Turn(m_pTransform->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * 0.1f);
+		m_pTransformCom->Go_Backward(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_pTransformCom->Go_Left(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_pTransformCom->Go_Right(TimeDelta);
+	}
+
+	if (pGameInstance->Key_Down(DIK_T))
+	{
+		m_bFix = !m_bFix;
+	}
+
+	if (!m_bFix)
+	{
+		Mouse_Fix();
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * 0.1f);
+		}
 	}
 
 	Safe_Release(pGameInstance);
-
-	if (FAILED(Bind_OnPipeLine()))
-		return;
 }
 
 void CCamera_Dynamic::Late_Tick(_double TimeDelta)
@@ -84,6 +114,14 @@ HRESULT CCamera_Dynamic::Render()
 		return E_FAIL;
 	
 	return S_OK;
+}
+
+void CCamera_Dynamic::Mouse_Fix()
+{
+	POINT pt{ g_iWinSizeX >> 1,g_iWinSizeY >> 1 };
+
+	ClientToScreen(g_hWnd, &pt);
+	SetCursorPos(pt.x, pt.y);
 }
 
 CCamera_Dynamic * CCamera_Dynamic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

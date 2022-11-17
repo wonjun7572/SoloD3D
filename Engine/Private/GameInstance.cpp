@@ -8,6 +8,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
+_uint CGameInstance::m_iStaticLevelIndex = 0;
+wstring CGameInstance::m_pPrototypeTransformTag = TEXT("Prototype_Component_Transform");
+
 CGameInstance::CGameInstance()
 	:m_pGraphicDev(CGraphic_Device::GetInstance()),
 	m_pInputDev(CInput_Device::GetInstance()),
@@ -41,10 +44,15 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pInputDev->Ready_Input_Device(GraphicDesc.hInstance, GraphicDesc.hWnd)))
 		return E_FAIL;
 
-	if (FAILED(m_pObjectMgr->Reserve_Manager(iNumLevels)))
+	m_iStaticLevelIndex = iNumLevels;
+
+	if (FAILED(m_pObjectMgr->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
-	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels)))
+	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels + 1)))
+		return E_FAIL;
+
+	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
 		return E_FAIL;
 
 	return S_OK;
@@ -65,7 +73,7 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 	m_pObjectMgr->Tick(TimeDelta);
 	m_pLevelMgr->Tick(TimeDelta);
 	
-	m_pPipeLine->Update();
+	m_pPipeLine->Tick();
 
 	m_pObjectMgr->Late_Tick(TimeDelta);
 	m_pLevelMgr->Late_Tick(TimeDelta);
@@ -267,14 +275,6 @@ void CGameInstance::Clear_ImguiObjects()
 	m_pImGuiMgr->Clear_ImguiObjects();
 }
 
-void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
-{
-	if (nullptr == m_pPipeLine)
-		return;
-
-	m_pPipeLine->Set_Transform(eState, TransformMatrix);
-}
-
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)
@@ -291,12 +291,20 @@ _float4x4 CGameInstance::Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState)
 	return m_pPipeLine->Get_TransformFloat4x4(eState);
 }
 
-_float4x4 CGameInstance::Get_TransformFloat4x4_TP(CPipeLine::TRANSFORMSTATE eState)
+_matrix CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)
-		return _float4x4();
+		return XMMatrixIdentity();
 
-	return m_pPipeLine->Get_TransformFloat4x4_TP(eState);
+	return m_pPipeLine->Get_TransformMatrix_Inverse(eState);
+}
+
+void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
 _float4 CGameInstance::Get_CamPosition()

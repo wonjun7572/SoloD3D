@@ -8,18 +8,16 @@ BEGIN(Engine)
 class ENGINE_DLL CCamera abstract : public CGameObject
 {
 public:
-	typedef struct tagCameraDesc
+	typedef struct tagCameraDesc : public CGameObject::GAMEOBJECTDESC
 	{
 		_float4				vEye;
 		_float4				vAt;
+		_float4				vUp;
 
 		_float				fAspect;
 		_float				fFovy;
 		_float				fNear;
 		_float				fFar;
-
-		CTransform::TRANSFORMDESC		TransformDesc;
-
 	}CAMERADESC;
 
 protected:
@@ -30,18 +28,13 @@ protected:
 public:
 	virtual HRESULT Init_Prototype();
 	virtual HRESULT Init(void* pArg);
-	virtual void Tick(_float fTimeDelta);
-	virtual void Late_Tick(_float fTimeDelta);
+	virtual void Tick(_double fTimeDelta);
+	virtual void Late_Tick(_double fTimeDelta);
 	virtual HRESULT Render();
 
 protected:
-	static wstring					m_pTransformTag;
-	class CTransform*				m_pTransform = nullptr;
 	CAMERADESC						m_CameraDesc;
 	class CPipeLine*				m_pPipeLine = nullptr;
-
-protected:
-	HRESULT Bind_OnPipeLine();
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

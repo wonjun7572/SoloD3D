@@ -37,7 +37,7 @@ void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_fTimeDelta += TimeDelta * 0.01f;
+	m_fTimeDelta += static_cast<float>(TimeDelta * 0.2f);
 }
 
 void CTerrain::Late_Tick(_double TimeDelta)
@@ -66,7 +66,7 @@ HRESULT CTerrain::Render()
 HRESULT CTerrain::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
@@ -85,17 +85,6 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
-	/* For.Com_Tranform */
-	CTransform::TRANSFORMDESC		TransformDesc;
-	ZeroMemory(&TransformDesc, sizeof TransformDesc);
-
-	TransformDesc.fSpeedPerSec = 5.f;
-	TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Transform"), TEXT("Com_Tranform"),
-		(CComponent**)&m_pTransformCom, &TransformDesc)))
-		return E_FAIL;
-	
 	return S_OK;
 }
 

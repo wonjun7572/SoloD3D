@@ -14,6 +14,10 @@ private:
 	CGameInstance();
 	virtual ~CGameInstance() = default;
 
+public:
+	static _uint Get_StaticLevelIndex() { return m_iStaticLevelIndex; }
+	static wstring m_pPrototypeTransformTag;
+
 public: // GameInstance
 	HRESULT		Init_Engine(_uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
 	void		Tick_Engine(_double TimeDelta);
@@ -56,11 +60,14 @@ public:		/* For ImGui_Manager */
 	void Clear_ImguiObjects();
 
 public: /* For.PipeLine */
+	_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
+	_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
+	_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE  eState);
-	_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE  eState);
-	_float4x4 Get_TransformFloat4x4_TP(CPipeLine::TRANSFORMSTATE  eState);
 	_float4 Get_CamPosition();
+
+private:
+	static _uint					m_iStaticLevelIndex;
 
 private:
 	class CGraphic_Device*		m_pGraphicDev = nullptr;

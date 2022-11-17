@@ -77,32 +77,12 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 
 HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 {
-	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CCamera_Dynamic::CAMERADESC_DERIVED				CameraDesc;
-	ZeroMemory(&CameraDesc, sizeof(CCamera_Dynamic::CAMERADESC_DERIVED));
-
-	CameraDesc.iTest = 10;
-
-	CameraDesc.CameraDesc.vEye = _float4(0.f, 10.0f, -10.f, 1.f);
-	CameraDesc.CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-
-	CameraDesc.CameraDesc.fFovy = XMConvertToRadians(60.0f);
-	CameraDesc.CameraDesc.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
-	CameraDesc.CameraDesc.fNear = 0.2f;
-	CameraDesc.CameraDesc.fFar = 500.f;
-
-	CameraDesc.CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
-	CameraDesc.CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"), &CameraDesc)))
-	{
-		Safe_Release(pGameInstance);
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
 		return E_FAIL;
-	}
 
-	Safe_Release(pGameInstance);
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

@@ -22,7 +22,13 @@ HRESULT CBackGround::Init_Prototype()
 
 HRESULT CBackGround::Init(void * pArg)
 {
-	if (FAILED(__super::Init(pArg)))
+	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
@@ -32,11 +38,12 @@ HRESULT CBackGround::Init(void * pArg)
 	m_fSizeY = static_cast<_float>(g_iWinSizeY) * 0.2f;
 	m_fX = m_fSizeX * 0.5f;
 	m_fY = m_fSizeY * 0.5f;
+	
 	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f , 0.f, 1.f));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(static_cast<float>(g_iWinSizeX), static_cast<float>(g_iWinSizeY), 0.f, 1.f));
 	
 	return S_OK;
 }
@@ -76,28 +83,17 @@ HRESULT CBackGround::Render()
 HRESULT CBackGround::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	/* For.Com_Transform */
-	CTransform::TRANSFORMDESC		TransformDesc;
-	ZeroMemory(&TransformDesc, sizeof(CTransform::TRANSFORMDESC));
-
-	TransformDesc.fSpeedPerSec = 5.f;
-	TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Transform"), TEXT("Com_Transform"),
-		(CComponent**)&m_pTransformCom, &TransformDesc)))
-		return E_FAIL;
-
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 

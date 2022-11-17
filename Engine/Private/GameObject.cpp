@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 #include "GameUtils.h"
 
+wstring CGameObject::m_pTransformComTag = TEXT("Com_Transform");
+
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:m_pDevice(pDevice),
 	m_pContext(pContext)
@@ -25,6 +27,15 @@ HRESULT CGameObject::Init_Prototype()
 
 HRESULT CGameObject::Init(void * pArg)
 {
+	GAMEOBJECTDESC GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(GAMEOBJECTDESC));
+
+	if (pArg != nullptr)
+		GameObjectDesc = *(reinterpret_cast<GAMEOBJECTDESC*>(pArg));
+
+	if (FAILED(Add_Component(CGameInstance::Get_StaticLevelIndex(), CGameInstance::m_pPrototypeTransformTag, m_pTransformComTag, reinterpret_cast<CComponent**>(&m_pTransformCom), &GameObjectDesc.TransformDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -90,6 +101,8 @@ CComponent * CGameObject::Find_Component(const wstring& pComponentTag)
 
 void CGameObject::Free()
 {
+	Safe_Release(m_pTransformCom);
+
 	for (auto& Pair : m_Components)
 		Safe_Release(Pair.second);
 

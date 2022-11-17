@@ -81,7 +81,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT         Out = (PS_OUT)0;
 
-	float4 albedo = g_Texture.Sample(DiffuseSampler, In.vTexUV);
+	float4 albedo = g_Texture.Sample(DiffuseSampler, In.vTexUV * 200.f);
 	float3 diffuse = gLightColor * albedo.rgb * saturate(In.vDiffuse);
 
 	float3 reflection = normalize(In.vReflection);
@@ -93,7 +93,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		specular = saturate(dot(reflection, -viewDir));
 		specular = pow(specular, 20.f);
 
-		float4 specularIntensity = g_Texture.Sample(SpecularSampler, In.vTexUV);
+		float4 specularIntensity = g_Texture.Sample(SpecularSampler, In.vTexUV * 200.f);
 		specular *= specularIntensity.rgb * gLightColor;
 	}
 
