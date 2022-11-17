@@ -453,6 +453,16 @@ XMFLOAT3 CMathUtils::Sub_Float3(const XMFLOAT3 & v1, const XMFLOAT3 & v2)
 	return result;
 }
 
+XMFLOAT4 CMathUtils::MulNum_Float4(const float & f1, const XMFLOAT4 & v1)
+{
+	return XMFLOAT4(f1 * v1.x, f1* v1.y, f1*v1.z, v1.w);
+}
+
+XMFLOAT3 CMathUtils::MulNum_Float3(const float & f1, const XMFLOAT3 & v1)
+{
+	return XMFLOAT3(f1 * v1.x, f1* v1.y, f1*v1.z);
+}
+
 XMFLOAT4X4 CMathUtils::Add_Matrix(const XMFLOAT4X4 & M1, const XMFLOAT4X4 & M2)
 {
 	XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));

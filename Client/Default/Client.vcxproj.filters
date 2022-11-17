@@ -175,12 +175,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpecularMapping.hlsl">
-      <Filter>ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_UVAnimation.hlsl">
-      <Filter>ShaderFile</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>

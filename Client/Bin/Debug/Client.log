@@ -1,4 +1,1 @@
-﻿  Camera_Dynamic.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\camera_dynamic.cpp(121): warning C4838: 'unsigned int'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
-  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
-  Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)
+﻿

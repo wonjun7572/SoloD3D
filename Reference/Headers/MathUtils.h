@@ -146,8 +146,6 @@ public:
 	//  주어진 행렬로 3D 벡터의 스트림을 변환하고 w 좌표가 1.0이 되도록 결과 XMFLOAT3를 뱉어줍니다. (normal)(사용할 일이?)
 	static void		TransformNormal(const XMFLOAT3* varray, size_t count, const XMFLOAT4X4& m, OUT XMFLOAT3* resultArray);
 
-	static XMFLOAT3 Add_Float3(const XMFLOAT3& v1, const XMFLOAT3& v2);
-	static XMFLOAT3 Sub_Float3(const XMFLOAT3& v1, const XMFLOAT3& v2);
 #pragma endregion VECTOR3
 
 
@@ -205,5 +203,16 @@ public:
 	// 벡터 4개 행 모두 (M1 ~ M2) 다 보간을 진행합니다.
 	static XMFLOAT4X4 Lerp(const XMFLOAT4X4& M1, const XMFLOAT4X4& M2, float t);
 #pragma endregion
+
+#pragma region 추가적인 함수들
+	// XMFLOAT3 끼리의 덧셈
+	static XMFLOAT3 Add_Float3(const XMFLOAT3& v1, const XMFLOAT3& v2);
+	// XMFLOAT3 끼리의 뺄셈
+	static XMFLOAT3 Sub_Float3(const XMFLOAT3& v1, const XMFLOAT3& v2);
+
+	static XMFLOAT4 MulNum_Float4(const float& f1, const XMFLOAT4& v1);
+	static XMFLOAT3 MulNum_Float3(const float& f1, const XMFLOAT3& v1);
+#pragma endregion
+
 };
 

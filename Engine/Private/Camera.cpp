@@ -43,7 +43,6 @@ void CCamera::Tick(_double fTimeDelta)
 		return;
 	/* 카메라의 트랜스폼으로 부터 월드행렬을 가져와서 역행렬을 구한다음(뷰행렬을 구했다.) 파이프라인에 저장한다. */
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrixInverse());
-	
 	m_pPipeLine->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
 }
 
