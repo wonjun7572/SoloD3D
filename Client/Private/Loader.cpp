@@ -3,7 +3,11 @@
 
 #include "GameInstance.h"
 
+/*Logo*/
 #include "BackGround.h"
+#include "Enter_KeyUI.h"
+
+
 #include "TestSphere.h"
 #include "TestCube.h"
 #include "Terrain.h"
@@ -70,9 +74,16 @@ HRESULT CLoader::Loading_ForLogo()
 
 	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
 
+	/*For.Prototype_Component_Texture_Logo*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default0.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_BMI_LOGO_US.dds")))))
 		return E_FAIL;
+
+	/*For.Prototype_Component_Texture_EnterKey*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_EnterKey"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_EnterKey.dds")))))
+		return E_FAIL;
+
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
@@ -83,6 +94,9 @@ HRESULT CLoader::Loading_ForLogo()
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"), CBackGround::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnterKeyUI"), CEnter_KeyUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");

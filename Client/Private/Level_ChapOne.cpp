@@ -64,6 +64,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 		return E_FAIL;
 	}
 
+
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Terrain"))))
 	{
 		Safe_Release(pGameInstance);

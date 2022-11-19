@@ -1,12 +1,64 @@
-﻿  Transform.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(62): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(72): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(82): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(92): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(102): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(112): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(120): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(158): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  ImSequencer.cpp
+  imgui_widgets.cpp
+  imgui_tables.cpp
+  imgui_impl_win32.cpp
+  imgui_impl_dx11.cpp
+  imgui_draw.cpp
+  imgui_demo.cpp
+  ImGuizmo.cpp
+  ImGuiFileDialog.cpp
+  imgui.cpp
+  ImGradient.cpp
+  ImCurveEdit.cpp
+  GraphEditor.cpp
+  VIBuffer_Sphere.cpp
+  VIBuffer_Rect.cpp
+  VIBuffer_Cube.cpp
+  VIBuffer.cpp
+  Transform.cpp
+  Texture.cpp
+  VIBuffer_Terrain.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Timer_Manager.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\public\timer.h(14): warning C4244: 'return': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Timer.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\public\timer.h(14): warning C4244: 'return': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Shader.cpp
+  RigidBody.cpp
+  Renderer.cpp
+  PipeLine.cpp
+  Object_Manager.cpp
+  Level_Manager.cpp
+  Level.cpp
+  Layer.cpp
+  Input_Device.cpp
+  ImGui_PropertyEditor.cpp
+  ImGui_Manager.cpp
+  ImGuiObject.cpp
+  Graphic_Device.cpp
+  GameUtils.cpp
+  GameObject.cpp
+  MathUtils.cpp
+  GameInstance.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\public\timer.h(14): warning C4244: 'return': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Font_Manager.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Engine_Struct.cpp
+  CustomFont.cpp
+  Component_Manager.cpp
+  Component.cpp
+  Camera.cpp
+  Base.cpp
+  코드를 생성하고 있습니다...
+     ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
+Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
@@ -19,11 +71,13 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(158): w
   .\Engine\Public\Camera.h
   .\Engine\Public\Component.h
   .\Engine\Public\Component_Manager.h
+  .\Engine\Public\CustomFont.h
   .\Engine\Public\Engine_Define.h
   .\Engine\Public\Engine_Function.h
   .\Engine\Public\Engine_Macro.h
   .\Engine\Public\Engine_Struct.h
   .\Engine\Public\Engine_Typedef.h
+  .\Engine\Public\Font_Manager.h
   .\Engine\Public\GameInstance.h
   .\Engine\Public\GameObject.h
   .\Engine\Public\GameUtils.h
@@ -42,6 +96,8 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(158): w
   .\Engine\Public\RigidBody.h
   .\Engine\Public\Shader.h
   .\Engine\Public\Texture.h
+  .\Engine\Public\Timer.h
+  .\Engine\Public\Timer_Manager.h
   .\Engine\Public\Transform.h
   .\Engine\Public\VIBuffer.h
   .\Engine\Public\VIBuffer_Cube.h
@@ -101,4 +157,4 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(158): w
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  86개 파일이 복사되었습니다.
+  90개 파일이 복사되었습니다.

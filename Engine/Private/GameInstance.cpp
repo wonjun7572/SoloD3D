@@ -5,6 +5,8 @@
 #include "Level_Manager.h"
 #include "Object_Manager.h"
 #include "ImGui_Manager.h"
+#include "Timer_Manager.h"
+#include "Font_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -18,7 +20,9 @@ CGameInstance::CGameInstance()
 	m_pObjectMgr(CObject_Manager::GetInstance()),
 	m_pComponetMgr(CComponent_Manager::GetInstance()),
 	m_pImGuiMgr(CImGui_Manager::GetInstance()),
-	m_pPipeLine(CPipeLine::GetInstance())
+	m_pPipeLine(CPipeLine::GetInstance()),
+	m_pTimerMgr(CTimer_Manager::GetInstance()),
+	m_pFontMgr(CFont_Manager::GetInstance())
 {
 	Safe_AddRef(m_pGraphicDev);
 	Safe_AddRef(m_pInputDev);
@@ -27,6 +31,8 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pComponetMgr);
 	Safe_AddRef(m_pImGuiMgr);
 	Safe_AddRef(m_pPipeLine);
+	Safe_AddRef(m_pTimerMgr);
+	Safe_AddRef(m_pFontMgr);
 }
 
 HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & GraphicDesc, ID3D11Device ** ppDeviceOut, ID3D11DeviceContext ** ppContextOut)
@@ -315,6 +321,46 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();
 }
 
+_double CGameInstance::Get_TimeDelta(const wstring & pTimerTag)
+{
+	if (m_pTimerMgr == nullptr)
+		return 0.0;
+
+	return m_pTimerMgr->Get_TimeDelta(pTimerTag);
+}
+
+HRESULT CGameInstance::Ready_Timer(const wstring & pTimerTag)
+{
+	if (m_pTimerMgr == nullptr)
+		return E_FAIL;
+
+	return m_pTimerMgr->Ready_Timer(pTimerTag);
+}
+
+void CGameInstance::Update_Timer(const wstring & pTimerTag)
+{
+	if (m_pTimerMgr == nullptr)
+		return;
+
+	return m_pTimerMgr->Update_Timer(pTimerTag);
+}
+
+HRESULT CGameInstance::Add_Fonts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & pFontTag, const wstring & pFontFilePath)
+{
+	if (nullptr == m_pFontMgr)
+		return E_FAIL;
+
+	return m_pFontMgr->Add_Fonts(pDevice, pContext, pFontTag, pFontFilePath);
+}
+
+HRESULT CGameInstance::Render_Font(const wstring & pFontTag, const wstring & pText, _fvector vPos, _fvector vColor)
+{
+	if (nullptr == m_pFontMgr)
+		return E_FAIL;
+
+	return m_pFontMgr->Render_Font(pFontTag, pText, vPos, vColor);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CImGui_Manager::GetInstance()->DestroyInstance();
@@ -331,13 +377,19 @@ void CGameInstance::Release_Engine()
 
 	CInput_Device::GetInstance()->DestroyInstance();
 
+	CFont_Manager::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
+
+	CTimer_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
 	Safe_Release(m_pComponetMgr);
 	Safe_Release(m_pPipeLine);
+	Safe_Release(m_pTimerMgr);
+	Safe_Release(m_pFontMgr);
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pInputDev);

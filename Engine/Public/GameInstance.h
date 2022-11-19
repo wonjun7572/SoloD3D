@@ -66,6 +66,15 @@ public: /* For.PipeLine */
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 	_float4 Get_CamPosition();
 
+public: /* For.Timer_Manager */
+	_double		Get_TimeDelta(const wstring& pTimerTag);
+	HRESULT		Ready_Timer(const wstring&  pTimerTag);
+	void		Update_Timer(const wstring&  pTimerTag);
+
+public: /* For.Font_Manager */
+	HRESULT Add_Fonts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontTag, const wstring& pFontFilePath);
+	HRESULT Render_Font(const wstring& pFontTag, const wstring& pText, _fvector vPos, _fvector vColor);
+
 private:
 	static _uint					m_iStaticLevelIndex;
 
@@ -77,6 +86,8 @@ private:
 	class CComponent_Manager*	m_pComponetMgr = nullptr;
 	class CImGui_Manager*		m_pImGuiMgr = nullptr;
 	CPipeLine*					m_pPipeLine = nullptr;
+	class CTimer_Manager*		m_pTimerMgr = nullptr;
+	class CFont_Manager*		m_pFontMgr = nullptr;
 
 public: // Release_Engine
 	static void Release_Engine();

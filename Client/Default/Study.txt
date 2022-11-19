@@ -1,133 +1,136 @@
-*¼ö¾÷³»¿ë*
+ï»¿*ìˆ˜ì—…ë‚´ìš©*
 
 2022-11-02
 
-±âÃÊ ÇÁ·¹ÀÓ¿öÅ© Á¦ÀÛ
-¶óÀÌºê·¯¸® Ãß°¡
+ê¸°ì´ˆ í”„ë ˆìž„ì›Œí¬ ì œìž‘
+ë¼ì´ë¸ŒëŸ¬ë¦¬ ì¶”ê°€
 guid, input8, d3d11
-±¸Á¶Ã¼·Î Ã¢ ¼¼ÆÃÇÏ±â À§ÇØ Á¦ÀÛ
-¹éÆÛ¹ö »çÀÌÁî, ºäÆ÷Æ® »çÀÌÁî
-hInstµµ graphicDesc¿¡ ³Ö¾îÁÖÀÚ
-½Ì±ÛÅæµµ ÂüÁ¶°³¼ö¸¦ Ä«¿îÆÃÇØ¾ßÇÏ±â ¶§¹®¿¡ delete -> Realease
-unsigned longÀ¸·Î ¹Ù²ãÁÖ±â
-device	  ¿Í devicecontext 2°³ÀÇ ÀåÄ¡¸¦ ¹Þ¾Æ¿È
-¸Þ¸ð¸® ÇÒ´ç   ¹ÙÀÎµù ½ÇÇà
-½º¿ÒÃ¼ÀÎÀÌ µð¹ÙÀÌ½º°¡ ÇÊ¿äÇÏ´Ù ¸Þ¸ð¸® ÇÒ´çÀ» ÇØ¾ßÇÏ±â ¶§¹®¿¡
-InputDevice Ãß°¡
+êµ¬ì¡°ì²´ë¡œ ì°½ ì„¸íŒ…í•˜ê¸° ìœ„í•´ ì œìž‘
+ë°±í¼ë²„ ì‚¬ì´ì¦ˆ, ë·°í¬íŠ¸ ì‚¬ì´ì¦ˆ
+hInstë„ graphicDescì— ë„£ì–´ì£¼ìž
+ì‹±ê¸€í†¤ë„ ì°¸ì¡°ê°œìˆ˜ë¥¼ ì¹´ìš´íŒ…í•´ì•¼í•˜ê¸° ë•Œë¬¸ì— delete -> Realease
+unsigned longìœ¼ë¡œ ë°”ê¿”ì£¼ê¸°
+device	  ì™€ devicecontext 2ê°œì˜ ìž¥ì¹˜ë¥¼ ë°›ì•„ì˜´
+ë©”ëª¨ë¦¬ í• ë‹¹   ë°”ì¸ë”© ì‹¤í–‰
+ìŠ¤ì™‘ì²´ì¸ì´ ë””ë°”ì´ìŠ¤ê°€ í•„ìš”í•˜ë‹¤ ë©”ëª¨ë¦¬ í• ë‹¹ì„ í•´ì•¼í•˜ê¸° ë•Œë¬¸ì—
+InputDevice ì¶”ê°€
 --------------------------------------------------------
 
 2022-11-03
 
-·¹º§¸Å´ÏÀú Á¦ÀÛ
+ë ˆë²¨ë§¤ë‹ˆì € ì œìž‘
 --------------------------------------------------------
 
 2022-11-04
-Loader Ã³¸®
+Loader ì²˜ë¦¬
 GameObj , Layer , ObjectMgr 
 --------------------------------------------------------
 
 2022-11-07
-ObjectMgr ±â´É Ãß°¡
+ObjectMgr ê¸°ëŠ¥ ì¶”ê°€
 
 --------------------------------------------------------
 
 2022-11-08
-ÄÄÆ÷³ÍÆ® Ãß°¡
-depth stencil È­¸é¿¡ ±×¸±·Á°í Çß´ø ÇÈ¼¿µéÀÇ ±íÀÌ¸¦ ÀúÀå.
+ì»´í¬ë„ŒíŠ¸ ì¶”ê°€
+depth stencil í™”ë©´ì— ê·¸ë¦´ë ¤ê³  í–ˆë˜ í”½ì…€ë“¤ì˜ ê¹Šì´ë¥¼ ì €ìž¥.
 
-blend ¿¬»ê
+blend ì—°ì‚°
 
 vSourColor, vDestColor
 vSourColor.rgb * vSourColor.a + vDestColor.rgb * (1.f - vSourColor.a)
 
-ºÒÅõ¸íÇÑ -> Åõ¸íÇÑ
+ë¶ˆíˆ¬ëª…í•œ -> íˆ¬ëª…í•œ
 
-ÀÌÆåÆ® ÀÌ¹ÌÁö°¡ Åõ¸í ºÒÅõ¸íÀ¸·Î ¿ÏÀüÈ÷ ³ª´©¾îÁöÁö¾ÊÀ¸¸é ºí·»µå
+ì´íŽ™íŠ¸ ì´ë¯¸ì§€ê°€ íˆ¬ëª… ë¶ˆíˆ¬ëª…ìœ¼ë¡œ ì™„ì „ížˆ ë‚˜ëˆ„ì–´ì§€ì§€ì•Šìœ¼ë©´ ë¸”ë Œë“œ
 
-3D ÆÄÆíµé °°Àº°Íµé
+3D íŒŒíŽ¸ë“¤ ê°™ì€ê²ƒë“¤
 
-ÆÄÆ¼Å¬ (ºñ) ¾ËÆÄºí·»µå ¸Ô¾î¾ßÇÔ
+íŒŒí‹°í´ (ë¹„) ì•ŒíŒŒë¸”ë Œë“œ ë¨¹ì–´ì•¼í•¨
 
-³ª¹«¸ðµ¨ ³ª¹µÀÙÀº »ç°¢È­¸é (³ª¹µÀÙÀº ÈÄ¸éÃß·Á³»±â ²¨¾ßÇÔ)
-»ç°¢Çü 2°³¸¦ Å©·Î½ºÇØ¼­ ±×·ÁÁÜ ÀÌ°Ç Àý´ë ºí·»µùÇÏ¸é ¾ÈµÊ
+ë‚˜ë¬´ëª¨ë¸ ë‚˜ë­‡ìžŽì€ ì‚¬ê°í™”ë©´ (ë‚˜ë­‡ìžŽì€ í›„ë©´ì¶”ë ¤ë‚´ê¸° êº¼ì•¼í•¨)
+ì‚¬ê°í˜• 2ê°œë¥¼ í¬ë¡œìŠ¤í•´ì„œ ê·¸ë ¤ì¤Œ ì´ê±´ ì ˆëŒ€ ë¸”ë Œë”©í•˜ë©´ ì•ˆë¨
 
 --------------------------------------------------------
 
 2022-11-09
-·»´õ·¯ ÄÄÆ÷³ÍÆ® 
-ÄÄÆ÷³ÍÆ®¸Å´ÏÀú
+ë Œë”ëŸ¬ ì»´í¬ë„ŒíŠ¸ 
+ì»´í¬ë„ŒíŠ¸ë§¤ë‹ˆì €
 
 --------------------------------------------------------
 2022-11-10
-BufferDesc.Usage µ¿ÀûÀ¸·Î È°¿ëÇÒ ‹š¿¡ D3D11_USAGE_DYNAMIC;
-Á¤ÀûÀº D3D11_USAGE_STATIC
-Shader Ãß°¡
+BufferDesc.Usage ë™ì ìœ¼ë¡œ í™œìš©í•  ë–„ì— D3D11_USAGE_DYNAMIC;
+ì •ì ì€ D3D11_USAGE_STATIC
+Shader ì¶”ê°€
 
 --------------------------------------------------------
 2022-11-11
-½¦ÀÌ´õ ±â´É Ãß°¡
+ì‰ì´ë” ê¸°ëŠ¥ ì¶”ê°€
 
 --------------------------------------------------------
 2022-11-14
 
-°°Àº Á¤Á¡À» ÀÌ¿ëÇÏ´Â °æ¿ì ÇÏ³ªÀÇ ½¦ÀÌ´õ·Î ÀÌ¿ë °¡´ÉÇÏ´Ù.
+ê°™ì€ ì •ì ì„ ì´ìš©í•˜ëŠ” ê²½ìš° í•˜ë‚˜ì˜ ì‰ì´ë”ë¡œ ì´ìš© ê°€ëŠ¥í•˜ë‹¤.
 
-´Ù¸¥ È¿°ú¸¦ ºÎ¿©ÇÏ°í½ÍÀ» ¶§ pass¸¦ ´Ã·Á¼­ »ç¿ëÇÒ ¼ö ÀÖ´Ù.
+ë‹¤ë¥¸ íš¨ê³¼ë¥¼ ë¶€ì—¬í•˜ê³ ì‹¶ì„ ë•Œ passë¥¼ ëŠ˜ë ¤ì„œ ì‚¬ìš©í•  ìˆ˜ ìžˆë‹¤.
 
-Á÷±³ Åõ¿µÀ» ÇÏ±âÀ§ÇÑ ÀÛ¾÷À» ÁøÇàÇØ¾ßÇÔ
+ì§êµ íˆ¬ì˜ì„ í•˜ê¸°ìœ„í•œ ìž‘ì—…ì„ ì§„í–‰í•´ì•¼í•¨
 
-GeometryShader, HullShader, DomainShader DX11¿¡ Ãß°¡µÈ ½¦ÀÌ´õ
+GeometryShader, HullShader, DomainShader DX11ì— ì¶”ê°€ëœ ì‰ì´ë”
 
-float4x4´Â ´Ü¼ø Çà·ÄÀ» ÀúÀåÇÏ±â À§ÇÑ ÀÚ·áÇüÀÌ¶ó°í »ý°¢ÇÏ¸é ÁÁÀ» °Í °°´Ù
+float4x4ëŠ” ë‹¨ìˆœ í–‰ë ¬ì„ ì €ìž¥í•˜ê¸° ìœ„í•œ ìžë£Œí˜•ì´ë¼ê³  ìƒê°í•˜ë©´ ì¢‹ì„ ê²ƒ ê°™ë‹¤
 
-XMMatrixIdentity´Â Ç×µîÇà·ÄÀ» ¸®ÅÏ 
+XMMatrixIdentityëŠ” í•­ë“±í–‰ë ¬ì„ ë¦¬í„´ 
 
-XMVECTOR 128ºñÆ® 
+XMVECTOR 128ë¹„íŠ¸ 
 
-XMFLOAT4(±¸Á¶Ã¼·Î) != XMVECTOR(ÅëÃ¼·Î 128)
+XMFLOAT4(êµ¬ì¡°ì²´ë¡œ) != XMVECTOR(í†µì²´ë¡œ 128)
 
-XMFLOAT4´Â °¢°¢ÀÇ x,y,z,w¸¦ Á¢±Ù°¡´ÉÇÏÁö¸¸ 4¹øÀÇ ºñÆ®¿¬»êÀ» ÅëÇØ µ¡¼ÀÀ» ÇØ¾ßÇÏ±â¿¡ XMVECTORÀÇ ±â´ÉµéÀ» È°¿ëÇØ¾ßÇÑ´Ù.(¿¬»êÀ» »¡¸®ÇÏ±â À§ÇØ)
+XMFLOAT4ëŠ” ê°ê°ì˜ x,y,z,wë¥¼ ì ‘ê·¼ê°€ëŠ¥í•˜ì§€ë§Œ 4ë²ˆì˜ ë¹„íŠ¸ì—°ì‚°ì„ í†µí•´ ë§ì…ˆì„ í•´ì•¼í•˜ê¸°ì— XMVECTORì˜ ê¸°ëŠ¥ë“¤ì„ í™œìš©í•´ì•¼í•œë‹¤.(ì—°ì‚°ì„ ë¹¨ë¦¬í•˜ê¸° ìœ„í•´)
 
-½ºÅÃ¿¡ ÀÖ´Â º¯¼öµé¸¸ ¿¬»êÀÌ °¡´ÉÇÏ´Ù. (XMVECTOR, XMMATRIX´Â Èü¿¬»ê ºÒ°¡ ÇÏ°í Áö¿ªº¯¼ö·Î¼­¸¸ ¼±¾ðÀ» ¿ä±¸ÇÔ(MSDN))
+ìŠ¤íƒì— ìžˆëŠ” ë³€ìˆ˜ë“¤ë§Œ ì—°ì‚°ì´ ê°€ëŠ¥í•˜ë‹¤. (XMVECTOR, XMMATRIXëŠ” íž™ì—°ì‚° ë¶ˆê°€ í•˜ê³  ì§€ì—­ë³€ìˆ˜ë¡œì„œë§Œ ì„ ì–¸ì„ ìš”êµ¬í•¨(MSDN))
 
-XMVECTOR´Â ÇÑ¹øÀÇ ºñÆ®¿¬»êÀ¸·Î µ¡¼À¿¬»êÀ» ¼öÇàÇÑ´Ù.
+XMVECTORëŠ” í•œë²ˆì˜ ë¹„íŠ¸ì—°ì‚°ìœ¼ë¡œ ë§ì…ˆì—°ì‚°ì„ ìˆ˜í–‰í•œë‹¤.
 
-ÁÖ¼Ò¸¦ È°¿ëÇÑ °è»êÀº ¹æÁöÇÏ±â.
+ì£¼ì†Œë¥¼ í™œìš©í•œ ê³„ì‚°ì€ ë°©ì§€í•˜ê¸°.
 
 XMMATRIX != XMFLOAT4x4
 
-setvalue·Î ÀüÄ¡Çà·Ä¹Þ°í ÇÏ´Â °ÍÀÌ ¾Æ´Ñ setMatrix¿¡ ¸ÅÆ®¸¯½º·Î ´øÁö¹Ç·Î½á ÀüÄ¡Çà·ÄÀ» ¾ÈÇØÁàµµµÊ ÇÔ¼ö ¾È¿¡¼­ ÀüÄ¡ÇØÁÜ
+setvalueë¡œ ì „ì¹˜í–‰ë ¬ë°›ê³  í•˜ëŠ” ê²ƒì´ ì•„ë‹Œ setMatrixì— ë§¤íŠ¸ë¦­ìŠ¤ë¡œ ë˜ì§€ë¯€ë¡œì¨ ì „ì¹˜í–‰ë ¬ì„ ì•ˆí•´ì¤˜ë„ë¨ í•¨ìˆ˜ ì•ˆì—ì„œ ì „ì¹˜í•´ì¤Œ
 
-ÇÔ¼öÀÎÀÚ·Î »ç¿ëÇÒ¶§  FXMVECTOR¸¦ È°¿ëÇÑ´Ù. (1°³ ~ 3°³) ÇÔ¼öÀÎÀÚ°¡ º¤ÅÍÀÎ °Í¿¡ ´ëÇØ¼­¸¸~
+í•¨ìˆ˜ì¸ìžë¡œ ì‚¬ìš©í• ë•Œ  FXMVECTORë¥¼ í™œìš©í•œë‹¤. (1ê°œ ~ 3ê°œ) í•¨ìˆ˜ì¸ìžê°€ ë²¡í„°ì¸ ê²ƒì— ëŒ€í•´ì„œë§Œ~
 
 
 -------------------------------------------------------
 2022-11-15
-transform °­È­
+transform ê°•í™”
 texture 
-format format -> generate mipmap -> ±×´ã¿¡ ÀúÀå~ 
+format format -> generate mipmap -> ê·¸ë‹´ì— ì €ìž¥~ 
 DxTex.exe
 
-TK °³¹ßÈ¯°æ¿¡ µû¸¥ ¼Ö·ç¼ÇÄÑ°í ºôµå debug x64 release x64 ¸ðµÎ 
-bin -> debug DirectxTK.lib DirectxTKd.lib·Î ÀÌ¸§º¯°æ
+TK ê°œë°œí™˜ê²½ì— ë”°ë¥¸ ì†”ë£¨ì…˜ì¼œê³  ë¹Œë“œ debug x64 release x64 ëª¨ë‘ 
+bin -> debug DirectxTK.lib DirectxTKd.libë¡œ ì´ë¦„ë³€ê²½
 release 
 
 -------------------------------------------------------
 2022-11-16
-hlsl ¼ö¾÷ 
+hlsl ìˆ˜ì—… 
 sampler AddressU,AddressV
-wrapÀº  1º¸´Ù Ä¿Áö¸é 0ºÎÅÍ ´Ù½Ã½ÃÀÛ
-clamp´Â 1º¸´Ù Ä¿Áö¸é 1°íÁ¤
+wrapì€  1ë³´ë‹¤ ì»¤ì§€ë©´ 0ë¶€í„° ë‹¤ì‹œì‹œìž‘
+clampëŠ” 1ë³´ë‹¤ ì»¤ì§€ë©´ 1ê³ ì •
 
 terrain
 
 -------------------------------------------------------
 2022-11-17
 
-ºä¸ÅÆ®¸¯½º¿Í Åõ¿µÇà·ÄÀ» º¸°üÇÏ±â À§ÇØ ÆÄÀÌÇÁ¶óÀÎ Á¦ÀÛ ½Ì±ÛÅæÀ¸·Î
+ë·°ë§¤íŠ¸ë¦­ìŠ¤ì™€ íˆ¬ì˜í–‰ë ¬ì„ ë³´ê´€í•˜ê¸° ìœ„í•´ íŒŒì´í”„ë¼ì¸ ì œìž‘ ì‹±ê¸€í†¤ìœ¼ë¡œ
 
-Ä«¸Þ¶ó Á¦ÀÛ
+ì¹´ë©”ë¼ ì œìž‘
 
-±âÁ¸ ¿ÀºêÁ§Æ®µé¿¡°Ô µû·Î Ãß°¡Çß¾î¾ßÇÒ Æ®·£½ºÇÄ ÄÄÆ÷³ÍÆ®µéÀ» ¿ÀºêÁ§Æ®¿¡ ³Ö¾îÁÖ°í½ÃÀÛ.
-±× ´ÙÀ½¿¡ staticLevelÀº ÀÌÁ¦ Á¸ÀçÇÏÁö¾Ê´Â´Ù. ¾Æ´Ï Á¸ÀçÇÏÁö¸¸ LEVEL_END Á÷Àü¿¡ ´ã¾ÆµÎ°íÀÖ´Â´Ù
+ê¸°ì¡´ ì˜¤ë¸Œì íŠ¸ë“¤ì—ê²Œ ë”°ë¡œ ì¶”ê°€í–ˆì–´ì•¼í•  íŠ¸ëžœìŠ¤í”” ì»´í¬ë„ŒíŠ¸ë“¤ì„ ì˜¤ë¸Œì íŠ¸ì— ë„£ì–´ì£¼ê³ ì‹œìž‘.
+ê·¸ ë‹¤ìŒì— staticLevelì€ ì´ì œ ì¡´ìž¬í•˜ì§€ì•ŠëŠ”ë‹¤. ì•„ë‹ˆ ì¡´ìž¬í•˜ì§€ë§Œ LEVEL_END ì§ì „ì— ë‹´ì•„ë‘ê³ ìžˆëŠ”ë‹¤
 -------------------------------------------------------
+2022-11-18
+
+ì¹´ë©”ë¼

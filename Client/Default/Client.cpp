@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Client.h"
 #include "MainApp.h"
+#include "GameInstance.h"
 
 #define MAX_LOADSTRING 100
 
@@ -59,9 +60,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (nullptr == pMainApp)
 		return FALSE;
 
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_Default"))))
+		return FALSE;
+	if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_60"))))
+		return FALSE;
+
+	_double			TimerAcc = 0.0;
+
 	// 기본 메시지 루프입니다.
 	while (true)
 	{
+		pGameInstance->Update_Timer(TEXT("Timer_Default"));
+
+		TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (WM_QUIT == msg.message)
@@ -75,12 +89,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
-			pMainApp->Tick(1.f / 60.f);
-			pMainApp->Render();
-			pMainApp->Resize_BackBuffer();
-			g_bNeedResizeSwapChain = false;
+			if (TimerAcc > 1.0 / 60.0)
+			{
+				pGameInstance->Update_Timer(TEXT("Timer_60"));
+				pMainApp->Tick(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+				pMainApp->Render();
+				pMainApp->Resize_BackBuffer();
+				g_bNeedResizeSwapChain = false;
+
+				TimerAcc = 0.0;
+			}
 		}
 	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	Safe_Release(pMainApp);
 

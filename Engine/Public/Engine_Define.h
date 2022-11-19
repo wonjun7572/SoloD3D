@@ -20,8 +20,10 @@ using namespace DirectX;
 
 #include <DirectXTK/DDSTextureLoader.h>
 #include <DirectXTK/WICTextureLoader.h>
+#include <DirectXTK/ScreenGrab.h>
+#include <DirectXTK/SpriteFont.h>
+#include <DirectXTK/SpriteBatch.h>
 
-// 난 사용할래
 #include <DirectXTK/SimpleMath.h>
 
 #include <d3dcompiler.h>

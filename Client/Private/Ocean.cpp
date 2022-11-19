@@ -37,7 +37,6 @@ HRESULT COcean::Init(void * pArg)
 	m_pTransformCom->Go_Left(30);
 	m_pTransformCom->Go_Down(2);
 
-	
 	return S_OK;
 }
 
@@ -172,7 +171,6 @@ void COcean::Free()
 	__super::Free();
 
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

@@ -44,6 +44,30 @@ AddressU = wrap;
 AddressV = wrap;
 };
 
+BlendState BS_Default
+{
+	BlendEnable[0] = false;
+};
+
+BlendState BS_AlphaBlending
+{
+	BlendEnable[0] = true;
+
+SrcBlend = src_alpha;
+DestBlend = inv_Src_Alpha;
+BlendOp = add;
+};
+
+BlendState BS_AddBlending
+{
+	BlendEnable[0] = true;
+
+SrcBlend = one;
+DestBlend = one;
+BlendOp = add;
+};
+
+
 /* 샘플링 해오는 함수 */
 /* dx9 : tex2D(DefaultSampler, In.vTexUV);*/
 /* dx11 : g_Texture.Sample(DefaultSampler, In.vTexUV); */

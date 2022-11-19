@@ -194,6 +194,8 @@ technique11 DefaultTechnique
 {
 	pass Default
 	{
+		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
@@ -203,6 +205,8 @@ technique11 DefaultTechnique
 
 	pass UVANIMATION
 	{
+		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN_UVANIMATION();
 		GeometryShader = NULL;
 		HullShader = NULL;
@@ -212,6 +216,8 @@ technique11 DefaultTechnique
 
 	pass SPECULAMAPPING
 	{
+		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN_SPECULARMAPPING();
 		GeometryShader = NULL;
 		HullShader = NULL;

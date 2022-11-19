@@ -65,13 +65,19 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const wstring& pLayerTag)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
+	
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_EnterKeyUI"))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_BackGround"))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-	
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

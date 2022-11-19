@@ -35,6 +35,9 @@ HRESULT CMainApp::Init()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Nexon"), TEXT("../Bin/Resources/Fonts/130.spritefont"))))
+		return E_FAIL;
+
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 

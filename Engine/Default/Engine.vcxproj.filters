@@ -91,6 +91,18 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Terrain">
       <UniqueIdentifier>{af3ddb2b-26bd-4f12-95f5-4b4ca2d0a487}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{aa5d968f-23d5-44ab-ac81-4debd64e3d98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer\TimerManager">
+      <UniqueIdentifier>{283bfeeb-77f7-463c-b8fb-8e032c906341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Font">
+      <UniqueIdentifier>{4dd135f3-0e70-46bd-98cb-722d16638d9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Font\FonatManager">
+      <UniqueIdentifier>{7a4716b0-857b-4907-951f-396a3b377f84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -246,6 +258,18 @@
     <ClInclude Include="..\public\VIBuffer_Terrain.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Timer.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CustomFont.h">
+      <Filter>Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Timer_Manager.h">
+      <Filter>Timer\TimerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Font_Manager.h">
+      <Filter>Font\FonatManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -373,6 +397,18 @@
     </ClCompile>
     <ClCompile Include="..\private\RigidBody.cpp">
       <Filter>Singleton\ComponentManager\Component\RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CustomFont.cpp">
+      <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Timer_Manager.cpp">
+      <Filter>Timer\TimerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Font_Manager.cpp">
+      <Filter>Font\FonatManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
