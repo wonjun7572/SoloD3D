@@ -7,7 +7,7 @@
 #include "BackGround.h"
 #include "Enter_KeyUI.h"
 
-
+#include "TestCylinder.h"
 #include "TestSphere.h"
 #include "TestCube.h"
 #include "Terrain.h"
@@ -84,7 +84,6 @@ HRESULT CLoader::Loading_ForLogo()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_EnterKey.dds")))))
 		return E_FAIL;
 
-
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
@@ -141,8 +140,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Ocean"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_H.bmp")))))
 		return E_FAIL;
-
-
+	
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
@@ -153,6 +151,9 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestCube"), CTestCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TestCylinder"), CTestCylinder::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Terrain */

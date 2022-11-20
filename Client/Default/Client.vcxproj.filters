@@ -126,6 +126,9 @@
     <ClInclude Include="..\public\Enter_KeyUI.h">
       <Filter>GameObject\Logo\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TestCylinder.h">
+      <Filter>GameObject\Figure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -173,6 +176,9 @@
     <ClCompile Include="..\private\Enter_KeyUI.cpp">
       <Filter>GameObject\Logo\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TestCylinder.cpp">
+      <Filter>GameObject\Figure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -209,6 +215,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorDifTan.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

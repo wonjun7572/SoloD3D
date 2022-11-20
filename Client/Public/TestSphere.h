@@ -33,8 +33,10 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 
 private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
+	HRESULT		SetUp_Components();
+	HRESULT		SetUp_ShaderResources();
+
+	_double		m_TimeDelta = 0;
 
 public:
 	static CTestSphere* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

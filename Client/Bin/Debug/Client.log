@@ -1,9 +1,4 @@
 ﻿  TestSphere.cpp
-  TestCube.cpp
-  Terrain.cpp
-  Ocean.cpp
-  Enter_KeyUI.cpp
-  BackGround.cpp
-  코드를 생성하고 있습니다...
-  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
+c:\users\sam51\desktop\solod3d\client\private\testsphere.cpp(57): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Client.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

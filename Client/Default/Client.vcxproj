@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\Ocean.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
+    <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="..\private\Ocean.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
+    <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -224,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorDifTan.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>

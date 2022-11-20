@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\TestSphere.h"
 #include "GameInstance.h"
+#include "MathUtils.h"
 
 CTestSphere::CTestSphere(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -42,6 +43,42 @@ HRESULT CTestSphere::Init(void * pArg)
 void CTestSphere::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	m_TimeDelta += TimeDelta * 0.5;
+
+	if (m_TimeDelta >= 1)
+		m_TimeDelta = 0;
+
+	XMFLOAT4 f1 = XMFLOAT4(-20.f, 0.f, -20.f, 1.f);
+	XMFLOAT4 f2 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
+	XMFLOAT4 f3 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
+	XMFLOAT4 f4 = XMFLOAT4(-200.f, 0.f, 100.f, 1.f);
+	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::SmoothStep(f1, f2, m_TimeDelta)));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::CatmullRom(f1, f2, f3, f4, m_TimeDelta)));
+	//static XMFLOAT4	Hermite(const XMFLOAT4& v1, const XMFLOAT4& t1, const XMFLOAT4& v2, const XMFLOAT4& t2, float t);
+
+	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+		m_pTransformCom->Go_Straight(TimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+		m_pTransformCom->Go_Backward(TimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
+		m_pTransformCom->Go_Left(TimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+		m_pTransformCom->Go_Right(TimeDelta);
+	
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+		m_pTransformCom->Go_Up(TimeDelta);
+
+	if (pGameInstance->Get_DIKeyState(DIK_C))
+		m_pTransformCom->Go_Down(TimeDelta);
+
+	Safe_Release(pGameInstance);
 }
 
 void CTestSphere::Late_Tick(_double TimeDelta)

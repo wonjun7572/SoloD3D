@@ -8,6 +8,7 @@
 #include "VIBuffer_Sphere.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Cylinder.h"
 
 #include "Transform.h"
 

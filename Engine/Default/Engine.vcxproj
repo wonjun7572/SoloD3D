@@ -217,6 +217,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\public\Timer.h" />
     <ClInclude Include="..\public\Timer_Manager.h" />
+    <ClInclude Include="..\public\VIBuffer_Cylinder.h" />
     <ClInclude Include="..\public\VIBuffer_Terrain.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\Public\Transform.h" />
@@ -252,6 +253,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\private\Timer.cpp" />
     <ClCompile Include="..\private\Timer_Manager.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Cylinder.cpp" />
     <ClCompile Include="..\private\VIBuffer_Terrain.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />

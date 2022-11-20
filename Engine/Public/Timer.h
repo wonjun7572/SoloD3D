@@ -11,7 +11,7 @@ public:
 	virtual ~CTimer() = default;
 
 public:
-	_float		Get_TimeDelta(void) {return m_TimeDelta; }
+	_double		Get_TimeDelta(void) {return m_TimeDelta; }
 
 public:
 	HRESULT		Ready_Timer(void);

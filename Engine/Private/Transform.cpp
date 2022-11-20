@@ -99,7 +99,7 @@ void CTransform::Go_Up(_double TimeDelta)
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector		vUP = Get_State(CTransform::STATE_UP);
 
-	vPosition += XMVector3Normalize(vUP) * m_TransformDesc.fSpeedPerSec * -1 * static_cast<float>(TimeDelta);
+	vPosition += XMVector3Normalize(vUP) * m_TransformDesc.fSpeedPerSec  * static_cast<float>(TimeDelta);
 
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }
@@ -109,7 +109,7 @@ void CTransform::Go_Down(_double TimeDelta)
 	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
 	_vector		vUP = Get_State(CTransform::STATE_UP);
 
-	vPosition -= XMVector3Normalize(vUP) * m_TransformDesc.fSpeedPerSec * static_cast<float>(TimeDelta);
+	vPosition -= XMVector3Normalize(vUP) * m_TransformDesc.fSpeedPerSec  * static_cast<float>(TimeDelta);
 
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }

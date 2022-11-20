@@ -39,7 +39,7 @@ void CLevel_Logo::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (GetKeyState(VK_F1) & 0x8000)
+	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
 		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 		Safe_AddRef(pGameInstance);

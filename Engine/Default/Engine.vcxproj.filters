@@ -103,6 +103,9 @@
     <Filter Include="Font\FonatManager">
       <UniqueIdentifier>{7a4716b0-857b-4907-951f-396a3b377f84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cylinder">
+      <UniqueIdentifier>{4e16ef3c-d8de-4f8c-8e5c-456d46f64fa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -270,6 +273,9 @@
     <ClInclude Include="..\public\Font_Manager.h">
       <Filter>Font\FonatManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cylinder.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -409,6 +415,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Font_Manager.cpp">
       <Filter>Font\FonatManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cylinder.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
