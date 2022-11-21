@@ -12,6 +12,8 @@
 
 #include "Transform.h"
 
+#include "FSMComponent.h"
+
 BEGIN(Engine)
 
 class CComponent_Manager final : public CBase

@@ -44,23 +44,13 @@ void CTestSphere::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_TimeDelta += TimeDelta * 0.5;
-
-	if (m_TimeDelta >= 1)
-		m_TimeDelta = 0;
-
-	XMFLOAT4 f1 = XMFLOAT4(-20.f, 0.f, -20.f, 1.f);
-	XMFLOAT4 f2 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
-	XMFLOAT4 f3 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
-	XMFLOAT4 f4 = XMFLOAT4(-200.f, 0.f, 100.f, 1.f);
-	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::SmoothStep(f1, f2, m_TimeDelta)));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::CatmullRom(f1, f2, f3, f4, static_cast<float>(m_TimeDelta))));
-	//static XMFLOAT4	Hermite(const XMFLOAT4& v1, const XMFLOAT4& t1, const XMFLOAT4& v2, const XMFLOAT4& t2, float t);
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	m_pFSMCom->Tick(TimeDelta);
+
+	/*if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
 		m_pTransformCom->Go_Straight(TimeDelta);
 
 	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
@@ -76,7 +66,7 @@ void CTestSphere::Tick(_double TimeDelta)
 		m_pTransformCom->Go_Up(TimeDelta);
 
 	if (pGameInstance->Get_DIKeyState(DIK_C))
-		m_pTransformCom->Go_Down(TimeDelta);
+		m_pTransformCom->Go_Down(TimeDelta);*/
 
 	Safe_Release(pGameInstance);
 }
@@ -107,6 +97,80 @@ HRESULT CTestSphere::Render()
 	return S_OK;
 }
 
+void CTestSphere::Idle_OnStart()
+{
+	m_pTransformCom->Go_Left(1);
+}
+
+void CTestSphere::Idle_Tick(_double TimeDelta)
+{
+	m_pTransformCom->Go_Right(TimeDelta);
+}
+
+void CTestSphere::Idle_OnExit()
+{
+	m_pTransformCom->Go_Up(2);
+}
+
+void CTestSphere::Walk_Tick(_double TimeDelta)
+{
+	m_TimeDelta += TimeDelta * 0.5;
+
+	if (m_TimeDelta >= 1)
+		m_TimeDelta = 0;
+
+	XMFLOAT4 f1 = XMFLOAT4(-20.f, 0.f, -20.f, 1.f);
+	XMFLOAT4 f2 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
+	XMFLOAT4 f3 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
+	XMFLOAT4 f4 = XMFLOAT4(-200.f, 0.f, 100.f, 1.f);
+	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::SmoothStep(f1, f2, m_TimeDelta)));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::CatmullRom(f1, f2, f3, f4, static_cast<float>(m_TimeDelta))));
+	//static XMFLOAT4	Hermite(const XMFLOAT4& v1, const XMFLOAT4& t1, const XMFLOAT4& v2, const XMFLOAT4& t2, float t);
+}
+
+bool CTestSphere::Idle2Walk_KeyInput()
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
+bool CTestSphere::Idle2Walk_Pushed()
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	{
+
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
+bool CTestSphere::Predic_Walk2Idle()
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
 HRESULT CTestSphere::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -129,6 +193,27 @@ HRESULT CTestSphere::SetUp_Components()
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
+	/* For. Com_FSM */
+	CFSMComponentBuilder builder = CFSMComponentBuilder() // 빌더 생성
+		.InitState(TEXT("Idle"))								  // 최초 시작 노드의 이름
+		.AddState(TEXT("Idle"))								  // Idle 상태노드 정의 시작
+			.OnStart(this, &CTestSphere::Idle_OnStart)	      // Idle 상태 시작할 때 CBackGround::Idle_OnStart함수 실행(상태당 하나의 함수 정의, 생략가능)
+			.Tick(this,&CTestSphere::Idle_Tick)	      // Idle 상태 유지 될 때 프레임마다 CBackGround::Idle_Tick함수 실행(상태당 하나의 함수 정의, 생략가능)
+			.OnExit(this, &CTestSphere::Idle_OnExit)          // Idle 상태에서 다른 상태로 이동할 때 실행하는 함수 정의(상태당 하나의 함수 정의, 생략가능)
+			.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk KeyInput"), this, &CTestSphere::Idle2Walk_KeyInput))
+			// Idle에서 Walk로 전이하는 조건 정의, CBackGround::Predic_Idle2Walk함수 실행결과
+			// true면 Walk로 전이한다. 이하 반복
+			.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk Pushed"), this, &CTestSphere::Idle2Walk_Pushed))
+			// 다수 transition정의 가능
+		.AddState(TEXT("Walk")) // Walk상태 노드 정의 시작
+		.Tick(this,&CTestSphere::Walk_Tick)
+		.Transition(TEXT("Idle"), FSM_TRANSITION(L"Walk To Idle", this, &CTestSphere::Predic_Walk2Idle))
+		.Build();										      // 모든 상태를 만들면 Build()함수로 최종 Builder를 만든다.(종료함수)
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_FSM"), TEXT("Com_FSM"),
+		(CComponent**)&m_pFSMCom, &builder)))			      // 만들어진 CFSMComponentBuilder의 포인터를 pArg로 넘겨준다.
+		return E_FAIL;								  // 이렇게 넘겨진 클래스는 "이동" 되므로 다시 사용할 수 없다.
+		
 	return S_OK;
 }
 
@@ -201,7 +286,7 @@ CGameObject * CTestSphere::Clone(void * pArg)
 void CTestSphere::Free()
 {
 	__super::Free();
-
+	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);

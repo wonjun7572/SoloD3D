@@ -181,6 +181,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
+    <ClInclude Include="..\public\FSMComponent.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
@@ -236,6 +237,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
+    <ClCompile Include="..\private\FSMComponent.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\Light.cpp" />
     <ClCompile Include="..\Private\Light_Manager.cpp" />

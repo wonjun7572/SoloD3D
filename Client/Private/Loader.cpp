@@ -141,6 +141,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_H.bmp")))))
 		return E_FAIL;
 	
+	/* For. Prototype_Component_FSM */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_FSM"),
+		CFSMComponent::Create())))
+		return E_FAIL;
+
+
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");

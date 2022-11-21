@@ -112,6 +112,9 @@
     <Filter Include="Light\Manager">
       <UniqueIdentifier>{455ad440-c619-4554-971f-9bcfc4f193bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\FSM">
+      <UniqueIdentifier>{31fe7843-dee4-49f9-a3e7-a1d940d34c06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -288,6 +291,9 @@
     <ClInclude Include="..\Public\Light_Manager.h">
       <Filter>Light\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FSMComponent.h">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -436,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Light_Manager.cpp">
       <Filter>Light\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FSMComponent.cpp">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
