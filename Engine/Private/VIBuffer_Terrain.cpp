@@ -1,7 +1,5 @@
 #include "..\public\VIBuffer_Terrain.h"
 
-#include "MathUtils.h"
-
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
 {
@@ -53,16 +51,6 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	m_iNumIndices = m_iNumIndicesPerPrimitive * m_iNumPrimitive;
 
 #pragma region VERTEX_BUFFER
-
-	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
-	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.StructureByteStride = m_iStride;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
-
 	VTXNORTEX*			pVertices = new VTXNORTEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXNORTEX));
 
@@ -72,17 +60,22 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
 
-			pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (pPixel[iIndex] & 0x000000ff) / 15.f, static_cast<float>(i));
+			//	11111111 11111011 11111011 11111011
+			//& 00000000 00000000 00000000 11111111
+
+			pVertices[iIndex].vPosition = _float3(j, (pPixel[iIndex] & 0x000000ff) / 10.f, i);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
 	}
 
+	Safe_Delete_Array(pPixel);
+
 #pragma endregion
 
+
+
 #pragma region INDEX_BUFFER
-
-
 	FACEINDICES32*		pIndices = new FACEINDICES32[m_iNumPrimitive];
 	ZeroMemory(pIndices, sizeof(FACEINDICES32) * m_iNumPrimitive);
 
@@ -93,7 +86,6 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		for (_uint j = 0; j < m_iNumVerticesX - 1; ++j)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
-			XMFLOAT3		vLook, vRight, vNormal;
 
 			_uint			iIndices[4] = {
 				iIndex + m_iNumVerticesX,
@@ -102,17 +94,19 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 				iIndex
 			};
 
+			_vector			vSour, vDest, vNormal;
+
 			pIndices[iNumFaces]._0 = iIndices[0];
 			pIndices[iNumFaces]._1 = iIndices[1];
 			pIndices[iNumFaces]._2 = iIndices[2];
 
-			vLook = CMathUtils::Sub_Float3(pVertices[pIndices[iNumFaces]._1].vPosition, pVertices[pIndices[iNumFaces]._2].vPosition);
-			vRight = CMathUtils::Sub_Float3(pVertices[pIndices[iNumFaces]._1].vPosition, pVertices[pIndices[iNumFaces]._0].vPosition);
-			vNormal = CMathUtils::Cross(vLook, vRight);
-		
-			pVertices[pIndices[iNumFaces]._0].vNormal =	CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._0].vNormal, vNormal);
-			pVertices[pIndices[iNumFaces]._1].vNormal = CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._1].vNormal, vNormal);
-			pVertices[pIndices[iNumFaces]._2].vNormal = CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._2].vNormal, vNormal);
+			vSour = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+			vDest = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition);
+			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
+
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal) + vNormal));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal) + vNormal));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal) + vNormal));
 
 			++iNumFaces;
 
@@ -120,20 +114,29 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 			pIndices[iNumFaces]._1 = iIndices[2];
 			pIndices[iNumFaces]._2 = iIndices[3];
 
-			vLook = CMathUtils::Sub_Float3(pVertices[pIndices[iNumFaces]._0].vPosition, pVertices[pIndices[iNumFaces]._2].vPosition);
-			vRight = CMathUtils::Sub_Float3(pVertices[pIndices[iNumFaces]._1].vPosition, pVertices[pIndices[iNumFaces]._2].vPosition);
-			vNormal = CMathUtils::Cross(vLook, vRight);
+			vSour = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vPosition);
+			vDest = XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vPosition) - XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vPosition);
+			vNormal = XMVector3Normalize(XMVector3Cross(vSour, vDest));
 
-			pVertices[pIndices[iNumFaces]._0].vNormal = CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._0].vNormal, vNormal);
-			pVertices[pIndices[iNumFaces]._1].vNormal = CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._1].vNormal, vNormal);
-			pVertices[pIndices[iNumFaces]._2].vNormal = CMathUtils::Add_Float3(pVertices[pIndices[iNumFaces]._2].vNormal, vNormal);
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._0].vNormal) + vNormal));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._1].vNormal) + vNormal));
+			XMStoreFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal, XMVector3Normalize(XMLoadFloat3(&pVertices[pIndices[iNumFaces]._2].vNormal) + vNormal));
 
 			++iNumFaces;
 		}
 	}
 
-	for (_uint i = 0; i < m_iNumVertices; ++i)
-		pVertices[i].vNormal = CMathUtils::Normalize(pVertices[i].vNormal);
+#pragma endregion
+
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iStride * m_iNumVertices;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.StructureByteStride = m_iStride;
+	m_BufferDesc.CPUAccessFlags = 0;
+	m_BufferDesc.MiscFlags = 0;
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -141,8 +144,6 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	if (FAILED(__super::Create_VertexBuffer()))
 		return E_FAIL;
 
-	Safe_Delete_Array(pVertices);
-	Safe_Delete_Array(pPixel);
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
@@ -159,9 +160,8 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	if (FAILED(__super::Create_IndexBuffer()))
 		return E_FAIL;
 
+	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
-
-#pragma endregion
 
 	return S_OK;
 }
@@ -202,4 +202,5 @@ CComponent * CVIBuffer_Terrain::Clone(void * pArg)
 void CVIBuffer_Terrain::Free()
 {
 	__super::Free();
+
 }

@@ -7,6 +7,7 @@
 #include "ImGui_Manager.h"
 #include "Timer_Manager.h"
 #include "Font_Manager.h"
+#include "Light_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -22,7 +23,8 @@ CGameInstance::CGameInstance()
 	m_pImGuiMgr(CImGui_Manager::GetInstance()),
 	m_pPipeLine(CPipeLine::GetInstance()),
 	m_pTimerMgr(CTimer_Manager::GetInstance()),
-	m_pFontMgr(CFont_Manager::GetInstance())
+	m_pFontMgr(CFont_Manager::GetInstance()),
+	m_pLightMgr(CLight_Manager::GetInstance())
 {
 	Safe_AddRef(m_pGraphicDev);
 	Safe_AddRef(m_pInputDev);
@@ -33,6 +35,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pPipeLine);
 	Safe_AddRef(m_pTimerMgr);
 	Safe_AddRef(m_pFontMgr);
+	Safe_AddRef(m_pLightMgr);
 }
 
 HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & GraphicDesc, ID3D11Device ** ppDeviceOut, ID3D11DeviceContext ** ppContextOut)
@@ -361,6 +364,22 @@ HRESULT CGameInstance::Render_Font(const wstring & pFontTag, const wstring & pTe
 	return m_pFontMgr->Render_Font(pFontTag, pText, vPos, vColor);
 }
 
+const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)
+{
+	if (m_pLightMgr == nullptr)
+		return nullptr;
+
+	return m_pLightMgr->Get_LightDesc(iIndex);
+}
+
+HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const LIGHTDESC & LightDesc)
+{
+	if (m_pLightMgr == nullptr)
+		return E_FAIL;
+
+	return m_pLightMgr->Add_Light(pDevice, pContext, LightDesc);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CImGui_Manager::GetInstance()->DestroyInstance();
@@ -379,6 +398,8 @@ void CGameInstance::Release_Engine()
 
 	CFont_Manager::GetInstance()->DestroyInstance();
 
+	CLight_Manager::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
@@ -394,5 +415,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pImGuiMgr);
+	Safe_Release(m_pLightMgr);
 	Safe_Release(m_pGraphicDev);
 }
