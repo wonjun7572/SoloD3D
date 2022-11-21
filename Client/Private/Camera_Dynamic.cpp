@@ -40,7 +40,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		CameraDesc.fNear = 0.2f;
 		CameraDesc.fFar = 500.f;
 
-		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 30.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
 

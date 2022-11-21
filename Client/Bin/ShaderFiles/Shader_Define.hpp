@@ -1,3 +1,8 @@
+sampler	DefaultSampler = sampler_state
+{
+
+};
+
 sampler DiffuseSampler = sampler_state
 {
 	filter = min_mag_mip_linear;
@@ -20,11 +25,6 @@ sampler NormalSampler = sampler_state
 };
 
 
-sampler	DefaultSampler = sampler_state
-{
-
-};
-
 RasterizerState rsSolidframe{ FillMode = Solid; };
 RasterizerState rsWireframe{ FillMode = WireFrame; };
 
@@ -33,15 +33,15 @@ RasterizerState rsWireframe{ FillMode = WireFrame; };
 sampler LinearSampler = sampler_state
 {
 	filter = min_mag_mip_linear;
-AddressU = wrap;
-AddressV = wrap;
+	AddressU = wrap;
+	AddressV = wrap;
 };
 
 sampler PointSampler = sampler_state
 {
 	filter = min_mag_mip_Point;
-AddressU = wrap;
-AddressV = wrap;
+	AddressU = wrap;
+	AddressV = wrap;
 };
 
 BlendState BS_Default

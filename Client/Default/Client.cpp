@@ -72,10 +72,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// 기본 메시지 루프입니다.
 	while (true)
 	{
-		pGameInstance->Update_Timer(TEXT("Timer_Default"));
-
-		TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (WM_QUIT == msg.message)
@@ -89,6 +85,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
+			pGameInstance->Update_Timer(TEXT("Timer_Default"));
+			
+			TimerAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
+			
 			if (TimerAcc > 1.0 / 60.0)
 			{
 				pGameInstance->Update_Timer(TEXT("Timer_60"));

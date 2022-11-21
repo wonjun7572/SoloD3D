@@ -54,7 +54,7 @@ void CTestSphere::Tick(_double TimeDelta)
 	XMFLOAT4 f3 = XMFLOAT4(-10.f, 5.f, 10.f, 1.f);
 	XMFLOAT4 f4 = XMFLOAT4(-200.f, 0.f, 100.f, 1.f);
 	//m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::SmoothStep(f1, f2, m_TimeDelta)));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::CatmullRom(f1, f2, f3, f4, m_TimeDelta)));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&CMathUtils::CatmullRom(f1, f2, f3, f4, static_cast<float>(m_TimeDelta))));
 	//static XMFLOAT4	Hermite(const XMFLOAT4& v1, const XMFLOAT4& t1, const XMFLOAT4& v2, const XMFLOAT4& t2, float t);
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
@@ -100,7 +100,7 @@ HRESULT CTestSphere::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(0);
 
 	m_pVIBufferCom->Render();
 
@@ -151,10 +151,25 @@ HRESULT CTestSphere::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	/* For.Lights */
+	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
+	if (nullptr == pLightDesc)
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
+		return E_FAIL;
+	
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture")))
+		return E_FAIL;
+
 
 	return S_OK;
 }

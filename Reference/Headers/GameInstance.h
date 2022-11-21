@@ -60,11 +60,11 @@ public:		/* For ImGui_Manager */
 	void Clear_ImguiObjects();
 
 public: /* For.PipeLine */
-	_matrix Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
-	_float4x4 Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
-	_matrix Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
-	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	_float4 Get_CamPosition();
+	_matrix		Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState);
+	_float4x4	Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState);
+	_matrix		Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
+	void		Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	_float4		Get_CamPosition();
 
 public: /* For.Timer_Manager */
 	_double		Get_TimeDelta(const wstring& pTimerTag);
@@ -74,6 +74,10 @@ public: /* For.Timer_Manager */
 public: /* For.Font_Manager */
 	HRESULT Add_Fonts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontTag, const wstring& pFontFilePath);
 	HRESULT Render_Font(const wstring& pFontTag, const wstring& pText, _fvector vPos, _fvector vColor);
+
+public: /* For. Light_Manager*/
+	const LIGHTDESC* Get_LightDesc(_uint iIndex);
+	HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc);
 
 private:
 	static _uint					m_iStaticLevelIndex;
@@ -88,6 +92,7 @@ private:
 	CPipeLine*					m_pPipeLine = nullptr;
 	class CTimer_Manager*		m_pTimerMgr = nullptr;
 	class CFont_Manager*		m_pFontMgr = nullptr;
+	class CLight_Manager*		m_pLightMgr = nullptr;
 
 public: // Release_Engine
 	static void Release_Engine();

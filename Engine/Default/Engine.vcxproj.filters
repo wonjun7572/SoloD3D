@@ -106,6 +106,12 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cylinder">
       <UniqueIdentifier>{4e16ef3c-d8de-4f8c-8e5c-456d46f64fa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{f07815f8-b9c4-46a2-a650-8f54c824f018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Light\Manager">
+      <UniqueIdentifier>{455ad440-c619-4554-971f-9bcfc4f193bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -276,6 +282,12 @@
     <ClInclude Include="..\public\VIBuffer_Cylinder.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Light.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Light_Manager.h">
+      <Filter>Light\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -418,6 +430,12 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cylinder.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light_Manager.cpp">
+      <Filter>Light\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

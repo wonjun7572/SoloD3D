@@ -44,7 +44,7 @@ void COcean::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_fTimeDelta += static_cast<float>(TimeDelta * 0.03f);
+	m_fTimeDelta += static_cast<float>(TimeDelta * 0.1f);
 }
 
 void COcean::Late_Tick(_double TimeDelta)
@@ -88,7 +88,7 @@ HRESULT COcean::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_D"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -100,24 +100,28 @@ HRESULT COcean::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	float			gWaveHeight = 5.f;
-	float			gSpeed = 2.f;
+	// 파도 높이
+	float			gWaveHeight	   = 5.f;
+	// 파도 속도
+	float			gSpeed		   = 2.f;
+	// 파도 빈도
 	float			gWaveFrequency = 15.f;
-	float			gUVSpeed = 0.15f;
+	// UV 움직이는 속도
+	float			gUVSpeed	   = 0.15f;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("gTime", &m_fTimeDelta, sizeof _float)))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof _float)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("gWaveHeight", &gWaveHeight, sizeof _float)))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_WaveHeight", &gWaveHeight, sizeof _float)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("gSpeed", &gSpeed, sizeof _float)))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_Speed", &gSpeed, sizeof _float)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("gWaveFrequency", &gWaveFrequency, sizeof _float)))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_WaveFrequency", &gWaveFrequency, sizeof _float)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("gUVSpeed", &gUVSpeed, sizeof _float)))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_UVSpeed", &gUVSpeed, sizeof _float)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_pTransformCom->Get_World4x4())))
@@ -134,10 +138,25 @@ HRESULT COcean::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof _float4)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	/* For.Lights */
+	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
+	if (nullptr == pLightDesc)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture")))
+		return E_FAIL;
+
 
 	return S_OK;
 }
