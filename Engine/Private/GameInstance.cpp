@@ -43,6 +43,8 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (nullptr == m_pGraphicDev ||	nullptr == m_pInputDev ||nullptr == m_pObjectMgr || nullptr == m_pComponetMgr || m_pImGuiMgr == nullptr)
 		return E_FAIL;
 
+	m_hWnd = GraphicDesc.hWnd;
+
 	if (FAILED(m_pGraphicDev->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWinMode, GraphicDesc.iViewportSizeX, GraphicDesc.iViewportSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 

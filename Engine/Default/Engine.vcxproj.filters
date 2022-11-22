@@ -52,15 +52,6 @@
     <Filter Include="Singleton\ComponentManager\Component\Shader">
       <UniqueIdentifier>{1281dfc4-454c-4f10-9104-529e7ddc05aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{8757eaff-3916-4b3a-8ab2-388195e427db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui\ImGui">
-      <UniqueIdentifier>{df975b80-2ca5-4832-921e-aecd48eb822f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui\Manager">
-      <UniqueIdentifier>{120676be-0645-46d9-ab32-105380ee8d2a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cube">
       <UniqueIdentifier>{ccbc1d4d-e02d-4dab-887d-4362b9093e51}</UniqueIdentifier>
     </Filter>
@@ -79,9 +70,6 @@
     <Filter Include="Util">
       <UniqueIdentifier>{cb14254d-ef3b-47bc-85fc-37a91873c777}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImGui\ImGuiObj">
-      <UniqueIdentifier>{1903e1db-c382-47c5-b84d-5d3bdfcdf8d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singleton\ComponentManager\Component\Texture">
       <UniqueIdentifier>{ed38da8e-262d-4be0-96fd-8c77af7a0201}</UniqueIdentifier>
     </Filter>
@@ -91,29 +79,44 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Terrain">
       <UniqueIdentifier>{af3ddb2b-26bd-4f12-95f5-4b4ca2d0a487}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Timer">
-      <UniqueIdentifier>{aa5d968f-23d5-44ab-ac81-4debd64e3d98}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Timer\TimerManager">
-      <UniqueIdentifier>{283bfeeb-77f7-463c-b8fb-8e032c906341}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Font">
-      <UniqueIdentifier>{4dd135f3-0e70-46bd-98cb-722d16638d9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Font\FonatManager">
-      <UniqueIdentifier>{7a4716b0-857b-4907-951f-396a3b377f84}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cylinder">
       <UniqueIdentifier>{4e16ef3c-d8de-4f8c-8e5c-456d46f64fa7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Light">
-      <UniqueIdentifier>{f07815f8-b9c4-46a2-a650-8f54c824f018}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Light\Manager">
-      <UniqueIdentifier>{455ad440-c619-4554-971f-9bcfc4f193bb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singleton\ComponentManager\Component\FSM">
       <UniqueIdentifier>{31fe7843-dee4-49f9-a3e7-a1d940d34c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Timer">
+      <UniqueIdentifier>{aa5d968f-23d5-44ab-ac81-4debd64e3d98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Timer\TimerManager">
+      <UniqueIdentifier>{283bfeeb-77f7-463c-b8fb-8e032c906341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Light">
+      <UniqueIdentifier>{f07815f8-b9c4-46a2-a650-8f54c824f018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Light\Manager">
+      <UniqueIdentifier>{455ad440-c619-4554-971f-9bcfc4f193bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ImGui">
+      <UniqueIdentifier>{8757eaff-3916-4b3a-8ab2-388195e427db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ImGui\ImGui">
+      <UniqueIdentifier>{df975b80-2ca5-4832-921e-aecd48eb822f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ImGui\Manager">
+      <UniqueIdentifier>{120676be-0645-46d9-ab32-105380ee8d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ImGui\ImGuiObj">
+      <UniqueIdentifier>{1903e1db-c382-47c5-b84d-5d3bdfcdf8d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Font">
+      <UniqueIdentifier>{4dd135f3-0e70-46bd-98cb-722d16638d9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Font\FonatManager">
+      <UniqueIdentifier>{7a4716b0-857b-4907-951f-396a3b377f84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\Picking">
+      <UniqueIdentifier>{8c8d1e4e-84f4-4e46-b28a-4163d61595de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +181,7 @@
       <Filter>Singleton\ComponentManager\Component\Shader</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_Manager.h">
-      <Filter>ImGui\Manager</Filter>
+      <Filter>Singleton\ImGui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Cube.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cube</Filter>
@@ -199,61 +202,61 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGuiObject.h">
-      <Filter>ImGui\ImGuiObj</Filter>
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ImGui_PropertyEditor.h">
-      <Filter>ImGui\ImGuiObj</Filter>
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\dirent.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\GraphEditor.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImCurveEdit.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImGradient.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imgui_internal.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImGuiFileDialog.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImGuiFileDialogConfig.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImGuizmo.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImSequencer.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_rectpack.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\ImZoomSlider.h">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MathUtils.h">
       <Filter>Util</Filter>
@@ -271,25 +274,25 @@
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Timer.h">
-      <Filter>Timer</Filter>
+      <Filter>Singleton\Timer</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CustomFont.h">
-      <Filter>Font</Filter>
+      <Filter>Singleton\Font</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Timer_Manager.h">
-      <Filter>Timer\TimerManager</Filter>
+      <Filter>Singleton\Timer\TimerManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Font_Manager.h">
-      <Filter>Font\FonatManager</Filter>
+      <Filter>Singleton\Font\FonatManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Cylinder.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Light.h">
-      <Filter>Light</Filter>
+      <Filter>Singleton\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Light_Manager.h">
-      <Filter>Light\Manager</Filter>
+      <Filter>Singleton\Light\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\FSMComponent.h">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
@@ -345,7 +348,7 @@
       <Filter>Include</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_Manager.cpp">
-      <Filter>ImGui\Manager</Filter>
+      <Filter>Singleton\ImGui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cube.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cube</Filter>
@@ -366,49 +369,49 @@
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGuiObject.cpp">
-      <Filter>ImGui\ImGuiObj</Filter>
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ImGui_PropertyEditor.cpp">
-      <Filter>ImGui\ImGuiObj</Filter>
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\GraphEditor.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\ImCurveEdit.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\ImGradient.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_demo.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_draw.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_impl_dx11.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_impl_win32.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_tables.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\imgui_widgets.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\ImGuiFileDialog.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\ImGuizmo.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\ImGui\ImSequencer.cpp">
-      <Filter>ImGui\ImGui</Filter>
+      <Filter>Singleton\ImGui\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MathUtils.cpp">
       <Filter>Util</Filter>
@@ -423,25 +426,25 @@
       <Filter>Singleton\ComponentManager\Component\RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Timer.cpp">
-      <Filter>Timer</Filter>
+      <Filter>Singleton\Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CustomFont.cpp">
-      <Filter>Font</Filter>
+      <Filter>Singleton\Font</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Timer_Manager.cpp">
-      <Filter>Timer\TimerManager</Filter>
+      <Filter>Singleton\Timer\TimerManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Font_Manager.cpp">
-      <Filter>Font\FonatManager</Filter>
+      <Filter>Singleton\Font\FonatManager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cylinder.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cylinder</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Light.cpp">
-      <Filter>Light</Filter>
+      <Filter>Singleton\Light</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Light_Manager.cpp">
-      <Filter>Light\Manager</Filter>
+      <Filter>Singleton\Light\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FSMComponent.cpp">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>

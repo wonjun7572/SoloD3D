@@ -35,7 +35,7 @@ public:
 	/* 리턴받은 행렬을 이용해 연산을 해야할 때. */
 	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_WorldMatrix); }
 
-	_matrix Get_WorldMatrixInverse() const { return XMMatrixInverse(nullptr, Get_WorldMatrix()); }
+	_matrix Get_WorldMatrixInverse() const { return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix)); }
 
 	/* 리턴받은 행렬보관해야할 때  */
 	_float4x4 Get_World4x4() const { return m_WorldMatrix; }
@@ -63,6 +63,7 @@ public:
 public:
 	virtual HRESULT Init_Prototype();
 	virtual HRESULT Init(void* pArg);
+	virtual void Imgui_RenderProperty() override;
 
 public:
 	void Go_Straight(_double TimeDelta);

@@ -1,3 +1,4 @@
+
 #pragma once
 #include "Client_Define.h"
 #include "GameObject.h"
@@ -13,6 +14,9 @@ BEGIN(Client)
 
 class CTerrain final : public CGameObject
 {
+public:
+	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_END };
+
 private:
 	CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTerrain(const CTerrain& rhs);
@@ -25,11 +29,19 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	virtual void Imgui_RenderProperty() override;
+
 private:
-	CShader*				m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
-	CVIBuffer_Terrain*		m_pVIBufferCom = nullptr;
+	CTexture*					m_pTextureCom[TYPE_END] = { nullptr };
+	CVIBuffer_Terrain*	m_pVIBufferCom = nullptr;
+
+private: /* For. Imgui*/
+	_uint			m_iDiffuseTexNum = 0;
+	_uint			m_iBrushTexNum = 0;
+	_float4		m_vBrushPos = _float4(0.f, 0.f, 0.f, 1.f);
+	_float		m_fBrushRange = 5.f;
 
 private:
 	HRESULT SetUp_Components();

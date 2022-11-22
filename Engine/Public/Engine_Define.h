@@ -27,6 +27,8 @@ using namespace DirectX;
 #include <DirectXTK/SimpleMath.h>
 
 #include <d3dcompiler.h>
+#include <TypeInfo.h>
+#include <DirectXCollision.h>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -44,7 +46,6 @@ using namespace std;
 
 // 크래쉬 확인용
 #include <cassert>
-
 
 #include "Engine_Typedef.h"
 #include "Engine_Macro.h"

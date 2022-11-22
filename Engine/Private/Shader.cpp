@@ -63,6 +63,17 @@ HRESULT CShader::Init(void * pArg)
 	return S_OK;
 }
 
+void CShader::Imgui_RenderProperty()
+{
+	ImGui::Text("InputLayOut Size : ");
+	ImGui::SameLine();
+	ImGui::Text(to_string(m_InputLayouts.size()).c_str());
+
+	ImGui::Text("Current NumPass :");
+	ImGui::SameLine();
+	ImGui::Text(to_string(m_iNumPasses).c_str());
+}
+
 HRESULT CShader::Begin(_uint iPassIndex)
 {
 	if (nullptr == m_pContext ||

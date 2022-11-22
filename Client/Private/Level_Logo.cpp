@@ -23,7 +23,6 @@ HRESULT CLevel_Logo::Init()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiTabObject(CImgui_PropertyEditor::Create());
 	
@@ -39,16 +38,21 @@ void CLevel_Logo::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (GetKeyState(VK_RETURN) & 0x8000)
-	{
-		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
+	if (pGameInstance->Key_Down(DIK_RETURN))
+	{
 		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP1))))
 			return;
-
-		Safe_Release(pGameInstance);
 	}
+
+	if (pGameInstance->Key_Down(DIK_F1))
+	{
+		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_TOOL))))
+			return;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CLevel_Logo::Render()

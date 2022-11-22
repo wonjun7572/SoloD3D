@@ -47,8 +47,8 @@ void CLoader::SwitchForThread(LEVEL eNextLevelID)
 	case LEVEL_CHAP2:
 		Loading_ForChapter_2();
 		break;
-	case LEVEL_CHAP3:
-		Loading_ForChapter_3();
+	case LEVEL_TOOL:
+		Loading_ForTool();
 		break;
 	}
 	return;
@@ -116,7 +116,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_Texture_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile0.jpg"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BMI_Terrain/Level1/Diffuse/TextureD_%d.dds"), 6))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Brush*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Brush"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Test */
@@ -127,6 +132,11 @@ HRESULT CLoader::Loading_ForChapter_1()
 	/* For.Prototype_Component_Texture_Water_D */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_D"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_Seafoam_01.dds")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Water_N */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_N"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_N.dds")))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
@@ -196,8 +206,20 @@ HRESULT CLoader::Loading_ForChapter_2()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForChapter_3()
+HRESULT CLoader::Loading_ForTool()
 {
+	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
+
+	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
+
+	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
+
+	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
+
+	m_strLoadingText = TEXT("로딩끝. ");
+
+	m_isFinished = true;
+
 	return S_OK;
 }
 

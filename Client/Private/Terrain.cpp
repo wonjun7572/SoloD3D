@@ -61,6 +61,60 @@ HRESULT CTerrain::Render()
 	return S_OK;
 }
 
+void CTerrain::Imgui_RenderProperty()
+{
+	if (ImGui::CollapsingHeader("For. Texture"))
+	{
+		ImGui::Text("TYPE_DIFFUSE : ");
+		ImGui::SameLine();
+		ImGui::Text(to_string(m_iDiffuseTexNum).c_str());
+		ImGui::SameLine();
+		ImGui::Text(" / ");
+		ImGui::SameLine();
+		ImGui::Text(to_string(m_pTextureCom[TYPE_DIFFUSE]->Get_AllTexsize()).c_str());
+
+		for (size_t i = 0; i < m_pTextureCom[TYPE_DIFFUSE]->Get_AllTexsize(); ++i)
+		{
+			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_DIFFUSE]->Get_Texture()[i], ImVec2(60.f, 60.f)))
+				m_iDiffuseTexNum = static_cast<_uint>(i);
+
+			if (i == 0 || (i + 1) % 6)
+				ImGui::SameLine();
+		}
+		ImGui::NewLine();
+
+		ImGui::Text("TYPE_BRUSH : ");
+		ImGui::SameLine();
+		ImGui::Text(to_string(m_iBrushTexNum).c_str());
+		ImGui::SameLine();
+		ImGui::Text(" / ");
+		ImGui::SameLine();
+		ImGui::Text(to_string(m_pTextureCom[TYPE_BRUSH]->Get_AllTexsize()).c_str());
+
+		for (size_t i = 0; i < m_pTextureCom[TYPE_BRUSH]->Get_AllTexsize(); ++i)
+		{
+			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_BRUSH]->Get_Texture()[i], ImVec2(60.f, 60.f)))
+				m_iDiffuseTexNum = static_cast<_uint>(i);
+
+			if (i == 0 || (i + 1) % 6)
+				ImGui::SameLine();
+		}
+
+		ImGui::NewLine();
+	}
+	if (ImGui::CollapsingHeader("For. TexPos"))
+	{
+		ImGui::Text("Position");
+		float fBrushPos[3] = { m_vBrushPos.x ,m_vBrushPos.y ,m_vBrushPos.z };
+		ImGui::DragFloat3("Brush_Pos", fBrushPos, 0.1f, -1000.0f, 1000.0f);
+		m_vBrushPos.x = fBrushPos[0];
+		m_vBrushPos.y = fBrushPos[1];
+		m_vBrushPos.z = fBrushPos[2];
+
+		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
+	}
+}
+
 HRESULT CTerrain::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -80,7 +134,12 @@ HRESULT CTerrain::SetUp_Components()
 
 	/* For.Com_Texture */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom)))
+		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+		return E_FAIL;
+
+	/* For.Com_Brush*/
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
 		return E_FAIL;
 
 	return S_OK;
@@ -121,7 +180,17 @@ HRESULT CTerrain::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture")))
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_iDiffuseTexNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", m_iBrushTexNum)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
+		return E_FAIL;
+
+	// TODO : 터레인과 마우스가 피킹하고 있는곳의 지점을 던져준다.
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
 		return E_FAIL;
 
 	return S_OK;
@@ -155,7 +224,9 @@ void CTerrain::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTextureCom);
+	for (auto& pTexture : m_pTextureCom)
+		Safe_Release(pTexture);
+	
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

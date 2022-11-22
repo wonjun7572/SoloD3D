@@ -67,6 +67,9 @@
     <Filter Include="GameObject\Player\UI\SKILL">
       <UniqueIdentifier>{beb19723-d787-4e0a-93dd-c8ea6ee3d302}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LevelDesign\Tool">
+      <UniqueIdentifier>{14b5ae69-1ee8-4fc5-a490-585f1be62ebb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -129,6 +132,9 @@
     <ClInclude Include="..\public\TestCylinder.h">
       <Filter>GameObject\Figure</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Level_Tool.h">
+      <Filter>LevelDesign\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -178,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="..\private\TestCylinder.cpp">
       <Filter>GameObject\Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Tool.cpp">
+      <Filter>LevelDesign\Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

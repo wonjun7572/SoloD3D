@@ -17,6 +17,7 @@ private:
 public:
 	static _uint Get_StaticLevelIndex() { return m_iStaticLevelIndex; }
 	static wstring m_pPrototypeTransformTag;
+	HWND GetHWND() { return m_hWnd; }
 
 public: // GameInstance
 	HRESULT		Init_Engine(_uint iNumLevels, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
@@ -96,6 +97,9 @@ private:
 
 public: // Release_Engine
 	static void Release_Engine();
+
+private:
+	HWND m_hWnd;
 
 public:
 	virtual void Free() override;

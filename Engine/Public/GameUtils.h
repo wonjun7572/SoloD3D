@@ -1,6 +1,7 @@
 #pragma once
+#include "Engine_Define.h"
 
-class CGameUtils
+class ENGINE_DLL CGameUtils
 {
 private:
 	CGameUtils() = default;

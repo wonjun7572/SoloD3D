@@ -15,11 +15,17 @@ public:
 	virtual HRESULT Init_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures);
 	virtual HRESULT Init(void* pArg) override;
 
+	virtual void Imgui_RenderProperty() override;
+
+	const vector<ID3D11ShaderResourceView*>& Get_Texture() { return m_Textures; }
+	_uint  Get_CurNumTex() { return m_iNumTextures; }
+	size_t  Get_AllTexsize() { return m_Textures.size(); }
+
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName, _uint iTextureIndex = 0);
-	
+
 private:
-	_uint										m_iNumTextures = 0;
+	_uint						m_iNumTextures = 0;
 	vector<ID3D11ShaderResourceView*>			m_Textures;
 	typedef vector<ID3D11ShaderResourceView*>	TEXTURES;
 

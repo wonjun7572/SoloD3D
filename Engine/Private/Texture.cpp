@@ -57,6 +57,17 @@ HRESULT CTexture::Init(void * pArg)
 	return S_OK;
 }
 
+void CTexture::Imgui_RenderProperty()
+{
+	ImGui::Text("TEXTURES Size : ");
+	ImGui::SameLine();
+	ImGui::Text(to_string(m_Textures.size()).c_str());
+
+	ImGui::Text("Current NumTexture :");
+	ImGui::SameLine();
+	ImGui::Text(to_string(m_iNumTextures).c_str());
+}
+
 HRESULT CTexture::Bind_ShaderResource(CShader * pShaderCom, const char * pConstantName, _uint iTextureIndex)
 {
 	if (nullptr == pShaderCom || iTextureIndex >= m_iNumTextures)

@@ -15,6 +15,8 @@ public:
 	virtual HRESULT Init_Prototype(const wstring& pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, const _uint iNumElements);
 	virtual HRESULT Init(void* pArg) override;
 
+	virtual void Imgui_RenderProperty() override;
+
 public:
 	HRESULT Begin(_uint iPassIndex);
 	HRESULT Set_RawValue(const char* pConstantName, const void* pData, _uint iLength);
