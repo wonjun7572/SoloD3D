@@ -40,8 +40,14 @@ void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if(m_bPicking)
+	if (m_bPicking)
+	{
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		if(pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
+			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, m_fHeight);
+		RELEASE_INSTANCE(CGameInstance);
+	}
 }
 
 void CTerrain::Late_Tick(_double TimeDelta)
@@ -118,8 +124,6 @@ void CTerrain::Imgui_RenderProperty()
 		ImGui::SameLine();
 		ImGui::Text(to_string(m_pTextureCom[TYPE_BRUSH]->Get_CntTex()).c_str());
 
-		ImGui::Checkbox("IsPicking", &m_bPicking);
-
 		for (_uint i = 0; i < m_pTextureCom[TYPE_BRUSH]->Get_CntTex(); ++i)
 		{
 			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_BRUSH]->Get_Texture(i), ImVec2(60.f, 60.f)))
@@ -152,14 +156,20 @@ void CTerrain::Imgui_RenderProperty()
 	}
 	if (ImGui::CollapsingHeader("For. TexPos"))
 	{
-		ImGui::Text("Position");
+		ImGui::Text("BrushPosition");
 		float fBrushPos[3] = { m_vBrushPos.x ,m_vBrushPos.y ,m_vBrushPos.z };
 		ImGui::DragFloat3("Brush_Pos", fBrushPos, 0.1f, -1000.0f, 1000.0f);
 		m_vBrushPos.x = fBrushPos[0];
 		m_vBrushPos.y = fBrushPos[1];
 		m_vBrushPos.z = fBrushPos[2];
-
 		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
+
+		ImGui::Checkbox("IsPicking", &m_bPicking);
+		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, -50.0f, 50.0f);
+		// TODO : 헤이트맵 저장하는 부분 수정 필요
+		//if (ImGui::Button("SaveHeight"))
+		//	m_pVIBufferCom->SaveHeightMap();
+
 	}
 }
 
@@ -337,7 +347,6 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
 		return E_FAIL;
 
-	// TODO : 터레인과 마우스가 피킹하고 있는곳의 지점을 던져준다.
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
 		return E_FAIL;
 

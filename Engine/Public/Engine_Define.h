@@ -23,6 +23,7 @@ using namespace DirectX;
 #include <DirectXTK/ScreenGrab.h>
 #include <DirectXTK/SpriteFont.h>
 #include <DirectXTK/SpriteBatch.h>
+#include <wincodec.h>
 
 #include <DirectXTK/SimpleMath.h>
 

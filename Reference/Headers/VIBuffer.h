@@ -36,7 +36,6 @@ protected:
 protected: /* 버텍스 버퍼 */
 	ID3D11Buffer*				m_pVB = nullptr;
 
-
 protected: /* 인덱스 버퍼 */
 	ID3D11Buffer*				m_pIB = nullptr;
 

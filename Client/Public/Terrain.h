@@ -42,7 +42,10 @@ private:
 
 private: /* For. Imgui*/
 
-	bool			m_bPicking = true;
+	_float			m_fHeight = 0.f;
+
+	bool			m_bPicking = false;
+
 	int				m_iPassNum = 0;
 
 	int				m_iTexRadioBtn = 0;

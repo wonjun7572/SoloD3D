@@ -1,19 +1,4 @@
 ﻿  VIBuffer_Terrain.cpp
-  Transform.cpp
-  Level_Manager.cpp
-  GameObject.cpp
-  GameInstance.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  Component_Manager.cpp
-  코드를 생성하고 있습니다...
-     ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
-Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
