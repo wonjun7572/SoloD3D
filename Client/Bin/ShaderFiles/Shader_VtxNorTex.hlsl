@@ -13,10 +13,12 @@ vector			g_vLightSpecular;
 
 /* 포인트 라이트를 위한 */
 vector			g_vLightPos;
-float				g_fRange;
+float			g_fRange;
 
 /* 재질 정보 */
-texture2D		g_DiffuseTexture;
+texture2D		g_DiffuseTextureA;
+texture2D		g_DiffuseTextureB;
+
 texture2D		g_NormalTexture;
 vector			g_vMtrlAmbient  = vector(0.4f, 0.4f, 0.4f, 1.f);
 vector			g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
@@ -29,9 +31,13 @@ float			g_WaveFrequency;
 float			g_UVSpeed;
 
 /* 지형 쉐이딩을 위한 */
-texture2D g_BrushTexture;
-vector		g_vBrushPos;	// 포지션을 마우스 피킹하는 부분으로 
+texture2D		g_BrushTexture;
+vector			g_vBrushPos;	// 포지션을 마우스 피킹하는 부분으로 
 float			g_fBrushRange; // 이부분을 줄였다 늘렸다
+texture2D		g_FilterTexture;
+
+/* 껏다 켰다 */
+bool			g_bSolid;
 
 struct VS_IN
 {
@@ -104,7 +110,9 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vSourDiffuse = g_DiffuseTextureA.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vDestDiffuse = g_DiffuseTextureB.Sample(LinearSampler, In.vTexUV * 30.f);
+	vector		vFilter = g_FilterTexture.Sample(LinearSampler, In.vTexUV);
 	/* Brush Texture를 위한 */
 	vector		vBrush = (vector)0.f;
 
@@ -117,6 +125,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
 	}
+
+	vector		vMtrlDiffuse = vSourDiffuse * vFilter.r +
+		vDestDiffuse * (1.f - vFilter.r) + vBrush;
 
 	vector		vDiffuse = (g_vLightDiffuse * vMtrlDiffuse) + vBrush;
 
@@ -138,7 +149,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vMtrlDiffuse = g_DiffuseTextureA.Sample(LinearSampler, In.vTexUV);
 
 	vector		vDiffuse = (g_vLightDiffuse * vMtrlDiffuse);
 
@@ -156,11 +167,23 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 	return Out;
 }
 
+
 technique11 DefaultTechnique
 {
 	pass SPECULAMAPPING
 	{
 		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass SPECULAMAPPING_WIRE
+	{
+		SetRasterizerState(rsWireframe);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

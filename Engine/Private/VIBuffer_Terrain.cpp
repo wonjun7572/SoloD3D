@@ -2,12 +2,16 @@
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
+	,m_pPos(nullptr)
 {
 
 }
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
 	: CVIBuffer(rhs)
+	,m_pPos(rhs.m_pPos)
+	,m_iNumVerticesX(rhs.m_iNumVerticesX)
+	,m_iNumVerticesZ(rhs.m_iNumVerticesZ)
 {
 
 }
@@ -32,6 +36,8 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	m_iNumVerticesX = ih.biWidth;
 	m_iNumVerticesZ = ih.biHeight;
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
+
+	m_pPos = new _float3[m_iNumVertices];
 
 	pPixel = new _ulong[m_iNumVertices];
 	ZeroMemory(pPixel, sizeof(_ulong) * m_iNumVertices);
@@ -63,7 +69,8 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 			//	11111111 11111011 11111011 11111011
 			//& 00000000 00000000 00000000 11111111
 
-			pVertices[iIndex].vPosition = _float3(j, (pPixel[iIndex] & 0x000000ff) / 15.f, i);
+			pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (pPixel[iIndex] & 0x000000ff) / 15.f, static_cast<float>(i));
+			m_pPos[iIndex] = pVertices[iIndex].vPosition;
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
@@ -203,4 +210,6 @@ void CVIBuffer_Terrain::Free()
 {
 	__super::Free();
 
+	if (!m_bClone)
+		Safe_Delete_Array(m_pPos);
 }

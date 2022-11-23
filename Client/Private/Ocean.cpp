@@ -80,12 +80,12 @@ void COcean::Imgui_RenderProperty()
 		ImGui::SameLine();
 		ImGui::Text(" / ");
 		ImGui::SameLine();
-		ImGui::Text(to_string(m_pTextureCom[TYPE_DIFFUSE]->Get_AllTexsize()).c_str());
+		ImGui::Text(to_string(m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex()).c_str());
 
-		for (size_t i = 0; i < m_pTextureCom[TYPE_DIFFUSE]->Get_AllTexsize(); ++i)
+		for (_uint i = 0; i < m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex(); ++i)
 		{
-			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_DIFFUSE]->Get_Texture()[i], ImVec2(60.f, 60.f)))
-				m_iDiffuseTexNum = static_cast<_uint>(i);
+			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_DIFFUSE]->Get_Texture(i), ImVec2(60.f, 60.f)))
+				m_iDiffuseTexNum = i;
 
 			if (i == 0 || (i + 1) % 6)
 				ImGui::SameLine();
@@ -98,12 +98,12 @@ void COcean::Imgui_RenderProperty()
 		ImGui::SameLine();
 		ImGui::Text(" / ");
 		ImGui::SameLine();
-		ImGui::Text(to_string(m_pTextureCom[TYPE_NORMAL]->Get_AllTexsize()).c_str());
+		ImGui::Text(to_string(m_pTextureCom[TYPE_NORMAL]->Get_CntTex()).c_str());
 
-		for (size_t i = 0; i < m_pTextureCom[TYPE_NORMAL]->Get_AllTexsize(); ++i)
+		for (_uint i = 0; i < m_pTextureCom[TYPE_NORMAL]->Get_CntTex(); ++i)
 		{
-			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_NORMAL]->Get_Texture()[i], ImVec2(60.f, 60.f)))
-				m_iDiffuseTexNum = static_cast<_uint>(i);
+			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_NORMAL]->Get_Texture(i), ImVec2(60.f, 60.f)))
+				m_iDiffuseTexNum = i;
 
 			if (i == 0 || (i + 1) % 6)
 				ImGui::SameLine();
@@ -200,7 +200,7 @@ HRESULT COcean::SetUp_ShaderResources()
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture",m_iDiffuseTexNum)))
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureA",m_iDiffuseTexNum)))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom[TYPE_NORMAL]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture",m_iNormalTexNum)))

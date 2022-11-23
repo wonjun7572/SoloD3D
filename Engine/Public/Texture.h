@@ -17,17 +17,16 @@ public:
 
 	virtual void Imgui_RenderProperty() override;
 
-	const vector<ID3D11ShaderResourceView*>& Get_Texture() { return m_Textures; }
-	_uint  Get_CurNumTex() { return m_iNumTextures; }
-	size_t  Get_AllTexsize() { return m_Textures.size(); }
+	_uint  Get_CntTex() { return m_iNumTextures; }
+	ID3D11ShaderResourceView* Get_Texture(_uint index) { return m_pTextures[index]; }
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName, _uint iTextureIndex = 0);
+	HRESULT Bind_ShaderResources(class CShader* pShaderCom, const char* pConstantName);
 
 private:
-	_uint						m_iNumTextures = 0;
-	vector<ID3D11ShaderResourceView*>			m_Textures;
-	typedef vector<ID3D11ShaderResourceView*>	TEXTURES;
+	_uint							m_iNumTextures = 0;
+	ID3D11ShaderResourceView**		m_pTextures = nullptr;
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);

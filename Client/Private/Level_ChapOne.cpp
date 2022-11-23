@@ -77,23 +77,23 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCylinder"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCylinder"))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestSphere"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestSphere"))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCube"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCube"))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Terrain"))))
 	{
@@ -101,11 +101,11 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 		return E_FAIL;
 	}
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Ocean"))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Ocean"))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
 
 	Safe_Release(pGameInstance);
 

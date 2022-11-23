@@ -65,11 +65,7 @@ HRESULT CShader::Init(void * pArg)
 
 void CShader::Imgui_RenderProperty()
 {
-	ImGui::Text("InputLayOut Size : ");
-	ImGui::SameLine();
-	ImGui::Text(to_string(m_InputLayouts.size()).c_str());
-
-	ImGui::Text("Current NumPass :");
+	ImGui::Text("PASSES All Count  :");
 	ImGui::SameLine();
 	ImGui::Text(to_string(m_iNumPasses).c_str());
 }
@@ -131,6 +127,19 @@ HRESULT CShader::Set_ShaderResourceView(const char * pConstantName, ID3D11Shader
 		return E_FAIL;
 
 	return pVariable->SetResource(pSRV);
+}
+
+HRESULT CShader::Set_ShaderResourceViewArray(const char * pConstantName, ID3D11ShaderResourceView ** ppSRV, _uint iNumTextures)
+{
+	if (m_pEffect == nullptr)
+		return E_FAIL;
+
+	ID3DX11EffectShaderResourceVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName)->AsShaderResource();
+
+	if (pVariable == nullptr)
+		return E_FAIL;
+
+	return pVariable->SetResourceArray(ppSRV, 0 , iNumTextures);
 }
 
 HRESULT CShader::Set_MatrixArray(const char * pConstantName, const _float4x4 * pData, _uint iNumMatrices)

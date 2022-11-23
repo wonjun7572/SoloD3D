@@ -119,7 +119,7 @@ HRESULT CCamera_Dynamic::Render()
 
 void CCamera_Dynamic::Mouse_Fix()
 {
-	POINT pt{ g_iWinSizeX >> 1,g_iWinSizeY >> 1 };
+	POINT pt{ static_cast<LONG>(g_iWinSizeX >> 1), static_cast<LONG>(g_iWinSizeY >> 1) };
 
 	ClientToScreen(g_hWnd, &pt);
 	SetCursorPos(pt.x, pt.y);

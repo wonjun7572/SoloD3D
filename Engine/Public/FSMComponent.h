@@ -150,6 +150,7 @@ public:
 		m_pBuildStateName = szNodeName;
 		return *this;
 	}
+
 	CFSMComponentBuilder& Transition(const _tchar* szNextNodeNmae, const FSM_TRANSITION& tTransition)
 	{
 		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
@@ -167,12 +168,14 @@ public:
 
 		return *this;
 	}
+
 	CFSMComponentBuilder& OnStart(const std::function<void()>& onStart)
 	{
 		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
 		assert(itr != m_mapStates.end());
 
 		itr->second.OnStart = onStart;
+
 		return *this;
 	}
 
@@ -248,7 +251,6 @@ public:
 				});
 			}
 		}
-
 		return *this;
 	}
 
@@ -261,7 +263,6 @@ public:
 	{
 		return m_pInitStateName;
 	}
-
 
 private:
 	const _tchar* m_pBuildStateName = nullptr;

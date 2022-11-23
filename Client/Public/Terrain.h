@@ -15,7 +15,7 @@ BEGIN(Client)
 class CTerrain final : public CGameObject
 {
 public:
-	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_END };
+	enum TEXTURE { TYPE_DIFFUSE, TYPE_BRUSH, TYPE_FILTER, TYPE_END };
 
 private:
 	CTerrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -31,17 +31,31 @@ public:
 
 	virtual void Imgui_RenderProperty() override;
 
+private:/* For. Imgui*/
+	_float4	PickingOnTerrain(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
+
 private:
 	CShader*					m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom[TYPE_END] = { nullptr };
-	CVIBuffer_Terrain*	m_pVIBufferCom = nullptr;
+	CVIBuffer_Terrain*			m_pVIBufferCom = nullptr;
 
 private: /* For. Imgui*/
-	_uint			m_iDiffuseTexNum = 0;
+
+	bool			m_bPicking = true;
+	int				m_iPassNum = 0;
+
+	int				m_iTexRadioBtn = 0;
+
+	_uint			m_iDiffuseTexCnt = 0;
+	_uint			m_iDiffuseATexNum = 0;
+	_uint			m_iDiffuseBTexNum = 0;
+
 	_uint			m_iBrushTexNum = 0;
-	_float4		m_vBrushPos = _float4(0.f, 0.f, 0.f, 1.f);
-	_float		m_fBrushRange = 5.f;
+	_float4			m_vBrushPos = _float4(0.f, 0.f, 0.f, 1.f);
+	_float			m_fBrushRange = 5.f;
+
+	_uint			m_iFilterTexNum = 0;
 
 private:
 	HRESULT SetUp_Components();
