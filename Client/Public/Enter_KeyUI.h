@@ -26,7 +26,7 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	//void	KeyInput(_double TimeDelta);
+	void	KeyInput(_double TimeDelta);
 
 private:
 	CShader*				m_pShaderCom = nullptr;

@@ -135,6 +135,7 @@
     <ClInclude Include="..\public\Level_Tool.h">
       <Filter>LevelDesign\Tool</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LoadingHourglass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -188,6 +189,7 @@
     <ClCompile Include="..\private\Level_Tool.cpp">
       <Filter>LevelDesign\Tool</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LoadingHourglass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

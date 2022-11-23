@@ -90,36 +90,36 @@ HRESULT CEnter_KeyUI::Render()
 	return S_OK;
 }
 
-//void CEnter_KeyUI::KeyInput(_double TimeDelta)
-//{
-//	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-//
-//	if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_UPARROW))
-//		m_fSizeY += 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-//		m_fSizeY -= 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-//		m_fSizeX -= 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-//		m_fSizeX += 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
-//		m_fY -= 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-//		m_fY += 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-//		m_fX -= 1.f;
-//	else if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-//		m_fX += 1.f;
-//
-//	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
-//	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f, 1.f));
-//
-//	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-//	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(static_cast<float>(g_iWinSizeX), static_cast<float>(g_iWinSizeY), 0.f, 1.f));
-//
-//
-//	RELEASE_INSTANCE(CGameInstance);
-//}
+void CEnter_KeyUI::KeyInput(_double TimeDelta)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_UPARROW))
+		m_fSizeY += 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+		m_fSizeY -= 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+		m_fSizeX -= 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_LALT) && pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
+		m_fSizeX += 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+		m_fY -= 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+		m_fY += 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
+		m_fX -= 1.f;
+	else if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+		m_fX += 1.f;
+
+	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f, 0.f, 1.f));
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(static_cast<float>(g_iWinSizeX), static_cast<float>(g_iWinSizeY), 0.f, 1.f));
+
+
+	RELEASE_INSTANCE(CGameInstance);
+}
 
 HRESULT CEnter_KeyUI::SetUp_Components()
 {

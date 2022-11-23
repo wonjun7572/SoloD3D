@@ -6,6 +6,7 @@
 /*Logo*/
 #include "BackGround.h"
 #include "Enter_KeyUI.h"
+#include "LoadingHourglass.h"
 
 #include "TestCylinder.h"
 #include "TestSphere.h"
@@ -84,6 +85,11 @@ HRESULT CLoader::Loading_ForLogo()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_EnterKey.dds")))))
 		return E_FAIL;
 
+	/*For.Prototype_Component_Texture_LoadingGlass*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_LoadingGlass"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Loading/HUD_BMI_Loading_%d.png"), 56))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
@@ -97,6 +103,10 @@ HRESULT CLoader::Loading_ForLogo()
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnterKeyUI"), CEnter_KeyUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingHourglass"), CLoadingHourglass::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	m_strLoadingText = TEXT("로딩끝. ");
 
