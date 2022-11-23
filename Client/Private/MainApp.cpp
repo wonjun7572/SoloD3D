@@ -124,19 +124,19 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Sphere */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Sphere"),
-		CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 0.5f))))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Sphere"),
+	//	CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 0.5f))))
+	//	return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Cube"),
+	//	CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cylinder */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Cylinder"),
-		CVIBuffer_Cylinder::Create(m_pDevice, m_pContext , 50))))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Cylinder"),
+	//	CVIBuffer_Cylinder::Create(m_pDevice, m_pContext , 50))))
+	//	return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"),

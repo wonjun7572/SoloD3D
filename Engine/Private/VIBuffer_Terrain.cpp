@@ -187,7 +187,12 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 				vBrushPos.z - fBrushRange <= m_pVertices[iIndex].vPosition.z && m_pVertices[iIndex].vPosition.z < vBrushPos.z + fBrushRange)
 			{
 				m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), ((m_pHeightPixel[iIndex] & 0x000000ff)) / 15.f + fHeight, static_cast<float>(i));
-				m_pHeightPixel[iIndex] = 0xffffffff;
+				unsigned char* p = (unsigned char*)(&m_pHeightPixel[iIndex]);
+				unsigned char color = (unsigned char)(fHeight);
+				*p += (unsigned char)(color);		   // B
+				*(p + 1) += (unsigned char)(color);	   // G
+				*(p + 2) += (unsigned char)(color);    // R
+				*(p + 3) += (unsigned char)(color);    // A
 			}
 
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
@@ -277,21 +282,6 @@ HRESULT CVIBuffer_Terrain::SaveHeightMap()
 
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
 		return E_FAIL;
-
-	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
-	{
-		for (_uint j = 0; j < m_iNumVerticesX; ++j)
-		{
-			_uint      iIndex = i * m_iNumVerticesX + j;
-
-			float fTemp = 1.f;
-			unsigned char* p = (unsigned char*)(&m_pHeightPixel[iIndex]);
-			*p = (unsigned char)(fTemp * 255);		   // B
-			*(p + 1) = (unsigned char)(fTemp * 255);   // G
-			*(p + 2) = (unsigned char)(fTemp * 255);   // R
-			*(p + 3) = (unsigned char)(fTemp * 255);   // A
-		}
-	}
 
 	D3D11_MAPPED_SUBRESOURCE			SubResource;
 	ZeroMemory(&SubResource, sizeof SubResource);

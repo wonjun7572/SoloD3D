@@ -51,8 +51,8 @@ private: /* For. Imgui*/
 	int				m_iTexRadioBtn = 0;
 
 	_uint			m_iDiffuseTexCnt = 0;
-	_uint			m_iDiffuseATexNum = 0;
-	_uint			m_iDiffuseBTexNum = 0;
+	_uint			m_iDiffuseATexNum = 3;
+	_uint			m_iDiffuseBTexNum = 4;
 
 	_uint			m_iBrushTexNum = 0;
 	_float4			m_vBrushPos = _float4(0.f, 0.f, 0.f, 1.f);

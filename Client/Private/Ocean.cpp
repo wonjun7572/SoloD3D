@@ -34,7 +34,7 @@ HRESULT COcean::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Go_Left(30);
+	m_pTransformCom->Go_Left(15);
 	m_pTransformCom->Go_Down(2);
 	m_pTransformCom->Set_Scaled(_float3(0.25f, 1.f, 0.25f));
 	return S_OK;
@@ -63,7 +63,7 @@ HRESULT COcean::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(1);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Render();
 

@@ -135,14 +135,14 @@ HRESULT CLoader::Loading_ForChapter_1()
 	//	return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Water_D */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_D"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_Seafoam_01.dds")))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_D"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_Seafoam_01.dds")))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Water_N */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_N"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_N.dds")))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_N"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_N.dds")))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 	
@@ -152,9 +152,9 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Ocean */
-	/*if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Ocean"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Ocean"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Ocean/T_LargeWaves_H.bmp")))))
-		return E_FAIL;*/
+		return E_FAIL;
 	
 	/* For. Prototype_Component_FSM */
 	/*if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_FSM"),
@@ -182,8 +182,8 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Ocean */
-	/*if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
-		return E_FAIL;*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 
