@@ -165,7 +165,7 @@ void CTerrain::Imgui_RenderProperty()
 		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
 
 		ImGui::Checkbox("IsPicking", &m_bPicking);
-		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, -50.0f, 50.0f);
+		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, 0.0f, 255.0f);
 		// TODO : 헤이트맵 저장하는 부분 수정 필요
 		if (ImGui::Button("SaveHeight"))
 			m_pVIBufferCom->SaveHeightMap();

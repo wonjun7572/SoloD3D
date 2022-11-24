@@ -19,7 +19,7 @@ public:
 	virtual HRESULT Init_Prototype(const _tchar* pHeightMapFilePath);
 	virtual HRESULT Init(void* pArg);
 
-	HRESULT DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, _float fHeight);
+	HRESULT DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, unsigned char _Height);
 	HRESULT	SaveHeightMap();
 
 private:
@@ -32,6 +32,9 @@ private:
 
 	_float3*		m_pPos;
 	wstring			m_strFilePath;
+
+	BITMAPFILEHEADER	m_fH;
+	BITMAPINFOHEADER	m_iH;
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);

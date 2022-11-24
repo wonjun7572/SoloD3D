@@ -1,5 +1,11 @@
 #pragma once
 
+#define D3DCOLOR_ARGB(a,r,g,b) \
+    ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
+#define D3DCOLOR_RGB(r,g,b) \
+    ((D3DCOLOR)((((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
 #define GET_INSTANCE(CLASSNAME)	[](){											\
 	CLASSNAME*	pInstance = CLASSNAME::GetInstance();							\
 	if(nullptr == pInstance) {													\

@@ -3,11 +3,13 @@
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
   1개 파일이 복사되었습니다.
+  .\Engine\ThirdPartyLib\assimp-vc140-mt.lib
+  .\Engine\ThirdPartyLib\assimp-vc140-mtd.lib
   .\Engine\ThirdPartyLib\DirectXTK.lib
   .\Engine\ThirdPartyLib\DirectXTKd.lib
   .\Engine\ThirdPartyLib\Effects11.lib
   .\Engine\ThirdPartyLib\Effects11d.lib
-  4개 파일이 복사되었습니다.
+  6개 파일이 복사되었습니다.
   .\Engine\Bin\Engine.dll
   1개 파일이 복사되었습니다.
   .\Engine\Bin\Engine.dll
@@ -53,6 +55,93 @@
   .\Engine\Public\VIBuffer_Rect.h
   .\Engine\Public\VIBuffer_Sphere.h
   .\Engine\Public\VIBuffer_Terrain.h
+  .\Engine\Public\assimp\.editorconfig
+  .\Engine\Public\assimp\aabb.h
+  .\Engine\Public\assimp\ai_assert.h
+  .\Engine\Public\assimp\anim.h
+  .\Engine\Public\assimp\BaseImporter.h
+  .\Engine\Public\assimp\Bitmap.h
+  .\Engine\Public\assimp\BlobIOSystem.h
+  .\Engine\Public\assimp\ByteSwapper.h
+  .\Engine\Public\assimp\camera.h
+  .\Engine\Public\assimp\cexport.h
+  .\Engine\Public\assimp\cfileio.h
+  .\Engine\Public\assimp\cimport.h
+  .\Engine\Public\assimp\color4.h
+  .\Engine\Public\assimp\color4.inl
+  .\Engine\Public\assimp\config.h
+  .\Engine\Public\assimp\config.h.in
+  .\Engine\Public\assimp\CreateAnimMesh.h
+  .\Engine\Public\assimp\DefaultIOStream.h
+  .\Engine\Public\assimp\DefaultIOSystem.h
+  .\Engine\Public\assimp\DefaultLogger.hpp
+  .\Engine\Public\assimp\Defines.h
+  .\Engine\Public\assimp\defs.h
+  .\Engine\Public\assimp\Exceptional.h
+  .\Engine\Public\assimp\Exporter.hpp
+  .\Engine\Public\assimp\fast_atof.h
+  .\Engine\Public\assimp\GenericProperty.h
+  .\Engine\Public\assimp\Hash.h
+  .\Engine\Public\assimp\Importer.hpp
+  .\Engine\Public\assimp\importerdesc.h
+  .\Engine\Public\assimp\IOStream.hpp
+  .\Engine\Public\assimp\IOStreamBuffer.h
+  .\Engine\Public\assimp\IOSystem.hpp
+  .\Engine\Public\assimp\irrXMLWrapper.h
+  .\Engine\Public\assimp\light.h
+  .\Engine\Public\assimp\LineSplitter.h
+  .\Engine\Public\assimp\LogAux.h
+  .\Engine\Public\assimp\Logger.hpp
+  .\Engine\Public\assimp\LogStream.hpp
+  .\Engine\Public\assimp\Macros.h
+  .\Engine\Public\assimp\material.h
+  .\Engine\Public\assimp\material.inl
+  .\Engine\Public\assimp\MathFunctions.h
+  .\Engine\Public\assimp\matrix3x3.h
+  .\Engine\Public\assimp\matrix3x3.inl
+  .\Engine\Public\assimp\matrix4x4.h
+  .\Engine\Public\assimp\matrix4x4.inl
+  .\Engine\Public\assimp\MemoryIOWrapper.h
+  .\Engine\Public\assimp\mesh.h
+  .\Engine\Public\assimp\metadata.h
+  .\Engine\Public\assimp\NullLogger.hpp
+  .\Engine\Public\assimp\ParsingUtils.h
+  .\Engine\Public\assimp\pbrmaterial.h
+  .\Engine\Public\assimp\postprocess.h
+  .\Engine\Public\assimp\Profiler.h
+  .\Engine\Public\assimp\ProgressHandler.hpp
+  .\Engine\Public\assimp\qnan.h
+  .\Engine\Public\assimp\quaternion.h
+  .\Engine\Public\assimp\quaternion.inl
+  .\Engine\Public\assimp\RemoveComments.h
+  .\Engine\Public\assimp\scene.h
+  .\Engine\Public\assimp\SceneCombiner.h
+  .\Engine\Public\assimp\SGSpatialSort.h
+  .\Engine\Public\assimp\SkeletonMeshBuilder.h
+  .\Engine\Public\assimp\SmoothingGroups.h
+  .\Engine\Public\assimp\SmoothingGroups.inl
+  .\Engine\Public\assimp\SpatialSort.h
+  .\Engine\Public\assimp\StandardShapes.h
+  .\Engine\Public\assimp\StreamReader.h
+  .\Engine\Public\assimp\StreamWriter.h
+  .\Engine\Public\assimp\StringComparison.h
+  .\Engine\Public\assimp\StringUtils.h
+  .\Engine\Public\assimp\Subdivision.h
+  .\Engine\Public\assimp\texture.h
+  .\Engine\Public\assimp\TinyFormatter.h
+  .\Engine\Public\assimp\types.h
+  .\Engine\Public\assimp\vector2.h
+  .\Engine\Public\assimp\vector2.inl
+  .\Engine\Public\assimp\vector3.h
+  .\Engine\Public\assimp\vector3.inl
+  .\Engine\Public\assimp\version.h
+  .\Engine\Public\assimp\Vertex.h
+  .\Engine\Public\assimp\XMLTools.h
+  .\Engine\Public\assimp\ZipArchiveIOSystem.h
+  .\Engine\Public\assimp\Compiler\poppack1.h
+  .\Engine\Public\assimp\Compiler\pstdint.h
+  .\Engine\Public\assimp\Compiler\pushpack1.h
+  .\Engine\Public\assimp\port\AndroidJNI\AndroidJNIIOSystem.h
   .\Engine\Public\DirectXTK\Audio.h
   .\Engine\Public\DirectXTK\CommonStates.h
   .\Engine\Public\DirectXTK\DDSTextureLoader.h
@@ -106,4 +195,4 @@
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  94개 파일이 복사되었습니다.
+  181개 파일이 복사되었습니다.

@@ -1,3 +1,22 @@
-﻿  LoadingHourglass.cpp
+﻿  Client.cpp
+  TestSphere.cpp
+  TestCylinder.cpp
+  TestCube.cpp
+  Ocean.cpp
+  LoadingHourglass.cpp
+  Level_Tool.cpp
+  Enter_KeyUI.cpp
+  Camera_Dynamic.cpp
+  MainApp.cpp
+  Loader.cpp
+  Level_Logo.cpp
+  Level_Loading.cpp
+  Level_ChapOne.cpp
+  BackGround.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Terrain.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\client\private\terrain.cpp(48): warning C4244: '인수': 'Engine::_float'에서 'unsigned char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

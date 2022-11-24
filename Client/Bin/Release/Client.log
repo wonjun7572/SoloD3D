@@ -1,19 +1,17 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
-  compilation object save succeeded; see C:\Users\sam51\Desktop\SoloD3D\Client\Bin\Release\Shader_Shadow.cso
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_Shadow.cso
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
-  compilation object save succeeded; see C:\Users\sam51\Desktop\SoloD3D\Client\Bin\Release\Shader_VtxNorDifTan.cso
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_VtxNorDifTan.cso
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
-  compilation object save succeeded; see C:\Users\sam51\Desktop\SoloD3D\Client\Bin\Release\Shader_VtxNorTex.cso
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_VtxNorTex.cso
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
-  compilation object save succeeded; see C:\Users\sam51\Desktop\SoloD3D\Client\Bin\Release\Shader_VtxTex.cso
-  stdafx.cpp
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_VtxTex.cso
   BackGround.cpp
   Camera_Dynamic.cpp
-..\private\Camera_Dynamic.cpp(122): warning C4838: 'unsigned int'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
   Enter_KeyUI.cpp
   Level_ChapOne.cpp
   Level_ChapTwo.cpp
@@ -21,6 +19,7 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
   Level_Logo.cpp
   Level_Tool.cpp
   Loader.cpp
+  LoadingHourglass.cpp
   MainApp.cpp
   Ocean.cpp
   Terrain.cpp
@@ -29,9 +28,9 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
   TestSphere.cpp
   Client.cpp
   코드를 생성하고 있습니다.
-  792 of 792 functions (100.0%) were compiled, the rest were copied from previous compilation.
-    472 functions were new in current compilation
+  451 of 451 functions (100.0%) were compiled, the rest were copied from previous compilation.
+    61 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Client.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Client\Default\..\Bin\Release\Client.exe
+  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Release\Client.exe
   Client.vcxproj -> ..\Bin\Release\Client.pdb (Full PDB)

@@ -1,10 +1,12 @@
 #include "..\public\VIBuffer_Terrain.h"
+#include "GameUtils.h"
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
 	,m_pPos(nullptr)
 {
-
+	ZeroMemory(&m_fH, sizeof(BITMAPFILEHEADER));
+	ZeroMemory(&m_iH, sizeof(BITMAPINFOHEADER));
 }
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
@@ -17,7 +19,8 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
 	,m_pHeightPixel(rhs.m_pHeightPixel)
 	,m_strFilePath(rhs.m_strFilePath)
 {
-
+	memcpy(&m_fH, &rhs.m_fH, sizeof(BITMAPFILEHEADER));
+	memcpy(&m_iH, &rhs.m_iH, sizeof(BITMAPINFOHEADER));
 }
 
 HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
@@ -32,17 +35,13 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	if (0 == hFile)
 		return E_FAIL;
 
-	BITMAPFILEHEADER			fh;
-	BITMAPINFOHEADER			ih;
 	m_pHeightPixel = nullptr;
 
-	ReadFile(hFile, &fh, sizeof fh, &dwByte, nullptr);
-	ReadFile(hFile, &ih, sizeof ih, &dwByte, nullptr);
-
-	m_iNumVerticesX = ih.biWidth;
-	m_iNumVerticesZ = ih.biHeight;
+	ReadFile(hFile, &m_fH, sizeof BITMAPFILEHEADER, &dwByte, nullptr);
+	ReadFile(hFile, &m_iH, sizeof BITMAPINFOHEADER, &dwByte, nullptr);
+	m_iNumVerticesX = m_iH.biWidth;
+	m_iNumVerticesZ = m_iH.biHeight;
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
-
 	m_pPos = new _float3[m_iNumVertices];
 
 	m_pHeightPixel = new _ulong[m_iNumVertices];
@@ -71,7 +70,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		for (_uint j = 0; j < m_iNumVerticesX; ++j)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
-			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (m_pHeightPixel[iIndex] & 0x000000ff) / 15.f, static_cast<float>(i));
+			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (m_pHeightPixel[iIndex] & 0x000000ff) / 5.f, static_cast<float>(i));
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
 			m_pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
@@ -174,7 +173,7 @@ HRESULT CVIBuffer_Terrain::Init(void * pArg)
 }
 
 /* 코드 수정 필요함*/
-HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, _float fHeight)
+HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, unsigned char _Height)
 {
 
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
@@ -186,15 +185,13 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 			if (vBrushPos.x - fBrushRange <= m_pVertices[iIndex].vPosition.x && m_pVertices[iIndex].vPosition.x < vBrushPos.x + fBrushRange &&
 				vBrushPos.z - fBrushRange <= m_pVertices[iIndex].vPosition.z && m_pVertices[iIndex].vPosition.z < vBrushPos.z + fBrushRange)
 			{
-				m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), ((m_pHeightPixel[iIndex] & 0x000000ff)) / 15.f + fHeight, static_cast<float>(i));
-				unsigned char* p = (unsigned char*)(&m_pHeightPixel[iIndex]);
-				unsigned char color = (unsigned char)(fHeight);
-				*p += (unsigned char)(color);		   // B
-				*(p + 1) += (unsigned char)(color);	   // G
-				*(p + 2) += (unsigned char)(color);    // R
-				*(p + 3) += (unsigned char)(color);    // A
+				unsigned char iHeight = static_cast<unsigned char>(((m_pHeightPixel[iIndex] & 0x000000ff) + _Height) / 5.f);
+				m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), iHeight , static_cast<float>(i));
+				if (iHeight >= 0 && iHeight <= 255)
+				{
+					m_pHeightPixel[iIndex] = D3DCOLOR_ARGB(iHeight, iHeight, iHeight, iHeight);
+				}
 			}
-
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
 			//m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
@@ -262,38 +259,62 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 /* TODO : bmp 저장 고치기*/
 HRESULT CVIBuffer_Terrain::SaveHeightMap()
 {
-	ID3D11Texture2D*			pTexture2D = nullptr;
+	FILE* fp = nullptr;
+	char* szName = new char[MAX_PATH];
+	CGameUtils::wc2c(m_strFilePath.c_str(), szName);
 
-	D3D11_TEXTURE2D_DESC	TextureDesc;
-	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	fopen_s(&fp, szName, "wb");
 
-	TextureDesc.Width = m_iNumVerticesX;
-	TextureDesc.Height = m_iNumVerticesZ;
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
+	/*for (_uint i = 0; i < m_iNumVerticesZ; ++i)
+	{
+		for (_uint j = 0; j < m_iNumVerticesX; ++j)
+		{
+			_uint			iIndex = i * m_iNumVerticesX + j;
 
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;
-	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	TextureDesc.MiscFlags = 0;
+			m_pHeightPixel[iIndex] *= D3DCOLOR_ARGB(5, 5, 5, 5);
 
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
-		return E_FAIL;
+		}
+	}*/
+	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
+	{
+		for (_uint j = 0; j < m_iNumVerticesX; ++j)
+		{
+			_uint      iIndex = i * m_iNumVerticesZ + j;
 
-	D3D11_MAPPED_SUBRESOURCE			SubResource;
-	ZeroMemory(&SubResource, sizeof SubResource);
+			unsigned char* p = (unsigned char*)(&m_pHeightPixel[iIndex]);
+			*p *= 5;        
+			if (*p >= 255)
+				*p = 255;
+			else if (*p <= 0)
+				*p = 0;
+			*(p+1) *= 5;        
+			
+			if (*(p + 1) >= 255)
+				*(p + 1) = 255;
+			else if (*(p + 1) <= 0)
+				*(p + 1) = 0;
 
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+			*(p + 2) *= 5;        
+			if (*(p + 2) >= 255)
+				*(p + 2) = 255;
+			else if (*(p + 2) <= 0)
+				*(p + 2) = 0;
+			
+			*(p + 3) *= 5;         
+			if (*(p + 3) >= 255)
+				*(p + 3) = 255;
+			else if (*(p + 3) <= 0)
+				*(p + 3) = 0;
+		}
+	}
 
-	memcpy(SubResource.pData, m_pHeightPixel, sizeof(_ulong) * m_iNumVertices);
+	fwrite(&m_fH, sizeof BITMAPFILEHEADER, 1, fp);
+	fwrite(&m_iH, sizeof(BITMAPINFOHEADER),1, fp);
+	fwrite(m_pHeightPixel,sizeof(_ulong) * m_iNumVertices, 1, fp);
+	
+	fclose(fp);
 
-	m_pContext->Unmap(pTexture2D, 0);
-
-	if (FAILED(DirectX::SaveWICTextureToFile(m_pContext, pTexture2D, GUID_ContainerFormatBmp, m_strFilePath.c_str())))
-		return E_FAIL;
+	Safe_Delete_Array(szName);
 
 	return S_OK;
 }
