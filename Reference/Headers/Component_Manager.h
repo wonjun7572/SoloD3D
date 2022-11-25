@@ -14,6 +14,8 @@
 
 #include "FSMComponent.h"
 
+#include "Model.h"
+
 BEGIN(Engine)
 
 class CComponent_Manager final : public CBase

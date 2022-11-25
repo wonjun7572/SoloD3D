@@ -118,6 +118,15 @@
     <Filter Include="Singleton\Picking">
       <UniqueIdentifier>{8c8d1e4e-84f4-4e46-b28a-4163d61595de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Model">
+      <UniqueIdentifier>{8e50ba26-ff5c-44d6-b242-d845c07c5aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Behavior_Tree">
+      <UniqueIdentifier>{52b2a47f-7d19-41a5-80ca-5839ed6e26b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Model\Mesh">
+      <UniqueIdentifier>{9c0ab980-3004-4c34-aa65-5b0fa6d2c6b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -297,6 +306,12 @@
     <ClInclude Include="..\public\FSMComponent.h">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Model.h">
+      <Filter>Singleton\ComponentManager\Component\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Mesh.h">
+      <Filter>Singleton\ComponentManager\Component\Model\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -448,6 +463,12 @@
     </ClCompile>
     <ClCompile Include="..\private\FSMComponent.cpp">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Model.cpp">
+      <Filter>Singleton\ComponentManager\Component\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Mesh.cpp">
+      <Filter>Singleton\ComponentManager\Component\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

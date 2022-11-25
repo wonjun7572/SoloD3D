@@ -1,4 +1,4 @@
-﻿  VIBuffer_Terrain.cpp
+﻿  Mesh.cpp
   Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
@@ -40,6 +40,8 @@
   .\Engine\Public\Light.h
   .\Engine\Public\Light_Manager.h
   .\Engine\Public\MathUtils.h
+  .\Engine\Public\Mesh.h
+  .\Engine\Public\Model.h
   .\Engine\Public\Object_Manager.h
   .\Engine\Public\PipeLine.h
   .\Engine\Public\Renderer.h
@@ -195,4 +197,4 @@
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  181개 파일이 복사되었습니다.
+  183개 파일이 복사되었습니다.

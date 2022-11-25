@@ -45,7 +45,7 @@ void CTerrain::Tick(_double TimeDelta)
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		if(pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
-			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, m_fHeight);
+			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight));
 		RELEASE_INSTANCE(CGameInstance);
 	}
 }
@@ -166,7 +166,6 @@ void CTerrain::Imgui_RenderProperty()
 
 		ImGui::Checkbox("IsPicking", &m_bPicking);
 		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, 0.0f, 255.0f);
-		// TODO : 헤이트맵 저장하는 부분 수정 필요
 		if (ImGui::Button("SaveHeight"))
 			m_pVIBufferCom->SaveHeightMap();
 

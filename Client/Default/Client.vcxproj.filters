@@ -135,7 +135,12 @@
     <ClInclude Include="..\public\Level_Tool.h">
       <Filter>LevelDesign\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LoadingHourglass.h" />
+    <ClInclude Include="..\public\LoadingHourglass.h">
+      <Filter>GameObject\Logo\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sheila.h">
+      <Filter>GameObject\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -189,7 +194,12 @@
     <ClCompile Include="..\private\Level_Tool.cpp">
       <Filter>LevelDesign\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LoadingHourglass.cpp" />
+    <ClCompile Include="..\private\LoadingHourglass.cpp">
+      <Filter>GameObject\Logo\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sheila.cpp">
+      <Filter>GameObject\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -229,6 +239,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorDifTan.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

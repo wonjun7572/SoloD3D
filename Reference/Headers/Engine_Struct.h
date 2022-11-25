@@ -15,6 +15,11 @@ namespace Engine
 
 	}GRAPHIC_DESC;
 
+	typedef struct tagModelMaterial
+	{
+		class CTexture*		pTexture[AI_TEXTURE_TYPE_MAX];
+	}MODELMATERIAL;
+
 	/* 방향성광원, 점광원 : 방향벡터가 필요하다. */
 	typedef struct tagLightDesc
 	{

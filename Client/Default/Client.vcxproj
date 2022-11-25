@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\LoadingHourglass.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Ocean.h" />
+    <ClInclude Include="..\public\Sheila.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="..\private\LoadingHourglass.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
+    <ClCompile Include="..\private\Sheila.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />
@@ -230,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorDifTan.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
