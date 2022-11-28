@@ -27,6 +27,9 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
+		return E_FAIL;
+
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiTabObject(CImgui_PropertyEditor::Create());
 
@@ -80,35 +83,11 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCylinder"))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestSphere"))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TestCube"))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
-
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Terrain"))))
-	{
-		Safe_Release(pGameInstance);
 		return E_FAIL;
-	}
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Ocean"))))
-	{
-		Safe_Release(pGameInstance);
 		return E_FAIL;
-	}
 
 	Safe_Release(pGameInstance);
 
@@ -132,6 +111,21 @@ HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sheila"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_Statue(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_DragonStatue_1"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_DragonStatue_4"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

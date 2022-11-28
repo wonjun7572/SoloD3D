@@ -22,6 +22,7 @@ private:
 	HRESULT Ready_Layer_BackGround(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Camera(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Player(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Statue(const wstring& pLayerTag);
 
 public:
 	static CLevel_ChapOne* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

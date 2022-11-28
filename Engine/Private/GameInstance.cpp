@@ -302,10 +302,10 @@ _float4x4 CGameInstance::Get_TransformFloat4x4(CPipeLine::TRANSFORMSTATE eState)
 	return m_pPipeLine->Get_TransformFloat4x4(eState);
 }
 
-_matrix CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState)
+_float4x4 CGameInstance::Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)
-		return XMMatrixIdentity();
+		return  _float4x4();
 
 	return m_pPipeLine->Get_TransformMatrix_Inverse(eState);
 }

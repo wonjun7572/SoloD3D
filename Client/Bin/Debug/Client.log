@@ -1,6 +1,5 @@
-﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
-  
-  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxModel.cso
-  Sheila.cpp
+﻿  MainApp.cpp
+  Level_Loading.cpp
+  코드를 생성하고 있습니다...
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

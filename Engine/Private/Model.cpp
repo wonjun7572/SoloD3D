@@ -21,7 +21,13 @@ CModel::CModel(const CModel & rhs)
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
 
-
+	for (auto& pMaterial : m_Materials)
+	{
+		for (int i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+		{
+			Safe_AddRef(pMaterial.pTexture[i]);
+		}
+	}
 }
 
 HRESULT CModel::Init_Prototype(TYPE eType, const char * pModelFilePath)
@@ -37,7 +43,7 @@ HRESULT CModel::Init_Prototype(TYPE eType, const char * pModelFilePath)
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
 
-	if (FAILED(Ready_MeshContainers()))
+	if (FAILED(Ready_MeshContainers(eType)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Materials(pModelFilePath)))
@@ -51,6 +57,24 @@ HRESULT CModel::Init(void * pArg)
 	return S_OK;
 }
 
+HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char * pConstantName)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;
+
+	_uint iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	if (nullptr != m_Materials[iMaterialIndex].pTexture[eType])
+		m_Materials[iMaterialIndex].pTexture[eType]->Bind_ShaderResource(pShader, pConstantName);
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassIndex)
 {
 	pShader->Begin(iPassIndex);
@@ -60,22 +84,7 @@ HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassInde
 	return S_OK;
 }
 
-HRESULT CModel::SetMaterial(CShader * pShader, const char * pConstantName, _uint iMeshIndex, aiTextureType eType,_uint iTexIndex)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return E_FAIL;
-
-	ID3D11ShaderResourceView* pSRV = nullptr;
-	MODELMATERIAL modelMat = m_Materials[m_Meshes[iMeshIndex]->Get_MaterialIndex()];
-
-	if (modelMat.pTexture[eType] == nullptr)
-		return E_FAIL;
-
-	pSRV = modelMat.pTexture[eType]->Get_Texture(iTexIndex);
-	return pShader->Set_ShaderResourceView(pConstantName, pSRV);
-}
-
-HRESULT CModel::Ready_MeshContainers()
+HRESULT CModel::Ready_MeshContainers(TYPE eType)
 {
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
@@ -86,7 +95,7 @@ HRESULT CModel::Ready_MeshContainers()
 	{
 		aiMesh*		pAIMesh = m_pAIScene->mMeshes[i];
 
-		CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, pAIMesh);
+		CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, eType, pAIMesh);
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -182,6 +191,15 @@ void CModel::Free()
 		Safe_Release(pMesh);
 
 	m_Meshes.clear();
+
+	for (auto& pMaterial : m_Materials)
+	{
+		for (int i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+		{
+			Safe_Release(pMaterial.pTexture[i]);
+		}
+	}
+	m_Materials.clear();
 
 	m_Importer.FreeScene();
 }

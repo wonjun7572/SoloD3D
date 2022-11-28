@@ -34,9 +34,8 @@ HRESULT COcean::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Go_Left(15);
-	m_pTransformCom->Go_Down(2);
-	m_pTransformCom->Set_Scaled(_float3(0.25f, 1.f, 0.25f));
+	m_pTransformCom->Set_Scaled(_float3(5.f, 1.f, 5.f));
+
 	return S_OK;
 }
 
@@ -52,7 +51,7 @@ void COcean::Late_Tick(_double TimeDelta)
 	__super::Late_Tick(TimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT COcean::Render()
@@ -63,61 +62,21 @@ HRESULT COcean::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(2);
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	m_pVIBufferCom->Render();
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
+			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(m_pShaderCom, i, 1)))
+			return E_FAIL;
+	}
+	
 	return S_OK;
-}
-
-void COcean::Imgui_RenderProperty()
-{
-	if (ImGui::CollapsingHeader("For. Texture"))
-	{
-		ImGui::Text("TYPE_DIFFUSE : ");
-		ImGui::SameLine();
-		ImGui::Text(to_string(m_iDiffuseTexNum).c_str());
-		ImGui::SameLine();
-		ImGui::Text(" / ");
-		ImGui::SameLine();
-		ImGui::Text(to_string(m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex()).c_str());
-
-		for (_uint i = 0; i < m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex(); ++i)
-		{
-			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_DIFFUSE]->Get_Texture(i), ImVec2(60.f, 60.f)))
-				m_iDiffuseTexNum = i;
-
-			if (i == 0 || (i + 1) % 6)
-				ImGui::SameLine();
-		}
-		ImGui::NewLine();
-
-		ImGui::Text("TYPE_NORMAL : ");
-		ImGui::SameLine();
-		ImGui::Text(to_string(m_iNormalTexNum).c_str());
-		ImGui::SameLine();
-		ImGui::Text(" / ");
-		ImGui::SameLine();
-		ImGui::Text(to_string(m_pTextureCom[TYPE_NORMAL]->Get_CntTex()).c_str());
-
-		for (_uint i = 0; i < m_pTextureCom[TYPE_NORMAL]->Get_CntTex(); ++i)
-		{
-			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_NORMAL]->Get_Texture(i), ImVec2(60.f, 60.f)))
-				m_iDiffuseTexNum = i;
-
-			if (i == 0 || (i + 1) % 6)
-				ImGui::SameLine();
-		}
-		ImGui::NewLine();
-	}
-
-	if (ImGui::CollapsingHeader("For. WaveProperty"))
-	{
-		ImGui::DragFloat("WaveHeight", &m_fWaveHeight, 0.1f, 0.0f, 50.0f);
-		ImGui::DragFloat("WaveSpeed", &m_fSpeed, 0.1f, 0.0f, 50.0f);
-		ImGui::DragFloat("WaveFrequency", &m_fWaveFrequency, 0.1f, 0.0f, 50.0f);
-		ImGui::DragFloat("WaveUVSpeed", &m_fUVSpeed, 0.1f, 0.0f, 50.0f);
-	}
 }
 
 HRESULT COcean::SetUp_Components()
@@ -128,23 +87,18 @@ HRESULT COcean::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Ocean"), TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVIBufferCom)))
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Ocean"), TEXT("Com_Model"),
+		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_D"), TEXT("Com_Texture_D"),
-		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-		return E_FAIL;
-
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Water_N"), TEXT("Com_Texture_N"),
-		(CComponent**)&m_pTextureCom[TYPE_NORMAL])))
+	/* For.Com_HeightTexture */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Ocean_Height"), TEXT("Com_HeightTexture"),
+		(CComponent**)&m_pHeightTexCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -181,6 +135,12 @@ HRESULT COcean::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewInverseMatrix", &pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjInverseMatrix", &pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+	return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof _float4)))
 		return E_FAIL;
 
@@ -198,13 +158,10 @@ HRESULT COcean::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
 		return E_FAIL;
 
+	if (FAILED(m_pHeightTexCom->Bind_ShaderResource(m_pShaderCom, "g_HeightTexture", 0)))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureA",m_iDiffuseTexNum)))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom[TYPE_NORMAL]->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture",m_iNormalTexNum)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -237,10 +194,8 @@ void COcean::Free()
 {
 	__super::Free();
 
-	for(auto& pTexture : m_pTextureCom)
-		Safe_Release(pTexture);
-
-	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pHeightTexCom);
+	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 }

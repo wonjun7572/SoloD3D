@@ -70,6 +70,9 @@
     <Filter Include="LevelDesign\Tool">
       <UniqueIdentifier>{14b5ae69-1ee8-4fc5-a490-585f1be62ebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\DragonStatue">
+      <UniqueIdentifier>{818c5f4a-8819-4e59-80d8-9b7e9419e68e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -141,6 +144,12 @@
     <ClInclude Include="..\public\Sheila.h">
       <Filter>GameObject\Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DragonStatue_1.h">
+      <Filter>GameObject\DragonStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DragonStatue_4.h">
+      <Filter>GameObject\DragonStatue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -199,6 +208,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Sheila.cpp">
       <Filter>GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DragonStatue_1.cpp">
+      <Filter>GameObject\DragonStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DragonStatue_4.cpp">
+      <Filter>GameObject\DragonStatue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

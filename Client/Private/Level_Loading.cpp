@@ -28,6 +28,8 @@ HRESULT CLevel_Loading::Init(LEVEL eNextLevelID)
 
 	/* 로딩씬 구성을 위한 객체를 생성한다. */
 	/* 로딩바. 배경. 등등등. */
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -87,6 +89,19 @@ HRESULT CLevel_Loading::Render()
 		return E_FAIL;
 
 	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText().c_str());
+
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Ready_Layer_BackGround(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingHourglass"))))
+		return E_FAIL;
+	
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

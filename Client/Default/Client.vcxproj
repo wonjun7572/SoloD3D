@@ -177,6 +177,8 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
+    <ClInclude Include="..\public\DragonStatue_1.h" />
+    <ClInclude Include="..\public\DragonStatue_4.h" />
     <ClInclude Include="..\public\Enter_KeyUI.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
     <ClInclude Include="..\Public\Level_ChapTwo.h" />
@@ -200,6 +202,8 @@
   <ItemGroup>
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\DragonStatue_1.cpp" />
+    <ClCompile Include="..\private\DragonStatue_4.cpp" />
     <ClCompile Include="..\private\Enter_KeyUI.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
     <ClCompile Include="..\Private\Level_ChapTwo.cpp" />
