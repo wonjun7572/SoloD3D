@@ -1,13 +1,13 @@
 #include "..\public\Imgui_Manager.h"
 #include "Graphic_Device.h"
-#include "ImGui/ImGuiFileDialog.h"
+#include "ImGui\ImGuiFileDialog.h"
 #include "ImguiObject.h"
+#include "ImGui\ImGuizmo.h"
 
 IMPLEMENT_SINGLETON(CImGui_Manager)
 
 CImGui_Manager::CImGui_Manager()
 {
-
 }
 
 void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContextOut)
@@ -19,7 +19,7 @@ void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;		// Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-	//io.ConfigViewportsNoAutoMerge = true;
+																//io.ConfigViewportsNoAutoMerge = true;
 	io.ConfigViewportsNoTaskBarIcon = true;
 
 	ImGui::StyleColorsDark();
@@ -40,19 +40,64 @@ void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 	ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext);
 }
 
+
 void CImGui_Manager::Tick_Imgui()
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 }
 
 void CImGui_Manager::Render_Imgui()
 {
-	RenderTab();
-	RenderWindow();
+	if (m_vecObj.empty() == false)
+	{
+		// 마음대로 구현하기
+		for (const auto& imObj : m_vecObj)
+			imObj->Imgui_FreeRender();
 
-	ImGui::EndFrame();
+		// 매니저 탭 윈도우 렌더 시작
+		ImGui::Begin("TabWindow", nullptr, m_iWindowFlags);
+		// 메뉴바 렌더
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Windows"))
+			{
+				for (const auto& imObj : m_vecObj)
+					imObj->Imgui_Menu_OpenWindow();
+				ImGui::EndMenu();
+			}
+
+			for (const auto& imObj : m_vecObj)
+				imObj->Imgui_RenderMenu();
+
+			ImGui::EndMenuBar();
+		}
+
+		// 탭 렌더
+		if (ImGui::BeginTabBar("Manager_Tab", m_iTabBarFlags))
+		{
+			for (const auto& imObj : m_vecObj)
+			{
+				if (strcmp(imObj->GetTabName(), "##") == 0) // 탭 이름 초기화 안하면 tab 생성 안함
+					continue;
+
+				if (ImGui::BeginTabItem(imObj->GetTabName()))
+				{
+					imObj->Imgui_RenderTab();
+					ImGui::EndTabItem();
+				}
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+
+		// 추가 윈도우 렌더
+		for (const auto& imObj : m_vecObj)
+			imObj->Imgui_StartWindow();
+	}
+
 	ImGui::Render();
 }
 
@@ -67,62 +112,17 @@ void CImGui_Manager::Render_Update_ImGui()
 	}
 }
 
-void CImGui_Manager::Add_ImguiTabObject(CImguiObject* ImguiObject)
+void CImGui_Manager::Add_ImguiObject(CImguiObject* pImguiObject)
 {
-	if (ImguiObject == nullptr)
-		return;
-
-	m_vecTab.push_back(ImguiObject);
-}
-
-void CImGui_Manager::Add_ImguiWindowObject(CImguiObject* ImguiObject)
-{
-	if (ImguiObject == nullptr)
-		return;
-
-	m_vecWin.push_back(ImguiObject);
+	if (pImguiObject)
+		m_vecObj.push_back(pImguiObject);
 }
 
 void CImGui_Manager::Clear_ImguiObjects()
 {
-	for (auto& e : m_vecTab)
+	for (auto& e : m_vecObj)
 		Safe_Release(e);
-	m_vecTab.clear();
-
-	for (auto& e : m_vecWin)
-		Safe_Release(e);
-	m_vecWin.clear();
-}
-
-void CImGui_Manager::RenderTab()
-{
-	if (m_vecTab.empty())
-		return;
-
-	ImGui::Begin("TabWindow");
-	if (ImGui::BeginTabBar("Manager_Tab", ImGuiTabBarFlags_None))
-	{
-		for (const auto& imTabObj : m_vecTab)
-		{
-			if (ImGui::BeginTabItem(imTabObj->GetTabName()))
-			{
-				imTabObj->Imgui_RenderTab();
-				ImGui::EndTabItem();
-			}
-		}
-		ImGui::EndTabBar();
-	}
-	ImGui::End();
-}
-
-void CImGui_Manager::RenderWindow()
-{
-	for (const auto& imWinObj : m_vecWin)
-	{
-		ImGui::Begin(imWinObj->GetWindowName());
-		imWinObj->Imgui_RenderWindow();
-		ImGui::End();
-	}
+	m_vecObj.clear();
 }
 
 void CImGui_Manager::Free()

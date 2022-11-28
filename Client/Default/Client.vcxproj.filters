@@ -73,6 +73,9 @@
     <Filter Include="GameObject\DragonStatue">
       <UniqueIdentifier>{818c5f4a-8819-4e59-80d8-9b7e9419e68e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LevelDesign\Loading\UI">
+      <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -138,9 +141,6 @@
     <ClInclude Include="..\public\Level_Tool.h">
       <Filter>LevelDesign\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LoadingHourglass.h">
-      <Filter>GameObject\Logo\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Sheila.h">
       <Filter>GameObject\Player</Filter>
     </ClInclude>
@@ -149,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="..\public\DragonStatue_4.h">
       <Filter>GameObject\DragonStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadingHourglass.h">
+      <Filter>LevelDesign\Loading\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +191,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Default</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Terrain.cpp">
-      <Filter>GameObject\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Ocean.cpp">
       <Filter>GameObject\Ocean</Filter>
     </ClCompile>
@@ -203,9 +203,6 @@
     <ClCompile Include="..\private\Level_Tool.cpp">
       <Filter>LevelDesign\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LoadingHourglass.cpp">
-      <Filter>GameObject\Logo\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Sheila.cpp">
       <Filter>GameObject\Player</Filter>
     </ClCompile>
@@ -214,6 +211,12 @@
     </ClCompile>
     <ClCompile Include="..\private\DragonStatue_4.cpp">
       <Filter>GameObject\DragonStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain.cpp">
+      <Filter>GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadingHourglass.cpp">
+      <Filter>LevelDesign\Loading\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,12 +251,6 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
-      <Filter>ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
-      <Filter>ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorDifTan.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">

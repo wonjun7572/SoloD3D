@@ -24,7 +24,7 @@ HRESULT CLevel_Logo::Init()
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
-	CGameInstance::GetInstance()->Add_ImguiTabObject(CImgui_PropertyEditor::Create());
+	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 	
 	return S_OK;
 }

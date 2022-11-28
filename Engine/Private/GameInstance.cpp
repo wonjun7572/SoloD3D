@@ -236,6 +236,20 @@ HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const wstring& pLayer
 	return m_pObjectMgr->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg);
 }
 
+void CGameInstance::Imgui_ProtoViewer(const _tchar*& szSelectedProto)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+	m_pObjectMgr->Imgui_ProtoViewer(szSelectedProto);
+}
+
+void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+	m_pObjectMgr->Imgui_ObjectViewer(iLevel, pSelectedObject);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, CComponent * pPrototype)
 {
 	if (m_pComponetMgr == nullptr)
@@ -268,16 +282,10 @@ void CGameInstance::Render_Update_ImGui()
 	m_pImGuiMgr->Render_Update_ImGui();
 }
 
-void CGameInstance::Add_ImguiTabObject(CImguiObject* ImguiObject)
+void CGameInstance::Add_ImguiObject(CImguiObject* pImguiObject)
 {
 	if (m_pImGuiMgr == nullptr) return;
-	m_pImGuiMgr->Add_ImguiTabObject(ImguiObject);
-}
-
-void CGameInstance::Add_ImguiWindowObject(CImguiObject* ImguiObject)
-{
-	if (m_pImGuiMgr == nullptr) return;
-	m_pImGuiMgr->Add_ImguiWindowObject(ImguiObject);
+	m_pImGuiMgr->Add_ImguiObject(pImguiObject);
 }
 
 void CGameInstance::Clear_ImguiObjects()
@@ -285,6 +293,7 @@ void CGameInstance::Clear_ImguiObjects()
 	if (m_pImGuiMgr == nullptr) return;
 	m_pImGuiMgr->Clear_ImguiObjects();
 }
+
 
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
@@ -384,8 +393,6 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 
 void CGameInstance::Release_Engine()
 {
-	CImGui_Manager::GetInstance()->DestroyInstance();
-
 	CGameInstance::GetInstance()->DestroyInstance();
 
 	CObject_Manager::GetInstance()->DestroyInstance();
@@ -405,10 +412,13 @@ void CGameInstance::Release_Engine()
 	CGraphic_Device::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
+
+	CImGui_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pComponetMgr);
 	Safe_Release(m_pPipeLine);
 	Safe_Release(m_pTimerMgr);
@@ -416,7 +426,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pInputDev);
-	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pLightMgr);
 	Safe_Release(m_pGraphicDev);
 }

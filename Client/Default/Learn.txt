@@ -11,3 +11,6 @@
 
 입자계(particle system, 拉子季)는 유한한 개의 입자가 모인 시스템
 
+Tessellation
+큰 규모에 적용
+동적 LOD 

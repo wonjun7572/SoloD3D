@@ -24,10 +24,8 @@ sampler NormalSampler = sampler_state
 	AddressV = wrap;
 };
 
-
 RasterizerState rsSolidframe{ FillMode = Solid; };
 RasterizerState rsWireframe{ FillMode = WireFrame; };
-
 
 /* 텍스쳐로부터 픽셀의 색을 샘플링(가져온다) 해오는 방식. */
 sampler LinearSampler = sampler_state

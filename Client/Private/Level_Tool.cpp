@@ -19,7 +19,7 @@ HRESULT CLevel_Tool::Init()
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
-	CGameInstance::GetInstance()->Add_ImguiTabObject(CImgui_PropertyEditor::Create());
+	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 
 	return S_OK;
 }
@@ -27,6 +27,15 @@ HRESULT CLevel_Tool::Init()
 void CLevel_Tool::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
+
+	if (ImGui::Button("DragonStatue_1"))
+	{
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+		pGameInstance->Clone_GameObject(LEVEL_TOOL, L"Layer_Camera", TEXT("Prototype_GameObject_DragonStatue_1"));
+
+		RELEASE_INSTANCE(CGameInstance);
+	}
 }
 
 void CLevel_Tool::Late_Tick(_double TimeDelta)

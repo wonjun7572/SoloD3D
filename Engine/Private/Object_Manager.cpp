@@ -103,6 +103,26 @@ void CObject_Manager::Late_Tick(_double TimeDelta)
 
 void CObject_Manager::Imgui_ProtoViewer(OUT const _tchar *& szSelectedProto)
 {
+	if (ImGui::CollapsingHeader("ProtoViewer"))
+	{
+		if (ImGui::BeginListBox("##"))
+		{
+			for (auto& ProtoPair : m_Prototypes)
+			{
+				const bool bSelected = (szSelectedProto != nullptr) && (0 == lstrcmp(ProtoPair.first.c_str(), szSelectedProto));
+				if (bSelected)
+					ImGui::SetItemDefaultFocus();
+
+				char szViewName[512], szProtoName[256];
+				CGameUtils::wc2c(ProtoPair.first.c_str(), szProtoName);
+				sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+				if (ImGui::Selectable(szViewName, bSelected))
+					szSelectedProto = ProtoPair.first.c_str();
+			}
+
+			ImGui::EndListBox();
+		}
+	}
 }
 
 void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelectedObject)
@@ -126,13 +146,17 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelec
 					for (auto& obj : Pair.second->GetGameObjects())
 					{
 						const bool bSelected = pSelectedObject == obj;
+
 						if (bSelected)
 						{
 							ImGui::SetItemDefaultFocus();
 							bFound = true;
 						}
 
-						if (ImGui::Selectable(typeid(*obj).name(), bSelected))
+						char szAddressName[256];
+						sprintf_s(szAddressName, "%s[%p]", typeid(*obj).name(), obj);
+
+						if (ImGui::Selectable(szAddressName, bSelected))
 						{
 							pSelectedObject = obj;
 							bFound = true;

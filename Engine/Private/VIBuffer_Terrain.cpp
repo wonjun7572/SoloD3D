@@ -172,7 +172,6 @@ HRESULT CVIBuffer_Terrain::Init(void * pArg)
 	return S_OK;
 }
 
-/* 코드 수정 필요함*/
 HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, unsigned char _Height)
 {
 
@@ -193,7 +192,6 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 				}
 			}
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
-			//m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
 	}
 
@@ -256,7 +254,7 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 
 	return S_OK;
 }
-/* TODO : bmp 저장 고치기*/
+
 HRESULT CVIBuffer_Terrain::SaveHeightMap()
 {
 	FILE* fp = nullptr;
@@ -265,16 +263,6 @@ HRESULT CVIBuffer_Terrain::SaveHeightMap()
 
 	fopen_s(&fp, szName, "wb");
 
-	/*for (_uint i = 0; i < m_iNumVerticesZ; ++i)
-	{
-		for (_uint j = 0; j < m_iNumVerticesX; ++j)
-		{
-			_uint			iIndex = i * m_iNumVerticesX + j;
-
-			m_pHeightPixel[iIndex] *= D3DCOLOR_ARGB(5, 5, 5, 5);
-
-		}
-	}*/
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
 	{
 		for (_uint j = 0; j < m_iNumVerticesX; ++j)

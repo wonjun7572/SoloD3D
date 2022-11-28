@@ -48,16 +48,17 @@ public: // Level_Manager
 public: /* For.Object_Manager */
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr);
+	void	Imgui_ProtoViewer(const _tchar*& szSelectedProto);
+	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
 
-public:		/* For ImGui_Manager */
+public: // for imgui manager
 	void Render_ImGui();
 	void Render_Update_ImGui();
-	void Add_ImguiTabObject(class CImguiObject* ImguiObject);
-	void Add_ImguiWindowObject(class CImguiObject* ImguiObject);
+	void Add_ImguiObject(class CImguiObject* pImguiObject);
 	void Clear_ImguiObjects();
 
 public: /* For.PipeLine */
