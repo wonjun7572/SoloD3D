@@ -26,15 +26,16 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	virtual void Imgui_RenderProperty() override;
+
 private:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CModel*						m_pModelCom = nullptr;
 	CTexture*					m_pHeightTexCom = nullptr;
 
-	_uint						m_iDiffuseTexNum = 0;
-	_uint						m_iNormalTexNum = 0;
 	_float						m_fTimeDelta = 0.f;
+	_float						m_fWaveTime = 0.1f;
 	_float						m_fWaveHeight = 5.f;
 	_float						m_fSpeed = 2.f;
 	_float						m_fWaveFrequency = 15.f;

@@ -3,6 +3,7 @@
 #include "Layer.h"
 #include "GameObject.h"
 #include "GameUtils.h"
+#include "Transform.h"
 
 IMPLEMENT_SINGLETON(CObject_Manager);
 
@@ -172,6 +173,125 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelec
 
 	if (bFound == false)
 		pSelectedObject = nullptr;
+}
+
+void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
+{
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	HANDLE      hFile = CreateFile(strDirectory.c_str(),
+		GENERIC_WRITE,        
+		NULL,				  
+		NULL,					
+		CREATE_ALWAYS,        
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);					
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	const LAYERS& targetLevel = m_pLayers[iLevel];
+	DWORD dwByte = 0;
+	
+	_uint layerSize = targetLevel.size();
+	WriteFile(hFile, &layerSize, sizeof(_uint), &dwByte, nullptr);
+	for (auto& Pair : targetLevel) // for layer loop
+	{
+		_uint gameObjSize = Pair.second->GetGameObjects().size();
+		WriteFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
+		
+		_tchar szLayerName[256] = {};
+		wcscpy_s(szLayerName, 256, Pair.first.c_str());
+		WriteFile(hFile, &szLayerName, 256, &dwByte, nullptr);
+		
+		for (auto& obj : Pair.second->GetGameObjects())
+		{
+			char szName[256] = {};
+			strcpy_s(szName, 256, typeid(*obj).name());
+			WriteFile(hFile, &szName, 256 , &dwByte, nullptr);
+		}
+	}
+
+	for (auto& Pair : targetLevel) // for layer loop
+	{
+		for (auto& obj : Pair.second->GetGameObjects())
+		{
+			auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
+
+			if (iter == obj->GetComponents().end())
+				return;
+			_matrix worldMatrix = dynamic_cast<CTransform*>(iter->second)->Get_WorldMatrix();
+			WriteFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
+		}
+	}
+			
+	CloseHandle(hFile);
+	MSG_BOX("Save_Complete!!!");
+}
+
+void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
+{
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	HANDLE      hFile = CreateFile(strDirectory.c_str(),    
+		GENERIC_READ,         
+		NULL,					
+		NULL,					
+		OPEN_EXISTING,        
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);					
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	const LAYERS& targetLevel = m_pLayers[iLevel];
+	DWORD   dwByte = 0;
+
+	_uint layerSize;
+	ReadFile(hFile, &layerSize, sizeof(_uint), &dwByte, nullptr);
+	for (_uint i = 0; i < layerSize; ++i)
+	{
+		_uint gameObjSize;
+		ReadFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
+
+		_tchar szLayerName[256];
+		ReadFile(hFile, &szLayerName, 256, &dwByte, nullptr);
+
+		for (_uint j = 0; j < gameObjSize; ++j)
+		{
+			char szName[256];
+			ReadFile(hFile, &szName, 256 , &dwByte, nullptr);
+
+			for (auto& proto : m_Prototypes)
+			{
+				if (!strcmp(szName, typeid(*(proto.second)).name()))
+				{
+					Clone_GameObject(iLevel, szLayerName, proto.first);
+				}
+			}
+		}
+	}
+
+	for (auto& Pair : targetLevel) // for layer loop
+	{
+		for (auto& obj : Pair.second->GetGameObjects())
+		{
+			auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
+
+			if (iter == obj->GetComponents().end())
+				return;
+
+			_matrix worldMatrix = XMMatrixIdentity();
+			ReadFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
+			_float4x4 world4x4;
+			XMStoreFloat4x4(&world4x4, worldMatrix);
+			dynamic_cast<CTransform*>(iter->second)->SetWorldMatrix(world4x4);
+		}
+	}
+
+	CloseHandle(hFile);
 }
 
 CGameObject * CObject_Manager::Find_Prototype(const wstring& pPrototypeTag)

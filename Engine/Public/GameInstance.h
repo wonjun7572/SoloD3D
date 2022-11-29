@@ -50,6 +50,8 @@ public: /* For.Object_Manager */
 	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr);
 	void	Imgui_ProtoViewer(const _tchar*& szSelectedProto);
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+	void	SaveData(_uint iLevel,const wstring& strDirectory);
+	void	LoadData(_uint iLevel, const wstring& strDirectory);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);

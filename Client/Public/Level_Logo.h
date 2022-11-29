@@ -17,8 +17,10 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	ImguiRenderTab();
+
 private:
-	HRESULT Ready_Layer_BackGround(const wstring& pLayerTag);
+	HRESULT Ready_Layer_UI(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Camera(const wstring& pLayerTag);
 
 public:

@@ -180,6 +180,7 @@
     <ClInclude Include="..\public\DragonStatue_1.h" />
     <ClInclude Include="..\public\DragonStatue_4.h" />
     <ClInclude Include="..\public\Enter_KeyUI.h" />
+    <ClInclude Include="..\public\FieldGrass_1.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
     <ClInclude Include="..\Public\Level_ChapTwo.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="..\private\DragonStatue_1.cpp" />
     <ClCompile Include="..\private\DragonStatue_4.cpp" />
     <ClCompile Include="..\private\Enter_KeyUI.cpp" />
+    <ClCompile Include="..\private\FieldGrass_1.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
     <ClCompile Include="..\Private\Level_ChapTwo.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />

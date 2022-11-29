@@ -76,6 +76,12 @@
     <Filter Include="LevelDesign\Loading\UI">
       <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Forest">
+      <UniqueIdentifier>{d687601e-67d7-4a34-b9bf-f08df456cf8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Forest\Grass">
+      <UniqueIdentifier>{7f79373c-42ad-41ce-82b5-c47e61f83378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -153,6 +159,9 @@
     <ClInclude Include="..\public\LoadingHourglass.h">
       <Filter>LevelDesign\Loading\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\FieldGrass_1.h">
+      <Filter>GameObject\Forest\Grass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -217,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="..\private\LoadingHourglass.cpp">
       <Filter>LevelDesign\Loading\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FieldGrass_1.cpp">
+      <Filter>GameObject\Forest\Grass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

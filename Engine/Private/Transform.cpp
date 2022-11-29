@@ -58,6 +58,9 @@ HRESULT CTransform::Init(void * pArg)
 void CTransform::Imgui_RenderProperty()
 {
 	ImGuizmo::BeginFrame();
+	ImGui::InputFloat("SpeedPerSec", &m_TransformDesc.fSpeedPerSec);
+	ImGui::InputFloat("RotationPerSec", &m_TransformDesc.fRotationPerSec);
+
 	static float snap[3] = { 1.f, 1.f, 1.f };
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
 	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);

@@ -84,6 +84,8 @@ public:
 	/* 추적한다 .*/
 	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f);
 
+	void SetWorldMatrix(_float4x4 matrix) { m_WorldMatrix = matrix; }
+
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
 

@@ -43,7 +43,7 @@ void COcean::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_fTimeDelta += static_cast<float>(TimeDelta * 0.1f);
+	m_fTimeDelta += static_cast<float>(TimeDelta * m_fWaveTime);
 }
 
 void COcean::Late_Tick(_double TimeDelta)
@@ -77,6 +77,18 @@ HRESULT COcean::Render()
 	}
 	
 	return S_OK;
+}
+
+void COcean::Imgui_RenderProperty()
+{
+	if (ImGui::CollapsingHeader("For. Wave"))
+	{
+		ImGui::DragFloat("WaveTime", &m_fWaveTime, 0.01f, 0.f, 50.f);
+		ImGui::DragFloat("WaveHeight", &m_fWaveHeight, 0.01f, 0.f, 50.f);
+		ImGui::DragFloat("WaveSpeed", &m_fSpeed, 0.01f, 0.f, 50.f);
+		ImGui::DragFloat("WaveFrequency", &m_fWaveFrequency, 0.01f, 0.f, 50.f);
+		ImGui::DragFloat("UVSpeed", &m_fUVSpeed, 0.01f, 0.f, 50.f);
+	}
 }
 
 HRESULT COcean::SetUp_Components()
@@ -139,7 +151,7 @@ HRESULT COcean::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjInverseMatrix", &pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
-	return E_FAIL;
+		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof _float4)))
 		return E_FAIL;

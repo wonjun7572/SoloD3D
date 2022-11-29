@@ -250,6 +250,22 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObjectMgr->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
+void CGameInstance::SaveData(_uint iLevel, const wstring& strDirectory)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->SaveData(iLevel, strDirectory);
+}
+
+void CGameInstance::LoadData(_uint iLevel, const wstring& strDirectory)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+	
+	m_pObjectMgr->LoadData(iLevel, strDirectory);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, CComponent * pPrototype)
 {
 	if (m_pComponetMgr == nullptr)

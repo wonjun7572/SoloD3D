@@ -19,6 +19,7 @@ protected:
 
 public:
 	static wstring m_pTransformComTag;
+	map<wstring, class CComponent*>& GetComponents() { return m_Components; }
 
 public:
 	virtual HRESULT Init_Prototype();
@@ -43,7 +44,6 @@ protected:
 	map<wstring, class CComponent*>			m_Components;
 
 	CTransform*								m_pTransformCom = nullptr;
-
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, class CComponent** ppOut, void* pArg = nullptr);

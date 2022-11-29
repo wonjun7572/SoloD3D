@@ -34,6 +34,8 @@ public: /* imgui */
 	// 해당 Object가 없거나 사라지면 nullptr로 돌려준다.
 	void Imgui_ObjectViewer(_uint iLevel, OUT CGameObject*& pSelectedObject);
 
+	void SaveData(_uint iLevel, wstring strDirectory);
+	void LoadData(_uint iLevel, wstring strDirectory);
 
 private: /* 원형객체들을 모아놓는다. */
 	map<wstring, class CGameObject*>			m_Prototypes;

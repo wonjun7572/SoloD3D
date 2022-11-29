@@ -49,7 +49,7 @@ void CMainApp::Tick(_double deltaTime)
 {
 	if (m_pGameInstance == nullptr)
 		return;
-
+	
 	m_pGameInstance->Tick_Engine(deltaTime);
 }
 

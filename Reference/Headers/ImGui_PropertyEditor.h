@@ -14,6 +14,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 	virtual void Imgui_RenderTab() override;
+	
 	static CImgui_PropertyEditor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	virtual void Free() override;
 

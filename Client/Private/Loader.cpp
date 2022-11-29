@@ -15,8 +15,12 @@
 
 #include "Sheila.h"
 
+/*Statue*/
 #include "DragonStatue_1.h"
 #include "DragonStatue_4.h"
+
+/*Forest*/
+#include "FieldGrass_1.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -103,8 +107,6 @@ HRESULT CLoader::Loading_ForLogo()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnterKeyUI"), CEnter_KeyUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	m_strLoadingText = TEXT("로딩끝. ");
-
 	m_isFinished = true;
 
 	Safe_Release(pGameInstance);
@@ -121,7 +123,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_Texture_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BMI_Terrain/Level1/Diffuse/TextureD_%d.dds"), 6))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BMI_Terrain/Level1/Diffuse/TextureD_%d.dds"), 7))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Brush*/
@@ -173,6 +175,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/DragonStatue/4/DragonStatue_4.fbx"))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_FieldGrass_1 */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_FieldGrass_1"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Forest/Grass/FieldGrass_1.fbx"))))
+		return E_FAIL;
+
+
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
 	/* For.Prototype_Component_Shader_VtxModel*/
@@ -200,6 +208,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_GameObject_DragonStatue_4 */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_4"), CDragonStatue_4::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_FieldGrass_1*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldGrass_1"), CFieldGrass_1::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
@@ -238,27 +250,9 @@ HRESULT CLoader::Loading_ForTool()
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
-	/* For.Prototype_Component_Model_DragonStatue_1 */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_DragonStatue_1"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/DragonStatue/1/DragonStatue_1.fbx"))))
-		return E_FAIL;
-
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
-	/* For.Prototype_Component_Shader_VtxModel*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxModel"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
-		return E_FAIL;
-
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
-
-	/* For.Prototype_GameObject_DragonStatue_1 */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_1"), CDragonStatue_1::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_DragonStatue_4 */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_4"), CDragonStatue_4::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 

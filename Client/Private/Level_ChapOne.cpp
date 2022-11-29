@@ -30,8 +30,15 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
+		return E_FAIL;
+
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
+
+	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -39,6 +46,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 void Client::CLevel_ChapOne::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
+	ImguiRenderTab();
 }
 
 void Client::CLevel_ChapOne::Late_Tick(_double TimeDelta)
@@ -54,6 +62,18 @@ HRESULT Client::CLevel_ChapOne::Render()
 	SetWindowText(g_hWnd, TEXT("Level : CHAPTER 1"));
 
 	return S_OK;
+}
+
+void CLevel_ChapOne::ImguiRenderTab()
+{
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	if (ImGui::Button("Transform_Save"))
+	{
+		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+		pGameInstance->SaveData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
+		Safe_Release(pGameInstance);
+	}
 }
 
 HRESULT CLevel_ChapOne::Ready_Lights()
@@ -126,6 +146,18 @@ HRESULT CLevel_ChapOne::Ready_Layer_Statue(const wstring & pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_DragonStatue_4"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_Forest(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FieldGrass_1"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

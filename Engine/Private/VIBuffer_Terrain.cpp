@@ -70,7 +70,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		for (_uint j = 0; j < m_iNumVerticesX; ++j)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
-			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (m_pHeightPixel[iIndex] & 0x000000ff) / 5.f, static_cast<float>(i));
+			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), (m_pHeightPixel[iIndex] & 0x000000ff), static_cast<float>(i));
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
 			m_pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
@@ -184,7 +184,7 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 			if (vBrushPos.x - fBrushRange <= m_pVertices[iIndex].vPosition.x && m_pVertices[iIndex].vPosition.x < vBrushPos.x + fBrushRange &&
 				vBrushPos.z - fBrushRange <= m_pVertices[iIndex].vPosition.z && m_pVertices[iIndex].vPosition.z < vBrushPos.z + fBrushRange)
 			{
-				unsigned char iHeight = static_cast<unsigned char>(((m_pHeightPixel[iIndex] & 0x000000ff) + _Height) / 5.f);
+				unsigned char iHeight = static_cast<unsigned char>(((m_pHeightPixel[iIndex] & 0x000000ff) + _Height));
 				m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), iHeight , static_cast<float>(i));
 				if (iHeight >= 0 && iHeight <= 255)
 				{
