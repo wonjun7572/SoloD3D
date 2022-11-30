@@ -1,77 +1,75 @@
-﻿  Base.cpp
-  Camera.cpp
-  Component.cpp
-  Component_Manager.cpp
-  CustomFont.cpp
-  Engine_Struct.cpp
-  Font_Manager.cpp
-  FSMComponent.cpp
-  GameInstance.cpp
-  Light.cpp
-  Light_Manager.cpp
-  MathUtils.cpp
-  GameObject.cpp
-  GameUtils.cpp
-  Graphic_Device.cpp
-  ImGuiObject.cpp
-  ImGui_Manager.cpp
-  ImGui_PropertyEditor.cpp
-  Input_Device.cpp
-  Layer.cpp
-  컴파일하고 있습니다...
-  Level.cpp
-  Level_Manager.cpp
-  Mesh.cpp
-  Model.cpp
-  Object_Manager.cpp
-  PipeLine.cpp
-  Renderer.cpp
-  RigidBody.cpp
-  Shader.cpp
-  Timer.cpp
-  Timer_Manager.cpp
-  VIBuffer_Cylinder.cpp
-  VIBuffer_Terrain.cpp
-  Texture.cpp
-  Transform.cpp
-  VIBuffer.cpp
-  VIBuffer_Cube.cpp
-  VIBuffer_Rect.cpp
-  VIBuffer_Sphere.cpp
-  GraphEditor.cpp
-  컴파일하고 있습니다...
-  ImCurveEdit.cpp
-  ImGradient.cpp
-  imgui.cpp
-  ImGuiFileDialog.cpp
-  ImGuizmo.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_dx11.cpp
-  imgui_impl_win32.cpp
-  imgui_tables.cpp
+﻿  ImSequencer.cpp
   imgui_widgets.cpp
-  ImSequencer.cpp
+  imgui_tables.cpp
+  imgui_impl_win32.cpp
+  imgui_impl_dx11.cpp
+  imgui_draw.cpp
+  imgui_demo.cpp
+  ImGuizmo.cpp
+  ImGuiFileDialog.cpp
+  imgui.cpp
+  ImGradient.cpp
+  ImCurveEdit.cpp
+  GraphEditor.cpp
+  VIBuffer_Sphere.cpp
+  VIBuffer_Rect.cpp
+  VIBuffer_Cube.cpp
+  VIBuffer.cpp
+  Transform.cpp
+  Texture.cpp
+  VIBuffer_Terrain.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  VIBuffer_Cylinder.cpp
+  Timer_Manager.cpp
+  Timer.cpp
+  Shader.cpp
+  RigidBody.cpp
+  Renderer.cpp
+  PipeLine.cpp
+  Object_Manager.cpp
+  Model.cpp
+  Mesh.cpp
+  Level_Manager.cpp
+  Level.cpp
+  Layer.cpp
+  Input_Device.cpp
+  ImGui_PropertyEditor.cpp
+  ImGui_Manager.cpp
+  ImGuiObject.cpp
+  Graphic_Device.cpp
+  GameUtils.cpp
+  GameObject.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  MathUtils.cpp
+  Light_Manager.cpp
+  Light.cpp
+  GameInstance.cpp
+  FSMComponent.cpp
+  Font_Manager.cpp
+  Engine_Struct.cpp
+  CustomFont.cpp
+  Component_Manager.cpp
+  Component.cpp
+  Camera.cpp
+  Base.cpp
+  코드를 생성하고 있습니다...
      ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
-  코드를 생성하고 있습니다.
-  693 of 8672 functions ( 8.0%) were compiled, the rest were copied from previous compilation.
-    14 functions were new in current compilation
-    289 functions had inline decision re-evaluated but remain unchanged
-  코드를 생성했습니다.
-Effects11.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11.lib(EffectAPI.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11.lib(EffectLoad.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11.lib(EffectReflection.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(CommonStates.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(CommonStates.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(DDSTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(DDSTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(BinaryReader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(BinaryReader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(SpriteBatch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(SpriteBatch.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(SpriteFont.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(SpriteFont.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(VertexTypes.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(VertexTypes.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTK.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(CommonStates.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(CommonStates.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(DDSTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(DDSTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(BinaryReader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(BinaryReader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(SpriteBatch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SpriteBatch.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(SpriteFont.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SpriteFont.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(VertexTypes.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(VertexTypes.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Engine.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib

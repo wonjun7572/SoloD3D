@@ -22,6 +22,9 @@
 /*Forest*/
 #include "FieldGrass_1.h"
 
+/*GuFeng*/
+#include "GF_Arch.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
 	m_pContext(pContext)
@@ -180,6 +183,11 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Forest/Grass/FieldGrass_1.fbx"))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_GF_Arch */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_GF_Arch"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Art/GuFeng/Arch/Arch.fbx"))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
 	/* For.Prototype_Component_Shader_VtxModel*/
@@ -211,6 +219,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_GameObject_FieldGrass_1*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldGrass_1"), CFieldGrass_1::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_GF_Arch*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GF_Arch"), CGF_Arch::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");

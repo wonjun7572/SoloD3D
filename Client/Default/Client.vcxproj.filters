@@ -82,6 +82,15 @@
     <Filter Include="GameObject\Forest\Grass">
       <UniqueIdentifier>{7f79373c-42ad-41ce-82b5-c47e61f83378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Art">
+      <UniqueIdentifier>{9f49ccc7-2393-4687-8a1f-8dc22e71661a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Art\GuFeng">
+      <UniqueIdentifier>{03cb71e5-919d-4522-ae21-b39d3ab9a74d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Art\GuFeng\Arch">
+      <UniqueIdentifier>{9f6ca1a9-e42e-4429-9ec0-281144888c18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -162,6 +171,9 @@
     <ClInclude Include="..\public\FieldGrass_1.h">
       <Filter>GameObject\Forest\Grass</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GF_Arch.h">
+      <Filter>GameObject\Art\GuFeng\Arch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -229,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="..\private\FieldGrass_1.cpp">
       <Filter>GameObject\Forest\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GF_Arch.cpp">
+      <Filter>GameObject\Art\GuFeng\Arch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
