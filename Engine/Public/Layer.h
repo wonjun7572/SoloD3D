@@ -12,6 +12,7 @@ private:
 
 public:
 	HRESULT Add_GameObject(class CGameObject* pGameObject);
+	HRESULT Delete_GameObject(class CGameObject* pGameObject);
 	HRESULT Init();
 	void Tick(_double TimeDelta);
 	void Late_Tick(_double TimeDelta);

@@ -102,8 +102,11 @@ void CObject_Manager::Late_Tick(_double TimeDelta)
 	}
 }
 
-void CObject_Manager::Imgui_ProtoViewer(OUT const _tchar *& szSelectedProto)
+void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
 {
+	if (m_iNumLevels <= iLevel)
+		return;
+
 	if (ImGui::CollapsingHeader("ProtoViewer"))
 	{
 		if (ImGui::BeginListBox("##"))
@@ -117,11 +120,27 @@ void CObject_Manager::Imgui_ProtoViewer(OUT const _tchar *& szSelectedProto)
 				char szViewName[512], szProtoName[256];
 				CGameUtils::wc2c(ProtoPair.first.c_str(), szProtoName);
 				sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*ProtoPair.second).name());
+				
 				if (ImGui::Selectable(szViewName, bSelected))
 					szSelectedProto = ProtoPair.first.c_str();
 			}
 
 			ImGui::EndListBox();
+		}
+
+		char szSelectProto[256] = {};
+		CGameUtils::wc2c(szSelectedProto, szSelectProto);
+		ImGui::Text("ProtoName: "); ImGui::SameLine();
+		ImGui::Text(szSelectProto);
+
+		ImGui::InputText("Layer Name", m_szLayerName, 256);
+		string str(m_szLayerName);
+		wstring strLayerName;
+		strLayerName.assign(str.begin(), str.end());
+
+		if (ImGui::Button("CLONE GAMEOBJECT"))
+		{
+			Clone_GameObject(iLevel, strLayerName, szSelectedProto);
 		}
 	}
 }
@@ -164,6 +183,11 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelec
 						}
 					}
 					ImGui::EndListBox();
+					if (ImGui::Button("DELETE GAMEOBJECT"))
+					{
+						Pair.second->Delete_GameObject(pSelectedObject);
+						Safe_Release(pSelectedObject);
+					}
 				}
 				ImGui::TreePop();
 			}
@@ -194,11 +218,11 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 	const LAYERS& targetLevel = m_pLayers[iLevel];
 	DWORD dwByte = 0;
 	
-	_uint layerSize = targetLevel.size();
+	_uint layerSize = static_cast<_uint>(targetLevel.size());
 	WriteFile(hFile, &layerSize, sizeof(_uint), &dwByte, nullptr);
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		_uint gameObjSize = Pair.second->GetGameObjects().size();
+		_uint gameObjSize = static_cast<_uint>(Pair.second->GetGameObjects().size());
 		WriteFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
 		
 		_tchar szLayerName[256] = {};

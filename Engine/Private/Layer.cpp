@@ -16,6 +16,21 @@ HRESULT CLayer::Add_GameObject(CGameObject * pGameObject)
 	return S_OK;
 }
 
+HRESULT CLayer::Delete_GameObject(CGameObject * pGameObject)
+{
+	if (pGameObject == nullptr)
+		return E_FAIL;
+	 
+	list<CGameObject*>::iterator iter = std::find(m_GameObjects.begin(), m_GameObjects.end(), pGameObject);
+	
+	if (iter == m_GameObjects.end())
+		return E_FAIL;
+	 
+	 m_GameObjects.erase(iter);
+	
+	return S_OK;
+}
+
 HRESULT CLayer::Init()
 {
 	return S_OK;

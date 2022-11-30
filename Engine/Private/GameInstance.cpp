@@ -236,11 +236,11 @@ HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const wstring& pLayer
 	return m_pObjectMgr->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg);
 }
 
-void CGameInstance::Imgui_ProtoViewer(const _tchar*& szSelectedProto)
+void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)
 {
 	if (nullptr == m_pObjectMgr)
 		return;
-	m_pObjectMgr->Imgui_ProtoViewer(szSelectedProto);
+	m_pObjectMgr->Imgui_ProtoViewer(iLevel, szSelectedProto);
 }
 
 void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject)

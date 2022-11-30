@@ -143,9 +143,7 @@ HRESULT CModel::Ready_Materials(const char* pModelFilePath)
 			strcat_s(szTexturePath, szExt);
 
 			_tchar			szFullPath[MAX_PATH] = TEXT("");
-
-			MultiByteToWideChar(CP_ACP, 0, szTexturePath, strlen(szTexturePath), szFullPath, MAX_PATH);
-
+			MultiByteToWideChar(CP_ACP, 0, szTexturePath, static_cast<int>(strlen(szTexturePath)), szFullPath, MAX_PATH);
 			ModelMaterial.pTexture[j] = CTexture::Create(m_pDevice, m_pContext, szFullPath);
 
 			if (nullptr == ModelMaterial.pTexture[j])
