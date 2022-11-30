@@ -248,6 +248,7 @@ ModelManifest.xml
 # preserve shader folder
 !/Client/Bin/ShaderFiles/
 !/Client/Bin/Resources/
+!/Client/Bin/MapData/
 
 /Engine/Bin/*
 # preserve engine bin folder
