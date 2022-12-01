@@ -179,6 +179,7 @@
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\DragonStatue_1.h" />
     <ClInclude Include="..\public\DragonStatue_4.h" />
+    <ClInclude Include="..\public\EmptyGameObject.h" />
     <ClInclude Include="..\public\Enter_KeyUI.h" />
     <ClInclude Include="..\public\FieldGrass_1.h" />
     <ClInclude Include="..\public\GF_Arch.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\DragonStatue_1.cpp" />
     <ClCompile Include="..\private\DragonStatue_4.cpp" />
+    <ClCompile Include="..\private\EmptyGameObject.cpp" />
     <ClCompile Include="..\private\Enter_KeyUI.cpp" />
     <ClCompile Include="..\private\FieldGrass_1.cpp" />
     <ClCompile Include="..\private\GF_Arch.cpp" />

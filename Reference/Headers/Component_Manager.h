@@ -30,12 +30,14 @@ public:
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
 
+	void Imgui_ComponentViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
+	
 private:
-	_uint											m_iNumLevels = 0;
+	_uint										m_iNumLevels = 0;
 
 	/* 레벨별로 원형 컴포넌트(텍스쳐, 메시모델 etc )들을 보관하겠다. */
 	map<wstring, class CComponent*>*			m_pPrototypes = nullptr;
-	typedef map<wstring, class CComponent*>	PROTOTYPES;
+	typedef map<wstring, class CComponent*>		PROTOTYPES;
 
 private:
 	CComponent* Find_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag);

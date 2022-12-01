@@ -169,7 +169,9 @@ call Copy.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Component_Manager.h" />
@@ -183,6 +185,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\FSMComponent.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
+    <ClInclude Include="..\public\ImGui_ProtoEditor.h" />
     <ClInclude Include="..\Public\Light.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
     <ClInclude Include="..\public\MathUtils.h" />
@@ -232,7 +235,9 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\VIBuffer_Sphere.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Component_Manager.cpp" />
@@ -241,6 +246,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\FSMComponent.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
+    <ClCompile Include="..\private\ImGui_ProtoEditor.cpp" />
     <ClCompile Include="..\Private\Light.cpp" />
     <ClCompile Include="..\Private\Light_Manager.cpp" />
     <ClCompile Include="..\private\MathUtils.cpp" />

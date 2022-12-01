@@ -27,6 +27,8 @@ public:
 	virtual void Tick(_double TimeDelta);
 	virtual void Late_Tick(_double TimeDelta);
 	virtual HRESULT Render();
+	virtual void Set_ModelTag(_tchar* szTag){wcscmp(m_szModelTag, szTag);}
+	virtual const _tchar*	Get_ModelTag() { return nullptr; }
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -42,8 +44,8 @@ public: /* imgui */
 protected:
 	/* 객체들이 사용해야 할 컴포넌트들을 보관한다. */
 	map<wstring, class CComponent*>			m_Components;
-
 	CTransform*								m_pTransformCom = nullptr;
+	_tchar*									m_szModelTag = nullptr;
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, class CComponent** ppOut, void* pArg = nullptr);

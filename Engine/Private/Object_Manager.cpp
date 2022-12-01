@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "GameUtils.h"
 #include "Transform.h"
+#include "Model.h"
+#include "Component_Manager.h"
 
 IMPLEMENT_SINGLETON(CObject_Manager);
 
@@ -183,6 +185,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelec
 						}
 					}
 					ImGui::EndListBox();
+
 					if (ImGui::Button("DELETE GAMEOBJECT"))
 					{
 						Pair.second->Delete_GameObject(pSelectedObject);
@@ -234,6 +237,12 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 			char szName[256] = {};
 			strcpy_s(szName, 256, typeid(*obj).name());
 			WriteFile(hFile, &szName, 256 , &dwByte, nullptr);
+			if (obj->Get_ModelTag() != nullptr)
+			{
+				_tchar szModelTag[MAX_PATH];
+				wcscpy_s(szModelTag, obj->Get_ModelTag());
+				WriteFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+			}
 		}
 	}
 
@@ -245,11 +254,12 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 
 			if (iter == obj->GetComponents().end())
 				return;
+
 			_matrix worldMatrix = dynamic_cast<CTransform*>(iter->second)->Get_WorldMatrix();
 			WriteFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
 		}
 	}
-			
+	
 	CloseHandle(hFile);
 	MSG_BOX("Save_Complete!!!");
 }
@@ -292,6 +302,12 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 			{
 				if (!strcmp(szName, typeid(*(proto.second)).name()))
 				{
+					if (proto.second->Get_ModelTag() != nullptr)
+					{
+						_tchar szModelTag[MAX_PATH];
+						ReadFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+						Clone_GameObject(iLevel, szLayerName, proto.first, szModelTag);
+					}
 					Clone_GameObject(iLevel, szLayerName, proto.first);
 				}
 			}

@@ -174,6 +174,7 @@
     <ClInclude Include="..\public\GF_Arch.h">
       <Filter>GameObject\Art\GuFeng\Arch</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EmptyGameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -245,6 +246,7 @@
     <ClCompile Include="..\private\GF_Arch.cpp">
       <Filter>GameObject\Art\GuFeng\Arch</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EmptyGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

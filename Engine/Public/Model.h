@@ -14,15 +14,16 @@ private:
 	CModel(const CModel& rhs);
 	virtual ~CModel() = default;
 
-
 public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
+	class CBone*	Get_BonePtr(const char* pBoneName);
 
 public:
 	virtual HRESULT Init_Prototype(TYPE eType, const char* pModelFilePath);
 	virtual HRESULT Init(void* pArg);
 
 public:
+	void	Play_Animation(_double TimeDelta);
 	HRESULT Bind_Material(class CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
 	HRESULT Render(class CShader* pShader, _uint iMeshIndex, _uint iPassIndex = 0);
 
@@ -38,7 +39,14 @@ private:
 	_uint								m_iNumMaterials = 0;
 	vector<MODELMATERIAL>				m_Materials;
 
+	_uint								m_iNumBones = 0;
+	vector<class CBone*>				m_Bones;
+
+	_uint								m_iNumAnimations = 0;
+	vector<class CAnimation*>			m_Animations;
+
 public:
+	HRESULT Ready_Bones(aiNode* pNode);
 	HRESULT Ready_MeshContainers(TYPE eType);
 	HRESULT Ready_Materials(const char* pModelFilePath);
 

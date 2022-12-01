@@ -110,5 +110,6 @@ void CGameObject::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Delete_Array(m_szModelTag);
 }
 

@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Bone.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -28,6 +29,18 @@ CModel::CModel(const CModel & rhs)
 			Safe_AddRef(pMaterial.pTexture[i]);
 		}
 	}
+}
+
+CBone * CModel::Get_BonePtr(const char * pBoneName)
+{
+	auto iter = find_if(m_Bones.begin(), m_Bones.end(),[&](CBone* pBone)->_bool {
+		return !strcmp(pBoneName, pBone->Get_Name());
+	});
+
+	if (iter == m_Bones.end())
+		return nullptr;
+
+	return *iter;
 }
 
 HRESULT CModel::Init_Prototype(TYPE eType, const char * pModelFilePath)
@@ -57,6 +70,15 @@ HRESULT CModel::Init(void * pArg)
 	return S_OK;
 }
 
+void CModel::Play_Animation(_double TimeDelta)
+{
+	for (auto& pBone : m_Bones)
+	{
+		if (pBone != nullptr)
+			pBone->Compute_CombindTransformationMatrix();
+	}
+}
+
 HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char * pConstantName)
 {
 	if (iMeshIndex >= m_iNumMeshes)
@@ -84,6 +106,24 @@ HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassInde
 	return S_OK;
 }
 
+HRESULT CModel::Ready_Bones(aiNode * pNode)
+{
+	CBone* pBone = CBone::Create(pNode);
+
+	if (pBone == nullptr)
+		return E_FAIL;
+
+	m_Bones.push_back(pBone);
+
+	/* 재귀 함수를 돌면서 모든 뼈를 준비해준다.*/
+	for (_uint i = 0; i < pNode->mNumChildren; ++i)
+	{
+		Ready_Bones(pNode);
+	}
+
+	return S_OK;
+}
+
 HRESULT CModel::Ready_MeshContainers(TYPE eType)
 {
 	if (nullptr == m_pAIScene)
@@ -95,7 +135,7 @@ HRESULT CModel::Ready_MeshContainers(TYPE eType)
 	{
 		aiMesh*		pAIMesh = m_pAIScene->mMeshes[i];
 
-		CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, eType, pAIMesh);
+		CMesh*		pMesh = CMesh::Create(m_pDevice, m_pContext, eType, pAIMesh, this);
 		if (nullptr == pMesh)
 			return E_FAIL;
 

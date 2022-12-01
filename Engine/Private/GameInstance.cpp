@@ -282,6 +282,14 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pP
 	return m_pComponetMgr->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 }
 
+void CGameInstance::Imgui_ComponentViewer(_uint iLevel, const _tchar *& szSelectedProto)
+{
+	if (m_pComponetMgr == nullptr)
+		return;
+
+	m_pComponetMgr->Imgui_ComponentViewer(iLevel, szSelectedProto);
+}
+
 void CGameInstance::Render_ImGui()
 {
 	if (nullptr == m_pImGuiMgr)

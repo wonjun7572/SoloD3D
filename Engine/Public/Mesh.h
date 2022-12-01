@@ -14,7 +14,7 @@ private:
 	virtual ~CMesh() = default;
 
 public:
-	virtual HRESULT Init_Prototype(CModel::TYPE eType, aiMesh* pAIMesh);
+	virtual HRESULT Init_Prototype(CModel::TYPE eType, aiMesh* pAIMesh, class CModel* pModel);
 	virtual HRESULT Init(void* pArg) override;
 
 public:
@@ -27,14 +27,15 @@ private:
 	_uint				m_iMaterialIndex = 0;
 
 	/* 이 메시의 정점들에게 영향을 주는 뼈의 갯수. */
-	_uint				m_iNumBones = 0;
+	_uint					m_iNumBones = 0;
+	vector<class CBone*>	m_Bones;
 
 private:
 	HRESULT Ready_VertexBuffer_NonAnimModel(aiMesh* pAIMesh);
-	HRESULT Ready_VertexBuffer_AnimModel(aiMesh* pAIMesh);
+	HRESULT Ready_VertexBuffer_AnimModel(aiMesh* pAIMesh, class CModel* pModel);
 
 public:
-	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, aiMesh* pAIMesh);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::TYPE eType, aiMesh* pAIMesh, class CModel* pModel);
 	virtual CComponent* Clone(void* pArg = nullptr) override;
 	virtual void Free();
 };

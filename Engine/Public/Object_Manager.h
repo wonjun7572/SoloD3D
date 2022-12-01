@@ -21,7 +21,6 @@ public:
 public:
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Clone_GameObject(_uint iLevelIndex,const wstring& pLayerTag,const wstring& pPrototypeTag, void* pArg = nullptr);
-	HRESULT Delete_GameObject();
 	void	Tick(_double TimeDelta);
 	void	Late_Tick(_double TimeDelta);
 
@@ -47,7 +46,7 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	typedef map<wstring, class CLayer*>		    LAYERS;
 
 	_uint										m_iNumLevels = 0;
-	char											m_szLayerName[256] = {};
+	char										m_szLayerName[256] = {};
 
 private:
 	class CGameObject* Find_Prototype(const wstring& pPrototypeTag);

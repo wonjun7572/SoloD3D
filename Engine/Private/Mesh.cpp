@@ -1,4 +1,6 @@
 #include "..\Public\Mesh.h"
+#include "MathUtils.h"
+#include "Bone.h"
 
 CMesh::CMesh(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CVIBuffer(pDevice,pContext)
@@ -10,7 +12,7 @@ CMesh::CMesh(const CMesh & rhs)
 {
 }
 
-HRESULT CMesh::Init_Prototype(CModel::TYPE eType, aiMesh * pAIMesh)
+HRESULT CMesh::Init_Prototype(CModel::TYPE eType, aiMesh * pAIMesh, class CModel* pModel)
 {
 	m_eType = eType;
 
@@ -32,7 +34,7 @@ HRESULT CMesh::Init_Prototype(CModel::TYPE eType, aiMesh * pAIMesh)
 	if (CModel::TYPE_NONANIM == m_eType)
 		Ready_VertexBuffer_NonAnimModel(pAIMesh);
 	else
-		Ready_VertexBuffer_AnimModel(pAIMesh);
+		Ready_VertexBuffer_AnimModel(pAIMesh, pModel);
 
 #pragma endregion
 
@@ -109,7 +111,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(aiMesh * pAIMesh)
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh)
+HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh, CModel* pModel)
 {
 	m_iStride = sizeof(VTXANIMMODEL);
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
@@ -137,6 +139,20 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh)
 	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
 		aiBone*		pAIBone = pAIMesh->mBones[i];
+
+		CBone*		pBone = pModel->Get_BonePtr(pAIMesh->mName.data);
+
+		if (pBone == nullptr)
+			return E_FAIL;
+
+		_float4x4 OffsetMatrix;
+		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+		OffsetMatrix = CMathUtils::Transpose(OffsetMatrix);
+
+		pBone->Set_OffsetMatrix(OffsetMatrix);
+
+		m_Bones.push_back(pBone);
+		Safe_AddRef(pBone);
 
 		/* 이 뼈는 몇개의 정점에 영향을 주는가?! */
 		_uint iNumWeights = pAIBone->mNumWeights;
@@ -182,11 +198,11 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh)
 	return S_OK;
 }
 
-CMesh * CMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, CModel::TYPE eType, aiMesh * pAIMesh)
+CMesh * CMesh::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, CModel::TYPE eType, aiMesh * pAIMesh, CModel* pModel)
 {
 	CMesh*		pInstance = new CMesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Init_Prototype(eType,pAIMesh)))
+	if (FAILED(pInstance->Init_Prototype(eType,pAIMesh,pModel)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);
@@ -210,4 +226,9 @@ CComponent * CMesh::Clone(void * pArg)
 void CMesh::Free()
 {
 	__super::Free();
+
+	for (auto& pBone : m_Bones)
+		Safe_Release(pBone);
+
+	m_Bones.clear();
 }

@@ -1,8 +1,29 @@
-﻿  Level_ChapOne.cpp
+﻿  BackGround.cpp
+  Level_ChapOne.cpp
+  Level_Loading.cpp
+  Level_Logo.cpp
+  Loader.cpp
+  MainApp.cpp
+  Camera_Dynamic.cpp
+  DragonStatue_1.cpp
+  DragonStatue_4.cpp
+  Enter_KeyUI.cpp
+  FieldGrass_1.cpp
+  GF_Arch.cpp
+  Level_Tool.cpp
+  LoadingHourglass.cpp
+  Ocean.cpp
+  Sheila.cpp
+  Terrain.cpp
+  TestCube.cpp
+  TestCylinder.cpp
+  TestSphere.cpp
+  컴파일하고 있습니다...
+  Client.cpp
   코드를 생성하고 있습니다.
-  29 of 525 functions ( 5.5%) were compiled, the rest were copied from previous compilation.
+  29 of 543 functions ( 5.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    36 functions had inline decision re-evaluated but remain unchanged
+    60 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Client.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Client\Default\..\Bin\Release\Client.exe
+  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Release\Client.exe
   Client.vcxproj -> ..\Bin\Release\Client.pdb (Full PDB)

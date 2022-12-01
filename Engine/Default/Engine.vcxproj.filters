@@ -124,6 +124,12 @@
     <Filter Include="Singleton\ComponentManager\Component\Model\Mesh">
       <UniqueIdentifier>{9c0ab980-3004-4c34-aa65-5b0fa6d2c6b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Model\Animation">
+      <UniqueIdentifier>{34320099-88fe-479a-9d8e-b4f004ac0267}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Model\Bone">
+      <UniqueIdentifier>{d3139f90-fad6-428b-be99-8c6f40f1589d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -309,6 +315,15 @@
     <ClInclude Include="..\public\Mesh.h">
       <Filter>Singleton\ComponentManager\Component\Model\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bone.h">
+      <Filter>Singleton\ComponentManager\Component\Model\Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Animation.h">
+      <Filter>Singleton\ComponentManager\Component\Model\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ImGui_ProtoEditor.h">
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -466,6 +481,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Mesh.cpp">
       <Filter>Singleton\ComponentManager\Component\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bone.cpp">
+      <Filter>Singleton\ComponentManager\Component\Model\Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Animation.cpp">
+      <Filter>Singleton\ComponentManager\Component\Model\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ImGui_ProtoEditor.cpp">
+      <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

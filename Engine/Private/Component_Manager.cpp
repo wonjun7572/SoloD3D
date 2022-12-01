@@ -1,5 +1,6 @@
 #include "..\Public\Component_Manager.h"
 #include "Component.h"
+#include "GameUtils.h"
 
 IMPLEMENT_SINGLETON(CComponent_Manager)
 
@@ -43,6 +44,33 @@ CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const wstrin
 		return nullptr;
 
 	return pComponent;
+}
+
+void CComponent_Manager::Imgui_ComponentViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
+{
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	const PROTOTYPES& targetLevel = m_pPrototypes[iLevel];
+
+	if (ImGui::CollapsingHeader("ComponentViewer"))
+	{
+		for (auto& Pair : targetLevel)
+		{
+			char szComProtoName[MAX_PATH];
+
+			const bool bSelected = (szComProtoName != nullptr) && (0 == lstrcmp(Pair.first.c_str(), szSelectedProto));
+			if (bSelected)
+				ImGui::SetItemDefaultFocus();
+
+			char szViewName[512], szProtoName[256];
+			CGameUtils::wc2c(Pair.first.c_str(), szProtoName);
+			sprintf_s(szViewName, "%s [%s]", szProtoName, typeid(*Pair.second).name());
+
+			if (ImGui::Selectable(szViewName, bSelected))
+				szSelectedProto = Pair.first.c_str();
+		}
+	}
 }
 
 CComponent * CComponent_Manager::Find_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag)
