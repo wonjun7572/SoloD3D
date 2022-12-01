@@ -45,7 +45,7 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	map<wstring, class CLayer*>*						m_pLayers = nullptr;
 	typedef map<wstring, class CLayer*>		    LAYERS;
 
-	_uint										m_iNumLevels = 0;
+	_uint									m_iNumLevels = 0;
 	char										m_szLayerName[256] = {};
 
 private:

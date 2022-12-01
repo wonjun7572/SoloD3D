@@ -237,12 +237,6 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 			char szName[256] = {};
 			strcpy_s(szName, 256, typeid(*obj).name());
 			WriteFile(hFile, &szName, 256 , &dwByte, nullptr);
-			if (obj->Get_ModelTag() != nullptr)
-			{
-				_tchar szModelTag[MAX_PATH];
-				wcscpy_s(szModelTag, obj->Get_ModelTag());
-				WriteFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
-			}
 		}
 	}
 
@@ -260,6 +254,19 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 		}
 	}
 	
+	for (auto& Pair : targetLevel) // for layer loop
+	{
+		for (auto& obj : Pair.second->GetGameObjects())
+		{
+			if (obj->Get_ModelTag() != nullptr)
+			{
+				_tchar szModelTag[MAX_PATH];
+				wcscpy_s(szModelTag, obj->Get_ModelTag());
+				WriteFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+			}
+		}
+	}
+
 	CloseHandle(hFile);
 	MSG_BOX("Save_Complete!!!");
 }
@@ -302,12 +309,6 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 			{
 				if (!strcmp(szName, typeid(*(proto.second)).name()))
 				{
-					if (proto.second->Get_ModelTag() != nullptr)
-					{
-						_tchar szModelTag[MAX_PATH];
-						ReadFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
-						Clone_GameObject(iLevel, szLayerName, proto.first, szModelTag);
-					}
 					Clone_GameObject(iLevel, szLayerName, proto.first);
 				}
 			}
@@ -328,6 +329,19 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 			_float4x4 world4x4;
 			XMStoreFloat4x4(&world4x4, worldMatrix);
 			dynamic_cast<CTransform*>(iter->second)->SetWorldMatrix(world4x4);
+		}
+	}
+
+	for (auto& Pair : targetLevel) // for layer loop
+	{
+		for (auto& obj : Pair.second->GetGameObjects())
+		{
+			if (obj->Get_ModelTag() != nullptr)
+			{
+				_tchar szModelTag[MAX_PATH];
+				ReadFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+				obj->Set_ModelTag(szModelTag);
+			}
 		}
 	}
 

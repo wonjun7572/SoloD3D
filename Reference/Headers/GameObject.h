@@ -27,7 +27,7 @@ public:
 	virtual void Tick(_double TimeDelta);
 	virtual void Late_Tick(_double TimeDelta);
 	virtual HRESULT Render();
-	virtual void Set_ModelTag(_tchar* szTag){wcscmp(m_szModelTag, szTag);}
+	virtual void Set_ModelTag(_tchar* szTag){wcscpy_s(m_szModelTag,MAX_PATH, szTag);}
 	virtual const _tchar*	Get_ModelTag() { return nullptr; }
 
 protected:

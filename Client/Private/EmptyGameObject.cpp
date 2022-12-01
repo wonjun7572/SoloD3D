@@ -15,8 +15,6 @@ CEmptyGameObject::CEmptyGameObject(const CEmptyGameObject & rhs)
 
 HRESULT CEmptyGameObject::Init_Prototype()
 {
-	m_szModelTag = new _tchar[MAX_PATH];
-
 	if (FAILED(__super::Init_Prototype()))
 		return E_FAIL;
 
@@ -26,9 +24,7 @@ HRESULT CEmptyGameObject::Init_Prototype()
 HRESULT CEmptyGameObject::Init(void * pArg)
 {
 	m_szModelTag = new _tchar[MAX_PATH];
-
-	if(pArg != nullptr)
-		wcscpy_s(m_szModelTag, MAX_PATH, reinterpret_cast<_tchar*>(pArg));
+	wcscpy_s(m_szModelTag, MAX_PATH, TEXT("NOT_ALREADY_MODELTAG"));
 
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
@@ -48,6 +44,12 @@ HRESULT CEmptyGameObject::Init(void * pArg)
 void CEmptyGameObject::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_pModelCom == nullptr)
+	{
+		if(wcscmp(m_szModelTag, TEXT("NOT_ALREADY_MODELTAG")))
+		__super::Add_Component(LEVEL_CHAP1, m_szModelTag, TEXT("Com_Model"), (CComponent**)&m_pModelCom);
+	}
 }
 
 void CEmptyGameObject::Late_Tick(_double TimeDelta)
@@ -114,13 +116,11 @@ const _tchar * CEmptyGameObject::Get_ModelTag()
 HRESULT CEmptyGameObject::SetUp_Components()
 {
 	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
-		(CComponent**)&m_pRendererCom)))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),	(CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
-		(CComponent**)&m_pShaderCom)))
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),	(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	return S_OK;
