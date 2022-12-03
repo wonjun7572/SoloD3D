@@ -130,6 +130,9 @@
     <Filter Include="Singleton\ComponentManager\Component\Model\Bone">
       <UniqueIdentifier>{d3139f90-fad6-428b-be99-8c6f40f1589d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Model\Channel">
+      <UniqueIdentifier>{7521b1ff-ffe0-463a-b5b5-92296e900c34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -324,6 +327,10 @@
     <ClInclude Include="..\public\ImGui_ProtoEditor.h">
       <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Channel.h">
+      <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DebugDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -491,6 +498,10 @@
     <ClCompile Include="..\private\ImGui_ProtoEditor.cpp">
       <Filter>Singleton\ImGui\ImGuiObj</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Channel.cpp">
+      <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DebugDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\SimpleMath.inl">

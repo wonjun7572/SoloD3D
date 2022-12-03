@@ -111,6 +111,18 @@ XMFLOAT4 CMathUtils::Lerp(const XMFLOAT4 & v1, const XMFLOAT4 & v2, float t)
 	return result;
 }
 
+XMFLOAT4 CMathUtils::QuaternionSlerp(const XMFLOAT4 & v1, const XMFLOAT4 & v2, float t)
+{
+	XMVECTOR x1 = XMLoadFloat4(&v1);
+	XMVECTOR x2 = XMLoadFloat4(&v2);
+	XMVECTOR T = XMVectorReplicate(t);
+	XMVECTOR X = XMQuaternionSlerpV(x1, x2, T);
+
+	XMFLOAT4 result = XMFLOAT4(0.f, 0.f, 0.f, 0.f);
+	XMStoreFloat4(&result, X);
+	return result;
+}
+
 XMFLOAT4 CMathUtils::SmoothStep(const XMFLOAT4 & v1, const XMFLOAT4 & v2, float t)
 {
 	t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
@@ -627,7 +639,6 @@ XMFLOAT4X4 CMathUtils::Transpose(const XMFLOAT4X4 & mThis)
 {
 	XMMATRIX M = XMLoadFloat4x4(&mThis);
 	XMFLOAT4X4 R;
-	XMStoreFloat4x4(&R, XMMatrixIdentity());
 	XMStoreFloat4x4(&R, XMMatrixTranspose(M));
 	return R;
 }
@@ -779,5 +790,29 @@ XMFLOAT4X4 CMathUtils::Lerp(const XMFLOAT4X4 & M1, const XMFLOAT4X4 & M2, float 
 	XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&result._21), x2);
 	XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&result._31), x3);
 	XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&result._41), x4);
+	return result;
+}
+
+XMFLOAT4X4 CMathUtils::MatrixAffineTransformation(const XMFLOAT4 & vScale, const XMFLOAT4 & vRotationOrigin, const XMFLOAT4 & vRotation, const XMFLOAT4 & vPosition)
+{
+	XMVECTOR m1 = XMLoadFloat4(&vScale);
+	XMVECTOR m2 = XMLoadFloat4(&vRotationOrigin);
+	XMVECTOR m3 = XMLoadFloat4(&vRotation);
+	XMVECTOR m4 = XMLoadFloat4(&vPosition);
+
+	XMMATRIX MScaling = XMMatrixScalingFromVector(m1);
+	XMVECTOR VRotationOrigin = XMVectorSelect(g_XMSelect1110.v, m2, g_XMSelect1110.v);
+	XMMATRIX MRotation = XMMatrixRotationQuaternion(m3);
+	XMVECTOR VTranslation = XMVectorSelect(g_XMSelect1110.v, m4, g_XMSelect1110.v);
+
+	XMMATRIX M;
+	M = MScaling;
+	M.r[3] = XMVectorSubtract(M.r[3], VRotationOrigin);
+	M = XMMatrixMultiply(M, MRotation);
+	M.r[3] = XMVectorAdd(M.r[3], VRotationOrigin);
+	M.r[3] = XMVectorAdd(M.r[3], VTranslation);
+
+	XMFLOAT4X4 result;
+	XMStoreFloat4x4(&result, M);
 	return result;
 }

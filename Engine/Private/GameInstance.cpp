@@ -78,7 +78,6 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 	}
 
 	m_pInputDev->Invalidate_Input_Device();
-
 	m_pImGuiMgr->Tick_Imgui();
 
 	m_pObjectMgr->Tick(TimeDelta);

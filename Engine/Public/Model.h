@@ -18,6 +18,7 @@ public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone*	Get_BonePtr(const char* pBoneName);
 
+
 public:
 	virtual HRESULT Init_Prototype(TYPE eType, const char* pModelFilePath);
 	virtual HRESULT Init(void* pArg);
@@ -25,7 +26,23 @@ public:
 public:
 	void	Play_Animation(_double TimeDelta);
 	HRESULT Bind_Material(class CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
-	HRESULT Render(class CShader* pShader, _uint iMeshIndex, _uint iPassIndex = 0);
+	HRESULT Render(class CShader* pShader, _uint iMeshIndex,  _uint iPassIndex = 0, const char* pBoneConstantName = nullptr);
+
+	void	Set_AnimationIndex(_uint iIndex)
+	{
+		if (iIndex < 0)
+		{
+			m_iCurrentAnimIndex = 0;
+		}
+		else if (iIndex >= m_iNumAnimations)
+		{
+			m_iCurrentAnimIndex = m_iNumAnimations;
+		}
+		else
+		{
+			m_iCurrentAnimIndex = iIndex;
+		}
+	}
 
 private:
 	const aiScene*						m_pAIScene = nullptr;
@@ -42,13 +59,15 @@ private:
 	_uint								m_iNumBones = 0;
 	vector<class CBone*>				m_Bones;
 
+	_uint								m_iCurrentAnimIndex = 0;
 	_uint								m_iNumAnimations = 0;
 	vector<class CAnimation*>			m_Animations;
 
 public:
-	HRESULT Ready_Bones(aiNode* pNode);
+	HRESULT Ready_Bones(aiNode* pNode, class CBone* pParent = nullptr);
 	HRESULT Ready_MeshContainers(TYPE eType);
 	HRESULT Ready_Materials(const char* pModelFilePath);
+	HRESULT Ready_Animation();
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const char* pModelFilePath);

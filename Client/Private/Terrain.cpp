@@ -207,8 +207,8 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInv);
 	vRayDir = XMVector3Normalize(vRayDir);
 
-	XMVector3TransformCoord(vRayPos, pTerrainTransformCom->Get_WorldMatrixInverse());
-	XMVector3TransformNormal(vRayDir, pTerrainTransformCom->Get_WorldMatrixInverse());
+	vRayPos = XMVector3TransformCoord(vRayPos, pTerrainTransformCom->Get_WorldMatrixInverse());
+	vRayDir = XMVector3TransformNormal(vRayDir, pTerrainTransformCom->Get_WorldMatrixInverse());
 	
 	RELEASE_INSTANCE(CGameInstance);
 

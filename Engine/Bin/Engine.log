@@ -1,14 +1,5 @@
-﻿  ImGui_ProtoEditor.cpp
-  ImGui_PropertyEditor.cpp
-  Camera.cpp
-  Renderer.cpp
-  Layer.cpp
-  GameObject.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  Object_Manager.cpp
-  코드를 생성하고 있습니다...
-  Engine.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Engine\Default\../Bin\Engine.dll
+﻿  GameInstance.cpp
+  Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
   1개 파일이 복사되었습니다.
@@ -27,9 +18,11 @@
   .\Engine\Public\Base.h
   .\Engine\Public\Bone.h
   .\Engine\Public\Camera.h
+  .\Engine\Public\Channel.h
   .\Engine\Public\Component.h
   .\Engine\Public\Component_Manager.h
   .\Engine\Public\CustomFont.h
+  .\Engine\Public\DebugDraw.h
   .\Engine\Public\Engine_Define.h
   .\Engine\Public\Engine_Function.h
   .\Engine\Public\Engine_Macro.h
@@ -209,4 +202,4 @@
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  186개 파일이 복사되었습니다.
+  188개 파일이 복사되었습니다.

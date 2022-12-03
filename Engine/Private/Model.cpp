@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Bone.h"
+#include "Animation.h"
 
 CModel::CModel(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -17,7 +18,11 @@ CModel::CModel(const CModel & rhs)
 	, m_Meshes(rhs.m_Meshes)
 	, m_iNumMaterials(rhs.m_iNumMaterials)
 	, m_Materials(rhs.m_Materials)
-
+	, m_iNumBones(rhs.m_iNumBones)
+	, m_Bones(rhs.m_Bones)
+	, m_iCurrentAnimIndex(rhs.m_iCurrentAnimIndex)
+	, m_iNumAnimations(rhs.m_iNumAnimations)
+	, m_Animations(rhs.m_Animations)
 {
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
@@ -25,10 +30,14 @@ CModel::CModel(const CModel & rhs)
 	for (auto& pMaterial : m_Materials)
 	{
 		for (int i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
-		{
 			Safe_AddRef(pMaterial.pTexture[i]);
-		}
 	}
+
+	for (auto& pBones : m_Bones)
+		Safe_AddRef(pBones);
+
+	for (auto& pAnimation : m_Animations)
+		Safe_AddRef(pAnimation);
 }
 
 CBone * CModel::Get_BonePtr(const char * pBoneName)
@@ -47,19 +56,28 @@ HRESULT CModel::Init_Prototype(TYPE eType, const char * pModelFilePath)
 {
 	_uint			iFlag = 0;
 
+	m_eType = eType;
+
 	if (TYPE_NONANIM == eType)
 		iFlag = aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 	else
 		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 
 	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+
 	if (nullptr == m_pAIScene)
+		return E_FAIL;
+
+	if (FAILED(Ready_Bones(m_pAIScene->mRootNode)))
 		return E_FAIL;
 
 	if (FAILED(Ready_MeshContainers(eType)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Materials(pModelFilePath)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Animation()))
 		return E_FAIL;
 
 	return S_OK;
@@ -72,6 +90,8 @@ HRESULT CModel::Init(void * pArg)
 
 void CModel::Play_Animation(_double TimeDelta)
 {
+	m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
+
 	for (auto& pBone : m_Bones)
 	{
 		if (pBone != nullptr)
@@ -97,18 +117,30 @@ HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, aiTextureType
 	return S_OK;
 }
 
-HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassIndex)
+HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassIndex, const char* pBoneConstantName)
 {
-	pShader->Begin(iPassIndex);
+	if (m_Meshes[iMeshIndex] != nullptr)
+	{
+		if (pBoneConstantName != nullptr)
+		{
+			_float4x4		BoneMatrices[256];
 
-	m_Meshes[iMeshIndex]->Render();
+			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices);
+
+			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 256);
+		}
+
+		pShader->Begin(iPassIndex);
+
+		m_Meshes[iMeshIndex]->Render();
+	}
 
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bones(aiNode * pNode)
+HRESULT CModel::Ready_Bones(aiNode * pNode, CBone* pParent)
 {
-	CBone* pBone = CBone::Create(pNode);
+	CBone* pBone = CBone::Create(pNode, pParent);
 
 	if (pBone == nullptr)
 		return E_FAIL;
@@ -117,9 +149,7 @@ HRESULT CModel::Ready_Bones(aiNode * pNode)
 
 	/* 재귀 함수를 돌면서 모든 뼈를 준비해준다.*/
 	for (_uint i = 0; i < pNode->mNumChildren; ++i)
-	{
-		Ready_Bones(pNode);
-	}
+		Ready_Bones(pNode->mChildren[i], pBone);
 
 	return S_OK;
 }
@@ -130,6 +160,8 @@ HRESULT CModel::Ready_MeshContainers(TYPE eType)
 		return E_FAIL;
 
 	m_iNumMeshes = m_pAIScene->mNumMeshes;
+
+	m_Meshes.reserve(m_iNumMeshes);
 
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
@@ -196,6 +228,24 @@ HRESULT CModel::Ready_Materials(const char* pModelFilePath)
 	return S_OK;
 }
 
+HRESULT CModel::Ready_Animation()
+{
+	m_iNumAnimations = m_pAIScene->mNumAnimations;
+
+	for (_uint i = 0; i < m_iNumAnimations; ++i)
+	{
+		aiAnimation*		pAIAnimation = m_pAIScene->mAnimations[i];
+
+		CAnimation*			pAnim = CAnimation::Create(pAIAnimation, this);
+		if (nullptr == pAnim)
+			return E_FAIL;
+
+		m_Animations.push_back(pAnim);
+	}
+
+	return S_OK;
+}
+
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType, const char * pModelFilePath)
 {
 	CModel*		pInstance = new CModel(pDevice, pContext);
@@ -238,6 +288,14 @@ void CModel::Free()
 		}
 	}
 	m_Materials.clear();
+
+	for (auto& pBones : m_Bones)
+		Safe_Release(pBones);
+	m_Bones.clear();
+
+	for (auto& pAnimation : m_Animations)
+		Safe_Release(pAnimation);
+	m_Animations.clear();
 
 	m_Importer.FreeScene();
 }

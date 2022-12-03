@@ -20,6 +20,9 @@ public:
 public:
 	_uint	Get_MaterialIndex() { return m_iMaterialIndex; }
 
+public:
+	void SetUp_BoneMatrices(_float4x4* pBoneMatrices);
+
 private:
 	CModel::TYPE		m_eType;
 

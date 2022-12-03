@@ -31,7 +31,7 @@ HRESULT CShader::Init_Prototype(const wstring& pShaderFilePath, const D3D11_INPU
 		return E_FAIL;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
-
+	
 	D3DX11_TECHNIQUE_DESC TeniqueDesc;
 	pTechnique->GetDesc(&TeniqueDesc);
 

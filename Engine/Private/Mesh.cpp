@@ -77,6 +77,23 @@ HRESULT CMesh::Init(void * pArg)
 	return S_OK;
 }
 
+void  CMesh::SetUp_BoneMatrices(_float4x4* pBoneMatrices)
+{
+	if (m_iNumBones == 0)
+	{
+		XMStoreFloat4x4(&pBoneMatrices[0], XMMatrixIdentity());
+		return;
+	}
+
+	_uint		iNumBones = 0;
+
+	for (auto& pBone : m_Bones)
+	{
+		// BoneMatrix = 오프셋매트릭스 * 컴바인드매트릭스;
+		pBoneMatrices[iNumBones++] = CMathUtils::Mul_Matrix(pBone->Get_OffsetMatrix(), pBone->Get_CombindMatrix());
+	}
+}
+
 HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(aiMesh * pAIMesh)
 {
 	m_iStride = sizeof(VTXMODEL);
@@ -90,7 +107,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnimModel(aiMesh * pAIMesh)
 	m_BufferDesc.MiscFlags = 0;
 
 	VTXMODEL*			pVertices = new VTXMODEL[m_iNumVertices];
-	ZeroMemory(pVertices, sizeof(VTXMODEL));
+	ZeroMemory(pVertices, sizeof(VTXMODEL) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
@@ -124,7 +141,7 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh, CModel* pModel)
 	m_BufferDesc.MiscFlags = 0;
 
 	VTXANIMMODEL*			pVertices = new VTXANIMMODEL[m_iNumVertices];
-	ZeroMemory(pVertices, sizeof(VTXANIMMODEL));
+	ZeroMemory(pVertices, sizeof(VTXANIMMODEL) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
@@ -148,9 +165,7 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh, CModel* pModel)
 		_float4x4 OffsetMatrix;
 		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
 		OffsetMatrix = CMathUtils::Transpose(OffsetMatrix);
-
 		pBone->Set_OffsetMatrix(OffsetMatrix);
-
 		m_Bones.push_back(pBone);
 		Safe_AddRef(pBone);
 
@@ -185,6 +200,18 @@ HRESULT CMesh::Ready_VertexBuffer_AnimModel(aiMesh * pAIMesh, CModel* pModel)
 				pVertices[iVertexIndex].vBlendWeight.w = pAIBone->mWeights[j].mWeight;
 			}
 		}
+	}
+
+	if (m_iNumBones == 0)
+	{
+		CBone*		pBone = pModel->Get_BonePtr(pAIMesh->mName.data);
+		if (pBone == nullptr)
+			return S_OK;
+
+		m_iNumBones = 1;
+
+		m_Bones.push_back(pBone);
+		Safe_AddRef(pBone);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);

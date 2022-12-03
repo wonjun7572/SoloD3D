@@ -2,6 +2,7 @@
 
 #include "Client_Define.h"
 #include "GameObject.h"
+#include "DebugDraw.h"
 
 BEGIN(Engine)
 class CShader;
@@ -30,9 +31,13 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
 
+	PrimitiveBatch<VertexPositionColor>* m_batch = nullptr;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+
+	_uint m_iCurrentAnimIndex = 0;
 
 public:
 	static CSheila* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -41,6 +41,19 @@ HRESULT CSheila::Init(void * pArg)
 void CSheila::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_pModelCom != nullptr)
+		m_pModelCom->Play_Animation(TimeDelta);
+	
+	CGameInstance* pinst = GET_INSTANCE(CGameInstance);
+	if (pinst->Key_Down(DIK_UPARROW))
+		m_iCurrentAnimIndex++;
+	
+	if(pinst->Key_Down(DIK_DOWNARROW))
+		m_iCurrentAnimIndex--;
+	
+	m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CSheila::Late_Tick(_double TimeDelta)
@@ -61,15 +74,15 @@ HRESULT CSheila::Render()
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-		for (_uint i = 0; i < iNumMeshes; ++i)
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
-				return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
+			return E_FAIL;
 
-			if (FAILED(m_pModelCom->Render(m_pShaderCom, i)))
-				return E_FAIL;
+		if (FAILED(m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices")))
+			return E_FAIL;
 	}
-
+		
 	return S_OK;
 }
 
@@ -81,7 +94,7 @@ HRESULT CSheila::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxAnimModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -161,4 +174,5 @@ void CSheila::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Delete(m_batch);
 }

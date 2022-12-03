@@ -61,6 +61,7 @@ public:
 	// 끝점의 값이 주어졌을 때 그 사이에 위치한 값을 추정하기 위하여 직선 거리에 따라 선형적으로 계산하는 방법
 	// 위치 벡터가 v1보다 작다면 0을 리턴하고, v2보다 크다면 1을 리턴한다.
 	static XMFLOAT4	Lerp(const XMFLOAT4& v1, const XMFLOAT4& v2, float t);
+	static XMFLOAT4 QuaternionSlerp(const XMFLOAT4& v1, const XMFLOAT4& v2, float t);
 
 	// Hermite 보간법 (t를 통해 위치가 결정됨) (w = 1)
 	// 위치 벡터가 [min, max] 사이의 값인 경우에 대해서 [0, 1] 사이에서 부드럽게 변하는 
@@ -202,6 +203,7 @@ public:
 
 	// 벡터 4개 행 모두 (M1 ~ M2) 다 보간을 진행합니다.
 	static XMFLOAT4X4 Lerp(const XMFLOAT4X4& M1, const XMFLOAT4X4& M2, float t);
+	static XMFLOAT4X4 MatrixAffineTransformation(const XMFLOAT4& vScale, const XMFLOAT4& vRotationOrigin, const XMFLOAT4& vRotation, const XMFLOAT4& vPosition);
 #pragma endregion
 
 #pragma region 추가적인 함수들

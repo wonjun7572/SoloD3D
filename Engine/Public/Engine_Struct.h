@@ -41,6 +41,14 @@ namespace Engine
 		XMFLOAT4			vSpecular;
 	}LIGHTDESC;
 
+	typedef struct tagKeyframe
+	{
+		double		Time;
+		XMFLOAT3	vScale;
+		XMFLOAT4	vRotation;
+		XMFLOAT3	vPosition;
+	}KEYFRAME;
+
 	typedef struct tagFaceIndices16
 	{
 		unsigned short			_0, _1, _2;

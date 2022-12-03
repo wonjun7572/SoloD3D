@@ -19,28 +19,27 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
+		return E_FAIL;
 
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 	CGameInstance::GetInstance()->Add_ImguiObject(CImGui_ProtoEditor::Create(m_pDevice, m_pContext));
 
-	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
-	Safe_Release(pGameInstance);
+	//CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	//pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
+	//Safe_Release(pGameInstance);
 
 	return S_OK;
 }
