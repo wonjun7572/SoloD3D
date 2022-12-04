@@ -249,6 +249,13 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	m_pObjectMgr->Imgui_ObjectViewer(iLevel, pSelectedObject);
 }
 
+CGameObject * CGameInstance::Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+	return m_pObjectMgr->Get_GameObject(iLevelIndex, pLayerTag, strObjName);
+}
+
 void CGameInstance::SaveData(_uint iLevel, const wstring& strDirectory)
 {
 	if (nullptr == m_pObjectMgr)

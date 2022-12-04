@@ -104,6 +104,31 @@ void CObject_Manager::Late_Tick(_double TimeDelta)
 	}
 }
 
+CGameObject * CObject_Manager::Get_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName)
+{
+	if (m_iNumLevels <= iLevelIndex)
+		return nullptr;
+
+	const LAYERS& targetLevel = m_pLayers[iLevelIndex];
+
+	auto iter = targetLevel.find(pLayerTag);
+
+	if (iter == targetLevel.end())
+		return nullptr;
+
+	auto objlist = iter->second->GetGameObjects();
+
+	auto obj = find_if(objlist.begin(), objlist.end(), [&](CGameObject* pGameObject)-> bool
+	{
+		return strObjName == pGameObject->Get_ObjectName();
+	});
+
+	if (obj == objlist.end())
+		return nullptr;
+
+	return *obj;
+}
+
 void CObject_Manager::Imgui_ProtoViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
 {
 	if (m_iNumLevels <= iLevel)

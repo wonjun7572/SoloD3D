@@ -23,7 +23,7 @@ HRESULT CDragonStatue_4::Init_Prototype()
 HRESULT CDragonStatue_4::Init(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+	ZeroMemory(&GameObjectDesc, sizeof(GAMEOBJECTDESC));
 
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);

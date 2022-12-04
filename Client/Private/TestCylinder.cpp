@@ -23,7 +23,7 @@ HRESULT CTestCylinder::Init_Prototype()
 HRESULT CTestCylinder::Init(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+	ZeroMemory(&GameObjectDesc, sizeof(GAMEOBJECTDESC));
 
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);

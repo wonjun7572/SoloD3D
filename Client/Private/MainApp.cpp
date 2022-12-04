@@ -139,6 +139,12 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Loading/HUD_BMI_Loading_%d.png"), 56))))
 		return E_FAIL;
 
+	/* For. Prototype_Component_FSM */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_FSM"),
+		CFSMComponent::Create())))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

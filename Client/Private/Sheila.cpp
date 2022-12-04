@@ -22,18 +22,19 @@ HRESULT CSheila::Init_Prototype()
 
 HRESULT CSheila::Init(void * pArg)
 {
-
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+	ZeroMemory(&GameObjectDesc, sizeof(GAMEOBJECTDESC));
 
 	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
+	
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+
+	Set_ObjectName(TEXT("Sheila"));
 
 	return S_OK;
 }
@@ -42,10 +43,13 @@ void CSheila::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	m_pFSMCom->Tick(TimeDelta);
+
 	if (m_pModelCom != nullptr)
 		m_pModelCom->Play_Animation(TimeDelta);
 	
 	CGameInstance* pinst = GET_INSTANCE(CGameInstance);
+
 	if (pinst->Key_Down(DIK_UPARROW))
 		m_iCurrentAnimIndex++;
 	
@@ -53,6 +57,7 @@ void CSheila::Tick(_double TimeDelta)
 		m_iCurrentAnimIndex--;
 	
 	m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
+
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -86,6 +91,161 @@ HRESULT CSheila::Render()
 	return S_OK;
 }
 
+void CSheila::Idle_OnStart()
+{
+	// 아이들로 돌아가는 애니메이션?
+}
+
+void CSheila::Idle_Tick(_double TimeDelta)
+{
+	// 아이들 애니메이션
+}
+
+void CSheila::Idle_OnExit()
+{
+	// 아이들에서 워크로
+}
+
+bool CSheila::IdleToWalk()
+{
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (pInst->Get_DIKeyState(DIK_W))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+	if (pInst->Get_DIKeyState(DIK_A))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+	if (pInst->Get_DIKeyState(DIK_S))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+	if (pInst->Get_DIKeyState(DIK_D))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
+bool CSheila::WalkToRun()
+{
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (pInst->Get_DIKeyState(DIK_W) && pInst->Get_DIKeyState(DIK_LSHIFT))
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
+void CSheila::Walk_OnStart()
+{
+
+}
+
+void CSheila::Walk_Tick(_double TimeDelta)
+{
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (pInst->Get_DIKeyState(DIK_W))
+		m_pTransformCom->Go_Straight(TimeDelta);
+	if (pInst->Get_DIKeyState(DIK_A))
+		m_pTransformCom->Go_Left(TimeDelta);
+	if (pInst->Get_DIKeyState(DIK_S))
+		m_pTransformCom->Go_Backward(TimeDelta);
+	if (pInst->Get_DIKeyState(DIK_D))
+		m_pTransformCom->Go_Right(TimeDelta);
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CSheila::Walk_OnExit()
+{
+
+}
+
+bool CSheila::WalkToIdle()
+{
+	if (IdleToWalk() == false)
+		return true;
+
+	return false;
+}
+
+void CSheila::Run_OnStart()
+{
+}
+
+void CSheila::Run_Tick(_double TimeDelta)
+{
+	m_pTransformCom->Go_Straight(TimeDelta * 2);
+}
+
+void CSheila::Run_OnExit()
+{
+}
+
+bool CSheila::RunToIdle()
+{
+	if (WalkToRun() == false && WalkToIdle() == true)
+		return true;
+
+	return false;
+}
+
+void CSheila::Dash_OnStart()
+{
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (pInst->Get_DIKeyState(DIK_A) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		m_pTransformCom->Go_Left(5);
+	if (pInst->Get_DIKeyState(DIK_S) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		m_pTransformCom->Go_Backward(5);
+	if (pInst->Get_DIKeyState(DIK_D) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		m_pTransformCom->Go_Right(5);
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CSheila::Dash_Tick(_double TimeDelta)
+{
+}
+
+void CSheila::Dash_OnExit()
+{
+}
+
+bool CSheila::DashToWalk()
+{
+	return true;
+}
+
+bool CSheila::WalkToDash()
+{
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (pInst->Get_DIKeyState(DIK_A) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		return true;
+	if (pInst->Get_DIKeyState(DIK_S) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		return true;
+	if (pInst->Get_DIKeyState(DIK_D) && pInst->Get_DIKeyState(DIK_LSHIFT))
+		return true;
+
+	RELEASE_INSTANCE(CGameInstance);
+	return false;
+}
+
 HRESULT CSheila::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -103,6 +263,36 @@ HRESULT CSheila::SetUp_Components()
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
+	CFSMComponentBuilder builder = CFSMComponentBuilder()
+		.InitState(TEXT("Idle"))						
+		.AddState(TEXT("Idle"))							
+			.OnStart(this, &CSheila::Idle_OnStart)	      
+			.Tick(this, &CSheila::Idle_Tick)		      
+			.OnExit(this, &CSheila::Idle_OnExit)          
+			.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk"), this, &CSheila::IdleToWalk))
+		.AddState(TEXT("Walk")) 
+			.OnStart(this, &CSheila::Walk_OnStart)
+			.Tick(this, &CSheila::Walk_Tick)
+			.OnExit(this, &CSheila::Walk_OnExit)
+			.Transition(TEXT("Dash"), FSM_TRANSITION(TEXT("Walk To Dash"), this, &CSheila::WalkToDash))
+			.Transition(TEXT("Run"), FSM_TRANSITION(TEXT("Walk To Run"), this, &CSheila::WalkToRun))
+			.Transition(TEXT("Idle"), FSM_TRANSITION(L"Walk To Idle", this, &CSheila::WalkToIdle))
+		.AddState(TEXT("Run"))
+			.OnStart(this, &CSheila::Run_OnStart)
+			.Tick(this, &CSheila::Run_Tick)
+			.OnExit(this, &CSheila::Run_OnExit)
+			.Transition(TEXT("Idle"), FSM_TRANSITION(L"Run To Idle", this, &CSheila::RunToIdle))
+		.AddState(TEXT("Dash"))
+			.OnStart(this, &CSheila::Dash_OnStart)
+			.Tick(this, &CSheila::Dash_Tick)
+			.OnExit(this, &CSheila::Dash_OnExit)
+			.Transition(TEXT("Walk"), FSM_TRANSITION(L"Dash To Walk", this, &CSheila::DashToWalk))
+		.Build();										    
+
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_FSM"), TEXT("Com_FSM"),
+		(CComponent**)&m_pFSMCom, &builder)))
+		return E_FAIL;
+														  
 	return S_OK;
 }
 
@@ -171,8 +361,8 @@ void CSheila::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-	Safe_Delete(m_batch);
 }

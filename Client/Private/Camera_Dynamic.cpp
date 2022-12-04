@@ -58,46 +58,58 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	if (pGameInstance->Get_DIKeyState(DIK_W))
+	
+	//if (pGameInstance->Key_Down(DIK_F1))
+	//{
+	//	m_bStatic = !m_bStatic;
+	//}
+	//
+	//if (m_bStatic)
+	//{
+	//	m_pTransformCom->Chase(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"))->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),TimeDelta);
+	//}
+	//else
 	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_S))
-	{
-		m_pTransformCom->Go_Backward(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_pTransformCom->Go_Left(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_pTransformCom->Go_Right(TimeDelta);
-	}
-
-	if (pGameInstance->Key_Down(DIK_T))
-	{
-		m_bFix = !m_bFix;
-	}
-
-	if (!m_bFix)
-	{
-		Mouse_Fix();
-
-		_long			MouseMove = 0;
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		if (pGameInstance->Get_DIKeyState(DIK_W))
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+			m_pTransformCom->Go_Straight(TimeDelta);
 		}
 
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		if (pGameInstance->Get_DIKeyState(DIK_S))
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+			m_pTransformCom->Go_Backward(TimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+		}
+
+		if (pGameInstance->Key_Down(DIK_T))
+		{
+			m_bFix = !m_bFix;
+		}
+
+		if (!m_bFix)
+		{
+			Mouse_Fix();
+
+			_long			MouseMove = 0;
+
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+			{
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+			}
+
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+			{
+				m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+			}
 		}
 	}
 

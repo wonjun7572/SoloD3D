@@ -50,6 +50,7 @@ public: /* For.Object_Manager */
 	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr);
 	void	Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+	class	CGameObject* Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName);
 	void	SaveData(_uint iLevel,const wstring& strDirectory);
 	void	LoadData(_uint iLevel, const wstring& strDirectory);
 

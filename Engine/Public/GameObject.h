@@ -20,6 +20,8 @@ protected:
 public:
 	static wstring m_pTransformComTag;
 	map<wstring, class CComponent*>& GetComponents() { return m_Components; }
+	const wstring& Get_ObjName() { return m_strObjName; }
+	CTransform*	Get_TransformCom() {return m_pTransformCom;}
 
 public:
 	virtual HRESULT Init_Prototype();
@@ -27,8 +29,12 @@ public:
 	virtual void Tick(_double TimeDelta);
 	virtual void Late_Tick(_double TimeDelta);
 	virtual HRESULT Render();
+
 	virtual void Set_ModelTag(_tchar* szTag){wcscpy_s(m_szModelTag,MAX_PATH, szTag);}
 	virtual const _tchar*	Get_ModelTag() { return nullptr; }
+
+	virtual void Set_ObjectName(const wstring& strTag) { m_strObjName = strTag; }
+	virtual const wstring&  Get_ObjectName() { return m_strObjName; }
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -46,9 +52,12 @@ protected:
 	map<wstring, class CComponent*>			m_Components;
 	CTransform*								m_pTransformCom = nullptr;
 	_tchar*									m_szModelTag = nullptr;
+	wstring									m_strObjName;
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
+
+public:                                                             
 	class CComponent* Find_Component(const wstring& pComponentTag);
 
 public:

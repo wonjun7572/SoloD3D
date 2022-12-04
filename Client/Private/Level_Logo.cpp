@@ -53,11 +53,11 @@ void CLevel_Logo::Late_Tick(_double TimeDelta)
 			return;
 	}
 
-	if (pGameInstance->Key_Down(DIK_F1))
-	{
-		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_TOOL))))
-			return;
-	}
+	//if (pGameInstance->Key_Down(DIK_F1))
+	//{
+	//	if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_TOOL))))
+	//		return;
+	//}
 
 	RELEASE_INSTANCE(CGameInstance);
 }
