@@ -13,6 +13,7 @@ private:
 public:
 	HRESULT Initialize(aiNodeAnim* pAIChannel, class CModel* pModel);
 	void Update_TransformMatrix(_double PlayTime);
+	void Reset_KeyFrameIndex() { m_iCurrentKeyFrameIndex = 0; }
 
 private:
 	char			m_szName[MAX_PATH] = "";

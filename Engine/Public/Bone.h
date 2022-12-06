@@ -19,6 +19,10 @@ public:
 	_float4x4 Get_CombindMatrix() { return m_CombindTransformMatrix; }
 
 	void Set_TransformMatrix(_float4x4 TransformMatrix) { m_TransformMatrix = TransformMatrix; }
+	_float4x4 Get_TransformMatrix() { return m_TransformMatrix; }
+
+	CBone*			Get_BoneParent() { return m_pParent; }
+
 
 public:
 	HRESULT Initialize(aiNode* pAINode, CBone* pParent);

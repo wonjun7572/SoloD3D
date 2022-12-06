@@ -32,6 +32,8 @@ public:
 	virtual void Late_Tick(_double fTimeDelta);
 	virtual HRESULT Render();
 
+	virtual void Imgui_RenderProperty() override;
+
 protected:
 	CAMERADESC						m_CameraDesc;
 	class CPipeLine*				m_pPipeLine = nullptr;

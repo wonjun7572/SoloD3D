@@ -33,6 +33,7 @@ public:
 
 private:/* For. Imgui*/
 	_float4	PickingOnTerrain(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
+	void	EditBrushTex();
 
 private:
 	CShader*					m_pShaderCom = nullptr;
@@ -45,6 +46,7 @@ private: /* For. Imgui*/
 	_float			m_fHeight = 0.f;
 
 	bool			m_bPicking = false;
+	bool			m_bDefaultHeight = false;
 
 	int				m_iPassNum = 0;
 

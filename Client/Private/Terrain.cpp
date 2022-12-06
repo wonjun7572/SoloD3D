@@ -45,7 +45,7 @@ void CTerrain::Tick(_double TimeDelta)
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		if(pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
-			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight));
+			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight), TimeDelta , m_bDefaultHeight);
 		RELEASE_INSTANCE(CGameInstance);
 	}
 }
@@ -164,11 +164,11 @@ void CTerrain::Imgui_RenderProperty()
 		m_vBrushPos.z = fBrushPos[2];
 		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
 
-		ImGui::Checkbox("IsPicking", &m_bPicking);
+		ImGui::Checkbox("IsPicking", &m_bPicking); ImGui::SameLine();
+		ImGui::Checkbox("IsDefaultHeight", &m_bDefaultHeight);
 		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, 0.0f, 255.0f);
 		if (ImGui::Button("SaveHeight"))
 			m_pVIBufferCom->SaveHeightMap();
-
 	}
 }
 
@@ -259,6 +259,10 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	}
 
 	return _float4();
+}
+
+void CTerrain::EditBrushTex()
+{
 }
 
 HRESULT CTerrain::SetUp_Components()

@@ -34,8 +34,6 @@ HRESULT COcean::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(_float3(5.f, 1.f, 5.f));
-
 	return S_OK;
 }
 

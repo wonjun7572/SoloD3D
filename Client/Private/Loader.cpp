@@ -27,6 +27,10 @@
 
 #include "EmptyGameObject.h"
 
+/* Monster */
+#include "Pig.h"
+#include "NpcArmy_1.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
 	m_pContext(pContext)
@@ -146,9 +150,9 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Ocean_Height*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Ocean_Height"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Ocean_Height"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
+	//	return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 	
@@ -160,14 +164,36 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
+	_matrix			PivotMatrix = XMMatrixIdentity();
+
 	/* For.Prototype_Component_Model_Fiona */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Fiona/Fiona.fbx"))))
+	//PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Fiona"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Fiona/Fiona.fbx", PivotMatrix))))
+	//	return E_FAIL;
+
+	/* For.Prototype_Component_Model_Sheila */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sheila"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Sheila/Sheila.fbx", PivotMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Ocean */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Ocean"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Ocean/Ocean.fbx"))))
+	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Ocean"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Ocean/Ocean.fbx", PivotMatrix))))
+	//	return E_FAIL;
+
+	/* For.Prototype_Component_Modle_Pig*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Pig"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Enemy/Pig/Pig.fbx", PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Modle_Army_1*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Army_1"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Enemy/NpcArmy/Army01.fbx", PivotMatrix))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Model_DragonStatue_1 */
@@ -228,8 +254,17 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Ocean */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
+	/*if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
+		return E_FAIL;*/
+
+	/* For.Prototype_GameObject_Pig*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pig"), CPig::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Army1*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Army1"), CNpcArmy_1::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	///* For.Prototype_GameObject_DragonStatue_1 */
 	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_1"), CDragonStatue_1::Create(m_pDevice, m_pContext))))

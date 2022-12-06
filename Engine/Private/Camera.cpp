@@ -55,6 +55,12 @@ HRESULT CCamera::Render()
 	return S_OK;
 }
 
+void CCamera::Imgui_RenderProperty()
+{
+	// TODO: Camera aspect, fov, near, far 세팅 할수있도록
+
+}
+
 void CCamera::Free()
 {
 	__super::Free();

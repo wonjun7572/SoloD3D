@@ -28,7 +28,7 @@ void CImGui_Manager::Ready_Imgui(HWND hWnd, ID3D11Device* pDevice, ID3D11DeviceC
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 0.2f;
 	}
 
 	m_pDevice = pDevice;
@@ -51,6 +51,7 @@ void CImGui_Manager::Tick_Imgui()
 
 void CImGui_Manager::Render_Imgui()
 {
+	ImGui_DockSpace();
 	if (m_vecObj.empty() == false)
 	{
 		// 마음대로 구현하기
@@ -99,6 +100,41 @@ void CImGui_Manager::Render_Imgui()
 	}
 
 	ImGui::Render();
+}
+
+void CImGui_Manager::ImGui_DockSpace()
+{
+	ImGuiWindowFlags			WindowFlag = ImGuiWindowFlags_NoDocking;
+
+	const ImGuiViewport*	Viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(Viewport->WorkPos);
+	ImGui::SetNextWindowSize(Viewport->WorkSize);
+	ImGui::SetNextWindowViewport(Viewport->ID);
+	ImGui::SetNextWindowBgAlpha(0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+
+	WindowFlag |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	WindowFlag |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	WindowFlag |= ImGuiDockNodeFlags_PassthruCentralNode;
+	WindowFlag |= ImGuiWindowFlags_NoBackground;
+
+	_bool	bIsShow = true;
+
+	ImGui::Begin("DockSpace", &bIsShow, WindowFlag);
+	ImGui::PopStyleVar(1);
+	ImGui::PopStyleVar(2);
+
+	ImGuiIO&	io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		ImGuiID	DockSpaceID = ImGui::GetID("DockSpace");
+		ImGuiDockNodeFlags Flag = ImGuiDockNodeFlags_PassthruCentralNode;
+		ImGui::DockSpace(DockSpaceID, ImVec2(0.f, 0.f), Flag);
+	}
+
+	ImGui::End();
 }
 
 void CImGui_Manager::Render_Update_ImGui()

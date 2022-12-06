@@ -19,7 +19,7 @@ public:
 	virtual HRESULT Init_Prototype(const _tchar* pHeightMapFilePath);
 	virtual HRESULT Init(void* pArg);
 
-	HRESULT DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, unsigned char _Height);
+	HRESULT DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, _double _Height, _double TimeDelta, bool defaultHeight);
 	HRESULT	SaveHeightMap();
 
 private:
@@ -29,7 +29,7 @@ private:
 	VTXNORTEX*		m_pVertices = nullptr;
 	FACEINDICES32*  m_pIndices= nullptr;
 	_ulong*			m_pHeightPixel = nullptr;
-
+	_double			m_height = 0.0;
 	_float3*		m_pPos;
 	wstring			m_strFilePath;
 

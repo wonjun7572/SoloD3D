@@ -17,6 +17,7 @@ namespace Engine
 
 	typedef struct tagModelMaterial
 	{
+		char				MaterialName[MAX_PATH];
 		class CTexture*		pTexture[AI_TEXTURE_TYPE_MAX];
 	}MODELMATERIAL;
 

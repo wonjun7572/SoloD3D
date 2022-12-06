@@ -19,11 +19,14 @@ public:
 
 public:
 	_uint	Get_MaterialIndex() { return m_iMaterialIndex; }
+	const char* Get_Name() const { return m_szName; }
 
 public:
-	void SetUp_BoneMatrices(_float4x4* pBoneMatrices);
+	void SetUp_MeshBones(class CModel* pModel);
+	void SetUp_BoneMatrices(_float4x4* pBoneMatrices, _float4x4 PivotMatrix);
 
 private:
+	aiMesh*				m_pAIMesh = nullptr;
 	CModel::TYPE		m_eType;
 
 	/* 이 메시는 m_iMaterialIndex번째 머테리얼을 사용한다. */
@@ -33,8 +36,10 @@ private:
 	_uint					m_iNumBones = 0;
 	vector<class CBone*>	m_Bones;
 
+	char					m_szName[MAX_PATH];
+
 private:
-	HRESULT Ready_VertexBuffer_NonAnimModel(aiMesh* pAIMesh);
+	HRESULT Ready_VertexBuffer_NonAnimModel(aiMesh* pAIMesh, class CModel* pModel);
 	HRESULT Ready_VertexBuffer_AnimModel(aiMesh* pAIMesh, class CModel* pModel);
 
 public:

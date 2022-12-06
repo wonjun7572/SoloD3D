@@ -69,7 +69,7 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 	}
 	else
 	{
-		if (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
+		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
 				++m_iCurrentKeyFrameIndex;
 
 		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /

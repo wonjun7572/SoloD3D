@@ -214,6 +214,7 @@ public:
 
 	static XMFLOAT4 MulNum_Float4(const float& f1, const XMFLOAT4& v1);
 	static XMFLOAT3 MulNum_Float3(const float& f1, const XMFLOAT3& v1);
+
 #pragma endregion
 
 };

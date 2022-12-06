@@ -20,7 +20,7 @@ public:
 
 
 public:
-	virtual HRESULT Init_Prototype(TYPE eType, const char* pModelFilePath);
+	virtual HRESULT Init_Prototype(TYPE eType, const char* pModelFilePath, _fmatrix PivotMatrix);
 	virtual HRESULT Init(void* pArg);
 
 public:
@@ -28,21 +28,11 @@ public:
 	HRESULT Bind_Material(class CShader * pShader, _uint iMeshIndex, aiTextureType eType, const char* pConstantName);
 	HRESULT Render(class CShader* pShader, _uint iMeshIndex,  _uint iPassIndex = 0, const char* pBoneConstantName = nullptr);
 
-	void	Set_AnimationIndex(_uint iIndex)
-	{
-		if (iIndex < 0)
-		{
-			m_iCurrentAnimIndex = 0;
-		}
-		else if (iIndex >= m_iNumAnimations)
-		{
-			m_iCurrentAnimIndex = m_iNumAnimations;
-		}
-		else
-		{
-			m_iCurrentAnimIndex = iIndex;
-		}
-	}
+	void	Set_AnimationIndex(_uint iIndex) { m_iCurrentAnimIndex = iIndex; }
+	vector<const char*>&	Get_AnimationName() { return m_strAnimationName; }
+	_uint	Get_AnimationsNum() { return m_iNumAnimations; }
+
+	virtual void Imgui_RenderProperty() override;
 
 private:
 	const aiScene*						m_pAIScene = nullptr;
@@ -62,6 +52,11 @@ private:
 	_uint								m_iCurrentAnimIndex = 0;
 	_uint								m_iNumAnimations = 0;
 	vector<class CAnimation*>			m_Animations;
+	vector<const char*>					m_strAnimationName;
+
+	CBone*								m_pSelectedBone = nullptr;
+
+	_float4x4							m_PivotMatrix;
 
 public:
 	HRESULT Ready_Bones(aiNode* pNode, class CBone* pParent = nullptr);
@@ -70,7 +65,7 @@ public:
 	HRESULT Ready_Animation();
 
 public:
-	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const char* pModelFilePath);
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const char* pModelFilePath, _fmatrix PivotMatrix);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

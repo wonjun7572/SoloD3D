@@ -91,6 +91,9 @@
     <Filter Include="GameObject\Art\GuFeng\Arch">
       <UniqueIdentifier>{9f6ca1a9-e42e-4429-9ec0-281144888c18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Monster">
+      <UniqueIdentifier>{0c7270cb-cc0d-44c8-9713-7a30f8c14fd4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -175,6 +178,12 @@
       <Filter>GameObject\Art\GuFeng\Arch</Filter>
     </ClInclude>
     <ClInclude Include="..\public\EmptyGameObject.h" />
+    <ClInclude Include="..\public\Pig.h">
+      <Filter>GameObject\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcArmy_1.h">
+      <Filter>GameObject\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -247,6 +256,12 @@
       <Filter>GameObject\Art\GuFeng\Arch</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
+    <ClCompile Include="..\private\Pig.cpp">
+      <Filter>GameObject\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcArmy_1.cpp">
+      <Filter>GameObject\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

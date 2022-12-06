@@ -172,7 +172,7 @@ HRESULT CVIBuffer_Terrain::Init(void * pArg)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, unsigned char _Height)
+HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, _double _Height, _double TimeDelta, bool defaultHeight)
 {
 
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
@@ -184,12 +184,25 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 			if (vBrushPos.x - fBrushRange <= m_pVertices[iIndex].vPosition.x && m_pVertices[iIndex].vPosition.x < vBrushPos.x + fBrushRange &&
 				vBrushPos.z - fBrushRange <= m_pVertices[iIndex].vPosition.z && m_pVertices[iIndex].vPosition.z < vBrushPos.z + fBrushRange)
 			{
-				unsigned char iHeight = static_cast<unsigned char>(((m_pHeightPixel[iIndex] & 0x000000ff) + _Height));
-				m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), iHeight , static_cast<float>(i));
-				if (iHeight >= 0 && iHeight <= 255)
+				m_pVertices[iIndex].vPosition.x = static_cast<float>(j);
+
+				if (m_pVertices[iIndex].vPosition.y >= 0 || m_pVertices[iIndex].vPosition.y <= 255)
 				{
-					m_pHeightPixel[iIndex] = D3DCOLOR_ARGB(iHeight, iHeight, iHeight, iHeight);
+					if (!defaultHeight)
+						m_pVertices[iIndex].vPosition.y += static_cast<float>(_Height * TimeDelta);
+					else
+						m_pVertices[iIndex].vPosition.y = static_cast<float>(_Height);
 				}
+				
+				if (m_pVertices[iIndex].vPosition.y < 0)
+					m_pVertices[iIndex].vPosition.y = 0;
+
+				if (m_pVertices[iIndex].vPosition.y > 255)
+					m_pVertices[iIndex].vPosition.y = 255;
+				m_pVertices[iIndex].vPosition.z = static_cast<float>(i);
+
+				_ulong fY = static_cast<_ulong>(m_pVertices[iIndex].vPosition.y);
+				m_pHeightPixel[iIndex] = D3DCOLOR_ARGB(fY, fY, fY, fY);
 			}
 			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
 		}
@@ -262,39 +275,6 @@ HRESULT CVIBuffer_Terrain::SaveHeightMap()
 	CGameUtils::wc2c(m_strFilePath.c_str(), szName);
 
 	fopen_s(&fp, szName, "wb");
-
-	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
-	{
-		for (_uint j = 0; j < m_iNumVerticesX; ++j)
-		{
-			_uint      iIndex = i * m_iNumVerticesZ + j;
-
-			unsigned char* p = (unsigned char*)(&m_pHeightPixel[iIndex]);
-			*p *= 5;        
-			if (*p >= 255)
-				*p = 255;
-			else if (*p <= 0)
-				*p = 0;
-			*(p+1) *= 5;        
-			
-			if (*(p + 1) >= 255)
-				*(p + 1) = 255;
-			else if (*(p + 1) <= 0)
-				*(p + 1) = 0;
-
-			*(p + 2) *= 5;        
-			if (*(p + 2) >= 255)
-				*(p + 2) = 255;
-			else if (*(p + 2) <= 0)
-				*(p + 2) = 0;
-			
-			*(p + 3) *= 5;         
-			if (*(p + 3) >= 255)
-				*(p + 3) = 255;
-			else if (*(p + 3) <= 0)
-				*(p + 3) = 0;
-		}
-	}
 
 	fwrite(&m_fH, sizeof BITMAPFILEHEADER, 1, fp);
 	fwrite(&m_iH, sizeof(BITMAPINFOHEADER),1, fp);
