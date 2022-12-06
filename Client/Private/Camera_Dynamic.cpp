@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Camera_Dynamic.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CCamera_Dynamic::CCamera_Dynamic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera(pDevice, pContext)
@@ -59,16 +60,38 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	//if (pGameInstance->Key_Down(DIK_F1))
-	//{
-	//	m_bStatic = !m_bStatic;
-	//}
-	//
-	//if (m_bStatic)
-	//{
-	//	m_pTransformCom->Chase(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"))->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),TimeDelta);
-	//}
-	//else
+	if (pGameInstance->Key_Down(DIK_F1))
+	{
+		m_bStatic = !m_bStatic;
+	}
+
+	CGameObject* pGameObject = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
+
+	if (m_bStatic && static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_SelectedBone() != nullptr)
+	{
+		_float4x4 Transform4x4 =	CMathUtils::Mul_Matrix(
+			CMathUtils::Mul_Matrix(static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_SelectedBone()->Get_CombindMatrix(), 
+			static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix()), 
+			pGameObject->Get_TransformCom()->Get_World4x4());
+
+		_vector TransformVec = XMVector3TransformCoord(XMVectorSet(0.f,0.f,0.f,1.f), XMLoadFloat4x4(&Transform4x4));
+		
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,TransformVec);
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+	}
+	else
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_W))
 		{

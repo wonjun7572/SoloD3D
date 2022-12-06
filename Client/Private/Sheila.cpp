@@ -48,6 +48,30 @@ void CSheila::Tick(_double TimeDelta)
 		m_pModelCom->Play_Animation(TimeDelta);
 		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
 	}
+
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_W))
+	{
+		m_pTransformCom->Go_Straight(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S))
+	{
+		m_pTransformCom->Go_Backward(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_pTransformCom->Go_Left(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_pTransformCom->Go_Right(TimeDelta);
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CSheila::Late_Tick(_double TimeDelta)

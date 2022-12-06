@@ -29,10 +29,10 @@ public:
 	virtual void Imgui_RenderProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CFSMComponent*			m_pFSMCom = nullptr;
+	CFSMComponent*	m_pFSMCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();

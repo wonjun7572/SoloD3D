@@ -148,99 +148,24 @@ void CModel::Imgui_RenderProperty()
 	if (ImGui::BeginTabBar("Manager_Tab"))
 	{
 #pragma region »À imgui
-		//if (ImGui::BeginTabItem("Bone"))
-		//{
-		//	if (ImGui::BeginListBox("##"))
-		//	{
-		//		for (auto& pBone : m_Bones)
-		//		{
-		//			const bool bSelected = m_pSelectedBone == pBone;
+		if (ImGui::BeginTabItem("Bone"))
+		{
+			if (ImGui::BeginListBox("##"))
+			{
+				for (auto& pBone : m_Bones)
+				{
+					const bool bSelected = m_pSelectedBone == pBone;
 
-		//			if (bSelected)
-		//				ImGui::SetItemDefaultFocus();
+					if (bSelected)
+						ImGui::SetItemDefaultFocus();
 
-		//			if (ImGui::Selectable(pBone->Get_Name(), bSelected))
-		//				m_pSelectedBone = pBone;
-		//		}
-		//		ImGui::EndListBox();
-		//	}
-
-		//	if (m_pSelectedBone != nullptr)
-		//	{
-		//		static float snap[3] = { 1.f, 1.f, 1.f };
-		//		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
-		//		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-		//		if (ImGui::IsKeyPressed(90))
-		//			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-		//		if (ImGui::IsKeyPressed(69))
-		//			mCurrentGizmoOperation = ImGuizmo::ROTATE;
-		//		if (ImGui::IsKeyPressed(82)) // r Key
-		//			mCurrentGizmoOperation = ImGuizmo::SCALE;
-		//		if (ImGui::RadioButton("Translate_BONE", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-		//			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-		//		ImGui::SameLine();
-		//		if (ImGui::RadioButton("Rotate_BONE", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-		//			mCurrentGizmoOperation = ImGuizmo::ROTATE;
-		//		ImGui::SameLine();
-		//		if (ImGui::RadioButton("Scale_BONE", mCurrentGizmoOperation == ImGuizmo::SCALE))
-		//			mCurrentGizmoOperation = ImGuizmo::SCALE;
-
-		//		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-
-		//		ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&CMathUtils::Mul_Matrix(CMathUtils::Mul_Matrix(m_pSelectedBone->Get_OffsetMatrix(), m_pSelectedBone->Get_CombindMatrix()), m_PivotMatrix)), matrixTranslation, matrixRotation, matrixScale);
-		//		ImGui::InputFloat3("Translate_BONE", matrixTranslation);
-		//		ImGui::InputFloat3("Rotate_BONE", matrixRotation);
-		//		ImGui::InputFloat3("Scale_BONE", matrixScale);
-		//		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&CMathUtils::Mul_Matrix(CMathUtils::Mul_Matrix(m_pSelectedBone->Get_OffsetMatrix(), m_pSelectedBone->Get_CombindMatrix()), m_PivotMatrix)));
-
-		//		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-		//		{
-		//			if (ImGui::RadioButton("Local_BONE", mCurrentGizmoMode == ImGuizmo::LOCAL))
-		//				mCurrentGizmoMode = ImGuizmo::LOCAL;
-		//			ImGui::SameLine();
-		//			if (ImGui::RadioButton("World_BONE", mCurrentGizmoMode == ImGuizmo::WORLD))
-		//				mCurrentGizmoMode = ImGuizmo::WORLD;
-		//		}
-
-		//		static bool useSnap(false);
-		//		if (ImGui::IsKeyPressed(83))
-		//			useSnap = !useSnap;
-		//		ImGui::Checkbox("##something_BONE", &useSnap);
-		//		ImGui::SameLine();
-		//		switch (mCurrentGizmoOperation)
-		//		{
-		//		case ImGuizmo::TRANSLATE:
-		//			ImGui::InputFloat3("Snap_BONE", &snap[0]);
-		//			break;
-		//		case ImGuizmo::ROTATE:
-		//			ImGui::InputFloat("Angle Snap_BONE", &snap[0]);
-		//			break;
-		//		case ImGuizmo::SCALE:
-		//			ImGui::InputFloat("Scale Snap_BONE", &snap[0]);
-		//			break;
-		//		}
-
-		//		ImGuiIO& io = ImGui::GetIO();
-		//		RECT rt;
-		//		GetClientRect(CGameInstance::GetInstance()->GetHWND(), &rt);
-		//		POINT lt{ rt.left, rt.top };
-		//		ClientToScreen(CGameInstance::GetInstance()->GetHWND(), &lt);
-		//		ImGuizmo::SetRect((_float)lt.x, (_float)lt.y, io.DisplaySize.x, io.DisplaySize.y);
-
-		//		_float4x4 matView, matProj;
-		//		XMStoreFloat4x4(&matView, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
-		//		XMStoreFloat4x4(&matProj, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
-
-		//		ImGuizmo::Manipulate(
-		//			reinterpret_cast<float*>(&matView),
-		//			reinterpret_cast<float*>(&matProj),
-		//			mCurrentGizmoOperation,
-		//			mCurrentGizmoMode,
-		//			reinterpret_cast<float*>(&CMathUtils::Mul_Matrix(CMathUtils::Mul_Matrix(m_pSelectedBone->Get_OffsetMatrix(), m_pSelectedBone->Get_CombindMatrix()), m_PivotMatrix)),
-		//			nullptr, useSnap ? &snap[0] : nullptr);
-		//	}
-		//	ImGui::EndTabItem();
-		//}
+					if (ImGui::Selectable(pBone->Get_Name(), bSelected))
+						m_pSelectedBone = pBone;
+				}
+				ImGui::EndListBox();
+			}
+			ImGui::EndTabItem();
+		}
 #pragma endregion
 		if (ImGui::BeginTabItem("Material"))
 		{
