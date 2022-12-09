@@ -41,7 +41,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		CameraDesc.fNear = 0.2f;
 		CameraDesc.fFar = 500.f;
 
-		CameraDesc.TransformDesc.fSpeedPerSec = 30.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 5.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
 
@@ -55,44 +55,44 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 
 void CCamera_Dynamic::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
+	SwitchCam(TimeDelta);
 
-	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
 	if (pGameInstance->Key_Down(DIK_F1))
-	{
 		m_bStatic = !m_bStatic;
-	}
 
-	CGameObject* pGameObject = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
+	if (m_bStatic == true)
+		m_eType = CCamera_Dynamic::TYPE_STATIC;
 
-	if (m_bStatic && static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_SelectedBone() != nullptr)
+	else if (!m_bStatic)
+		m_eType = CCamera_Dynamic::TYPE_DYNAMIC;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	__super::Tick(TimeDelta);
+}
+
+void CCamera_Dynamic::Late_Tick(_double TimeDelta)
+{
+	__super::Late_Tick(TimeDelta);
+}
+
+HRESULT CCamera_Dynamic::Render()
+{
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+	
+	return S_OK;
+}
+
+void CCamera_Dynamic::SwitchCam(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance =GET_INSTANCE(CGameInstance);
+
+	switch (m_eType)
 	{
-		_float4x4 Transform4x4 =	CMathUtils::Mul_Matrix(
-			CMathUtils::Mul_Matrix(static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_SelectedBone()->Get_CombindMatrix(), 
-			static_cast<CModel*>(pGameObject->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix()), 
-			pGameObject->Get_TransformCom()->Get_World4x4());
-
-		_vector TransformVec = XMVector3TransformCoord(XMVectorSet(0.f,0.f,0.f,1.f), XMLoadFloat4x4(&Transform4x4));
-		
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,TransformVec);
-
-		_long			MouseMove = 0;
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
-		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
-		}
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
-		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
-		}
-
-	}
-	else
-	{
+	case Client::CCamera_Dynamic::TYPE_DYNAMIC:
 		if (pGameInstance->Get_DIKeyState(DIK_W))
 		{
 			m_pTransformCom->Go_Straight(TimeDelta);
@@ -117,7 +117,6 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 		{
 			m_bFix = !m_bFix;
 		}
-
 		if (!m_bFix)
 		{
 			Mouse_Fix();
@@ -134,22 +133,45 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 				m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
 			}
 		}
+		break;
+	case Client::CCamera_Dynamic::TYPE_STATIC:
+		
+		m_pPlayer = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
+		if(m_pPlayer != nullptr)
+			m_pPlayerBone = static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_BonePtr("Bip001");
+
+		if (m_pPlayer != nullptr && m_pPlayerBone != nullptr)
+		{
+			// 라이플 일때
+			_float4x4 OffsetMat = CMathUtils::Mul_Matrix(m_pPlayerBone->Get_CombindMatrix(),
+				static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix());
+			
+			_matrix TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(0.f, 1.75f, -1.575f), XMVectorSet(-0.05f, 0.f, -0.28f, 1.f)) *
+				XMLoadFloat4x4(&OffsetMat) *
+				m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
+			
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+		}
+		break;
+	default:
+		break;
 	}
 
-	Safe_Release(pGameInstance);
+	RELEASE_INSTANCE(CGameInstance);
 }
 
-void CCamera_Dynamic::Late_Tick(_double TimeDelta)
+void CCamera_Dynamic::Imgui_RenderProperty()
 {
-	__super::Late_Tick(TimeDelta);
-}
-
-HRESULT CCamera_Dynamic::Render()
-{
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-	
-	return S_OK;
+	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("RX", &m_RX, 0.01f, -180.f, 180.f);
+	ImGui::DragFloat("RY", &m_RY, 0.01f, -180.f, 180.f);
+	ImGui::DragFloat("RZ", &m_RZ, 0.01f, -180.f, 180.f);
+	ImGui::DragFloat("SX", &m_SX, 0.01f, 0.f, 180.f);
+	ImGui::DragFloat("SY", &m_SY, 0.01f, 0.f, 180.f);
+	ImGui::DragFloat("SZ", &m_SZ, 0.01f, 0.f, 180.f);
 }
 
 void CCamera_Dynamic::Mouse_Fix()
@@ -189,4 +211,7 @@ CGameObject * CCamera_Dynamic::Clone(void* pArg)
 void CCamera_Dynamic::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pPlayer);
+	Safe_Release(m_pPlayerBone);
 }

@@ -94,6 +94,9 @@
     <Filter Include="GameObject\Monster">
       <UniqueIdentifier>{0c7270cb-cc0d-44c8-9713-7a30f8c14fd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Weapon">
+      <UniqueIdentifier>{11eb2dde-bcb0-4504-aa6b-87e48c45ca4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -184,6 +187,12 @@
     <ClInclude Include="..\public\NpcArmy_1.h">
       <Filter>GameObject\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Weapon.h">
+      <Filter>GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rifle.h">
+      <Filter>GameObject\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -261,6 +270,12 @@
     </ClCompile>
     <ClCompile Include="..\private\NpcArmy_1.cpp">
       <Filter>GameObject\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Weapon.cpp">
+      <Filter>GameObject\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rifle.cpp">
+      <Filter>GameObject\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -44,6 +44,7 @@ public:		/* For InputDevice */
 public: // Level_Manager
 	HRESULT OpenLevel(_uint iLevelIndex, class CLevel* pNewLevel);
 	HRESULT RenderLevel();
+	_uint GetCurLevelIdx();
 
 public: /* For.Object_Manager */
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
@@ -57,6 +58,7 @@ public: /* For.Object_Manager */
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
+	HRESULT Remove_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag);
 	void	Imgui_ComponentViewer(_uint iLevel, const _tchar*& szSelectedProto);
 
 public: // for imgui manager

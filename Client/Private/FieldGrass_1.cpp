@@ -34,8 +34,6 @@ HRESULT CFieldGrass_1::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(_float3(0.05f, 0.05f, 0.05f));
-
 	return S_OK;
 }
 

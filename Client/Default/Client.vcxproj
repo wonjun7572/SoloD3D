@@ -194,11 +194,13 @@
     <ClInclude Include="..\public\NpcArmy_1.h" />
     <ClInclude Include="..\public\Ocean.h" />
     <ClInclude Include="..\public\Pig.h" />
+    <ClInclude Include="..\public\Rifle.h" />
     <ClInclude Include="..\public\Sheila.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
+    <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -224,11 +226,13 @@
     <ClCompile Include="..\private\NpcArmy_1.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
     <ClCompile Include="..\private\Pig.cpp" />
+    <ClCompile Include="..\private\Rifle.cpp" />
     <ClCompile Include="..\private\Sheila.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
+    <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

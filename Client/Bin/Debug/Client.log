@@ -1,3 +1,7 @@
-﻿  Camera_Dynamic.cpp
-  Client.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
+﻿  Sheila.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\client\public\sheila.h(43): warning C4244: '초기화 중': 'float'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Rifle.cpp
+  Camera_Dynamic.cpp
+  코드를 생성하고 있습니다...
+  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

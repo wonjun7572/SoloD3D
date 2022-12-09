@@ -29,16 +29,18 @@ public:
 	virtual void Imgui_RenderProperty() override;
 
 private:
-	CShader*					m_pShaderCom = nullptr;
+	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CFSMComponent*	m_pFSMCom = nullptr;
+	CFSMComponent*			m_pFSMCom = nullptr;
+
+	_float					m_fSensitivity = 0.0f;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
-	_uint m_iCurrentAnimIndex = 0;
+	_uint m_iCurrentAnimIndex = 0.1f;
 
 public:
 	static CSheila* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

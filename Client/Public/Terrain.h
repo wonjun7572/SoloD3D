@@ -33,13 +33,18 @@ public:
 
 private:/* For. Imgui*/
 	_float4	PickingOnTerrain(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
-	void	EditBrushTex();
+
+	HRESULT	Ready_FilterBuffer();
+	HRESULT DynanicBuffer_ForBrush();
 
 private:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom[TYPE_END] = { nullptr };
 	CVIBuffer_Terrain*			m_pVIBufferCom = nullptr;
+
+	ID3D11Texture2D*			m_pTexture2D = nullptr;
+	D3D11_TEXTURE2D_DESC		m_TextureDesc;
 
 private: /* For. Imgui*/
 
@@ -61,6 +66,12 @@ private: /* For. Imgui*/
 	_float			m_fBrushRange = 5.f;
 
 	_uint			m_iFilterTexNum = 0;
+
+	// TODO : Brush
+	_ulong*			m_pPixel = nullptr;
+
+	_bool			m_bHeight = false;
+	_bool			m_bFilter = false;
 
 private:
 	HRESULT SetUp_Components();

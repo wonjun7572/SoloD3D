@@ -133,6 +133,9 @@
     <Filter Include="Singleton\ComponentManager\Component\Model\Channel">
       <UniqueIdentifier>{7521b1ff-ffe0-463a-b5b5-92296e900c34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Collider">
+      <UniqueIdentifier>{1e55658a-e03f-44b4-a090-2e0086e3bfe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -331,6 +334,7 @@
       <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h" />
+    <ClInclude Include="..\public\Collider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -502,6 +506,7 @@
       <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp" />
+    <ClCompile Include="..\private\Collider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\SimpleMath.inl">

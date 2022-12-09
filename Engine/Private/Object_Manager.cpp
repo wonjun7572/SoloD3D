@@ -330,7 +330,7 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 			char szName[256];
 			ReadFile(hFile, &szName, 256 , &dwByte, nullptr);
 
-			for (auto& proto : m_Prototypes)
+			for (auto& proto : m_Prototypes) // 게임오브젝트 원형이있는가
 			{
 				if (!strcmp(szName, typeid(*(proto.second)).name()))
 				{

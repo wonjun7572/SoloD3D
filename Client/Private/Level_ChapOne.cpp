@@ -19,11 +19,6 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
-	//	return E_FAIL;
-
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 
@@ -31,15 +26,21 @@ HRESULT Client::CLevel_ChapOne::Init()
 	//pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
 	//Safe_Release(pGameInstance);
 
+
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
+	//if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
+	//	return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -132,6 +133,10 @@ HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sheila"))))
 		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rifle"))))
+		return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

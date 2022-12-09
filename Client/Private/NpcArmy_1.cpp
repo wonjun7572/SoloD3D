@@ -26,7 +26,7 @@ HRESULT CNpcArmy_1::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GAMEOBJECTDESC));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -37,6 +37,8 @@ HRESULT CNpcArmy_1::Init(void * pArg)
 
 	Set_ObjectName(TEXT("NpcArmy_1"));
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(5.f, 0.f, 0.f, 1.f));
+
 	return S_OK;
 }
 
@@ -44,11 +46,15 @@ void CNpcArmy_1::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	Movement(TimeDelta);
+
 	if (m_pModelCom != nullptr)
 	{
 		m_pModelCom->Play_Animation(TimeDelta);
 		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
 	}
+	
+	m_pColliderCom[COLLTYPE_AABB]->Update(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CNpcArmy_1::Late_Tick(_double TimeDelta)
@@ -78,6 +84,14 @@ HRESULT CNpcArmy_1::Render()
 			return E_FAIL;
 	}
 
+#ifdef _DEBUG
+	for (_uint i = 0; i < COLLTYPE_END; ++i)
+	{
+		if (nullptr != m_pColliderCom[i])
+			m_pColliderCom[i]->Render();
+	}
+#endif
+
 	return S_OK;
 }
 
@@ -106,6 +120,22 @@ void CNpcArmy_1::Imgui_RenderProperty()
 	}
 }
 
+void CNpcArmy_1::Movement(_double TimeDelta)
+{
+	m_TimeDelta += TimeDelta;
+
+	// HomeWalk 하고있으면 되고
+	m_pTransformCom->Go_Straight(TimeDelta);
+
+	if (m_TimeDelta > 3)
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
+
+		if (m_TimeDelta > 4)
+			m_TimeDelta = 0;
+	}
+}
+
 HRESULT CNpcArmy_1::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -121,6 +151,18 @@ HRESULT CNpcArmy_1::SetUp_Components()
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Army_1"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
+		return E_FAIL;
+
+	CCollider::COLLIDERDESC			ColliderDesc;
+
+	/* For.Com_AABB */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vSize = _float3(0.7f, 1.5f, 0.7f);
+	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
+		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -190,6 +232,11 @@ CGameObject * CNpcArmy_1::Clone(void * pArg)
 void CNpcArmy_1::Free()
 {
 	__super::Free();
+
+	for (_uint i = 0; i < COLLTYPE_END; ++i)
+	{
+		Safe_Release(m_pColliderCom[i]);
+	}
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

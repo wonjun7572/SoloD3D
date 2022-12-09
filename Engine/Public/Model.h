@@ -39,11 +39,11 @@ public:
 private:
 	const aiScene*						m_pAIScene = nullptr;
 	Assimp::Importer					m_Importer;
-	TYPE									m_eType = TYPE_END;
+	TYPE								m_eType = TYPE_END;
 
 	/* 하나의 모델은 교체가 가능한 여러개의 메시로 구성되어있다. */
-	_uint									m_iNumMeshes = 0;
-	vector<class CMesh*>		m_Meshes;
+	_uint								m_iNumMeshes = 0;
+	vector<class CMesh*>				m_Meshes;
 
 	_uint								m_iNumMaterials = 0;
 	vector<MODELMATERIAL>				m_Materials;

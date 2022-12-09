@@ -32,6 +32,8 @@ public:
 	
 	_vector Get_State(STATE eState) const {	return XMLoadFloat4x4(&m_WorldMatrix).r[eState]; }
 
+	_float3 Get_StateFloat(STATE eState) const { return _float3(m_WorldMatrix._41, m_WorldMatrix._42, m_WorldMatrix._43); }
+
 	/* 리턴받은 행렬을 이용해 연산을 해야할 때. */
 	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_WorldMatrix); }
 
@@ -85,14 +87,14 @@ public:
 	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f);
 
 	void SetWorldMatrix(_float4x4 matrix) { m_WorldMatrix = matrix; }
-
+	void SetWorldMatrix(_fmatrix matrix) { XMStoreFloat4x4(&m_WorldMatrix, matrix); }
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
 
 private:
 	_float4x4				m_WorldMatrix;
 	TRANSFORMDESC			m_TransformDesc;
-	
+
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr) override;

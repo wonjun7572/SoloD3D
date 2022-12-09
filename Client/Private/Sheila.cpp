@@ -42,13 +42,7 @@ HRESULT CSheila::Init(void * pArg)
 void CSheila::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	if (m_pModelCom != nullptr)
-	{
-		m_pModelCom->Play_Animation(TimeDelta);
-		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
-	}
-
+	
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (pGameInstance->Get_DIKeyState(DIK_W))
@@ -69,6 +63,24 @@ void CSheila::Tick(_double TimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_D))
 	{
 		m_pTransformCom->Go_Right(TimeDelta);
+	}
+
+	_long			MouseMove = 0;
+
+	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+	}
+
+	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+	{
+		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+	}
+
+	if (m_pModelCom != nullptr)
+	{
+		m_pModelCom->Play_Animation(TimeDelta);
+		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -126,6 +138,8 @@ void CSheila::Imgui_RenderProperty()
 		ImGui::Text("Current Anim Index"); ImGui::SameLine();
 		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
 	}
+
+	ImGui::InputFloat("Sensitivity", &m_fSensitivity);
 }
 
 HRESULT CSheila::SetUp_Components()

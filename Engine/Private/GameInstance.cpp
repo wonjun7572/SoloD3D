@@ -219,6 +219,14 @@ HRESULT CGameInstance::RenderLevel()
 	return	m_pLevelMgr->Render();
 }
 
+_uint CGameInstance::GetCurLevelIdx()
+{
+	if (m_pLevelMgr == nullptr)
+		return _uint();
+
+	return	m_pLevelMgr->GetCurLevelIdx();
+}
+
 HRESULT CGameInstance::Add_Prototype(const wstring& pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObjectMgr)
@@ -286,6 +294,14 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pP
 		return nullptr;
 
 	return m_pComponetMgr->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
+}
+
+HRESULT CGameInstance::Remove_Prototype(_uint iLevelIndex, const wstring & pPrototypeTag)
+{
+	if (m_pComponetMgr == nullptr)
+		return E_FAIL;
+
+	return m_pComponetMgr->Remove_Prototype(iLevelIndex, pPrototypeTag);
 }
 
 void CGameInstance::Imgui_ComponentViewer(_uint iLevel, const _tchar *& szSelectedProto)

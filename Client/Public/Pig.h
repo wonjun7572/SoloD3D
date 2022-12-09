@@ -7,12 +7,15 @@ BEGIN(Engine)
 class CShader;
 class CRenderer;
 class CModel;
+class CCollider;
 END
 
 BEGIN(Client)
 
 class CPig final : public CGameObject
 {
+	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
+
 private:
 	CPig(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPig(const CPig& rhs);
@@ -31,6 +34,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
+	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

@@ -49,6 +49,7 @@ void CPig::Tick(_double TimeDelta)
 		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
 	}
 
+	m_pColliderCom[COLLTYPE_AABB]->Update(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CPig::Late_Tick(_double TimeDelta)
@@ -77,6 +78,14 @@ HRESULT CPig::Render()
 		if (FAILED(m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices")))
 			return E_FAIL;
 	}
+
+#ifdef _DEBUG
+	for (_uint i = 0; i < COLLTYPE_END; ++i)
+	{
+		if (nullptr != m_pColliderCom[i])
+			m_pColliderCom[i]->Render();
+	}
+#endif
 
 	return S_OK;
 }
@@ -122,6 +131,20 @@ HRESULT CPig::SetUp_Components()
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Pig"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
+
+	CCollider::COLLIDERDESC			ColliderDesc;
+
+	/* For.Com_AABB */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vSize = _float3(0.7f, 1.5f, 0.7f);
+	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
+		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
+		return E_FAIL;
+
+	return S_OK;
 
 	return S_OK;
 }
@@ -190,6 +213,11 @@ CGameObject * CPig::Clone(void * pArg)
 void CPig::Free()
 {
 	__super::Free();
+
+	for (_uint i = 0; i < COLLTYPE_END; ++i)
+	{
+		Safe_Release(m_pColliderCom[i]);
+	}
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
