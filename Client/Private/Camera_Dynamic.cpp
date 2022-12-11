@@ -2,6 +2,7 @@
 #include "..\Public\Camera_Dynamic.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "Sheila.h"
 
 CCamera_Dynamic::CCamera_Dynamic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera(pDevice, pContext)
@@ -89,7 +90,8 @@ HRESULT CCamera_Dynamic::Render()
 void CCamera_Dynamic::SwitchCam(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance =GET_INSTANCE(CGameInstance);
-
+	_matrix TransformMat;
+	m_pPlayer = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
 	switch (m_eType)
 	{
 	case Client::CCamera_Dynamic::TYPE_DYNAMIC:
@@ -135,23 +137,50 @@ void CCamera_Dynamic::SwitchCam(_double TimeDelta)
 		}
 		break;
 	case Client::CCamera_Dynamic::TYPE_STATIC:
-		
-		m_pPlayer = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
-		if(m_pPlayer != nullptr)
-			m_pPlayerBone = static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_BonePtr("Bip001");
-
-		if (m_pPlayer != nullptr && m_pPlayerBone != nullptr)
+		// 뼈에 붙일 때
+		//m_pPlayer = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
+		//if(m_pPlayer != nullptr)
+		//	m_pPlayerBone = static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_BonePtr("Bip001");
+		//{
+		//	// 라이플 일때
+		//	_float4x4 OffsetMat = CMathUtils::Mul_Matrix(m_pPlayerBone->Get_CombindMatrix(),
+		//		static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix());
+		//	
+		//	_matrix TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+		//		XMQuaternionRotationRollPitchYaw(0.f, 1.75f, -1.575f), XMVectorSet(-0.05f, 0.f, -0.28f, 1.f)) *
+		//		XMLoadFloat4x4(&OffsetMat) *
+		//		m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
+		//	
+		//	m_pTransformCom->SetWorldMatrix(TransformMat);
+		//}
+		switch (static_cast<CSheila*>(m_pPlayer)->Get_WeaponType())
 		{
-			// 라이플 일때
-			_float4x4 OffsetMat = CMathUtils::Mul_Matrix(m_pPlayerBone->Get_CombindMatrix(),
-				static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix());
-			
-			_matrix TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
-				XMQuaternionRotationRollPitchYaw(0.f, 1.75f, -1.575f), XMVectorSet(-0.05f, 0.f, -0.28f, 1.f)) *
-				XMLoadFloat4x4(&OffsetMat) *
+		case CSheila::TYPE_RIFLE:
+			TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(m_RX, m_RY, m_RZ), XMVectorSet(m_X, 0.65f, m_Z, 1.f)) *
 				m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
-			
 			m_pTransformCom->SetWorldMatrix(TransformMat);
+			break;
+		case CSheila::TYPE_SHOTGUN:
+			TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(m_RX, m_RY, m_RZ), XMVectorSet(m_X, 0.7f, m_Z, 1.f)) *
+				m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+			break;
+		case CSheila::TYPE_PISTOL:
+			TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(m_RX, m_RY, m_RZ), XMVectorSet(m_X, 0.8f, m_Z, 1.f)) *
+				m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+			break;
+		case CSheila::TYPE_SNIPER:
+			TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(m_RX, m_RY, m_RZ), XMVectorSet(m_X, 0.55f, m_Z, 1.f)) *
+				m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+			break;
+		default:
+			break;
 		}
 		break;
 	default:

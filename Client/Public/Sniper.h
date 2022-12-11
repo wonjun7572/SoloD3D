@@ -29,6 +29,9 @@ private:
 	CGameObject* m_pPlayer = nullptr;
 	CBone* m_pPlayerBone = nullptr;
 
+	_float m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
+	_float m_RX = 0.f, m_RY = 0.f, m_RZ = 0.f;
+
 public:
 	static CSniper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr);
