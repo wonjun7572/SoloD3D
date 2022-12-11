@@ -97,6 +97,18 @@
     <Filter Include="GameObject\Weapon">
       <UniqueIdentifier>{11eb2dde-bcb0-4504-aa6b-87e48c45ca4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Weapon\Rifle">
+      <UniqueIdentifier>{1c3a6df8-f0df-471c-8f94-ca1cc420ea0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Weapon\ShotGun">
+      <UniqueIdentifier>{ef815d92-4194-4fd0-9290-2f9b2fe31250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Weapon\Sniper">
+      <UniqueIdentifier>{9786ee1c-049d-49bb-9c2d-e1d75f9595a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Weapon\Pistol">
+      <UniqueIdentifier>{a7643d99-c114-4789-b785-94a5321ca318}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -191,8 +203,15 @@
       <Filter>GameObject\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Rifle.h">
-      <Filter>GameObject\Weapon</Filter>
+      <Filter>GameObject\Weapon\Rifle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Shotgun.h">
+      <Filter>GameObject\Weapon\ShotGun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pistol.h">
+      <Filter>GameObject\Weapon\Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sniper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -275,8 +294,15 @@
       <Filter>GameObject\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Rifle.cpp">
-      <Filter>GameObject\Weapon</Filter>
+      <Filter>GameObject\Weapon\Rifle</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Shotgun.cpp">
+      <Filter>GameObject\Weapon\ShotGun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pistol.cpp">
+      <Filter>GameObject\Weapon\Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sniper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

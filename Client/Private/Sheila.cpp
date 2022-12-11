@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Sheila.h"
 #include "GameInstance.h"
+#include "Weapon.h"
 
 CSheila::CSheila(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice,pContext)
@@ -42,48 +43,16 @@ HRESULT CSheila::Init(void * pArg)
 void CSheila::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W))
-	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_S))
-	{
-		m_pTransformCom->Go_Backward(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_pTransformCom->Go_Left(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_pTransformCom->Go_Right(TimeDelta);
-	}
-
-	_long			MouseMove = 0;
-
-	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
-	}
-
-	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
-	{
-		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
-	}
+	FindWeapon();
+	SwitchWeapon();
+	Movement(TimeDelta);
 
 	if (m_pModelCom != nullptr)
 	{
 		m_pModelCom->Play_Animation(TimeDelta);
 		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CSheila::Late_Tick(_double TimeDelta)
@@ -140,6 +109,252 @@ void CSheila::Imgui_RenderProperty()
 	}
 
 	ImGui::InputFloat("Sensitivity", &m_fSensitivity);
+}
+
+void CSheila::FindWeapon()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if(m_WeaponArray[TYPE_RIFLE] == nullptr)
+		m_WeaponArray[TYPE_RIFLE] =	static_cast<CWeapon*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Weapon"), TEXT("Rifle")));
+	
+	if(m_WeaponArray[TYPE_SHOTGUN] == nullptr)
+		m_WeaponArray[TYPE_SHOTGUN] = static_cast<CWeapon*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Weapon"), TEXT("Shotgun")));
+	
+	if(m_WeaponArray[TYPE_PISTOL] == nullptr)
+		m_WeaponArray[TYPE_PISTOL] = static_cast<CWeapon*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Weapon"), TEXT("Pistol")));
+
+	if(m_WeaponArray[TYPE_SNIPER] == nullptr)
+		m_WeaponArray[TYPE_SNIPER] = static_cast<CWeapon*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Weapon"), TEXT("Sniper")));
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CSheila::SwitchWeapon()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Key_Down(DIK_1))
+		m_WeaponType = TYPE_RIFLE;
+	else	if (pGameInstance->Key_Down(DIK_2))
+		m_WeaponType = TYPE_SHOTGUN;
+	else if (pGameInstance->Key_Down(DIK_3))
+		m_WeaponType  =  TYPE_PISTOL;
+	else if (pGameInstance->Key_Down(DIK_4))
+		m_WeaponType = TYPE_SNIPER;
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CSheila::Movement(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	// 무기 체인지 할때 put up put down~
+
+	switch (m_WeaponType)
+	{
+	case TYPE_RIFLE:
+	{
+		// 82 ~ 97 라이플
+		if (pGameInstance->Get_DIKeyState(DIK_W))
+		{
+			m_pTransformCom->Go_Straight(TimeDelta);
+			m_iCurrentAnimIndex = 97;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(TimeDelta);
+			m_iCurrentAnimIndex = 97;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+			m_iCurrentAnimIndex = 97;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+			m_iCurrentAnimIndex = 97;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_R))
+		{
+			m_iCurrentAnimIndex = 90;
+		}
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (pGameInstance->Get_DIMouseState(DIM_LB))
+		{
+			m_iCurrentAnimIndex = 82;
+		}
+	}
+		break;
+	case TYPE_SHOTGUN:
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_W))
+		{
+			m_pTransformCom->Go_Straight(TimeDelta);
+			m_iCurrentAnimIndex = 38;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(TimeDelta);
+			m_iCurrentAnimIndex = 38;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+			m_iCurrentAnimIndex = 38;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+			m_iCurrentAnimIndex = 38;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_R))
+		{
+			m_iCurrentAnimIndex = 35;
+		}
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (pGameInstance->Get_DIMouseState(DIM_LB))
+		{
+			m_iCurrentAnimIndex = 28;
+		}
+	}
+	break;
+	case TYPE_PISTOL:
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_W))
+		{
+			m_pTransformCom->Go_Straight(TimeDelta);
+			m_iCurrentAnimIndex = 77;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(TimeDelta);
+			m_iCurrentAnimIndex = 77;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+			m_iCurrentAnimIndex = 77;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+			m_iCurrentAnimIndex = 77;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_R))
+		{
+			m_iCurrentAnimIndex = 71;
+		}
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (pGameInstance->Get_DIMouseState(DIM_LB))
+		{
+			m_iCurrentAnimIndex = 63;
+		}
+	}
+	break;
+	case TYPE_SNIPER:
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_W))
+		{
+			m_pTransformCom->Go_Straight(TimeDelta);
+			m_iCurrentAnimIndex = 58;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(TimeDelta);
+			m_iCurrentAnimIndex = 58;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+			m_iCurrentAnimIndex = 58;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+			m_iCurrentAnimIndex = 58;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_R))
+		{
+			m_iCurrentAnimIndex = 55;
+		}
+
+		_long			MouseMove = 0;
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+		}
+
+		if (pGameInstance->Get_DIMouseState(DIM_LB))
+		{
+			m_iCurrentAnimIndex = 46;
+		}
+	}
+		break;
+	default:
+		break;
+	}
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CSheila::SetUp_Components()

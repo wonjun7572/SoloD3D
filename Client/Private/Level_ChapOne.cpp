@@ -33,6 +33,8 @@ HRESULT Client::CLevel_ChapOne::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Weapon(TEXT("Layer_Weapon"))))
+		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
 	//	return E_FAIL;
@@ -134,10 +136,6 @@ HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sheila"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rifle"))))
-		return E_FAIL;
-
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -178,6 +176,27 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Army1"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_Weapon(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rifle"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Shotgun"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Pistol"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sniper"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

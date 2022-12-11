@@ -1,5 +1,16 @@
-﻿  Camera.cpp
-  Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
+﻿  Model.cpp
+  Mesh.cpp
+  ImGui_ProtoEditor.cpp
+  ImGui_PropertyEditor.cpp
+  Channel.cpp
+  Transform.cpp
+  Object_Manager.cpp
+  Level_Manager.cpp
+  GameObject.cpp
+  GameInstance.cpp
+  Component_Manager.cpp
+  코드를 생성하고 있습니다...
+  Engine.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
   1개 파일이 복사되었습니다.

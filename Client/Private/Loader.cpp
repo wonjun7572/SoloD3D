@@ -32,6 +32,9 @@
 #include "NpcArmy_1.h"
 
 #include "Rifle.h"
+#include "Shotgun.h"
+#include "Pistol.h"
+#include "Sniper.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -193,8 +196,26 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Rifle/Rifle.fbx", PivotMatrix))))
 		return E_FAIL;
 
+	/* For. Prototype_Component_Model_Shotgun*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shotgun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Shotgun/Shotgun.fbx", PivotMatrix))))
+		return E_FAIL;
+
+	/* For. Prototype_Component_Model_Pistol*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Pistol"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Pistol/Pistol.fbx", PivotMatrix))))
+		return E_FAIL;
+
+	/* For. Prototype_Component_Model_Sniper*/
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sniper"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Sniper/Sniper.fbx", PivotMatrix))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_Model_Sheila */
-	PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sheila"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Sheila_FP/Sheila_FP.fbx", PivotMatrix))))
 		return E_FAIL;
@@ -314,6 +335,18 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_GameObject_Rifle*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rifle"), CRifle::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Shotgun*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Shotgun"), CShotgun::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Pistol*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pistol"), CPistol::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sniper*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sniper"), CSniper::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("·Îµù³¡. ");

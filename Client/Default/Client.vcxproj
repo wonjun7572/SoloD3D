@@ -194,8 +194,11 @@
     <ClInclude Include="..\public\NpcArmy_1.h" />
     <ClInclude Include="..\public\Ocean.h" />
     <ClInclude Include="..\public\Pig.h" />
+    <ClInclude Include="..\public\Pistol.h" />
     <ClInclude Include="..\public\Rifle.h" />
     <ClInclude Include="..\public\Sheila.h" />
+    <ClInclude Include="..\public\Shotgun.h" />
+    <ClInclude Include="..\public\Sniper.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
@@ -226,8 +229,11 @@
     <ClCompile Include="..\private\NpcArmy_1.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
     <ClCompile Include="..\private\Pig.cpp" />
+    <ClCompile Include="..\private\Pistol.cpp" />
     <ClCompile Include="..\private\Rifle.cpp" />
     <ClCompile Include="..\private\Sheila.cpp" />
+    <ClCompile Include="..\private\Shotgun.cpp" />
+    <ClCompile Include="..\private\Sniper.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />

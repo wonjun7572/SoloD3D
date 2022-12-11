@@ -3,6 +3,8 @@
 #include "Client_Define.h"
 #include "GameObject.h"
 
+class CWeapon;
+
 BEGIN(Engine)
 class CShader;
 class CRenderer;
@@ -14,6 +16,9 @@ BEGIN(Client)
 
 class CSheila final : public CGameObject
 {
+public:
+	enum WEAPON_TYPE {TYPE_RIFLE, TYPE_SHOTGUN,  TYPE_PISTOL, TYPE_SNIPER, TYPE_END};
+
 private:
 	CSheila(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSheila(const CSheila& rhs);
@@ -28,19 +33,29 @@ public:
 
 	virtual void Imgui_RenderProperty() override;
 
-private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CFSMComponent*			m_pFSMCom = nullptr;
+	WEAPON_TYPE		Get_WeaponType() { return m_WeaponType; }
 
-	_float					m_fSensitivity = 0.0f;
+	void FindWeapon();
+	void SwitchWeapon();
+	void	Movement(_double TimeDelta);
+
+private:
+	CShader*						m_pShaderCom = nullptr;
+	CRenderer*					m_pRendererCom = nullptr;
+	CModel*						m_pModelCom = nullptr;
+	CFSMComponent*		m_pFSMCom = nullptr;
+
+private:
+	WEAPON_TYPE				m_WeaponType;
+	CWeapon*					m_WeaponArray[TYPE_END] = { nullptr, nullptr, nullptr, nullptr};
+
+	_float							m_fSensitivity = 0.05f;
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
-	_uint m_iCurrentAnimIndex = 0.1f;
+	_uint m_iCurrentAnimIndex = 0;
 
 public:
 	static CSheila* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

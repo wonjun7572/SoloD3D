@@ -2,6 +2,7 @@
 #include "..\Public\Rifle.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "Sheila.h"
 
 CRifle::CRifle(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CWeapon(pDevice,pContext)
@@ -48,17 +49,19 @@ void CRifle::Tick(_double TimeDelta)
 	Safe_AddRef(pGameInstance);
 
 	m_pPlayer = pGameInstance->Find_GameObject(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Sheila"));
+	
 	if(m_pPlayer != nullptr)
-		m_pPlayerBone = static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_BonePtr("Bip001");
-	// TODO : ÃßÈÄ Àú »À Weapon_RBoneÀ¸·Î ¸ÂÃçÁà¾ßÇÔ
+		m_pPlayerBone = static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_BonePtr("Weapon_RBone");
 
 	if (m_pPlayerBone != nullptr)
 	{
 		_float4x4 OffsetMat = CMathUtils::Mul_Matrix(m_pPlayerBone->Get_CombindMatrix(),
 			static_cast<CModel*>(m_pPlayer->Find_Component(TEXT("Com_Model")))->Get_PivotMatrix());
 
-		_matrix TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
-			XMQuaternionRotationRollPitchYaw(m_RX, m_RY, m_RZ), XMVectorSet(m_X, m_Y, m_Z, 1.f)) *
+		_matrix TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), 
+			XMVectorSet(0.f, 0.f, 0.f, 1.f),
+			XMQuaternionRotationRollPitchYaw(4.0f, 0.25f, 0.f),
+			XMVectorSet(0.1f, 0.f, -0.04f, 1.f)) *
 			XMLoadFloat4x4(&OffsetMat) *
 			m_pPlayer->Get_TransformCom()->Get_WorldMatrix();
 
@@ -84,37 +87,39 @@ void CRifle::Late_Tick(_double TimeDelta)
 
 HRESULT CRifle::Render()
 {
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; ++i)
+	if (static_cast<CSheila*>(m_pPlayer)->Get_WeaponType() == CSheila::TYPE_RIFLE)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
+		if (FAILED(__super::Render()))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices")))
+		if (FAILED(SetUp_ShaderResources()))
 			return E_FAIL;
+
+		_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (_uint i = 0; i < iNumMeshes; ++i)
+		{
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices")))
+				return E_FAIL;
+		}
 	}
-
 	return S_OK;
 }
 
 void CRifle::Imgui_RenderProperty()
 {
-	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("RX", &m_RX, 0.01f, -180.f, 180.f);
-	ImGui::DragFloat("RY", &m_RY, 0.01f, -180.f, 180.f);
-	ImGui::DragFloat("RZ", &m_RZ, 0.01f, -180.f, 180.f);
-	ImGui::DragFloat("SX", &m_SX, 0.01f, 0.f, 180.f);
-	ImGui::DragFloat("SY", &m_SY, 0.01f, 0.f, 180.f);
-	ImGui::DragFloat("SZ", &m_SZ, 0.01f, 0.f, 180.f);
+	ImGui::DragFloat("X", &m_X, 0.001f, -10.f, 10.f);
+	ImGui::DragFloat("Y", &m_Y, 0.001f, -10.f, 10.f);
+	ImGui::DragFloat("Z", &m_Z, 0.001f, -10.f, 10.f);
+	ImGui::DragFloat("RX", &m_RX, 0.001f, -180.f, 180.f);
+	ImGui::DragFloat("RY", &m_RY, 0.001f, -180.f, 180.f);
+	ImGui::DragFloat("RZ", &m_RZ, 0.001f, -180.f, 180.f);
+	ImGui::DragFloat("SX", &m_SX, 0.001f, 0.f, 180.f);
+	ImGui::DragFloat("SY", &m_SY, 0.001f, 0.f, 180.f);
+	ImGui::DragFloat("SZ", &m_SZ, 0.001f, 0.f, 180.f);
 }
 
 HRESULT CRifle::SetUp_Components()

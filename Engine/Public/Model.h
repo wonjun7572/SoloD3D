@@ -15,7 +15,7 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	_uint Get_NumMeshes() const { return m_iNumMeshes; }
+	_uint					Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone*	Get_BonePtr(const char* pBoneName);
 
 	class CBone*	Get_SelectedBone() {return m_pSelectedBone; }
