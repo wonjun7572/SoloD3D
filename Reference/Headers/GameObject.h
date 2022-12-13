@@ -36,8 +36,6 @@ public:
 	virtual void Set_ObjectName(const wstring& strTag) { m_strObjName = strTag; }
 	virtual const wstring&  Get_ObjectName() { return m_strObjName; }
 
-	virtual	HRESULT	Remove_Component(const wstring& pComponentTag);
-
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
@@ -55,6 +53,8 @@ protected:
 	CTransform*								m_pTransformCom = nullptr;
 	_tchar*									m_szModelTag = nullptr;
 	wstring									m_strObjName;
+
+	_bool									m_bClone;
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, class CComponent** ppOut, void* pArg = nullptr);

@@ -1,3 +1,5 @@
+#include "Shader_Define.hpp"
+
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 /* 1. 모델의 전체의 뼈를 받아온다. */
@@ -6,20 +8,6 @@ matrix			g_BoneMatrices[256];
 
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
-
-sampler LinearSampler = sampler_state
-{
-	filter = min_mag_mip_linear;
-	AddressU = wrap;
-	AddressV = wrap;
-};
-
-sampler PointSampler = sampler_state
-{
-	filter = min_mag_mip_Point;
-	AddressU = wrap;
-	AddressV = wrap;
-};
 
 struct VS_IN
 {
@@ -88,6 +76,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	
+	if (0.1f > Out.vColor.a)
+		discard;
+
 	return Out;
 }
 
@@ -95,6 +86,8 @@ technique11 DefaultTechnique
 {
 	pass Default
 	{
+		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;

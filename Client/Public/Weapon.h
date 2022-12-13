@@ -7,11 +7,22 @@ BEGIN(Engine)
 class CShader;
 class CRenderer;
 class CModel;
+class CBone;
 END
 
-class CWeapon : public CGameObject
+BEGIN(Client)
+
+class CWeapon final : public CGameObject
 {
-protected:
+public:
+	typedef struct tagWeaponDesc
+	{
+		_float4x4			PivotMatrix;
+		CBone*				pSocket;
+		CTransform*			pTargetTransform;
+	}WEAPONDESC;
+
+private:
 	CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CWeapon(const CWeapon& rhs);
 	virtual ~CWeapon() = default;
@@ -23,15 +34,23 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-protected:
+private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
 
-	_uint m_iCurrentAnimIndex = 0;
+private:
+	WEAPONDESC				m_WeaponDesc;
+	_float4x4				m_SocketMatrix;
+
+private:
+	HRESULT SetUp_Components();
+	HRESULT SetUp_ShaderResources();
 
 public:
-	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
+	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 };
 
+END

@@ -7,50 +7,16 @@ CChannel::CChannel()
 {
 }
 
-HRESULT CChannel::Initialize(aiNodeAnim * pAIChannel, CModel * pModel)
+HRESULT CChannel::Initialize(CHANNELLOAD& pAIChannel, CModel * pModel)
 {
-	strcpy_s(m_szName, pAIChannel->mNodeName.data);
+	strcpy_s(m_szName, pAIChannel.mNodeName);
 
 	m_pBone = pModel->Get_BonePtr(m_szName);
 	Safe_AddRef(m_pBone);
 
-	m_iNumKeyframes = max(pAIChannel->mNumPositionKeys,max(pAIChannel->mNumScalingKeys, pAIChannel->mNumRotationKeys));
+	m_iNumKeyframes = pAIChannel.mNumKeyFrames;
 
-	XMFLOAT3 vScale, vPosition;
-	XMFLOAT4 vRotation;
-
-	for (_uint i = 0; i < m_iNumKeyframes; ++i)
-	{
-		KEYFRAME keyFrame;
-		ZeroMemory(&keyFrame, sizeof(KEYFRAME));
-
-		if (i < pAIChannel->mNumScalingKeys)
-		{
-			memcpy(&vScale, &pAIChannel->mScalingKeys[i].mValue, sizeof(XMFLOAT3));
-			keyFrame.Time = pAIChannel->mScalingKeys[i].mTime;
-		}
-
-		if (i < pAIChannel->mNumRotationKeys)
-		{
-			vRotation.x = pAIChannel->mRotationKeys[i].mValue.x;
-			vRotation.y = pAIChannel->mRotationKeys[i].mValue.y;
-			vRotation.z = pAIChannel->mRotationKeys[i].mValue.z;
-			vRotation.w = pAIChannel->mRotationKeys[i].mValue.w;
-			keyFrame.Time = pAIChannel->mRotationKeys[i].mTime;
-		}
-
-		if (i < pAIChannel->mNumPositionKeys)
-		{
-			memcpy(&vPosition, &pAIChannel->mPositionKeys[i].mValue, sizeof(XMFLOAT3));
-			keyFrame.Time = pAIChannel->mPositionKeys[i].mTime;
-		}
-
-		keyFrame.vScale = vScale;
-		keyFrame.vRotation = vRotation;
-		keyFrame.vPosition = vPosition;
-
-		m_KeyFrames.push_back(keyFrame);
-	}
+	m_KeyFrames = pAIChannel.mKeyFrames;
 
 	return S_OK;
 }
@@ -85,7 +51,70 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
 
-CChannel * CChannel::Create(aiNodeAnim * pAIChannel, CModel * pModel)
+_bool CChannel::Lerp_TransformMatrix(_double PlayTime, CChannel * Sour, CChannel * Dest, _bool bFinish)
+{
+	_vector		vScale;
+	_vector		vRotation;
+	_vector		vPosition;
+	_matrix		Transform_Matrix;
+
+	if (-1 == m_iLerpFrameIndex)
+	{
+		while (PlayTime >= Sour->m_KeyFrames[m_iLerpFrameIndex + 1].Time)
+		{
+			m_iLerpFrameIndex++;
+
+			if ((_int)m_iNumKeyframes <= m_iLerpFrameIndex + 1)
+			{
+				m_iLerpFrameIndex -= 1;
+				break;
+			}
+		}
+	}
+
+	_uint iSour;
+	if (bFinish)	iSour = m_iNumKeyframes - 1;
+	else			iSour = m_iLerpFrameIndex;
+
+	_uint iDest = 0;
+
+	if (Sour->m_KeyFrames.size() <= iSour)
+		iSour = (_uint)Sour->m_KeyFrames.size() - 1;
+
+	m_LerpRatio += 0.1f;
+
+	_vector	vSourScale, vDestScale;
+	_vector	vSourRotation, vDestRotation;
+	_vector vSourPosition, vDestPosition;
+
+	vSourScale = XMLoadFloat3(&Sour->m_KeyFrames[iSour].vScale);
+	vDestScale = XMLoadFloat3(&Dest->m_KeyFrames[iDest].vScale);
+
+	vSourRotation = XMLoadFloat4(&Sour->m_KeyFrames[iSour].vRotation);
+	vDestRotation = XMLoadFloat4(&Dest->m_KeyFrames[iDest].vRotation);
+
+	vSourPosition = XMLoadFloat3(&Sour->m_KeyFrames[iSour].vPosition);
+	vDestPosition = XMLoadFloat3(&Dest->m_KeyFrames[iDest].vPosition);
+
+	vScale = XMVectorLerp(vSourScale, vDestScale, static_cast<_float>(m_LerpRatio));
+	vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, static_cast<_float>(m_LerpRatio));
+	vPosition = XMVectorLerp(vSourPosition, vDestPosition, static_cast<_float>(m_LerpRatio));
+	vPosition = XMVectorSetW(vPosition, 1.f);
+
+	Transform_Matrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+
+	m_pBone->Set_TransformMatrix(Transform_Matrix);
+
+	if (1.f <= m_LerpRatio)
+	{
+		m_LerpRatio = 0.f;
+		return true;
+	}
+
+	return false;
+}
+
+CChannel * CChannel::Create(CHANNELLOAD& pAIChannel, CModel * pModel)
 {
 	CChannel*		pInstance = new CChannel();
 
@@ -100,5 +129,7 @@ CChannel * CChannel::Create(aiNodeAnim * pAIChannel, CModel * pModel)
 void CChannel::Free()
 {
 	Safe_Release(m_pBone);
+
+	m_KeyFrames.clear();
 }
 

@@ -44,13 +44,14 @@ public:		/* For InputDevice */
 public: // Level_Manager
 	HRESULT OpenLevel(_uint iLevelIndex, class CLevel* pNewLevel);
 	HRESULT RenderLevel();
-	_uint GetCurLevelIdx();
 
 public: /* For.Object_Manager */
+	class	CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr);
 	void	Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
+	class	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	class	CGameObject* Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName);
 	void	SaveData(_uint iLevel,const wstring& strDirectory);
 	void	LoadData(_uint iLevel, const wstring& strDirectory);
@@ -58,7 +59,6 @@ public: /* For.Object_Manager */
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
-	HRESULT Remove_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag);
 	void	Imgui_ComponentViewer(_uint iLevel, const _tchar*& szSelectedProto);
 
 public: // for imgui manager

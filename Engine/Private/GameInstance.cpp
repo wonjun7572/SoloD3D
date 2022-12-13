@@ -219,12 +219,12 @@ HRESULT CGameInstance::RenderLevel()
 	return	m_pLevelMgr->Render();
 }
 
-_uint CGameInstance::GetCurLevelIdx()
+CComponent * CGameInstance::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, _uint iIndex)
 {
-	if (m_pLevelMgr == nullptr)
-		return _uint();
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
 
-	return	m_pLevelMgr->GetCurLevelIdx();
+	return m_pObjectMgr->Get_ComponentPtr(iLevelIndex, pLayerTag, pComponentTag, iIndex);
 }
 
 HRESULT CGameInstance::Add_Prototype(const wstring& pPrototypeTag, CGameObject * pPrototype)
@@ -255,6 +255,14 @@ void CGameInstance::Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObje
 	if (nullptr == m_pObjectMgr)
 		return;
 	m_pObjectMgr->Imgui_ObjectViewer(iLevel, pSelectedObject);
+}
+
+CGameObject * CGameInstance::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
+{
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
+	return m_pObjectMgr->Clone_GameObject(pPrototypeTag, pArg);
 }
 
 CGameObject * CGameInstance::Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName)
@@ -294,14 +302,6 @@ CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pP
 		return nullptr;
 
 	return m_pComponetMgr->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
-}
-
-HRESULT CGameInstance::Remove_Prototype(_uint iLevelIndex, const wstring & pPrototypeTag)
-{
-	if (m_pComponetMgr == nullptr)
-		return E_FAIL;
-
-	return m_pComponetMgr->Remove_Prototype(iLevelIndex, pPrototypeTag);
 }
 
 void CGameInstance::Imgui_ComponentViewer(_uint iLevel, const _tchar *& szSelectedProto)

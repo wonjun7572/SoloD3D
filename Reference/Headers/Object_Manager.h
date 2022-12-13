@@ -15,12 +15,17 @@ private:
 	virtual ~CObject_Manager() = default;
 
 public:
+	class CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex);
+
+public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	HRESULT Clear(_uint iLevelIndex);
 
 public:
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Clone_GameObject(_uint iLevelIndex,const wstring& pLayerTag,const wstring& pPrototypeTag, void* pArg = nullptr);
+	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
+
 	void	Tick(_double TimeDelta);
 	void	Late_Tick(_double TimeDelta);
 	

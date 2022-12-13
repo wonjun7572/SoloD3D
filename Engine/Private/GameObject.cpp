@@ -7,6 +7,7 @@ wstring CGameObject::m_pTransformComTag = TEXT("Com_Transform");
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:m_pDevice(pDevice),
 	m_pContext(pContext)
+	,m_bClone(false)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -15,6 +16,7 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CGameObject::CGameObject(const CGameObject & rhs)
 	:m_pDevice(rhs.m_pDevice),
 	m_pContext(rhs.m_pContext)
+	, m_bClone(true)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -85,19 +87,6 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& pPrototypeT
 	*ppOut = pComponent;
 
 	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CGameObject::Remove_Component(const wstring & pComponentTag)
-{
-	auto iter = m_Components.find(pComponentTag);
-
-	if (iter == m_Components.end())
-		return E_FAIL;
-
-	Safe_Release(iter->second);
-	iter = m_Components.erase(iter);
 
 	return S_OK;
 }

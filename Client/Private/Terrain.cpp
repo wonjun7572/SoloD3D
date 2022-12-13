@@ -31,8 +31,6 @@ HRESULT CTerrain::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	Ready_FilterBuffer();
-
 	m_iDiffuseTexCnt = m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex();
 
 	return S_OK;
@@ -46,19 +44,8 @@ void CTerrain::Tick(_double TimeDelta)
 	{
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		
-		if (m_bHeight)
-		{
-			if (pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
-				m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight), TimeDelta, m_bDefaultHeight);
-		}
-
-		if (m_bFilter)
-		{
-			if (pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
-				DynanicBuffer_ForBrush();
-		}
-		
+		if(pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
+			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight), TimeDelta , m_bDefaultHeight);
 		RELEASE_INSTANCE(CGameInstance);
 	}
 }
@@ -177,16 +164,11 @@ void CTerrain::Imgui_RenderProperty()
 		m_vBrushPos.z = fBrushPos[2];
 		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
 
-		ImGui::Checkbox("IsPicking", &m_bPicking); 
-
-		ImGui::Checkbox("Height", &m_bHeight);  ImGui::SameLine();
-		ImGui::Checkbox("Filter", &m_bFilter);
-
+		ImGui::Checkbox("IsPicking", &m_bPicking); ImGui::SameLine();
 		ImGui::Checkbox("IsDefaultHeight", &m_bDefaultHeight);
 		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, 0.0f, 255.0f);
 		if (ImGui::Button("SaveHeight"))
 			m_pVIBufferCom->SaveHeightMap();
-
 	}
 }
 
@@ -279,83 +261,8 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	return _float4();
 }
 
-HRESULT	CTerrain::Ready_FilterBuffer()
+void CTerrain::EditBrushTex()
 {
-	m_pPixel = new _ulong[128 * 128];
-
-	for (_uint i = 0; i < 128; ++i)
-	{
-		for (_uint j = 0; j < 128; ++j)
-		{
-			_uint iIndex = i * 128 + j;
-			m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
-		}
-	}
-	
-	return S_OK;
-}
-
-HRESULT CTerrain::DynanicBuffer_ForBrush()
-{
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	HRESULT hr = 0;
-
-	// 아 필터 이미지는 저기 위에서부터 칠해주는데
-	// 버텍스는 반대로 그려주고있구나
-
-	_uint iResult = (static_cast<_uint>(m_vBrushPos.z) * 128) + (static_cast<_uint>(m_vBrushPos.x));
-	m_pPixel[iResult] = D3DCOLOR_ARGB(255, 0, 0, 0);
-
-	ZeroMemory(&m_TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-
-	m_TextureDesc.Width = 128;		// 2의 배수로 맞춰야됀다.
-	m_TextureDesc.Height = 128;		// 2의 배수로 맞춰야됀다.
-	m_TextureDesc.MipLevels = 1;
-	m_TextureDesc.ArraySize = 1;
-	m_TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	m_TextureDesc.SampleDesc.Quality = 0;
-	m_TextureDesc.SampleDesc.Count = 1;
-
-	m_TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
-	m_TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	m_TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
-	m_TextureDesc.MiscFlags = 0;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&m_TextureDesc, nullptr, &m_pTexture2D)))
-		return E_FAIL;
-
-	D3D11_MAPPED_SUBRESOURCE		SubResource;
-	ZeroMemory(&SubResource, sizeof SubResource);
-
-	m_pContext->Map(m_pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
-
-	memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) *m_TextureDesc.Width * m_TextureDesc.Height));
-
-	m_pContext->Unmap(m_pTexture2D, 0);
-
-	Safe_Release(m_pTextureCom[TYPE_FILTER]);
-
-	Remove_Component(TEXT("Com_Filter"));
-
-	hr = DirectX::SaveDDSTextureToFile(m_pContext, m_pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"));
-
-	Safe_Release(m_pTexture2D);
-
-	if (FAILED(pGameInstance->Remove_Prototype(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_CustomFilter"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_CustomFilter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
-		return E_FAIL;
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_CustomFilter"), TEXT("Com_Filter"),
-		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
 }
 
 HRESULT CTerrain::SetUp_Components()
@@ -386,7 +293,7 @@ HRESULT CTerrain::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Filter*/
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_CustomFilter"), TEXT("Com_Filter"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		return E_FAIL;
 
@@ -476,8 +383,6 @@ CGameObject * CTerrain::Clone(void * pArg)
 void CTerrain::Free()
 {
 	__super::Free();
-
-	Safe_Delete(m_pPixel);
 
 	for (auto& pTexture : m_pTextureCom)
 		Safe_Release(pTexture);

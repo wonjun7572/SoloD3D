@@ -15,7 +15,6 @@
 #include "FSMComponent.h"
 
 #include "Model.h"
-
 #include "Collider.h"
 
 BEGIN(Engine)
@@ -30,10 +29,7 @@ private:
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
-	HRESULT Remove_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag);
-
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
-
 
 	void Imgui_ComponentViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	

@@ -20,18 +20,14 @@ using namespace DirectX;
 
 #include <DirectXTK/DDSTextureLoader.h>
 #include <DirectXTK/WICTextureLoader.h>
-#include <DirectXTK/ScreenGrab.h>
-
-#include <assimp/scene.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
 
 #include <DirectXTK/PrimitiveBatch.h>
 #include <DirectXTK/VertexTypes.h>
 #include <DirectXTK/Effects.h>
 
-#include <DirectXTK/SpriteBatch.h>
+#include <DirectXTK/ScreenGrab.h>
 #include <DirectXTK/SpriteFont.h>
+#include <DirectXTK/SpriteBatch.h>
 #include <wincodec.h>
 
 #include <DirectXTK/SimpleMath.h>

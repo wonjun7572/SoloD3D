@@ -19,6 +19,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
+	
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 
@@ -26,23 +27,19 @@ HRESULT Client::CLevel_ChapOne::Init()
 	//pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
 	//Safe_Release(pGameInstance);
 
-
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Weapon(TEXT("Layer_Weapon"))))
+	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Obstacle(TEXT("Layer_Obstacle"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Map(TEXT("Layer_Map"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Statue(TEXT("Layer_Statue"))))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Forest(TEXT("Layer_Forest"))))
-	//	return E_FAIL;
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
-	
 	return S_OK;
 }
 
@@ -106,11 +103,8 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Terrain"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ForkLift"))))
 		return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Ocean"))))
-	//	return E_FAIL;
 
 	Safe_Release(pGameInstance);
 
@@ -133,34 +127,13 @@ HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sheila"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Player"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CLevel_ChapOne::Ready_Layer_Statue(const wstring & pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_DragonStatue_1"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Izuna"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_DragonStatue_4"))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CLevel_ChapOne::Ready_Layer_Forest(const wstring & pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FieldGrass_1"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Momoi"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -172,10 +145,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Pig"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Army1"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Monster"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -183,20 +153,23 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_ChapOne::Ready_Layer_Weapon(const wstring & pLayerTag)
+HRESULT CLevel_ChapOne::Ready_Layer_Obstacle(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rifle"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Baricade"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Shotgun"))))
-		return E_FAIL;
+	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Pistol"))))
-		return E_FAIL;
+	return S_OK;
+}
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Sniper"))))
+HRESULT CLevel_ChapOne::Ready_Layer_Map(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_School"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

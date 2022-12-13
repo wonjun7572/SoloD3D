@@ -18,7 +18,7 @@ namespace Engine
 	typedef struct tagModelMaterial
 	{
 		char				MaterialName[MAX_PATH];
-		class CTexture*		pTexture[AI_TEXTURE_TYPE_MAX];
+		class CTexture*		pTexture[18];
 	}MODELMATERIAL;
 
 	/* 방향성광원, 점광원 : 방향벡터가 필요하다. */

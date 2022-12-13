@@ -33,22 +33,6 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const wstring& pPro
 	return S_OK;
 }
 
-HRESULT CComponent_Manager::Remove_Prototype(_uint iLevelIndex, const wstring & pPrototypeTag)
-{
-	if (nullptr == m_pPrototypes || iLevelIndex >= m_iNumLevels)
-		return E_FAIL;
-
-	auto iter = m_pPrototypes[iLevelIndex].find(pPrototypeTag);
-
-	if (iter == m_pPrototypes[iLevelIndex].end())
-		return E_FAIL;
-
-	Safe_Release(iter->second);
-	iter = m_pPrototypes[iLevelIndex].erase(iter);
-
-	return S_OK;
-}
-
 CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void * pArg)
 {
 	CComponent* pPrototype = Find_Prototype(iLevelIndex, pPrototypeTag);

@@ -20,6 +20,14 @@ public:
 		_float3			vSize; /* 너비, 높이, 깊이 */
 		_float3			vRotation; /* x축회전, y축회전, z축회전 */
 	}COLLIDERDESC;
+
+	typedef struct tagOBBDesc
+	{
+		_float3			vCenter;
+		_float3			vCenterAxis[3];
+		_float3			vAlignAxis[3];
+	}OBBDESC;
+
 public:
 	CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCollider(const CCollider& rhs);
@@ -32,6 +40,11 @@ public:
 public:
 	void Update(_fmatrix TransformMatrix);
 
+public:
+	_bool Collision(class CCollider* pTargetCollider);
+	_bool Collision_AABB(class CCollider* pTargetCollider);
+	_bool Collision_OBB(class CCollider* pTargetCollider);
+
 #ifdef _DEBUG
 public:
 	HRESULT Render();
@@ -41,7 +54,9 @@ private:
 	TYPE						m_eType = TYPE_END;
 	BoundingBox*				m_pAABB_Original = nullptr;
 	BoundingBox*				m_pAABB = nullptr;
+	BoundingOrientedBox*		m_pOBB_Original = nullptr;
 	BoundingOrientedBox*		m_pOBB = nullptr;
+	BoundingSphere*				m_pSphere_Original = nullptr;
 	BoundingSphere*				m_pSphere = nullptr;
 	_bool						m_isColl = false;
 
@@ -52,6 +67,12 @@ private:
 	ID3D11InputLayout*									m_pInputLayout = nullptr;
 	_float4												m_vColor;
 #endif // _DEBUG
+
+private:
+	_matrix Remove_Rotation(_fmatrix TransformMatrix);
+	_float3 Compute_Min();
+	_float3 Compute_Max();
+	OBBDESC Compute_OBBDesc();
 
 public:
 	static CCollider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType);

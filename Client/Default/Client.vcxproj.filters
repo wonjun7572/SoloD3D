@@ -61,53 +61,26 @@
     <Filter Include="GameObject\Player">
       <UniqueIdentifier>{580ff846-3bbe-4588-85fc-b8794049ae36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Player\UI">
-      <UniqueIdentifier>{f7143dbc-b708-47ac-b010-bc1486d9f5a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Player\UI\SKILL">
-      <UniqueIdentifier>{beb19723-d787-4e0a-93dd-c8ea6ee3d302}</UniqueIdentifier>
-    </Filter>
     <Filter Include="LevelDesign\Tool">
       <UniqueIdentifier>{14b5ae69-1ee8-4fc5-a490-585f1be62ebb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\DragonStatue">
-      <UniqueIdentifier>{818c5f4a-8819-4e59-80d8-9b7e9419e68e}</UniqueIdentifier>
     </Filter>
     <Filter Include="LevelDesign\Loading\UI">
       <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Forest">
-      <UniqueIdentifier>{d687601e-67d7-4a34-b9bf-f08df456cf8d}</UniqueIdentifier>
+    <Filter Include="GameObject\Player\Weapon">
+      <UniqueIdentifier>{8b3ce01a-7eba-41bc-b524-71711ee5f671}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Forest\Grass">
-      <UniqueIdentifier>{7f79373c-42ad-41ce-82b5-c47e61f83378}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Art">
-      <UniqueIdentifier>{9f49ccc7-2393-4687-8a1f-8dc22e71661a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Art\GuFeng">
-      <UniqueIdentifier>{03cb71e5-919d-4522-ae21-b39d3ab9a74d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Art\GuFeng\Arch">
-      <UniqueIdentifier>{9f6ca1a9-e42e-4429-9ec0-281144888c18}</UniqueIdentifier>
+    <Filter Include="GameObject\Env">
+      <UniqueIdentifier>{8ef51747-abb6-4e3c-a06b-7456d4a9005c}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\Monster">
-      <UniqueIdentifier>{0c7270cb-cc0d-44c8-9713-7a30f8c14fd4}</UniqueIdentifier>
+      <UniqueIdentifier>{3adb26ef-14c6-4969-afec-e6ec33f95f66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Weapon">
-      <UniqueIdentifier>{11eb2dde-bcb0-4504-aa6b-87e48c45ca4c}</UniqueIdentifier>
+    <Filter Include="GameObject\Character">
+      <UniqueIdentifier>{f3d5fbc8-a2a7-4aa7-bbfa-390bf4db4cb1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Weapon\Rifle">
-      <UniqueIdentifier>{1c3a6df8-f0df-471c-8f94-ca1cc420ea0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Weapon\ShotGun">
-      <UniqueIdentifier>{ef815d92-4194-4fd0-9290-2f9b2fe31250}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Weapon\Sniper">
-      <UniqueIdentifier>{9786ee1c-049d-49bb-9c2d-e1d75f9595a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Weapon\Pistol">
-      <UniqueIdentifier>{a7643d99-c114-4789-b785-94a5321ca318}</UniqueIdentifier>
+    <Filter Include="GameObject\Obstacle">
+      <UniqueIdentifier>{0ca75f09-b6a6-4fdd-ba2d-bc34f5d20d5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,53 +138,35 @@
     <ClInclude Include="..\public\Ocean.h">
       <Filter>GameObject\Ocean</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Enter_KeyUI.h">
-      <Filter>GameObject\Logo\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\TestCylinder.h">
       <Filter>GameObject\Figure</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Level_Tool.h">
       <Filter>LevelDesign\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Sheila.h">
+    <ClInclude Include="..\public\EmptyGameObject.h" />
+    <ClInclude Include="..\public\Player.h">
       <Filter>GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DragonStatue_1.h">
-      <Filter>GameObject\DragonStatue</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\DragonStatue_4.h">
-      <Filter>GameObject\DragonStatue</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\LoadingHourglass.h">
-      <Filter>LevelDesign\Loading\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FieldGrass_1.h">
-      <Filter>GameObject\Forest\Grass</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\GF_Arch.h">
-      <Filter>GameObject\Art\GuFeng\Arch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\EmptyGameObject.h" />
-    <ClInclude Include="..\public\Pig.h">
-      <Filter>GameObject\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\NpcArmy_1.h">
-      <Filter>GameObject\Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Weapon.h">
-      <Filter>GameObject\Weapon</Filter>
+      <Filter>GameObject\Player\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Rifle.h">
-      <Filter>GameObject\Weapon\Rifle</Filter>
+    <ClInclude Include="..\Public\ForkLift.h">
+      <Filter>GameObject\Env</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Shotgun.h">
-      <Filter>GameObject\Weapon\ShotGun</Filter>
+    <ClInclude Include="..\private\Izuna.h">
+      <Filter>GameObject\Character</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Pistol.h">
-      <Filter>GameObject\Weapon\Pistol</Filter>
+    <ClInclude Include="..\public\Monster.h">
+      <Filter>GameObject\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Sniper.h" />
+    <ClInclude Include="..\public\School.h">
+      <Filter>GameObject\Env</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Momoi.h">
+      <Filter>GameObject\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Baricade.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -253,56 +208,38 @@
     <ClCompile Include="..\private\Ocean.cpp">
       <Filter>GameObject\Ocean</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Enter_KeyUI.cpp">
-      <Filter>GameObject\Logo\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\TestCylinder.cpp">
       <Filter>GameObject\Figure</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Level_Tool.cpp">
       <Filter>LevelDesign\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Sheila.cpp">
-      <Filter>GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DragonStatue_1.cpp">
-      <Filter>GameObject\DragonStatue</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DragonStatue_4.cpp">
-      <Filter>GameObject\DragonStatue</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Terrain.cpp">
       <Filter>GameObject\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LoadingHourglass.cpp">
-      <Filter>LevelDesign\Loading\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FieldGrass_1.cpp">
-      <Filter>GameObject\Forest\Grass</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\GF_Arch.cpp">
-      <Filter>GameObject\Art\GuFeng\Arch</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
-    <ClCompile Include="..\private\Pig.cpp">
-      <Filter>GameObject\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\NpcArmy_1.cpp">
-      <Filter>GameObject\Monster</Filter>
+    <ClCompile Include="..\private\Player.cpp">
+      <Filter>GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Weapon.cpp">
-      <Filter>GameObject\Weapon</Filter>
+      <Filter>GameObject\Player\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Rifle.cpp">
-      <Filter>GameObject\Weapon\Rifle</Filter>
+    <ClCompile Include="..\Private\ForkLift.cpp">
+      <Filter>GameObject\Env</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Shotgun.cpp">
-      <Filter>GameObject\Weapon\ShotGun</Filter>
+    <ClCompile Include="..\public\Izuna.cpp">
+      <Filter>GameObject\Character</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Pistol.cpp">
-      <Filter>GameObject\Weapon\Pistol</Filter>
+    <ClCompile Include="..\private\Monster.cpp">
+      <Filter>GameObject\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Sniper.cpp" />
+    <ClCompile Include="..\private\School.cpp">
+      <Filter>GameObject\Env</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Momoi.cpp">
+      <Filter>GameObject\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Baricade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

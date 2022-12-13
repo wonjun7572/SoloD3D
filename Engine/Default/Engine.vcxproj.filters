@@ -133,8 +133,8 @@
     <Filter Include="Singleton\ComponentManager\Component\Model\Channel">
       <UniqueIdentifier>{7521b1ff-ffe0-463a-b5b5-92296e900c34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Singleton\ComponentManager\Component\Collider">
-      <UniqueIdentifier>{1e55658a-e03f-44b4-a090-2e0086e3bfe1}</UniqueIdentifier>
+    <Filter Include="Singleton\ComponentManager\Component\Collision">
+      <UniqueIdentifier>{3c6ff827-342f-41ea-b0dc-55fe818230e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -334,10 +334,10 @@
       <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Collider.h">
-      <Filter>Singleton\ComponentManager\Component\Collider</Filter>
+      <Filter>Singleton\ComponentManager\Component\Collision</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
-      <Filter>Singleton\ComponentManager\Component\Collider</Filter>
+      <Filter>Singleton\ComponentManager\Component\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -510,10 +510,10 @@
       <Filter>Singleton\ComponentManager\Component\Model\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Collider.cpp">
-      <Filter>Singleton\ComponentManager\Component\Collider</Filter>
+      <Filter>Singleton\ComponentManager\Component\Collision</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
-      <Filter>Singleton\ComponentManager\Component\Collider</Filter>
+      <Filter>Singleton\ComponentManager\Component\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

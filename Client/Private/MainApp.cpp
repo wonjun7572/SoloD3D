@@ -5,7 +5,6 @@
 #include "Level_Loading.h"
 
 #include "Camera_Dynamic.h"
-#include "LoadingHourglass.h"
 
 CMainApp::CMainApp()
 	:m_pGameInstance(CGameInstance::GetInstance())
@@ -134,16 +133,10 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/*For.Prototype_Component_Texture_LoadingGlass*/
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingGlass"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Loading/HUD_BMI_Loading_%d.png"), 56))))
-		return E_FAIL;
-
 	/* For. Prototype_Component_FSM */
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_FSM"),
 		CFSMComponent::Create())))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -151,9 +144,6 @@ HRESULT CMainApp::Ready_Prototype_Component()
 HRESULT CMainApp::Ready_Prototype_GameObject()
 {
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"), CCamera_Dynamic::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingHourglass"), CLoadingHourglass::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

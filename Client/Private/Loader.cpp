@@ -5,7 +5,6 @@
 
 /*Logo*/
 #include "BackGround.h"
-#include "Enter_KeyUI.h"
 
 #include "TestCylinder.h"
 #include "TestSphere.h"
@@ -13,28 +12,22 @@
 #include "Terrain.h"
 #include "Ocean.h"
 
-#include "Sheila.h"
-
-/*Statue*/
-#include "DragonStatue_1.h"
-#include "DragonStatue_4.h"
-
-/*Forest*/
-#include "FieldGrass_1.h"
-
-/*GuFeng*/
-#include "GF_Arch.h"
-
 #include "EmptyGameObject.h"
 
-/* Monster */
-#include "Pig.h"
-#include "NpcArmy_1.h"
+#include "Player.h"
+#include "ForkLift.h"
+#include "Weapon.h"
+#include "Monster.h"
 
-#include "Rifle.h"
-#include "Shotgun.h"
-#include "Pistol.h"
-#include "Sniper.h"
+/* For. Map*/
+#include "School.h"
+
+/* For. Character*/
+#include "Izuna.h"
+#include "Momoi.h"
+
+/* For. Obstacle*/
+#include "Baricade.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -102,11 +95,6 @@ HRESULT CLoader::Loading_ForLogo()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_BMI_LOGO_US.dds")))))
 		return E_FAIL;
 
-	/*For.Prototype_Component_Texture_EnterKey*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_EnterKey"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_EnterKey.dds")))))
-		return E_FAIL;
-
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
@@ -116,9 +104,6 @@ HRESULT CLoader::Loading_ForLogo()
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"), CBackGround::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnterKeyUI"), CEnter_KeyUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_Empty*/
@@ -154,15 +139,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.bmp"), 1))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_CustomFilter*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_CustomFilter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"), 1))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Texture_Ocean_Height*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Ocean_Height"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Ocean_Height"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
+	//	return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 	
@@ -188,99 +168,36 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
+	/* For.Prototype_Component_Model_Fiona */
 	_matrix			PivotMatrix = XMMatrixIdentity();
-
-	/* For. Prototype_Component_Model_Rifle*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Rifle"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Rifle/Rifle.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Fiona"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Fiona/Fiona.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For. Prototype_Component_Model_Shotgun*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shotgun"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Shotgun/Shotgun.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ForkLift"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For. Prototype_Component_Model_Pistol*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Pistol"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Pistol/Pistol.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_School"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/MapEditor/School/School.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For. Prototype_Component_Model_Sniper*/
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sniper"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Weapon/Sniper/Sniper.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Izuna"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Izuna/Izuna.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_Sheila */
-	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sheila"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Sheila_FP/Sheila_FP.fbx", PivotMatrix))))
+	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Momoi"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Momoi/Momoi.model"), PivotMatrix))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_Ocean */
-	//PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Ocean"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Ocean/Ocean.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Modle_Pig*/
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Pig"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Enemy/Pig/Pig.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Modle_Army_1*/
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Modle_Army_1"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Meshes/Enemy/NpcArmy/Army01.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Model_DragonStatue_1 */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_DragonStatue_1"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/DragonStatue/1/DragonStatue_1.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Model_DragonStatue_4 */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_DragonStatue_4"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/DragonStatue/4/DragonStatue_4.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Model_FieldGrass_1 */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_FieldGrass_1"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Forest/Grass/FieldGrass_1.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Model_GF_Arch */
-	//PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_GF_Arch"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Art/GuFeng/Arch/Arch.fbx", PivotMatrix))))
-	//	return E_FAIL;
-
-
-	//{
-	//	/*For. Prototype_EMPTY!!!*/
-	//	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ChaBei"),
-	//		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Art/GuFeng/ChaBei/ChaBei.fbx", PivotMatrix))))
-	//		return E_FAIL;
-
-	//	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ChineseLamp"),
-	//		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Art/GuFeng/ChineseLamp/ChineseLamp.fbx", PivotMatrix))))
-	//		return E_FAIL;
-
-	//	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ClothesRack"),
-	//		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Meshes/Art/GuFeng/ClothesRack/ClothesRack.fbx", PivotMatrix))))
-	//		return E_FAIL;
-	//}
-
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Baricade"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Baricade/Baricade.model"), PivotMatrix))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
@@ -296,58 +213,46 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
 
-	/* For.Prototype_GameObject_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"), CTerrain::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Player*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"), CPlayer::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Sheila */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sheila"),CSheila::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_ForkLift*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"), CForkLift::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Ocean */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ocean"), COcean::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_GameObject_Pig*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pig"), CPig::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_GameObject_Army1*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Army1"), CNpcArmy_1::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-
-	///* For.Prototype_GameObject_DragonStatue_1 */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_1"), CDragonStatue_1::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_GameObject_DragonStatue_4 */
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DragonStatue_4"), CDragonStatue_4::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_GameObject_FieldGrass_1*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FieldGrass_1"), CFieldGrass_1::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_GameObject_GF_Arch*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GF_Arch"), CGF_Arch::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	/* For.Prototype_GameObject_Rifle*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rifle"), CRifle::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Weapon*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Weapon"), CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Shotgun*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Shotgun"), CShotgun::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Monster*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"), CMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	// For Map
+	{
+		/* For.Prototype_GameObject_School*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_School"), CSchool::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
 
-	/* For.Prototype_GameObject_Pistol*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Pistol"), CPistol::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	// For Character
+	{
+		/* For.Prototype_GameObject_Izuna*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Izuna"), CIzuna::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For.Prototype_GameObject_Sniper*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sniper"), CSniper::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For.Prototype_GameObject_Momoi*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Momoi"), CMomoi::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
+
+	// For Obstacle
+	{
+		/* For. Prototype_GameObject_Baricade*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Baricade"), CBaricade::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
 
 	m_strLoadingText = TEXT("로딩끝. ");
 

@@ -2,26 +2,25 @@
 #include "Channel.h"
 
 CAnimation::CAnimation()
-	:m_isLooping(true)
 {
 }
 
-HRESULT CAnimation::Initialize(aiAnimation * pAIAnimation, CModel* pModel)
+HRESULT CAnimation::Initialize(ANIMATIONLOAD& pAIAnimation, CModel* pModel)
 {
-	strcpy_s(m_szName, pAIAnimation->mName.data);
+	m_ANIMATIONLOAD = pAIAnimation;
 
-	m_Duration = pAIAnimation->mDuration;
+	strcpy_s(m_szName, pAIAnimation.mName);
 
-	m_TickPerSecond = pAIAnimation->mTicksPerSecond;
+	m_Duration = pAIAnimation.mDuration;
+
+	m_TickPerSecond = pAIAnimation.mTicksPerSecond;
 
 	/* 이 애니메이션 구동하는데 필요한 뼈대의 갯수다.  */
-	m_iNumChannels = pAIAnimation->mNumChannels;
+	m_iNumChannels = pAIAnimation.mNumChannels;
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		aiNodeAnim*		pAINodeAnim = pAIAnimation->mChannels[i];
-
-		CChannel*		pChannel = CChannel::Create(pAINodeAnim, pModel);
+		CChannel*		pChannel = CChannel::Create(pAIAnimation.pvecChannels[i], pModel);
 		if (nullptr == pChannel)
 			return E_FAIL;
 
@@ -31,12 +30,12 @@ HRESULT CAnimation::Initialize(aiAnimation * pAIAnimation, CModel* pModel)
 	return S_OK;
 }
 
-void CAnimation::Update_Bones(_double TimeDelta)
+_bool CAnimation::Update_Bones(_double TimeDelta)
 {
 	if (true == m_isFinished &&
 		false == m_isLooping)
 	{
-		return;
+		return false;
 	}
 
 	m_PlayTime += m_TickPerSecond * TimeDelta;
@@ -45,21 +44,63 @@ void CAnimation::Update_Bones(_double TimeDelta)
 	{
 		m_PlayTime = 0.0;
 		m_isFinished = true;
+		return true;
+	}
+
+	if (m_isLooping && m_isFinished)
+	{
+		for (auto pChannel : m_Channels)
+			pChannel->Reset_KeyFrameIndex();
 	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		if (true == m_isFinished)
-			m_Channels[i]->Reset_KeyFrameIndex();
-
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
 	}
 
 	if (true == m_isFinished)
 		m_isFinished = false;
+
+	return false;
 }
 
-CAnimation * CAnimation::Create(aiAnimation * pAIAnimation, CModel* pModel)
+_bool CAnimation::AnimLerpTime(_double TimeDelta, CAnimation * pNext, _bool bFinish)
+{
+	if (m_isLerping)
+	{
+		m_PlayTime = 0.f;
+
+		for (auto pChannel : m_Channels)
+		{
+			pChannel->Reset_KeyFrameIndex();
+			pChannel->Reset_LerpIndex();
+		}
+
+		m_isLerping = false;
+
+		return false;
+	}
+	else
+	{
+		for (auto pChannel : m_Channels)
+		{
+			for (auto pNext : pNext->m_Channels)
+			{
+				if (!strcmp(pChannel->Get_ChannelName(), pNext->Get_ChannelName()))
+				{
+					m_isLerping = pChannel->Lerp_TransformMatrix(TimeDelta, pChannel, pNext, bFinish);
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	return true;
+}
+
+CAnimation * CAnimation::Create(ANIMATIONLOAD& pAIAnimation, CModel* pModel)
 {
 	CAnimation* pInstance = new CAnimation;
 

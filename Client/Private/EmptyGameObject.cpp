@@ -189,8 +189,6 @@ void CEmptyGameObject::Free()
 {
 	__super::Free();
 
-	Safe_Delete_Array(m_szModelTag);
-
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

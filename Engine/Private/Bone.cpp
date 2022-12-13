@@ -5,12 +5,13 @@ CBone::CBone()
 {
 }
 
-HRESULT CBone::Initialize(aiNode * pAINode, CBone* pParent)
+HRESULT CBone::Initialize(BONELOAD& BoneLoad, CBone* pParent)
 {
-	strcpy_s(m_szName, pAINode->mName.data);
+	m_BONELOAD = BoneLoad;
+	strcpy_s(m_szName, BoneLoad.mName);
 	XMStoreFloat4x4(&m_OffsetMatrix, XMMatrixIdentity());
-	memcpy(&m_TransformMatrix, &pAINode->mTransformation, sizeof(_float4x4));
-	m_TransformMatrix = CMathUtils::Transpose(m_TransformMatrix);
+	memcpy(&m_TransformMatrix, &BoneLoad.mTransformation, sizeof(_float4x4));
+	//m_TransformMatrix = CMathUtils::Transpose(m_TransformMatrix);
 	XMStoreFloat4x4(&m_CombindTransformMatrix, XMMatrixIdentity());
 	m_pParent = pParent;
 	Safe_AddRef(m_pParent);
@@ -25,11 +26,11 @@ void CBone::Compute_CombindTransformationMatrix()
 		m_CombindTransformMatrix = CMathUtils::Mul_Matrix(m_TransformMatrix, m_pParent->m_CombindTransformMatrix);
 }
 
-CBone * CBone::Create(aiNode * pAINode, CBone* pParent)
+CBone * CBone::Create(BONELOAD& BoneLoad, CBone* pParent)
 {
 	CBone* pInstance = new CBone();
 
-	if (FAILED(pInstance->Initialize(pAINode, pParent)))
+	if (FAILED(pInstance->Initialize(BoneLoad, pParent)))
 	{
 		MSG_BOX("Failed to Create : CBone");
 		Safe_Release(pInstance);
