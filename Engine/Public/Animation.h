@@ -31,12 +31,14 @@ public:
 	ANIMATIONLOAD&	Get_ANIMATIONLOAD() { return m_ANIMATIONLOAD; }
 
 public:
-	void		Reset_PlayTime(void) { m_PlayTime = 0.0; }
+	void			Reset_PlayTime(void) { m_PlayTime = 0.0; }
 	_bool		AnimLerpTime(_double TimeDelta, CAnimation* pNext, _bool bFinish = false);
 	_vector		Get_MovePos(void) { return XMLoadFloat3(&m_vMovePos); }
 
+	_double		Get_Duration() { return m_Duration; }
+
 private:
-	char								m_szName[MAX_PATH];
+	char									m_szName[MAX_PATH];
 	_double								m_Duration = 0.0;
 	_double								m_TickPerSecond;
 

@@ -147,6 +147,11 @@ void CModel::Set_AnimationIndex(_uint iIndex)
 	m_bAnimationChanged = true;
 }
 
+_double CModel::Get_AnimDuration(_uint iIndex)
+{
+	return m_Animations[iIndex]->Get_Duration();
+}
+
 HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, TextureType eType, const char * pConstantName)
 {
 	if (iMeshIndex >= m_iNumMeshes)

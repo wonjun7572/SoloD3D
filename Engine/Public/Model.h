@@ -18,7 +18,7 @@ public:
 	_uint			Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone*	Get_BonePtr(const char* pBoneName);
 
-	class CBone*		Get_SelectedBone() {return m_pSelectedBone; }
+	class CBone*		Get_SelectedBone() { return m_pSelectedBone; }
 	_float4x4			Get_PivotMatrix() { return m_PivotMatrix; }
 
 public:
@@ -31,7 +31,9 @@ public:
 	HRESULT Render(class CShader* pShader, _uint iMeshIndex,  _uint iPassIndex = 0, const char* pBoneConstantName = nullptr);
 
 	void	Set_AnimationIndex(_uint iIndex);
-	
+
+	_double Get_AnimDuration(_uint iIndex);
+
 	vector<const char*>&	Get_AnimationName() { return m_strAnimationName; }
 	_uint	Get_AnimationsNum() { return m_iNumAnimations; }
 

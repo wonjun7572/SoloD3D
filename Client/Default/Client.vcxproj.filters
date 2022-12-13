@@ -166,7 +166,9 @@
     <ClInclude Include="..\public\Momoi.h">
       <Filter>GameObject\Character</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Baricade.h" />
+    <ClInclude Include="..\public\Baricade.h">
+      <Filter>GameObject\Obstacle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -239,7 +241,9 @@
     <ClCompile Include="..\private\Momoi.cpp">
       <Filter>GameObject\Character</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Baricade.cpp" />
+    <ClCompile Include="..\private\Baricade.cpp">
+      <Filter>GameObject\Obstacle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

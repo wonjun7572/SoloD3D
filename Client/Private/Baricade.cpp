@@ -112,14 +112,14 @@ HRESULT CBaricade::SetUp_Components()
 
 	/* For.Com_OBB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.0f, 1.0f, 1.0f);
-	ColliderDesc.vRotation = _float3(0.f, /*XMConvertToRadians(45.0f)*/0.0f, 0.f);
+	ColliderDesc.vSize = _float3(1.f, 1.0f, 0.5f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
 		return E_FAIL;
 
+	// ¾ê´Â ¸ó½ºÅÍ°¡ ÀÖ´Â°¡? ÀÖ´Ù¸é ÃÑ ½÷¶ó
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);

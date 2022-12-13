@@ -95,6 +95,8 @@ HRESULT CIzuna::Render()
 void CIzuna::Move(STATETYPE eType, _double TimeDelta)
 {
 	m_MoveTime += TimeDelta;
+	_double indexTime27 = m_pModelCom->Get_AnimDuration(27);
+	_double indexTime29 = m_pModelCom->Get_AnimDuration(29);
 
 	switch (eType)
 	{
@@ -102,13 +104,11 @@ void CIzuna::Move(STATETYPE eType, _double TimeDelta)
 		//14 -> 21 -> 24
 		if(m_MoveTime < 5)
 			m_pModelCom->Set_AnimationIndex(14);
-
 		if (m_MoveTime > 5)
 		{
 			m_pModelCom->Set_AnimationIndex(21);
 			m_pTransformCom->Go_Straight(TimeDelta);
 		}
-
 		if (m_MoveTime > 10)
 		{
 			m_pModelCom->Set_AnimationIndex(24);
@@ -120,20 +120,19 @@ void CIzuna::Move(STATETYPE eType, _double TimeDelta)
 	
 		break;
 	case Client::CIzuna::STATE_KNEEL:
-		// TODO : 애니메이션 인덱스 수정하기
-		if (m_MoveTime < 5)
+		// TODO
+		if (m_MoveTime < 10)
+			m_pModelCom->Set_AnimationIndex(26); // KNEEL_IDLE
+		else if (m_MoveTime > 10 && m_MoveTime < 10 + indexTime27)
+			m_pModelCom->Set_AnimationIndex(27); //KNEEL_ ATTACK_START
+		else	if (m_MoveTime > 10 + indexTime27 * 0.5 && m_MoveTime < 19)
+			m_pModelCom->Set_AnimationIndex(28); // KNEEL_ATTACK_ING
+		else	if (m_MoveTime > 19 && m_MoveTime < 19 + indexTime29)
+			m_pModelCom->Set_AnimationIndex(29); //KNEEL_ ATTACK_END
+		else if (m_MoveTime >  19 + indexTime29 * 0.5)
+		{
 			m_pModelCom->Set_AnimationIndex(20);
-
-		if (m_MoveTime > 5)
-		{
-			m_pModelCom->Set_AnimationIndex(26);
 			m_pTransformCom->Go_Straight(TimeDelta);
-		}
-
-		if (m_MoveTime > 6)
-		{
-			m_pModelCom->Set_AnimationIndex(24);
-			m_MoveTime = 0.0;
 		}
 		break;
 
@@ -154,6 +153,8 @@ void CIzuna::Collision_ToObstacle()
 		m_eState = STATE_KNEEL;
 	else
 		m_eState = STATE_NORMAL;
+
+	// 구 충돌로 적이 있으면 총 쏘는애니메이션 나오고 몬스터에게 발사체 발사
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -213,8 +214,7 @@ HRESULT CIzuna::SetUp_Components()
 
 	/* For.Com_OBB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.0f, 1.0f, 1.0f);
-	ColliderDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
+	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
