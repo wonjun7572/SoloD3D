@@ -32,7 +32,7 @@ void Engine::CTimer::Update_Timer(void)
 		m_OriginTime = m_CurrentTime;
 	}
 
-	m_TimeDelta = float(m_CurrentTime.QuadPart - m_OldTime.QuadPart) / m_CpuTick.QuadPart;
+	m_TimeDelta = (float(m_CurrentTime.QuadPart - m_OldTime.QuadPart) / m_CpuTick.QuadPart) * m_fSlowTime;
 
 	m_OldTime = m_CurrentTime;
 }

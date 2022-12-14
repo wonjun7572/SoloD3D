@@ -38,6 +38,9 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 
 public:
+	_float3 Get_CollisionCenter();
+
+public:
 	void Update(_fmatrix TransformMatrix);
 
 public:

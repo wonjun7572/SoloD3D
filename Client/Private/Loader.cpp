@@ -29,6 +29,10 @@
 /* For. Obstacle*/
 #include "Baricade.h"
 
+/* For. Monster*/
+#include "TechSoldier.h"
+#include "LightTank.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
 	m_pContext(pContext)
@@ -180,21 +184,42 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.model"), PivotMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_Sword*/
+	PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.model"), PivotMatrix))))
+		return E_FAIL;
+
 	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_School"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/MapEditor/School/School.model"), PivotMatrix))))
 		return E_FAIL;
 
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Izuna"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Izuna/Izuna.model"), PivotMatrix))))
-		return E_FAIL;
+	// For. Character
+	{
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Izuna"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Izuna/Izuna.model"), PivotMatrix))))
+			return E_FAIL;
 
-	PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Momoi"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Momoi/Momoi.model"), PivotMatrix))))
-		return E_FAIL;
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Momoi"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Momoi/Momoi.model"), PivotMatrix))))
+			return E_FAIL;
+	}
 
+	// For. Monster
+	{
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TechSoldier"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/TechSoldier/TechSoldier.model"), PivotMatrix))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixIdentity();
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_LightTank"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/LightTank/LightTank.model"), PivotMatrix))))
+			return E_FAIL;
+	}
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Baricade"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Baricade/Baricade.model"), PivotMatrix))))
 		return E_FAIL;
@@ -244,6 +269,17 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 		/* For.Prototype_GameObject_Momoi*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Momoi"), CMomoi::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
+
+	// For Monster
+	{
+		/* For.Prototype_GameObject_TechSoldier*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TechSoldier"), CTechSoldier::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For.Prototype_GameObject_LightTank*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LightTank"), CLightTank::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 

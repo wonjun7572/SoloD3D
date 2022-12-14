@@ -136,6 +136,12 @@
     <Filter Include="Singleton\ComponentManager\Component\Collision">
       <UniqueIdentifier>{3c6ff827-342f-41ea-b0dc-55fe818230e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Navigation">
+      <UniqueIdentifier>{bb8471db-573d-4c08-8437-5fdae6878599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\Navigation\Cell">
+      <UniqueIdentifier>{8598b6a3-f7a3-44b3-8207-14639ac47291}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -339,6 +345,12 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>Singleton\ComponentManager\Component\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Navigation.h">
+      <Filter>Singleton\ComponentManager\Component\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Cell.h">
+      <Filter>Singleton\ComponentManager\Component\Navigation\Cell</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -514,6 +526,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>Singleton\ComponentManager\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Navigation.cpp">
+      <Filter>Singleton\ComponentManager\Component\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cell.cpp">
+      <Filter>Singleton\ComponentManager\Component\Navigation\Cell</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

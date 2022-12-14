@@ -16,6 +16,7 @@ public:
 public:
 	HRESULT		Ready_Timer(void);
 	void		Update_Timer(void);
+	void		Set_SlowTimer(_float time) { m_fSlowTime = time; }
 
 private:
 	LARGE_INTEGER		m_CurrentTime;
@@ -24,6 +25,8 @@ private:
 	LARGE_INTEGER		m_CpuTick;
 
 	_double				m_TimeDelta = 0.0;
+
+	_float				m_fSlowTime = 1.f;
 
 public:
 	static CTimer*	Create(void);

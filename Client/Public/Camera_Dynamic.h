@@ -26,8 +26,9 @@ private:
 
 	_bool m_bStatic = true;
 
-
-	_float					m_X, m_Y, m_Z;
+	_float m_fCameraLatitude;
+	_float m_fCameraLongitude;
+	_float m_fOrbitDistance = 5.f;
 
 
 public:

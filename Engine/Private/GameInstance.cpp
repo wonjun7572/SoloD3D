@@ -340,7 +340,6 @@ void CGameInstance::Clear_ImguiObjects()
 	m_pImGuiMgr->Clear_ImguiObjects();
 }
 
-
 _matrix CGameInstance::Get_TransformMatrix(CPipeLine::TRANSFORMSTATE eState)
 {
 	if (nullptr == m_pPipeLine)
@@ -403,6 +402,14 @@ void CGameInstance::Update_Timer(const wstring & pTimerTag)
 		return;
 
 	return m_pTimerMgr->Update_Timer(pTimerTag);
+}
+
+CTimer* CGameInstance::Find_Timer(const wstring& pTimerTag)
+{
+	if (m_pTimerMgr == nullptr)
+		return nullptr;
+
+	return m_pTimerMgr->Find_Timer(pTimerTag);
 }
 
 HRESULT CGameInstance::Add_Fonts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & pFontTag, const wstring & pFontFilePath)

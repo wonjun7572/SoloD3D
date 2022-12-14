@@ -78,6 +78,7 @@ public: /* For.Timer_Manager */
 	_double		Get_TimeDelta(const wstring& pTimerTag);
 	HRESULT		Ready_Timer(const wstring&  pTimerTag);
 	void		Update_Timer(const wstring&  pTimerTag);
+	class CTimer* Find_Timer(const wstring& pTimerTag);
 
 public: /* For.Font_Manager */
 	HRESULT Add_Fonts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontTag, const wstring& pFontFilePath);

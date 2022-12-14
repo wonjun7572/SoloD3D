@@ -91,6 +91,25 @@ HRESULT CCollider::Initialize(void * pArg)
 
 	return S_OK;
 }
+_float3 CCollider::Get_CollisionCenter()
+{
+	switch (m_eType)
+	{
+	case CCollider::TYPE_AABB:
+		return m_pAABB->Center;
+		break;
+
+	case CCollider::TYPE_OBB:
+		return m_pOBB->Center;
+		break;
+
+	case CCollider::TYPE_SPHERE:
+		return m_pSphere->Center;
+		break;
+	}
+
+	return _float3();
+}
 void CCollider::Update(_fmatrix TransformMatrix)
 {
 	switch (m_eType)

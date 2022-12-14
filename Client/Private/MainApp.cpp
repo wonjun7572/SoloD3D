@@ -149,6 +149,38 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 	return S_OK;
 }
 
+///* 내가 만든 네비게이션 대로 움직일수 있도록 하는 툴 제작 들어가야함*/
+//_ulong		dwByte = 0;
+//HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+//if (0 == hFile)
+//return E_FAIL;
+//
+//
+//// 여기 밑으로 만들어주면 될듯
+//_float3		vPoints[3];
+//
+//vPoints[0] = _float3(0.0f, 0.f, 5.0f);
+//vPoints[1] = _float3(5.0f, 0.f, 0.0f);
+//vPoints[2] = _float3(0.0f, 0.f, 0.0f);
+//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+//
+//vPoints[0] = _float3(0.0f, 0.f, 5.0f);
+//vPoints[1] = _float3(5.0f, 0.f, 5.0f);
+//vPoints[2] = _float3(5.0f, 0.f, 0.0f);
+//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+//
+//vPoints[0] = _float3(0.0f, 0.f, 10.0f);
+//vPoints[1] = _float3(5.0f, 0.f, 5.0f);
+//vPoints[2] = _float3(0.0f, 0.f, 5.0f);
+//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+//
+//vPoints[0] = _float3(5.0f, 0.f, 5.0f);
+//vPoints[1] = _float3(10.0f, 0.f, 0.0f);
+//vPoints[2] = _float3(5.0f, 0.f, 0.0f);
+//WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+//
+//CloseHandle(hFile);
+
 CMainApp * CMainApp::Create()
 {
 	CMainApp* pInstance = new CMainApp;

@@ -8,6 +8,7 @@ class CShader;
 class CRenderer;
 class CModel;
 class CBone;
+class CCollider;
 END
 
 BEGIN(Client)
@@ -38,6 +39,7 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
+	CCollider*				m_pColliderCom = nullptr;
 
 private:
 	WEAPONDESC				m_WeaponDesc;

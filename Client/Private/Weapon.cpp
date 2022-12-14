@@ -32,7 +32,6 @@ HRESULT CWeapon::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(_float3(0.1f, 0.1f, 0.1f));
 	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
 
 	return S_OK;
@@ -60,6 +59,8 @@ void CWeapon::Late_Tick(_double TimeDelta)
 
 	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
 
+	m_pColliderCom->Update(m_pTransformCom->Get_WorldMatrix() * SocketMatrix);
+
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
@@ -82,6 +83,10 @@ HRESULT CWeapon::Render()
 		m_pModelCom->Render(m_pShaderCom, i, 2);
 	}
 
+#ifdef _DEBUG
+	m_pColliderCom->Render();
+#endif 
+
 	return S_OK;
 }
 
@@ -98,8 +103,19 @@ HRESULT CWeapon::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ForkLift"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
+		return E_FAIL;
+
+	/* For.Com_Collider */
+	CCollider::COLLIDERDESC			ColliderDesc;
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.7f);
+	ColliderDesc.vSize = _float3(0.5f, 0.5f, 0.5f);
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider"),
+		(CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -168,7 +184,8 @@ void CWeapon::Free()
 		Safe_Release(m_WeaponDesc.pSocket);
 		Safe_Release(m_WeaponDesc.pTargetTransform);
 	}
-	
+
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

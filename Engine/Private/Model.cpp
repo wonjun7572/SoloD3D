@@ -140,9 +140,6 @@ void CModel::Set_AnimationIndex(_uint iIndex)
 	if (0 > iIndex || m_iNumAnimations <= iIndex ||	m_iCurrentAnimIndex == iIndex)
 		return;
 
-	//m_iBeforeAnimindex = m_iCurrentAnimIndex;
-	//m_iCurrentAnimIndex = iIndex;
-
 	m_iNextAnimindex = iIndex;
 	m_bAnimationChanged = true;
 }
@@ -462,6 +459,11 @@ HRESULT CModel::Load_Animations(HANDLE hFile)
 		m_strAnimationName.push_back(pAnim->Get_AnimationName());
 	}
 	return S_OK;
+}
+
+void CModel::Set_AnimLooping(_bool isLooping)
+{
+	m_Animations[m_iCurrentAnimIndex]->Set_isLooping(isLooping);
 }
 
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix)

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Momoi.h"
 #include "GameInstance.h"
+#include "MomoiFSM.h"
+#include "Timer.h"
 
 CMomoi::CMomoi(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -25,7 +27,7 @@ HRESULT CMomoi::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -36,6 +38,12 @@ HRESULT CMomoi::Init(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(26.f, 0.f, 0.f, 1.f));
 
+	m_strObjName = TEXT("Momoi");
+
+	m_pFSM = CMomoiFSM::Create(this);
+	m_Components.insert({ L"FSM", m_pFSM });
+	Safe_AddRef(m_pFSM);
+
 	return S_OK;
 }
 
@@ -43,10 +51,8 @@ void CMomoi::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	Collision_ToObstacle();
-	//Move(CMomoi::STATE_NORMAL, TimeDelta);
-
-	m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
+	Movement(TimeDelta);
+	m_pFSM->Tick(TimeDelta);
 
 	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
 
@@ -91,53 +97,52 @@ HRESULT CMomoi::Render()
 	return S_OK;
 }
 
-void CMomoi::Move(STATETYPE eType, _double TimeDelta)
+void CMomoi::Movement(_double TimeDelta)
 {
-	m_MoveTime += TimeDelta;
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	switch (eType)
+	m_eState = STATE_NORMAL;
+
+	m_isRun = false;
+	m_isJumping = false;
+	m_isAttack = false;
+
+	if (pGameInstance->Get_DIKeyState(DIK_W))
 	{
-	case Client::CMomoi::STATE_NORMAL:
-		//14 -> 21 -> 24
-		if (m_MoveTime < 5)
-			m_pModelCom->Set_AnimationIndex(14);
-
-		if (m_MoveTime > 5)
-		{
-			m_pModelCom->Set_AnimationIndex(21);
-			m_pTransformCom->Go_Straight(TimeDelta);
-		}
-
-		if (m_MoveTime > 10)
-		{
-			m_pModelCom->Set_AnimationIndex(24);
-			m_MoveTime = 0.0;
-		}
-		break;
-	case Client::CMomoi::STATE_STAND:
-		//14 -> 21 -> 24
-		if (m_MoveTime < 5)
-			m_pModelCom->Set_AnimationIndex(14);
-
-		if (m_MoveTime > 5)
-		{
-			m_pModelCom->Set_AnimationIndex(21);
-			m_pTransformCom->Go_Straight(TimeDelta);
-		}
-
-		if (m_MoveTime > 10)
-		{
-			m_pModelCom->Set_AnimationIndex(24);
-			m_MoveTime = 0.0;
-		}
-		break;
-	case Client::CMomoi::STATE_KNEEL:
-
-		break;
-
-	default:
-		break;
+		m_pTransformCom->Go_Straight(TimeDelta);
+		m_isRun = true;
 	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * -1.f);
+		m_isRun = true;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
+		m_isRun = true;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S))
+	{
+		m_pTransformCom->Go_Backward(TimeDelta);
+		m_isRun = true;
+	}
+
+	if (pGameInstance->Get_DIMouseState(DIM_LB))
+	{
+		m_isAttack = true;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+	{
+		m_isRun = true;
+		m_isJumping = true;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CMomoi::Collision_ToObstacle()

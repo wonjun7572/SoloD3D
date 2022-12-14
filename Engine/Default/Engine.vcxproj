@@ -173,6 +173,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Camera.h" />
+    <ClInclude Include="..\public\Cell.h" />
     <ClInclude Include="..\public\Channel.h" />
     <ClInclude Include="..\public\Collider.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -221,6 +222,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\public\Mesh.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\Public\Renderer.h" />
@@ -242,6 +244,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
+    <ClCompile Include="..\private\Cell.cpp" />
     <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
@@ -268,6 +271,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\Private\Level_Manager.cpp" />
     <ClCompile Include="..\private\Mesh.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />

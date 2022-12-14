@@ -17,7 +17,7 @@ HRESULT CChannel::Initialize(CHANNELLOAD& pAIChannel, CModel * pModel)
 	m_iNumKeyframes = pAIChannel.mNumKeyFrames;
 
 	m_KeyFrames = pAIChannel.mKeyFrames;
-
+	
 	return S_OK;
 }
 

@@ -101,7 +101,6 @@ void CTerrain::Imgui_RenderProperty()
 			
 		for (_uint i = 0; i < m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex(); ++i)
 		{
-			
 			if (ImGui::ImageButton((void*)m_pTextureCom[TYPE_DIFFUSE]->Get_Texture(i), ImVec2(60.f, 60.f)))
 			{
 				if (m_iTexRadioBtn == 0)
@@ -206,7 +205,7 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrixInv);
 	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInv);
 	vRayDir = XMVector3Normalize(vRayDir);
-
+	
 	vRayPos = XMVector3TransformCoord(vRayPos, pTerrainTransformCom->Get_WorldMatrixInverse());
 	vRayDir = XMVector3TransformNormal(vRayDir, pTerrainTransformCom->Get_WorldMatrixInverse());
 	

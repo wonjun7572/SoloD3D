@@ -82,6 +82,15 @@
     <Filter Include="GameObject\Obstacle">
       <UniqueIdentifier>{0ca75f09-b6a6-4fdd-ba2d-bc34f5d20d5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Monster\Tank">
+      <UniqueIdentifier>{2b21afb1-5e74-4172-a383-776bad6dd0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Character\Izuna">
+      <UniqueIdentifier>{0b7cd531-0a23-42c3-b44d-2ace009df66d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Character\Momoi">
+      <UniqueIdentifier>{f78e0d69-a849-456b-8c68-3f8c91beeed5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -154,21 +163,31 @@
     <ClInclude Include="..\Public\ForkLift.h">
       <Filter>GameObject\Env</Filter>
     </ClInclude>
-    <ClInclude Include="..\private\Izuna.h">
-      <Filter>GameObject\Character</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>GameObject\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\public\School.h">
       <Filter>GameObject\Env</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Momoi.h">
-      <Filter>GameObject\Character</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Baricade.h">
       <Filter>GameObject\Obstacle</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TechSoldier.h">
+      <Filter>GameObject\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LightTank.h">
+      <Filter>GameObject\Monster\Tank</Filter>
+    </ClInclude>
+    <ClInclude Include="..\private\Izuna.h">
+      <Filter>GameObject\Character\Izuna</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IzunaFSM.h">
+      <Filter>GameObject\Character\Izuna</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Momoi.h">
+      <Filter>GameObject\Character\Momoi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MomoiFSM.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -229,21 +248,31 @@
     <ClCompile Include="..\Private\ForkLift.cpp">
       <Filter>GameObject\Env</Filter>
     </ClCompile>
-    <ClCompile Include="..\public\Izuna.cpp">
-      <Filter>GameObject\Character</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>GameObject\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\private\School.cpp">
       <Filter>GameObject\Env</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Momoi.cpp">
-      <Filter>GameObject\Character</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Baricade.cpp">
       <Filter>GameObject\Obstacle</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TechSoldier.cpp">
+      <Filter>GameObject\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightTank.cpp">
+      <Filter>GameObject\Monster\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="..\public\Izuna.cpp">
+      <Filter>GameObject\Character\Izuna</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\IzunaFSM.cpp">
+      <Filter>GameObject\Character\Izuna</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Momoi.cpp">
+      <Filter>GameObject\Character\Momoi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MomoiFSM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

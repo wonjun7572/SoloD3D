@@ -22,6 +22,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 	
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
+	// 
 
 	//CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	//pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
@@ -146,6 +147,12 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Monster"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TechSoldier"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_LightTank"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

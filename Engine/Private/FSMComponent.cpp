@@ -104,6 +104,11 @@ void CFSMComponent::Tick(_double TimeDelta)
 	// 다른 state로 전이가 불가해질 때 가지 반복하여 전이
 	while (--iLoopCnt)
 	{
+		if (iLoopCnt < 1000)
+		{
+			int a = 3;
+		}
+
 		const auto CurItr = find_if(m_mapState.begin(), m_mapState.end(), CTag_Finder(m_pCurStateName));
 		assert(CurItr != m_mapState.end());
 

@@ -59,54 +59,78 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	
+
 	if (pGameInstance->Key_Down(DIK_F1))
 	{
 		m_bStatic = !m_bStatic;
 	}
-	
-	if (pGameInstance->Get_DIKeyState(DIK_W))
-	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_S))
+	if (m_bStatic)
 	{
-		m_pTransformCom->Go_Backward(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_pTransformCom->Go_Left(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_pTransformCom->Go_Right(TimeDelta);
-	}
-
-	if (pGameInstance->Key_Down(DIK_T))
-	{
-		m_bFix = !m_bFix;
-	}
-
-	if (!m_bFix)
-	{
-		Mouse_Fix();
-
+		_float3 pos;
+		XMStoreFloat3(&pos,pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+		m_pTransformCom->LookAt(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+		
+		_float3 LookFloat3;
+		XMStoreFloat3(&LookFloat3, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+		
 		_long			MouseMove = 0;
 
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Z))
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+			m_fOrbitDistance -= MouseMove * TimeDelta * m_fSensitivity;
 		}
 
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
+			XMVectorSet(pos.x - LookFloat3.x * m_fOrbitDistance,
+			pos.y - LookFloat3.y * m_fOrbitDistance,
+			pos.z - LookFloat3.z * m_fOrbitDistance,
+			1.f));
+	}
+	else
+	{
+		if (pGameInstance->Get_DIKeyState(DIK_W))
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+			m_pTransformCom->Go_Straight(TimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(TimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A))
+		{
+			m_pTransformCom->Go_Left(TimeDelta);
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_D))
+		{
+			m_pTransformCom->Go_Right(TimeDelta);
+		}
+
+		if (pGameInstance->Key_Down(DIK_T))
+		{
+			m_bFix = !m_bFix;
+		}
+
+		if (!m_bFix)
+		{
+			Mouse_Fix();
+
+			_long			MouseMove = 0;
+
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+			{
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
+			}
+
+			if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+			{
+				m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+			}
 		}
 	}
-
 	Safe_Release(pGameInstance);
 }
 

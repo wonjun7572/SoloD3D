@@ -18,8 +18,6 @@ public:
 public:
 	HRESULT		Ready_Timer(const wstring& pTimerTag);
 	void		Update_Timer(const wstring& pTimerTag);
-
-private:
 	CTimer*		Find_Timer(const wstring& pTimerTag);
 
 private:

@@ -156,7 +156,7 @@ public:
 		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
 		assert(itr != m_mapStates.end());
 
-		auto NextNodeItr = find_if(itr->second.mapTransition.begin(), itr->second.mapTransition.begin(), CTag_Finder(szNextNodeNmae));
+		auto NextNodeItr = find_if(itr->second.mapTransition.begin(), itr->second.mapTransition.end(), CTag_Finder(szNextNodeNmae));
 		if (NextNodeItr == itr->second.mapTransition.end())
 		{
 			itr->second.mapTransition.insert({ szNextNodeNmae, vector<FSM_TRANSITION>{tTransition} });

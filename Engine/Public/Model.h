@@ -44,6 +44,8 @@ public:
 	HRESULT  Load_Bones(HANDLE hFile, class CBone* pParent);
 	HRESULT  Load_Animations(HANDLE hFile);
 
+	void	Set_AnimLooping(_bool isLooping);
+
 private:
 	TYPE									m_eType = TYPE_END;
 
