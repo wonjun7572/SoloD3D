@@ -22,14 +22,13 @@ public:
 private:
 	void Mouse_Fix();
 	bool m_bFix = false;
+
 	_float m_fSensitivity = 0.f;
+	_bool m_bStatic = false;
 
-	_bool m_bStatic = true;
+	_bool m_bFound = false;
 
-	_float m_fCameraLatitude;
-	_float m_fCameraLongitude;
-	_float m_fOrbitDistance = 5.f;
-
+	class CTransform* m_pMomoiTransform = nullptr;
 
 public:
 	static CCamera_Dynamic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

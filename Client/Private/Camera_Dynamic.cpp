@@ -60,51 +60,42 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	if (!m_bFound)
+	{
+		m_pMomoiTransform = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom();
+	}
+
 	if (pGameInstance->Key_Down(DIK_F1))
 	{
 		m_bStatic = !m_bStatic;
 	}
 
-	if (m_bStatic)
+	if (m_bStatic && m_pMomoiTransform != nullptr)
 	{
-		_float3 pos;
-		XMStoreFloat3(&pos,pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-		m_pTransformCom->LookAt(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-		
-		_float3 LookFloat3;
-		XMStoreFloat3(&LookFloat3, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
-		
-		_long			MouseMove = 0;
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Z))
-		{
-			m_fOrbitDistance -= MouseMove * TimeDelta * m_fSensitivity;
-		}
-
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, 
-			XMVectorSet(pos.x - LookFloat3.x * m_fOrbitDistance,
-			pos.y - LookFloat3.y * m_fOrbitDistance,
-			pos.z - LookFloat3.z * m_fOrbitDistance,
-			1.f));
+		_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+			XMQuaternionRotationRollPitchYaw(0.1f,  0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
+			m_pMomoiTransform->Get_WorldMatrix();
+	
+		m_pTransformCom->SetWorldMatrix(TransformMat);
 	}
 	else
 	{
-		if (pGameInstance->Get_DIKeyState(DIK_W))
+		if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
 		{
 			m_pTransformCom->Go_Straight(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_S))
+		if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
 		{
 			m_pTransformCom->Go_Backward(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_A))
+		if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
 		{
 			m_pTransformCom->Go_Left(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_D))
+		if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
 		{
 			m_pTransformCom->Go_Right(TimeDelta);
 		}

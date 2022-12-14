@@ -40,18 +40,18 @@ private:
 	void Imgui_RenderProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
+	CCollider*					m_pColliderCom[COLLTYPE_END] = { nullptr };
 
 private:
 	// IDLE
-	_uint					m_iCurrentAnimIndex = 7;
+	_uint						m_iCurrentAnimIndex = 7;
 	_bool					m_bAnimationFinished = false;
 
 private:
-	STATETYPE				m_eState = STATE_END;
+	STATETYPE					m_eState = STATE_END;
 	class CMomoiFSM*		m_pFSM = nullptr;
 
 public:

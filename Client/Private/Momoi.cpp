@@ -115,13 +115,13 @@ void CMomoi::Movement(_double TimeDelta)
 
 	if (pGameInstance->Get_DIKeyState(DIK_A))
 	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * -1.f);
+		m_pTransformCom->Go_Left(TimeDelta);
 		m_isRun = true;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_D))
 	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
+		m_pTransformCom->Go_Right(TimeDelta);
 		m_isRun = true;
 	}
 
@@ -140,6 +140,23 @@ void CMomoi::Movement(_double TimeDelta)
 	{
 		m_isRun = true;
 		m_isJumping = true;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_C))
+	{
+		m_eState = STATE_KNEEL;
+	}
+
+	_long			MouseMove = 0;
+
+	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
+	}
+
+	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * -0.1f);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -300,6 +317,7 @@ void CMomoi::Free()
 	for (_uint i = 0; i < COLLTYPE_END; ++i)
 		Safe_Release(m_pColliderCom[i]);
 
+	Safe_Release(m_pFSM);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

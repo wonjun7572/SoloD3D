@@ -65,7 +65,7 @@ public:
 
 private:
 	_bool					m_isAttack = false;
-	_bool					m_isRun = false;
+	_bool					m_isRun = true;
 	_bool					m_isJumping = false;
 	_bool					m_isExSkill = false;
 

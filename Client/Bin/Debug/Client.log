@@ -1,4 +1,7 @@
-﻿  Camera_Dynamic.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\camera_dynamic.cpp(81): warning C4244: '-=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
+﻿  IzunaFSM.cpp
+  코드를 생성하고 있습니다...
+  건너뛰고 있습니다... (관련된 변경 내용 없음)
+  Izuna.cpp
+  Loader.cpp
+  Client.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)
