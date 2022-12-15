@@ -1,22 +1,11 @@
 #pragma once
 
-#include "Client_Define.h"
-#include "GameObject.h"
-
-BEGIN(Engine)
-class CModel;
-class CShader;
-class CCollider;
-class CRenderer;
-END
+#include "Enemy.h"
 
 BEGIN(Client)
 
-class CLightTank final : public CGameObject
+class CLightTank final : public CEnemy
 {
-public:
-	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
-
 private:
 	CLightTank(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CLightTank(const CLightTank& rhs);
@@ -31,17 +20,6 @@ public:
 
 private:
 	void Imgui_RenderProperty() override;
-
-private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
-
-private:
-	// IDLE
-	_uint					m_iCurrentAnimIndex = 7;
-	_bool					m_bAnimationFinished = false;
 
 private:
 	HRESULT SetUp_Components();

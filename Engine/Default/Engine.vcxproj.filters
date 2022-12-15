@@ -142,6 +142,9 @@
     <Filter Include="Singleton\ComponentManager\Component\Navigation\Cell">
       <UniqueIdentifier>{8598b6a3-f7a3-44b3-8207-14639ac47291}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cell">
+      <UniqueIdentifier>{1cd010b5-bebe-4561-9ac3-dcf91ce7c31f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -351,6 +354,9 @@
     <ClInclude Include="..\public\Cell.h">
       <Filter>Singleton\ComponentManager\Component\Navigation\Cell</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cell.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cell</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -533,10 +539,18 @@
     <ClCompile Include="..\private\Cell.cpp">
       <Filter>Singleton\ComponentManager\Component\Navigation\Cell</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cell.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Cell</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\SimpleMath.inl">
       <Filter>Util</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
+      <Filter>Singleton\ComponentManager\Component\Navigation</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

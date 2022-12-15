@@ -28,8 +28,13 @@ HRESULT CBaricade::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	// 위치 수정필요한 게임오브젝트
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(25.f, 0.f, 5.f, 1.f));
+	_float3 vPos;
+
+	if (pArg != nullptr)
+		memcpy(&vPos, pArg, sizeof(_float3));
+
+	m_pTransformCom->Set_Scaled(_float3(0.8f, 0.8f, 0.8f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, vPos.y, vPos.z, 1.f));
 
 	return S_OK;
 }

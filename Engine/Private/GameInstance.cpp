@@ -288,6 +288,14 @@ void CGameInstance::LoadData(_uint iLevel, const wstring& strDirectory)
 	m_pObjectMgr->LoadData(iLevel, strDirectory);
 }
 
+CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const wstring & pLayerTag)
+{
+	if (nullptr == m_pObjectMgr)
+		return  nullptr;
+
+	return m_pObjectMgr->Find_Layer(iLevelIndex, pLayerTag);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, CComponent * pPrototype)
 {
 	if (m_pComponetMgr == nullptr)

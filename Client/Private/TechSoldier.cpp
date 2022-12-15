@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "..\Public\TechSoldier.h"
 #include "GameInstance.h"
+#include "TechSoldierFSM.h"
 
 CTechSoldier::CTechSoldier(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)	
-	:CGameObject(pDevice, pContext)
+	:CEnemy(pDevice, pContext)
 {
 }
 
 CTechSoldier::CTechSoldier(const CTechSoldier & rhs)
-	:CGameObject(rhs)
+	: CEnemy(rhs)
 {
 }
 
@@ -34,28 +35,47 @@ HRESULT CTechSoldier::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(25.f, 0.f, 10.f, 1.f));
+	_float3 vPos;
+
+	if (pArg != nullptr)
+		memcpy(&vPos, pArg, sizeof(_float3));
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, vPos.y, vPos.z, 1.f));
+
+	m_strObjName = TEXT("TechSoldier");
+	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.0f));
 
 	return S_OK;
 }
 
 void CTechSoldier::Tick(_double TimeDelta)
 {
+	m_MoveTime += TimeDelta;
+
+	if (m_MoveTime > 10)
+		m_isRun = true;
+
+	if (m_MoveTime > 25)	// 체력과 공격 ㅋ
+		m_isDeath = true;
+
+	if (m_isDeath == true)
+	{
+		if (m_pModelCom->Get_AnimFinished() == true)
+		{
+			Remove_Component(L"Com_SPHERE");
+			return;
+		}
+	}
+
 	__super::Tick(TimeDelta);
-
+	Collision_ToPlayer();
+	m_pFSM->Tick(TimeDelta);
 	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
-
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CTechSoldier::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-
 }
 
 HRESULT CTechSoldier::Render()
@@ -70,46 +90,40 @@ HRESULT CTechSoldier::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
-#ifdef _DEBUG
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-	{
-		if (nullptr != m_pColliderCom[i])
-			m_pColliderCom[i]->Render();
-	}
-#endif
-
 	return S_OK;
 }
 
+void CTechSoldier::Collision_ToPlayer()
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Character"), TEXT("Com_SPHERE"));
+	CTransform*		pTargetPos = (CTransform*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Character"), TEXT("Com_Transform"), 0);
+
+	if (nullptr == pTargetCollider)
+	{
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
+	{
+		m_isAttack = true;
+		m_pTransformCom->LookAt(pTargetPos->Get_State(CTransform::STATE_TRANSLATION));
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+
 void CTechSoldier::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
-	{
-		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-					m_iCurrentAnimIndex = i;
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}
+	__super::Imgui_RenderProperty();
 }
 
 HRESULT CTechSoldier::SetUp_Components()
@@ -151,12 +165,16 @@ HRESULT CTechSoldier::SetUp_Components()
 
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+	ColliderDesc.vSize = _float3(7.f, 7.f, 7.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
+
+	m_pFSM = CTechSoldierFSM::Create(this);
+	m_Components.insert({ L"FSM", m_pFSM });
+	Safe_AddRef(m_pFSM);
 
 	return S_OK;
 }
@@ -180,7 +198,7 @@ HRESULT CTechSoldier::SetUp_ShaderResources()
 	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
 	if (nullptr == pLightDesc)
 		return E_FAIL;
-	//
+	
 	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
 	//	return E_FAIL;
 	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
@@ -189,7 +207,6 @@ HRESULT CTechSoldier::SetUp_ShaderResources()
 	//	return E_FAIL;
 	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
 	//	return E_FAIL;
-
 	//if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 	//	return E_FAIL;
 
@@ -226,10 +243,5 @@ void CTechSoldier::Free()
 {
 	__super::Free();
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		Safe_Release(m_pColliderCom[i]);
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pFSM);
 }

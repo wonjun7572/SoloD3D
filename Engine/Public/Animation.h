@@ -35,7 +35,6 @@ public:
 	void		Reset_PlayTime(void) { m_PlayTime = 0.0; }
 	_bool		AnimLerpTime(_double TimeDelta, CAnimation* pNext, _bool bFinish = false);
 	_vector		Get_MovePos(void) { return XMLoadFloat3(&m_vMovePos); }
-
 	_double		Get_Duration() { return m_Duration; }
 
 private:

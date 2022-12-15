@@ -60,6 +60,17 @@ namespace Engine
 		unsigned long			_0, _1, _2;
 	}FACEINDICES32;
 
+	typedef struct tagVertexPosition
+	{
+		XMFLOAT3		vPosition;
+	}VTXPOS;
+
+	typedef struct ENGINE_DLL tagVertexPosition_Declaration
+	{
+		static const unsigned int		iNumElements = 1;
+		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXPOS_DECLARATION;
+
 	typedef struct tagVertexPositionTexture
 	{
 		XMFLOAT3		vPosition;

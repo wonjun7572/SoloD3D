@@ -58,6 +58,7 @@ public:
 	void Set_Scaled(_float3 vScale); /* fScale값으로 길이를 변형한다. */
 	void Scaling(STATE eState, _float fScale); /* fScale배수로 늘린다. */
 
+	void Set_SpeedPerSec(_float speed) { m_TransformDesc.fSpeedPerSec = speed; }
 	void Set_TransformDesc(const TRANSFORMDESC& TransformDesc) { m_TransformDesc = TransformDesc; }
 
 public:

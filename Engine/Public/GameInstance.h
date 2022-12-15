@@ -55,6 +55,7 @@ public: /* For.Object_Manager */
 	class	CGameObject* Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName);
 	void	SaveData(_uint iLevel,const wstring& strDirectory);
 	void	LoadData(_uint iLevel, const wstring& strDirectory);
+	class   CLayer*	Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);

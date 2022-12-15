@@ -137,7 +137,7 @@ void CModel::Play_Animation(_double TimeDelta, _bool bFinished)
 
 void CModel::Set_AnimationIndex(_uint iIndex)
 {
-	if (0 > iIndex || m_iNumAnimations <= iIndex ||	m_iCurrentAnimIndex == iIndex)
+	if (0 > iIndex || m_iNumAnimations <= iIndex || m_iCurrentAnimIndex == iIndex)
 		return;
 
 	m_iNextAnimindex = iIndex;

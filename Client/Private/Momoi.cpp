@@ -1,16 +1,18 @@
 #include "stdafx.h"
 #include "..\Public\Momoi.h"
+#include "Camera_Dynamic.h"
 #include "GameInstance.h"
 #include "MomoiFSM.h"
 #include "Timer.h"
+#include "Layer.h"
 
 CMomoi::CMomoi(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CGameObject(pDevice, pContext)
+	:CCharacter(pDevice, pContext)
 {
 }
 
 CMomoi::CMomoi(const CMomoi & rhs)
-	:CGameObject(rhs)
+	: CCharacter(rhs)
 {
 }
 
@@ -39,33 +41,40 @@ HRESULT CMomoi::Init(void * pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(26.f, 0.f, 0.f, 1.f));
 
 	m_strObjName = TEXT("Momoi");
-
-	m_pFSM = CMomoiFSM::Create(this);
-	m_Components.insert({ L"FSM", m_pFSM });
-	Safe_AddRef(m_pFSM);
-
 	return S_OK;
 }
 
 void CMomoi::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
+	m_isRun = true;
 
-	Movement(TimeDelta);
+	if (m_pCam->Get_CAMSTATE() == CCamera_Dynamic::STATE_TPS 
+		&& m_pCam->Get_CHARACTERCAM() == CCamera_Dynamic::CHARACTER_MOMOI)
+	{
+		m_pTransformCom->Set_SpeedPerSec(2.f);
+		Movement(TimeDelta);
+	}
+	else
+	{
+		m_pTransformCom->Set_SpeedPerSec(1.f);
+		Collision_ToObstacle(TimeDelta);
+		Collision_ToEnemy(TimeDelta);
+
+		if (m_isRun == true || m_isJumping == true)
+		{
+			m_pTransformCom->Go_Straight(TimeDelta);
+		}
+	}
+
 	m_pFSM->Tick(TimeDelta);
-
 	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
-
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+	
+	__super::Tick(TimeDelta);
 }
 
 void CMomoi::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CMomoi::Render()
@@ -85,14 +94,6 @@ HRESULT CMomoi::Render()
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
-
-#ifdef _DEBUG
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-	{
-		if (nullptr != m_pColliderCom[i])
-			m_pColliderCom[i]->Render();
-	}
-#endif
 
 	return S_OK;
 }
@@ -154,50 +155,120 @@ void CMomoi::Movement(_double TimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
 	}
 
-	if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * -0.1f);
-	}
-
 	RELEASE_INSTANCE(CGameInstance);
 }
 
-void CMomoi::Collision_ToObstacle()
+void CMomoi::Collision_ToObstacle(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Obstacle"), TEXT("Com_OBB"));
-	if (nullptr == pTargetCollider)
+	vector<CCollider*> vecTarget;
+
+	_uint iSize = pGameInstance->Find_Layer(LEVEL_CHAP1, TEXT("Layer_Obstacle"))->GetGameObjects().size();
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Obstacle"), TEXT("Com_AABB"), i);
+		vecTarget.push_back(pTargetCollider);
+	}
+
+	if (vecTarget.size() == 0)
 		return;
 
-	m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider);
+	_uint i = 0;
 
+	for (auto& pTarget : vecTarget)
+	{
+		if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTarget) == true)
+		{
+			m_eState = STATE_KNEEL;
+			m_isJumping = true;
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	if (i == iSize)
+	{
+		m_eState = STATE_NORMAL;
+		m_isJumping = false;
+	}
+
+	vecTarget.clear();
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CMomoi::Collision_ToEnemy(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	vector<pair<CCollider*, CTransform*>> vecTarget;
+	vector<float> vecDistance;
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Enemy"), TEXT("Com_SPHERE"), i);
+		CTransform*	pTargetPos = (CTransform*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Enemy"), TEXT("Com_Transform"), i);
+
+		if (pTargetCollider != nullptr)
+			vecTarget.push_back({ pTargetCollider, pTargetPos });
+	}
+
+	if (vecTarget.size() == 0)
+	{
+		m_isRun = true;
+		m_isAttack = false;
+		m_pTransformCom->Set_State(CTransform::STATE_LOOK, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+		vecTarget.clear();
+		vecDistance.clear();
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	for (auto& pTarget : vecTarget)
+	{
+		_float3 fSour, fDest;
+		XMStoreFloat3(&fSour, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		XMStoreFloat3(&fDest, pTarget.second->Get_State(CTransform::STATE_TRANSLATION));
+		vecDistance.push_back(CMathUtils::Distance(fSour, fDest));
+	}
+
+	sort(vecDistance.begin(), vecDistance.end(), [](_float first, _float second) -> bool { return first < second; });
+
+	for (auto& pTarget : vecTarget)
+	{
+		_float3 fSour, fDest;
+		XMStoreFloat3(&fSour, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		XMStoreFloat3(&fDest, pTarget.second->Get_State(CTransform::STATE_TRANSLATION));
+
+		if (fabs(vecDistance[0] - CMathUtils::Distance(fSour, fDest)) <= 0.01f)
+		{
+			// 구 충돌로 적이 있으면 총 쏘는애니메이션 나오고 몬스터에게 발사체 발사
+			if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTarget.first))
+			{
+				m_isRun = false;
+				m_isAttack = true;
+				m_pTransformCom->LookAt(pTarget.second->Get_State(CTransform::STATE_TRANSLATION));
+			}
+			else
+			{
+				m_isRun = true;
+				m_isAttack = false;
+				m_pTransformCom->Set_State(CTransform::STATE_LOOK, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+			}
+		}
+	}
+
+	vecTarget.clear();
+	vecDistance.clear();
 	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CMomoi::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
-	{
-		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-					m_iCurrentAnimIndex = i;
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}
+	__super::Imgui_RenderProperty();
 }
 
 HRESULT CMomoi::SetUp_Components()
@@ -221,7 +292,7 @@ HRESULT CMomoi::SetUp_Components()
 
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.7f, 1.5f, 0.7f);
+	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
@@ -230,7 +301,7 @@ HRESULT CMomoi::SetUp_Components()
 
 	/* For.Com_OBB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.0f, 1.0f, 1.0f);
+	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
@@ -239,12 +310,16 @@ HRESULT CMomoi::SetUp_Components()
 
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+	ColliderDesc.vSize = _float3(10.f, 10.f, 10.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
+
+	m_pFSM = CMomoiFSM::Create(this);
+	m_Components.insert({ L"FSM", m_pFSM });
+	Safe_AddRef(m_pFSM);
 
 	return S_OK;
 }
@@ -314,11 +389,5 @@ void CMomoi::Free()
 {
 	__super::Free();
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		Safe_Release(m_pColliderCom[i]);
-
 	Safe_Release(m_pFSM);
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 }

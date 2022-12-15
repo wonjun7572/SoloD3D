@@ -33,6 +33,7 @@ public:
 	void	Set_AnimationIndex(_uint iIndex);
 
 	_double Get_AnimDuration(_uint iIndex);
+	_bool	Get_AnimFinished() { return m_bAnimFinished; }
 
 	vector<const char*>&	Get_AnimationName() { return m_strAnimationName; }
 	_uint	Get_AnimationsNum() { return m_iNumAnimations; }

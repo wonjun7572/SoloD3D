@@ -16,6 +16,7 @@
 
 #include "Model.h"
 #include "Collider.h"
+#include "Navigation.h"
 
 BEGIN(Engine)
 

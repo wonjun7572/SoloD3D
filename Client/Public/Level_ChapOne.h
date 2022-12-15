@@ -26,6 +26,8 @@ private:
 	HRESULT Ready_Layer_Player(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Monster(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Obstacle(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Character(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Enemy(const wstring& pLayerTag);
 
 	HRESULT Ready_Layer_Map(const wstring& pLayerTag);
 

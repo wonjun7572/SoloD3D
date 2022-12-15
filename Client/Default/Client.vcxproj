@@ -175,11 +175,15 @@
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.hpp" />
     <ClInclude Include="..\private\Izuna.h" />
+    <ClInclude Include="..\public\Azusa.h" />
+    <ClInclude Include="..\public\AzusaFSM.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Baricade.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
+    <ClInclude Include="..\public\Character.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\EmptyGameObject.h" />
+    <ClInclude Include="..\public\Enemy.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\public\IzunaFSM.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
@@ -189,7 +193,10 @@
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\public\LightTank.h" />
     <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\public\LoadingBackGround.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\Midori.h" />
+    <ClInclude Include="..\Public\MidoriFSM.h" />
     <ClInclude Include="..\public\Momoi.h" />
     <ClInclude Include="..\public\MomoiFSM.h" />
     <ClInclude Include="..\public\Monster.h" />
@@ -197,6 +204,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\School.h" />
     <ClInclude Include="..\public\TechSoldier.h" />
+    <ClInclude Include="..\public\TechSoldierFSM.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
@@ -208,10 +216,14 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Azusa.cpp" />
+    <ClCompile Include="..\private\AzusaFSM.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Baricade.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\Character.cpp" />
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
+    <ClCompile Include="..\private\Enemy.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
     <ClCompile Include="..\private\IzunaFSM.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
@@ -221,7 +233,10 @@
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\private\LightTank.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingBackGround.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\Midori.cpp" />
+    <ClCompile Include="..\Private\MidoriFSM.cpp" />
     <ClCompile Include="..\private\Momoi.cpp" />
     <ClCompile Include="..\private\MomoiFSM.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
@@ -229,6 +244,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\School.cpp" />
     <ClCompile Include="..\private\TechSoldier.cpp" />
+    <ClCompile Include="..\private\TechSoldierFSM.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />

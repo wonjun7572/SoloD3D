@@ -14,6 +14,8 @@
 
 #include "EmptyGameObject.h"
 
+#include "Navigation.h"
+
 #include "Player.h"
 #include "ForkLift.h"
 #include "Weapon.h"
@@ -25,6 +27,8 @@
 /* For. Character*/
 #include "Izuna.h"
 #include "Momoi.h"
+#include "Azusa.h"
+#include "Midori.h"
 
 /* For. Obstacle*/
 #include "Baricade.h"
@@ -206,16 +210,26 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Momoi"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Momoi/Momoi.model"), PivotMatrix))))
 			return E_FAIL;
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Azusa"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Azusa/Azusa.model"), PivotMatrix))))
+			return E_FAIL;
+
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Midori"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/Midori/Midori.model"), PivotMatrix))))
+			return E_FAIL;
 	}
 
 	// For. Monster
 	{
-		PivotMatrix = XMMatrixIdentity();
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TechSoldier"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/TechSoldier/TechSoldier.model"), PivotMatrix))))
 			return E_FAIL;
 
-		PivotMatrix = XMMatrixIdentity();
+		PivotMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_LightTank"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/BlueArchive/LightTank/LightTank.model"), PivotMatrix))))
 			return E_FAIL;
@@ -234,6 +248,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 	/* For.Prototype_Component_Shader_VtxAnimModel*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAnimModel.hlsl"), VTXANIMMODEL_DECLARATION::Elements, VTXANIMMODEL_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	m_strLoadingText = TEXT("네비게이션 정보 로딩중입니다. ");
+	/* For.Prototype_Component_Navigation */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Navigation.dat")))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
@@ -269,6 +289,14 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 		/* For.Prototype_GameObject_Momoi*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Momoi"), CMomoi::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For.Prototype_GameObject_Azusa*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Azusa"), CAzusa::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For.Prototype_GameObject_Midori*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Midori"), CMidori::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 

@@ -93,7 +93,6 @@ void CIzunaFSM::Idle_Tick(_double TimeDelta)
 void CIzunaFSM::Run_Tick(_double TimeDelta)
 {
 	m_pTarget->Get_ModelComponent()->Set_AnimationIndex(21);
-	m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta);
 }
 
 void CIzunaFSM::Run_End()
@@ -115,7 +114,6 @@ void CIzunaFSM::Run_End()
 void CIzunaFSM::Jump_Ing(_double TimeDelta)
 {
 	m_pTarget->Get_ModelComponent()->Set_AnimationIndex(20);
-	m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta);
 }
 
 void CIzunaFSM::Attack_Start()

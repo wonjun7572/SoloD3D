@@ -1,22 +1,11 @@
 #pragma once
 
-#include "Client_Define.h"
-#include "GameObject.h"
-
-BEGIN(Engine)
-class CModel;
-class CShader;
-class CCollider;
-class CRenderer;
-END
+#include "Enemy.h"
 
 BEGIN(Client)
 
-class CTechSoldier final : public CGameObject
+class CTechSoldier final : public CEnemy
 {
-public:
-	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
-
 private:
 	CTechSoldier(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTechSoldier(const CTechSoldier& rhs);
@@ -29,19 +18,15 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+public:
 	void Imgui_RenderProperty() override;
 
 private:
-	CShader*				m_pShaderCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
+	class CTechSoldierFSM*		m_pFSM = nullptr;
+	_double					m_MoveTime = 0.0;
 
 private:
-	// IDLE
-	_uint					m_iCurrentAnimIndex = 7;
-	_bool					m_bAnimationFinished = false;
+	void Collision_ToPlayer();
 
 private:
 	HRESULT SetUp_Components();

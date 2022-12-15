@@ -41,7 +41,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		CameraDesc.fNear = 0.02f;
 		CameraDesc.fFar = 500.f;
 
-		CameraDesc.TransformDesc.fSpeedPerSec = 30.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 2.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
 
@@ -49,6 +49,8 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		return E_FAIL;
 
 	m_fSensitivity = 0.1f;
+
+	m_strObjName = TEXT("Camera");
 
 	return S_OK;
 }
@@ -60,42 +62,30 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (!m_bFound)
-	{
-		m_pMomoiTransform = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Momoi")->Get_TransformCom();
-	}
+	m_pCharacterTransform[CHARACTER_MOMOI] = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Character", L"Momoi")->Get_TransformCom();
+	m_pCharacterTransform[CHARACTER_IZUNA] = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Character", L"Izuna")->Get_TransformCom();
+	m_pCharacterTransform[CHARACTER_AZUSA] = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Character", L"Azusa")->Get_TransformCom();
+	m_pCharacterTransform[CHARACTER_MIDORI] = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Character", L"Midori")->Get_TransformCom();
 
-	if (pGameInstance->Key_Down(DIK_F1))
+	switch (m_eState)
 	{
-		m_bStatic = !m_bStatic;
-	}
-
-	if (m_bStatic && m_pMomoiTransform != nullptr)
-	{
-		_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
-			XMQuaternionRotationRollPitchYaw(0.1f,  0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
-			m_pMomoiTransform->Get_WorldMatrix();
-	
-		m_pTransformCom->SetWorldMatrix(TransformMat);
-	}
-	else
-	{
-		if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
+	case STATE_DYNAMIC:
+		if (pGameInstance->Get_DIKeyState(DIK_W))
 		{
 			m_pTransformCom->Go_Straight(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
+		if (pGameInstance->Get_DIKeyState(DIK_S))
 		{
 			m_pTransformCom->Go_Backward(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
+		if (pGameInstance->Get_DIKeyState(DIK_A))
 		{
 			m_pTransformCom->Go_Left(TimeDelta);
 		}
 
-		if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
+		if (pGameInstance->Get_DIKeyState(DIK_D))
 		{
 			m_pTransformCom->Go_Right(TimeDelta);
 		}
@@ -121,7 +111,63 @@ void CCamera_Dynamic::Tick(_double TimeDelta)
 				m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
 			}
 		}
+		break;
+	case STATE_TPS:
+		if (m_pCharacterTransform[CHARACTER_MOMOI] != nullptr && m_eCharacter == CCamera_Dynamic::CHARACTER_MOMOI)
+		{
+			_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(0.1f, 0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
+				m_pCharacterTransform[CHARACTER_MOMOI]->Get_WorldMatrix();
+
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+		}
+
+		if (m_pCharacterTransform[CHARACTER_IZUNA] != nullptr && m_eCharacter == CCamera_Dynamic::CHARACTER_IZUNA)
+		{
+			_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(0.1f, 0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
+				m_pCharacterTransform[CHARACTER_IZUNA]->Get_WorldMatrix();
+
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+		}
+
+		if (m_pCharacterTransform[CHARACTER_AZUSA] != nullptr && m_eCharacter == CCamera_Dynamic::CHARACTER_AZUSA)
+		{
+			_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(0.1f, 0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
+				m_pCharacterTransform[CHARACTER_AZUSA]->Get_WorldMatrix();
+
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+		}
+
+		if (m_pCharacterTransform[CHARACTER_MIDORI] != nullptr && m_eCharacter == CCamera_Dynamic::CHARACTER_MIDORI)
+		{
+			_matrix 	TransformMat = XMMatrixAffineTransformation(XMVectorSet(0.5f, 0.5f, 0.5f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),
+				XMQuaternionRotationRollPitchYaw(0.1f, 0.f, 0.f), XMVectorSet(0.f, 1.5f, -2.5f, 1.f)) *
+				m_pCharacterTransform[CHARACTER_MIDORI]->Get_WorldMatrix();
+
+			m_pTransformCom->SetWorldMatrix(TransformMat);
+		}
+
+		break;
+	case STATE_ORIGINAL:
+		{
+			m_pTransformCom->LookAt(m_pCharacterTransform[CHARACTER_IZUNA]->Get_State(CTransform::STATE_TRANSLATION));
+			_float3 vPos;
+			XMStoreFloat3(&vPos,m_pCharacterTransform[CHARACTER_IZUNA]->Get_State(CTransform::STATE_TRANSLATION));
+			_float3 vCamPos;
+			XMStoreFloat3(&vCamPos,	m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			
+			if(CMathUtils::Distance(_float3(vPos.x + 8.f, vPos.y + 8.f, vPos.z - 5.f), vCamPos) > 5.f)
+				m_pTransformCom->Chase(XMLoadFloat4(&_float4(vPos.x + 5.f, vPos.y + 8.f, vPos.z - 2.f, 1.f)), TimeDelta);
+			else
+				m_pTransformCom->Chase(XMLoadFloat4(&_float4(vPos.x + 5.f, vPos.y + 8.f, vPos.z - 2.f, 1.f)), TimeDelta * 0.5f);
+		}
+		break;
+	default:
+		break;
 	}
+
 	Safe_Release(pGameInstance);
 }
 
@@ -136,6 +182,43 @@ HRESULT CCamera_Dynamic::Render()
 		return E_FAIL;
 	
 	return S_OK;
+}
+
+void CCamera_Dynamic::Imgui_RenderProperty()
+{
+	ImGui::InputFloat("X", &m_X);
+	ImGui::InputFloat("Y", &m_Y);
+	ImGui::InputFloat("Z", &m_Z);
+	ImGui::InputFloat("RX", &m_RX);
+	ImGui::InputFloat("RY", &m_RY);
+	ImGui::InputFloat("RZ", &m_RZ);
+
+	static int e = 0;
+	ImGui::RadioButton("Original", &e, 0); ImGui::SameLine();
+	ImGui::RadioButton("TPS", &e, 1); ImGui::SameLine();
+	ImGui::RadioButton("Dynamic", &e, 2);
+
+	if (e == 0)
+		m_eState = STATE_ORIGINAL;
+	if (e == 1)
+		m_eState = STATE_TPS;
+	if (e == 2)
+		m_eState = STATE_DYNAMIC;
+
+	static int a = 0;
+	ImGui::RadioButton("Momoi", &a, 0); ImGui::SameLine();
+	ImGui::RadioButton("Izuna", &a, 1); ImGui::SameLine();
+	ImGui::RadioButton("Azusa", &a, 2); ImGui::SameLine();
+	ImGui::RadioButton("Midori", &a, 3);
+
+	if (a == 0)
+		m_eCharacter = CHARACTER_MOMOI;
+	if (a == 1)
+		m_eCharacter = CHARACTER_IZUNA;
+	if (a == 2)
+		m_eCharacter = CHARACTER_AZUSA;
+	if (a == 3)
+		m_eCharacter = CHARACTER_MIDORI;
 }
 
 void CCamera_Dynamic::Mouse_Fix()

@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Weapon.h"
 #include "Bone.h"
+#include "Navigation.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -123,6 +124,7 @@ HRESULT CPlayer::Render()
 			m_pColliderCom[i]->Render();
 	}
 
+	m_pNavigationCom->Render();
 #endif
 
 	return S_OK;
@@ -226,6 +228,16 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 
+	/* For.Com_Navigation */
+	CNavigation::NAVIDESC			NaviDesc;
+	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+	NaviDesc.iCurrentIndex = 0;
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+		(CComponent**)&m_pNavigationCom, &NaviDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -302,6 +314,7 @@ void CPlayer::Free()
 
 	m_PlayerParts.clear();
 
+	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

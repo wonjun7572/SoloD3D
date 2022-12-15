@@ -30,6 +30,7 @@ public:
 	void	Late_Tick(_double TimeDelta);
 	
 	class CGameObject* Get_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& strObjName);
+	class CLayer* Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
 
 public: /* imgui */
 	// 모든 원본 Object를 Imgui로 출력한다.
@@ -52,12 +53,11 @@ private: /* 사본객체들을 보관하기위한 컨테이너. */
 	map<wstring, class CLayer*>*				m_pLayers = nullptr;
 	typedef map<wstring, class CLayer*>		    LAYERS;
 
-	_uint									m_iNumLevels = 0;
-	char									m_szLayerName[256] = {};
+	_uint										m_iNumLevels = 0;
+	char										m_szLayerName[256] = {};
 
 private:
 	class CGameObject* Find_Prototype(const wstring& pPrototypeTag);
-	class CLayer* Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
 
 public:
 	virtual void Free() override;

@@ -70,6 +70,10 @@ HRESULT CTerrain::Render()
 
 	m_pVIBufferCom->Render();
 
+#ifdef _DEBUG
+	m_pNavigationCom->Render();
+#endif
+
 	return S_OK;
 }
 
@@ -296,6 +300,11 @@ HRESULT CTerrain::SetUp_Components()
 		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
 		return E_FAIL;
 
+	/* For.Com_Navigation */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+		(CComponent**)&m_pNavigationCom)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -386,6 +395,7 @@ void CTerrain::Free()
 	for (auto& pTexture : m_pTextureCom)
 		Safe_Release(pTexture);
 	
+	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

@@ -7,6 +7,7 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CNavigation;
 class CVIBuffer_Terrain;
 END
 
@@ -40,6 +41,7 @@ private:
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom[TYPE_END] = { nullptr };
 	CVIBuffer_Terrain*			m_pVIBufferCom = nullptr;
+	CNavigation*				m_pNavigationCom = nullptr;
 
 private: /* For. Imgui*/
 

@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CLightTank::CLightTank(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CGameObject(pDevice, pContext)
+	:CEnemy(pDevice, pContext)
 {
 }
 
 CLightTank::CLightTank(const CLightTank & rhs)
-	: CGameObject(rhs)
+	: CEnemy(rhs)
 {
 }
 
@@ -34,8 +34,8 @@ HRESULT CLightTank::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(27.f, 0.f, 10.f, 1.f));
-
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(25.f, 0.f, 30.f, 1.f));
+	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.0f));
 	return S_OK;
 }
 
@@ -44,18 +44,11 @@ void CLightTank::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 
 	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
-
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CLightTank::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-
 }
 
 HRESULT CLightTank::Render()
@@ -76,40 +69,12 @@ HRESULT CLightTank::Render()
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
-#ifdef _DEBUG
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-	{
-		if (nullptr != m_pColliderCom[i])
-			m_pColliderCom[i]->Render();
-	}
-#endif
-
 	return S_OK;
 }
 
 void CLightTank::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
-	{
-		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-					m_iCurrentAnimIndex = i;
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}
+	__super::Imgui_RenderProperty();
 }
 
 HRESULT CLightTank::SetUp_Components()
@@ -225,11 +190,4 @@ CGameObject * CLightTank::Clone(void * pArg)
 void CLightTank::Free()
 {
 	__super::Free();
-
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		Safe_Release(m_pColliderCom[i]);
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 }

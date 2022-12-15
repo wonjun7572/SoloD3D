@@ -5,6 +5,7 @@
 #include "Level_Loading.h"
 
 #include "Camera_Dynamic.h"
+#include "LoadingBackGround.h"
 
 CMainApp::CMainApp()
 	:m_pGameInstance(CGameInstance::GetInstance())
@@ -133,9 +134,9 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For. Prototype_Component_FSM */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_FSM"),
-		CFSMComponent::Create())))
+	/*For.Prototype_Component_Texture_LoadingBackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingBackGround"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BlueArchive/Loading/Loading_%d.png"), 6))))
 		return E_FAIL;
 
 	return S_OK;
@@ -144,6 +145,9 @@ HRESULT CMainApp::Ready_Prototype_Component()
 HRESULT CMainApp::Ready_Prototype_GameObject()
 {
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"), CCamera_Dynamic::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingBackGround"), CLoadingBackGround::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

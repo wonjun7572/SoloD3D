@@ -61,6 +61,10 @@ HRESULT CSchool::Render()
 		m_pModelCom->Render(m_pShaderCom, i);
 	}
 
+#ifdef _DEBUG
+	m_pNavigationCom->Render();
+#endif
+
 	return S_OK;
 }
 
@@ -79,6 +83,11 @@ HRESULT CSchool::SetUp_Components()
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_School"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
+		return E_FAIL;
+
+	/* For.Com_Navigation */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+		(CComponent**)&m_pNavigationCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -149,6 +158,7 @@ void CSchool::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

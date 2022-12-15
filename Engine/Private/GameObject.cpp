@@ -55,6 +55,17 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
+void CGameObject::Remove_Component(const wstring & strTag)
+{
+	auto iter = m_Components.find(strTag);
+
+	if (iter == m_Components.end())
+		return;
+
+	Safe_Release(iter->second);
+	iter = m_Components.erase(iter);
+}
+
 void CGameObject::Imgui_RenderComponentProperties()
 {
 	for (const auto& com : m_Components)

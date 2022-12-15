@@ -35,6 +35,7 @@ public:
 
 	virtual void Set_ObjectName(const wstring& strTag) { m_strObjName = strTag; }
 	virtual const wstring&  Get_ObjectName() { return m_strObjName; }
+	virtual void	Remove_Component(const wstring& strTag);
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
