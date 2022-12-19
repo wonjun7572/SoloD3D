@@ -41,7 +41,7 @@ CModel::CModel(const CModel & rhs)
 
 CBone * CModel::Get_BonePtr(const char * pBoneName)
 {
-	auto iter = find_if(m_Bones.begin(), m_Bones.end(),[&](CBone* pBone)->_bool {
+	auto iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool {
 		return !strcmp(pBoneName, pBone->Get_Name());
 	});
 
@@ -127,7 +127,7 @@ void CModel::Play_Animation(_double TimeDelta, _bool bFinished)
 	}
 	else
 		m_bAnimFinished = m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
-	
+
 	for (auto& pBone : m_Bones)
 	{
 		if (pBone != nullptr)
@@ -352,13 +352,13 @@ HRESULT CModel::Load_Materials(HANDLE hFile)
 	{
 		MODELMATERIAL			ModelMaterial;
 		ZeroMemory(&ModelMaterial, sizeof(ModelMaterial));
-	
+
 		for (_uint j = 0; j < AI_TEXTURE_TYPE_MAX; ++j)
 		{
 			_uint texNum = 0;
 			ReadFile(hFile, &texNum, sizeof(_uint), &dwByte, nullptr);
 
-			if(texNum == AI_TEXTURE_TYPE_MAX)
+			if (texNum == AI_TEXTURE_TYPE_MAX)
 				continue;
 
 			//문자열 길이와 문자열 저장
@@ -415,7 +415,7 @@ HRESULT CModel::Load_Bones(HANDLE hFile, CBone* pParent)
 	/* 재귀 함수를 돌면서 모든 뼈를 준비해준다.*/
 	for (_uint i = 0; i < NumChildren; ++i)
 		Load_Bones(hFile, pBone);
-	
+
 	return S_OK;
 }
 

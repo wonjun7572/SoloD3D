@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\public\ForkLift.h"
+#include "ForkLift.h"
 #include "GameInstance.h"
 
 CForkLift::CForkLift(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

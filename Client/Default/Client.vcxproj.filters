@@ -76,32 +76,8 @@
     <Filter Include="GameObject\Monster">
       <UniqueIdentifier>{3adb26ef-14c6-4969-afec-e6ec33f95f66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Character">
-      <UniqueIdentifier>{f3d5fbc8-a2a7-4aa7-bbfa-390bf4db4cb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Obstacle">
-      <UniqueIdentifier>{0ca75f09-b6a6-4fdd-ba2d-bc34f5d20d5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Izuna">
-      <UniqueIdentifier>{0b7cd531-0a23-42c3-b44d-2ace009df66d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Momoi">
-      <UniqueIdentifier>{f78e0d69-a849-456b-8c68-3f8c91beeed5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Enemy">
-      <UniqueIdentifier>{752ab803-b3a8-404b-9906-be6e37d6006c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Enemy\Tank">
-      <UniqueIdentifier>{2b21afb1-5e74-4172-a383-776bad6dd0cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Enemy\TechSoldier">
-      <UniqueIdentifier>{1eff6f2c-66df-40d3-b04e-e7218c93b201}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Azusa">
-      <UniqueIdentifier>{92c59926-c55e-4fa2-8002-cf02c0a40696}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Character\Midori">
-      <UniqueIdentifier>{287898e7-abad-46d5-9cdb-56fb9d9a6d5d}</UniqueIdentifier>
+    <Filter Include="GameObject\Camera">
+      <UniqueIdentifier>{fe4fd288-734f-4c76-98ae-17eebd94d246}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="..\public\TestCube.h">
       <Filter>GameObject\Figure</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Camera_Dynamic.h">
-      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Default</Filter>
@@ -178,54 +151,19 @@
     <ClInclude Include="..\public\Monster.h">
       <Filter>GameObject\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\School.h">
-      <Filter>GameObject\Env</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Baricade.h">
-      <Filter>GameObject\Obstacle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\LightTank.h">
-      <Filter>GameObject\Enemy\Tank</Filter>
-    </ClInclude>
-    <ClInclude Include="..\private\Izuna.h">
-      <Filter>GameObject\Character\Izuna</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\IzunaFSM.h">
-      <Filter>GameObject\Character\Izuna</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Momoi.h">
-      <Filter>GameObject\Character\Momoi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MomoiFSM.h">
-      <Filter>GameObject\Character\Momoi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TechSoldier.h">
-      <Filter>GameObject\Enemy\TechSoldier</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TechSoldierFSM.h">
-      <Filter>GameObject\Enemy\TechSoldier</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Character.h">
-      <Filter>GameObject\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Enemy.h">
-      <Filter>GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Azusa.h">
-      <Filter>GameObject\Character\Azusa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\AzusaFSM.h">
-      <Filter>GameObject\Character\Azusa</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\LoadingBackGround.h">
       <Filter>LevelDesign\Loading\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MidoriFSM.h">
-      <Filter>GameObject\Character\Midori</Filter>
+    <ClInclude Include="..\public\PlayerFSM.h">
+      <Filter>GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Midori.h">
-      <Filter>GameObject\Character\Midori</Filter>
+    <ClInclude Include="..\public\Shield.h">
+      <Filter>GameObject\Player\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Dynamic.h">
+      <Filter>GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PlayerCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -254,9 +192,6 @@
     </ClCompile>
     <ClCompile Include="..\private\TestCube.cpp">
       <Filter>GameObject\Figure</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Camera_Dynamic.cpp">
-      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>Default</Filter>
@@ -289,54 +224,19 @@
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>GameObject\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\School.cpp">
-      <Filter>GameObject\Env</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Baricade.cpp">
-      <Filter>GameObject\Obstacle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\LightTank.cpp">
-      <Filter>GameObject\Enemy\Tank</Filter>
-    </ClCompile>
-    <ClCompile Include="..\public\Izuna.cpp">
-      <Filter>GameObject\Character\Izuna</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\IzunaFSM.cpp">
-      <Filter>GameObject\Character\Izuna</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Momoi.cpp">
-      <Filter>GameObject\Character\Momoi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MomoiFSM.cpp">
-      <Filter>GameObject\Character\Momoi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TechSoldier.cpp">
-      <Filter>GameObject\Enemy\TechSoldier</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TechSoldierFSM.cpp">
-      <Filter>GameObject\Enemy\TechSoldier</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Character.cpp">
-      <Filter>GameObject\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Enemy.cpp">
-      <Filter>GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Azusa.cpp">
-      <Filter>GameObject\Character\Azusa</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\AzusaFSM.cpp">
-      <Filter>GameObject\Character\Azusa</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\LoadingBackGround.cpp">
       <Filter>LevelDesign\Loading\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MidoriFSM.cpp">
-      <Filter>GameObject\Character\Midori</Filter>
+    <ClCompile Include="..\private\PlayerFSM.cpp">
+      <Filter>GameObject\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Midori.cpp">
-      <Filter>GameObject\Character\Midori</Filter>
+    <ClCompile Include="..\private\Shield.cpp">
+      <Filter>GameObject\Player\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Dynamic.cpp">
+      <Filter>GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PlayerCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

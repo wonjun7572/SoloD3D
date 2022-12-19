@@ -48,6 +48,9 @@ HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 
 	CloseHandle(hFile);
 
+	if (FAILED(Ready_Neighbor()))
+		return E_FAIL;
+
 #ifdef _DEBUG
 
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECLARATION::Elements, VTXPOS_DECLARATION::iNumElements);
@@ -65,6 +68,44 @@ HRESULT CNavigation::Init(void * pArg)
 		memcpy(&m_NaviDesc, pArg, sizeof(NAVIDESC));
 
 	return S_OK;
+}
+
+_bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
+{
+	if (-1 == m_NaviDesc.iCurrentIndex)
+		return false;
+
+	_int		iNeighborIndex = -1;
+
+	/* 움직이고 난 결과위치가 쎌 안에 있다면.  */
+	if (true == m_Cells[m_NaviDesc.iCurrentIndex]->isIn(TargetPos, &iNeighborIndex))
+		return true; // 움직여. 
+					 /* 움직이고 난 결과위치가 이쎌을 벗어난다면. */
+	else
+	{
+		/* 나간방향으로 이웃이 있었다면ㄴ. */
+		if (-1 != iNeighborIndex)
+		{
+			while (true)
+			{
+				if (-1 == iNeighborIndex)
+				{
+					return false;
+				}
+				if (true == m_Cells[iNeighborIndex]->isIn(TargetPos, &iNeighborIndex))
+				{
+					// m_NaviDesc.iCurrentIndex = 이웃의 인덱스;
+					m_NaviDesc.iCurrentIndex = iNeighborIndex;
+					return true;
+				}
+			}
+		}
+		/* 나간방향으로 이웃이 없었다면 */
+		else
+		{
+			return false;
+		}
+	}
 }
 
 #ifdef _DEBUG
@@ -101,7 +142,31 @@ HRESULT CNavigation::Render()
 
 HRESULT CNavigation::Ready_Neighbor()
 {
-	return E_NOTIMPL;
+	for (auto& pSourCell : m_Cells)
+	{
+		for (auto& pDestCell : m_Cells)
+		{
+			if (pSourCell == pDestCell)
+				continue;
+
+			if (true == pDestCell->Compare_Points(pSourCell->Get_Point(CCell::POINT_A), pSourCell->Get_Point(CCell::POINT_B)))
+			{
+				pSourCell->Set_Neighbor(CCell::NEIGHBOR_AB, pDestCell);
+			}
+
+			else if (true == pDestCell->Compare_Points(pSourCell->Get_Point(CCell::POINT_B), pSourCell->Get_Point(CCell::POINT_C)))
+			{
+				pSourCell->Set_Neighbor(CCell::NEIGHBOR_BC, pDestCell);
+			}
+
+			else if (true == pDestCell->Compare_Points(pSourCell->Get_Point(CCell::POINT_C), pSourCell->Get_Point(CCell::POINT_A)))
+			{
+				pSourCell->Set_Neighbor(CCell::NEIGHBOR_CA, pDestCell);
+			}
+		}
+	}
+
+	return S_OK;
 }
 
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pNavigationDataFilePath)

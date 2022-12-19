@@ -67,10 +67,10 @@ public:
 	virtual void Imgui_RenderProperty() override;
 
 public:
-	void Go_Straight(_double TimeDelta);
-	void Go_Backward(_double TimeDelta);
-	void Go_Left(_double TimeDelta);
-	void Go_Right(_double TimeDelta);
+	void Go_Straight(_double TimeDelta, class CNavigation* pNaviCom = nullptr);
+	void Go_Backward(_double TimeDelta, class CNavigation* pNaviCom = nullptr);
+	void Go_Left(_double TimeDelta, class CNavigation* pNaviCom = nullptr);
+	void Go_Right(_double TimeDelta, class CNavigation* pNaviCom = nullptr);
 	void Go_Up(_double TimeDelta);
 	void Go_Down(_double TimeDelta);
 
@@ -91,7 +91,7 @@ public:
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);
 
-private:
+public:
 	_float4x4				m_WorldMatrix;
 	TRANSFORMDESC			m_TransformDesc;
 

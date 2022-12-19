@@ -22,6 +22,10 @@ public:
 	HRESULT DynamicBufferControlForSave(_float4 vBrushPos, _float fBrushRange, _double _Height, _double TimeDelta, bool defaultHeight);
 	HRESULT	SaveHeightMap();
 
+	FACEINDICES32* Get_Idx() {
+		return m_pIndices;
+	}
+
 private:
 	_uint			m_iNumVerticesX = 0;
 	_uint			m_iNumVerticesZ = 0;

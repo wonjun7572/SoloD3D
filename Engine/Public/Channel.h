@@ -7,12 +7,12 @@ BEGIN(Engine)
 class CChannel final : public CBase
 {
 public:
-		typedef struct ChannelLoadTag
-		{
-			char				mNodeName[MAX_PATH];
-			_uint				mNumKeyFrames;
-			vector<KEYFRAME>	mKeyFrames;
-		}CHANNELLOAD;
+	typedef struct ChannelLoadTag
+	{
+		char				mNodeName[MAX_PATH];
+		_uint				mNumKeyFrames;
+		vector<KEYFRAME>	mKeyFrames;
+	}CHANNELLOAD;
 
 private:
 	CChannel();

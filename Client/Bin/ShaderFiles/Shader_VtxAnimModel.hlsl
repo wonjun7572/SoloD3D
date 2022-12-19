@@ -9,6 +9,8 @@ matrix			g_BoneMatrices[256];
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
+matrix			g_SocketMatrix;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -56,6 +58,26 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_MAIN_SOCKET(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	vPosition = mul(vPosition, g_SocketMatrix);
+
+	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	vNormal = mul(vNormal, g_SocketMatrix);
+
+	Out.vPosition = mul(vPosition, matVP);
+	Out.vNormal = normalize(vNormal);
+	Out.vTexUV = In.vTexUV;
+	Out.vTangent = (vector)0.f;
+
+	return Out;
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -89,6 +111,17 @@ technique11 DefaultTechnique
 		SetRasterizerState(rsSolidframe);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Socket
+	{
+		SetRasterizerState(rsSolidframe);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;

@@ -1,11 +1,4 @@
-﻿  Izuna.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\public\izuna.cpp(168): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Momoi.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\momoi.cpp(167): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Azusa.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\azusa.cpp(166): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Midori.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\midori.cpp(169): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  코드를 생성하고 있습니다...
+﻿  PlayerCamera.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\client\private\playercamera.cpp(74): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

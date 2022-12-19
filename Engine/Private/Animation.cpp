@@ -58,9 +58,6 @@ _bool CAnimation::Update_Bones(_double TimeDelta)
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
 	}
 
-	if (true == m_isFinished)
-		m_isFinished = false;
-
 	return false;
 }
 
@@ -104,7 +101,7 @@ CAnimation * CAnimation::Create(ANIMATIONLOAD& pAIAnimation, CModel* pModel)
 {
 	CAnimation* pInstance = new CAnimation;
 
-	if(FAILED(pInstance->Initialize(pAIAnimation, pModel)))
+	if (FAILED(pInstance->Initialize(pAIAnimation, pModel)))
 	{
 		MSG_BOX("Failed to Create : CAnimation");
 		Safe_Release(pInstance);

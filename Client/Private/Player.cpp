@@ -2,7 +2,9 @@
 #include "..\public\Player.h"
 #include "GameInstance.h"
 #include "Weapon.h"
+#include "Shield.h"
 #include "Bone.h"
+#include "PlayerFSM.h"
 #include "Navigation.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -42,39 +44,22 @@ HRESULT CPlayer::Init(void * pArg)
 	if (FAILED(SetUp_Parts()))
 		return E_FAIL;
 
-	m_pModelCom->Set_AnimationIndex(3);
-	m_PartSize = m_PlayerParts.size();
+	m_strObjName = L"Player";
+
+	m_iCurrentAnimIndex = 23;
+	m_PartSize =	static_cast<_uint>(m_PlayerParts.size());
 	return S_OK;
 }
 
 void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+	
+	Movement(TimeDelta);
 
-	if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		m_pTransformCom->Go_Backward(TimeDelta);
-	}
+	m_pFSM->Tick(TimeDelta);
 
-	if (GetKeyState(VK_LEFT) & 0x8000)
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * -1.f);
-	}
-
-	if (GetKeyState(VK_RIGHT) & 0x8000)
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
-	}
-
-	if (GetKeyState(VK_UP) & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-		m_pModelCom->Set_AnimationIndex(4);
-	}
-	else
-		m_pModelCom->Set_AnimationIndex(m_iCurrentAnimIndex);
-
-	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
+	m_pModelCom->Play_Animation(TimeDelta, m_bAnimation);
 
 	for (_uint i = 0; i <m_PartSize; ++i)
 	{
@@ -130,6 +115,83 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+void CPlayer::Movement(_double TimeDelta)
+{
+	m_bWalk = false;
+	m_bRunning = false;
+
+	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_W))
+	{
+		m_bWalk = true;
+		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		{
+			m_bWalk = false;
+			m_bRunning = true;
+		}
+		m_eState = CPlayer::FORWARD;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S))
+	{
+		m_bWalk = true;
+		m_eState = CPlayer::BACK;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_bWalk = true;
+		m_eState = CPlayer::LEFT;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_bWalk = true;
+		m_eState = CPlayer::RIGHT;
+	}
+	
+	if (pGameInstance->Mouse_Down(DIM_LB))
+	{
+		m_bAttackClick = true;
+	}
+
+	if (m_bAttackClick && m_bAttack_1 == true)
+	{
+		m_bAttack_2 = true;
+		m_bAttackClick = false;
+	}
+	else if (m_bAttackClick && m_bAttack_0 == true)
+	{
+		m_bAttack_1 = true;
+		m_bAttackClick = false;
+	}																																											
+	else if (m_bAttackClick && m_bAttack_0 == false)
+	{
+		m_bAttack_0 = true;
+		m_bAttackClick = false;
+	}
+	else
+	{
+		if (m_pModelCom->Get_AnimFinished() == true)
+		{
+			m_bAttack_0 = false;
+			m_bAttack_1 = false;
+			m_bAttack_2 = false;
+		}
+	}
+
+	//_long			MouseMove = 0;
+
+	//if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+	//{
+	//	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
+	//}
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
 void CPlayer::Imgui_RenderProperty()
 {
 	if (ImGui::CollapsingHeader("For.Animation"))
@@ -165,7 +227,7 @@ HRESULT CPlayer::SetUp_Parts()
 	ZeroMemory(&WeaponDesc, sizeof(CWeapon::WEAPONDESC));
 
 	WeaponDesc.PivotMatrix = m_pModelCom->Get_PivotMatrix();
-	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("SWORD");
+	WeaponDesc.pSocket = m_pModelCom->Get_BonePtr("BN_Weapon_R");
 	WeaponDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(WeaponDesc.pSocket);
 	Safe_AddRef(m_pTransformCom);
@@ -194,7 +256,7 @@ HRESULT CPlayer::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Fiona"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -237,6 +299,10 @@ HRESULT CPlayer::SetUp_Components()
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
 		(CComponent**)&m_pNavigationCom, &NaviDesc)))
 		return E_FAIL;
+
+	m_pFSM = CPlayerFSM::Create(this);
+	m_Components.insert({ L"FSM", m_pFSM });
+	Safe_AddRef(m_pFSM);
 
 	return S_OK;
 }
@@ -314,8 +380,9 @@ void CPlayer::Free()
 
 	m_PlayerParts.clear();
 
-	Safe_Release(m_pNavigationCom);
+	Safe_Release(m_pFSM);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pNavigationCom);
 }

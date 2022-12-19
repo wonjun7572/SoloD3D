@@ -21,6 +21,9 @@ public:
 	virtual HRESULT Init_Prototype(const _tchar* pNavigationDataFilePath);
 	virtual HRESULT Init(void* pArg) override;
 
+public:
+	_bool isMove_OnNavigation(_fvector TargetPos);
+
 #ifdef _DEBUG
 public:
 	HRESULT Render();

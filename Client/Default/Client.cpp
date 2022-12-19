@@ -15,8 +15,8 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 bool		g_bFullScreen = false;
 bool		g_bNeedResizeSwapChain = false;
-unsigned int g_iWinSizeX = 1920;
-unsigned int g_iWinSizeY = 1080;
+unsigned int g_iWinSizeX = 1280;
+unsigned int g_iWinSizeY = 720;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

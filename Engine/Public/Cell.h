@@ -9,12 +9,22 @@ class CCell final : public CBase
 public:
 	enum POINT { POINT_A, POINT_B, POINT_C, POINT_END };
 	enum NEIGHBOR { NEIGHBOR_AB, NEIGHBOR_BC, NEIGHBOR_CA, NEIGHBOR_END };
+
 private:
 	CCell(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CCell() = default;
 
 public:
+	_float3 Get_Point(POINT ePoint) { return m_vPoints[ePoint]; }
+
+	void	Set_Neighbor(NEIGHBOR eNeighbor, CCell* pNeighbor) { m_iNeighborIndices[eNeighbor] = pNeighbor->m_iIndex; }
+
+public:
 	HRESULT Init(const _float3* pPoints, _int iIndex);
+
+public:
+	_bool	Compare_Points(const _float3& SourPoint, const _float3& DestPoint);
+	_bool	isIn(_fvector vTargetPos, _int* pNeighborIndex);
 
 #ifdef _DEBUG
 public:

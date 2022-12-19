@@ -38,10 +38,11 @@ private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
-	_bool					m_bAnimationFinished = false;
-
 private:
 	void Collision_ToPlayer();
+
+private:
+	_bool	m_bAnimation = false;
 
 public:
 	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

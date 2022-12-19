@@ -17,7 +17,7 @@ HRESULT CChannel::Initialize(CHANNELLOAD& pAIChannel, CModel * pModel)
 	m_iNumKeyframes = pAIChannel.mNumKeyFrames;
 
 	m_KeyFrames = pAIChannel.mKeyFrames;
-	
+
 	return S_OK;
 }
 
@@ -36,17 +36,17 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 	else
 	{
 		while (PlayTime >= m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time)
-				++m_iCurrentKeyFrameIndex;
+			++m_iCurrentKeyFrameIndex;
 
 		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
-	
+
 		vScale = CMathUtils::Lerp(m_KeyFrames[m_iCurrentKeyFrameIndex].vScale, m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vScale, static_cast<float>(Ratio));
 		vRotation = CMathUtils::QuaternionSlerp(m_KeyFrames[m_iCurrentKeyFrameIndex].vRotation, m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vRotation, static_cast<float>(Ratio));
 		vPosition = CMathUtils::Lerp(m_KeyFrames[m_iCurrentKeyFrameIndex].vPosition, m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vPosition, static_cast<float>(Ratio));
 	}
 
-	TransformMatrix = CMathUtils::MatrixAffineTransformation(_float4(vScale.x,vScale.y,vScale.z, 0.f), _float4(0.f, 0.f, 0.f, 1.f), vRotation,_float4(vPosition.x,vPosition.y,vPosition.z,1.f));
+	TransformMatrix = CMathUtils::MatrixAffineTransformation(_float4(vScale.x, vScale.y, vScale.z, 0.f), _float4(0.f, 0.f, 0.f, 1.f), vRotation, _float4(vPosition.x, vPosition.y, vPosition.z, 1.f));
 
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }
@@ -132,4 +132,3 @@ void CChannel::Free()
 
 	m_KeyFrames.clear();
 }
-

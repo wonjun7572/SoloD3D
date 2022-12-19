@@ -46,7 +46,7 @@ void CMonster::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_pModelCom->Play_Animation(TimeDelta, m_bAnimationFinished);
+	m_pModelCom->Play_Animation(TimeDelta,m_bAnimation);
 
 	for (_uint i = 0; i < COLLTYPE_END; ++i)
 		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
@@ -105,7 +105,7 @@ HRESULT CMonster::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Fiona"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

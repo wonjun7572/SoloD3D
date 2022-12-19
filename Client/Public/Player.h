@@ -17,6 +17,7 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
+	enum PLAYER_STATE { FORWARD, LEFT, RIGHT, BACK , STATE_END };
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,13 +31,19 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	CModel*					Get_ModelCom() { return m_pModelCom; }
+	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
+
+	void	Movement(_double TimeDelta);
+
 private:
 	void Imgui_RenderProperty() override;
 
 private:
+	class CPlayerFSM*		m_pFSM = nullptr;
+	CModel*					m_pModelCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CNavigation*			m_pNavigationCom = nullptr;
 
@@ -44,9 +51,36 @@ private:
 	vector<CGameObject*>	m_PlayerParts;
 	_uint					m_PartSize = 0;
 
-	_uint					m_iCurrentAnimIndex = 3;
+	_uint					m_iCurrentAnimIndex = 0;
 
-	_bool					m_bAnimationFinished = false;
+public:
+	_bool					IsWalking() { return m_bWalk; }
+	_bool					IsRunning() { return m_bRunning; }
+	_bool					IsAttack_0() { return m_bAttack_0; }
+	_bool					IsAttack_1() { return m_bAttack_1; }
+	_bool					IsAttack_2() { return m_bAttack_2; }
+	_bool					IsJumping() { return m_bJumping; }
+	PLAYER_STATE			Get_State() { return m_eState; }
+
+private:
+	_bool					m_bAttackClick = false;
+
+	_bool					m_bAttack_0 = false;
+	_bool					m_bAttack_1 = false;
+	_bool					m_bAttack_2 = false;
+	_bool					m_bAttack_3 = false;
+
+	_double					m_AttackTime_0 = 0.0;
+
+	_bool					m_bWalk = false;
+	_bool					m_bRunning = false;
+
+	_bool					m_bJumping = false;
+
+	PLAYER_STATE			m_eState = STATE_END;
+
+private:
+	_bool					m_bAnimation = true;
 
 private:
 	HRESULT SetUp_Parts();

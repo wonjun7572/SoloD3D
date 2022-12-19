@@ -26,14 +26,16 @@ public:
 public:
 	HRESULT Initialize(ANIMATIONLOAD& pAIAnimation, class CModel* pModel);
 	_bool	Update_Bones(_double TimeDelta);
+	_bool	AnimLerpTime(_double TimeDelta, CAnimation * pNext, _bool bFinish);
 
+public:
 	char*	Get_AnimationName() { return m_szName; }
 	ANIMATIONLOAD&	Get_ANIMATIONLOAD() { return m_ANIMATIONLOAD; }
+
 	void	Set_isLooping(_bool isLooping) { m_isLooping = isLooping; }
 
 public:
 	void		Reset_PlayTime(void) { m_PlayTime = 0.0; }
-	_bool		AnimLerpTime(_double TimeDelta, CAnimation* pNext, _bool bFinish = false);
 	_vector		Get_MovePos(void) { return XMLoadFloat3(&m_vMovePos); }
 	_double		Get_Duration() { return m_Duration; }
 

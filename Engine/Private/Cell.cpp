@@ -28,6 +28,56 @@ HRESULT CCell::Init(const _float3 * pPoints, _int iIndex)
 	return S_OK;
 }
 
+_bool CCell::Compare_Points(const _float3& SourPoint, const _float3& DestPoint)
+{
+	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&SourPoint)))
+	{
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint)))
+			return true;
+
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint)))
+			return true;
+	}
+
+	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&SourPoint)))
+	{
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint)))
+			return true;
+
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint)))
+			return true;
+	}
+
+	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&SourPoint)))
+	{
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint)))
+			return true;
+
+		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint)))
+			return true;
+	}
+
+	return false;
+}
+
+_bool CCell::isIn(_fvector vTargetPos, _int * pNeighborIndex)
+{
+	for (_uint i = 0; i < NEIGHBOR_END; ++i)
+	{
+		_vector		vLine = XMLoadFloat3(&m_vPoints[(i + 1) % NEIGHBOR_END]) - XMLoadFloat3(&m_vPoints[i]);
+		_vector		vNormal = XMVector3Normalize(XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
+		_vector		vDir = XMVector3Normalize(vTargetPos - XMLoadFloat3(&m_vPoints[i]));
+
+		if (0 < XMVectorGetX(XMVector3Dot(vNormal, vDir)))
+		{
+			*pNeighborIndex = m_iNeighborIndices[i];
+			return false;
+		}
+	}
+
+	return true;
+}
+
 #ifdef _DEBUG
 HRESULT CCell::Render(CShader * pShader)
 {
