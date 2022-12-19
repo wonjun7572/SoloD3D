@@ -30,7 +30,10 @@ private:
 	CGameObject* m_pTarget = nullptr;
 
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
-	_float3 m_vPlayerPos;
+	_float4 m_vPlayerPos;
+
+	_float m_X = 0, m_Y = 0, m_Z = 0 , m_Y1 = 0;
+	_float m_RX = 0, m_RY = 0, m_RZ = 0;
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -60,7 +60,7 @@ void CPlayerCamera::Tick(_double TimeDelta)
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	Mouse_Fix();
+	//Mouse_Fix();
 
 	m_pTarget = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player");
 	
@@ -77,20 +77,26 @@ void CPlayerCamera::Tick(_double TimeDelta)
 
 	if (MouseMove_Y = pGameInstance->Get_DIMouseMove(DIMS_Y))
 	{
-
 	}
 	
-	XMStoreFloat3(&m_vPlayerPos, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-
+	XMStoreFloat4(&m_vPlayerPos, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 	_float4 vLook = CMathUtils::MulNum_Float4(-5.f, m_vLookAt);
-	XMStoreFloat4(&vLook, XMVector3Normalize(XMLoadFloat4(&vLook)));
-
-	_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMLoadFloat4(&vLook);
-
+	_vector vCamPos = XMVectorSet(m_vPlayerPos.x , m_vPlayerPos.y , m_vPlayerPos.z , 1.f) +	(XMLoadFloat4(&vLook)  +XMVectorSet(0.f, 5.f, 0.f, 0.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
-	m_pTransformCom->LookAt(m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+	m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y ,m_vPlayerPos.z , 1.f) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
 
 	Safe_Release(pGameInstance);
+}
+
+void CPlayerCamera::Imgui_RenderProperty()
+{
+	ImGui::InputFloat("X", &m_X);
+	ImGui::InputFloat("Y", &m_Y);
+	ImGui::InputFloat("Y1", &m_Y1);
+	ImGui::InputFloat("Z", &m_Z);
+	ImGui::InputFloat("RX", &m_RX);
+	ImGui::InputFloat("RY", &m_RY);
+	ImGui::InputFloat("RZ", &m_RZ);
 }
 
 void CPlayerCamera::Late_Tick(_double TimeDelta)
@@ -104,10 +110,6 @@ HRESULT CPlayerCamera::Render()
 		return E_FAIL;
 
 	return S_OK;
-}
-
-void CPlayerCamera::Imgui_RenderProperty()
-{
 }
 
 void CPlayerCamera::Mouse_Fix()
