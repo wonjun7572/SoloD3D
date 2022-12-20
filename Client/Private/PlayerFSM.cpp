@@ -145,8 +145,23 @@ void CPlayerFSM::Walk_Tick(_double TimeDelta)
 
 void CPlayerFSM::Run_Tick(_double TimeDelta)
 {
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(32);
-	m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+	switch (m_pTarget->Get_State())
+	{
+	case CPlayer::FORWARD:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(32);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+		break;
+	case CPlayer::LF:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(35);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 1.2);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+		break;
+	case CPlayer::RF:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(36);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 1.2);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+		break;
+	}
 }
 
 void CPlayerFSM::Run_End()

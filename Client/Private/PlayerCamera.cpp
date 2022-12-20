@@ -61,7 +61,11 @@ void CPlayerCamera::Tick(_double TimeDelta)
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//Mouse_Fix();
+	if (pGameInstance->Key_Down(DIK_F1))
+		m_bFix = !m_bFix;
+
+	if(m_bFix)
+		Mouse_Fix();
 
 	m_pTarget = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player");
 	
@@ -168,6 +172,7 @@ void CPlayerCamera::Mouse_Fix()
 
 	ClientToScreen(g_hWnd, &pt);
 	SetCursorPos(pt.x, pt.y);
+	ShowCursor(false);
 }
 
 CPlayerCamera * CPlayerCamera::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

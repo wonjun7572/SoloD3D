@@ -162,6 +162,11 @@ void CPlayer::Movement(_double TimeDelta)
 	{
 		m_bWalk = true;
 		m_bCamTurn = false;
+		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		{
+			m_bWalk = false;
+			m_bRunning = true;
+		}
 		m_eState = CPlayer::LF;
 	}
 
@@ -169,6 +174,11 @@ void CPlayer::Movement(_double TimeDelta)
 	{
 		m_bWalk = true;
 		m_bCamTurn = false;
+		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		{
+			m_bWalk = false;
+			m_bRunning = true;
+		}
 		m_eState = CPlayer::RF;
 	}
 
