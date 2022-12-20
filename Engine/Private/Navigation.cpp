@@ -21,11 +21,10 @@ CNavigation::CNavigation(const CNavigation & rhs)
 #ifdef _DEBUG
 	Safe_AddRef(m_pShader);
 #endif
-
 }
 
 HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
-{
+{ 
 	_ulong		dwByte = 0;
 	HANDLE		hFile = CreateFile(pNavigationDataFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)

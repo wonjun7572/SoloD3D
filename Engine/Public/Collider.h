@@ -47,6 +47,21 @@ public:
 	_bool Collision(class CCollider* pTargetCollider);
 	_bool Collision_AABB(class CCollider* pTargetCollider);
 	_bool Collision_OBB(class CCollider* pTargetCollider);
+	
+	void Imgui_RenderProperty() override;
+
+public:
+	void	FixedSize();
+
+private:
+	_float	m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
+	_float  m_CX = 0.f, m_CY = 0.f, m_CZ = 0.f;
+
+	_float	m_OBBX = 0.f, m_OBBY = 0.f, m_OBBZ = 0.f;
+	_float  m_OBBCX = 0.f, m_OBBCY = 0.f, m_OBBCZ = 0.f;
+
+	_float	m_SphereX = 0.f, m_SphereY = 0.f, m_SphereZ = 0.f;
+	_float  m_fRadius = 0.f;
 
 #ifdef _DEBUG
 public:

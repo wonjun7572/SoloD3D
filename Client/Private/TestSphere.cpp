@@ -193,27 +193,6 @@ HRESULT CTestSphere::SetUp_Components()
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
-	/* For. Com_FSM */
-	CFSMComponentBuilder builder = CFSMComponentBuilder() // 빌더 생성
-		.InitState(TEXT("Idle"))								  // 최초 시작 노드의 이름
-		.AddState(TEXT("Idle"))								  // Idle 상태노드 정의 시작
-			.OnStart(this, &CTestSphere::Idle_OnStart)	      // Idle 상태 시작할 때 CBackGround::Idle_OnStart함수 실행(상태당 하나의 함수 정의, 생략가능)
-			.Tick(this,&CTestSphere::Idle_Tick)	      // Idle 상태 유지 될 때 프레임마다 CBackGround::Idle_Tick함수 실행(상태당 하나의 함수 정의, 생략가능)
-			.OnExit(this, &CTestSphere::Idle_OnExit)          // Idle 상태에서 다른 상태로 이동할 때 실행하는 함수 정의(상태당 하나의 함수 정의, 생략가능)
-			.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk KeyInput"), this, &CTestSphere::Idle2Walk_KeyInput))
-			// Idle에서 Walk로 전이하는 조건 정의, CBackGround::Predic_Idle2Walk함수 실행결과
-			// true면 Walk로 전이한다. 이하 반복
-			.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk Pushed"), this, &CTestSphere::Idle2Walk_Pushed))
-			// 다수 transition정의 가능
-		.AddState(TEXT("Walk")) // Walk상태 노드 정의 시작
-		.Tick(this,&CTestSphere::Walk_Tick)
-		.Transition(TEXT("Idle"), FSM_TRANSITION(L"Walk To Idle", this, &CTestSphere::Predic_Walk2Idle))
-		.Build();										      // 모든 상태를 만들면 Build()함수로 최종 Builder를 만든다.(종료함수)
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_FSM"), TEXT("Com_FSM"),
-		(CComponent**)&m_pFSMCom, &builder)))			      // 만들어진 CFSMComponentBuilder의 포인터를 pArg로 넘겨준다.
-		return E_FAIL;								  // 이렇게 넘겨진 클래스는 "이동" 되므로 다시 사용할 수 없다.
-		
 	return S_OK;
 }
 

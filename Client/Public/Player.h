@@ -17,7 +17,7 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
-	enum PLAYER_STATE { FORWARD, LEFT, RIGHT, BACK , STATE_END };
+	enum PLAYER_STATE { IDLE, ATTACK, FORWARD, LEFT, RIGHT, BACK ,LF, RF, LB, RB, STATE_END };
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,6 +36,8 @@ public:
 
 	void	Movement(_double TimeDelta);
 
+	void	Set_CamTurn(_bool isTurn) { m_bCamTurn = false; }
+
 private:
 	void Imgui_RenderProperty() override;
 
@@ -47,12 +49,16 @@ private:
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CNavigation*			m_pNavigationCom = nullptr;
 
+public:
+	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
+
 private:
 	vector<CGameObject*>	m_PlayerParts;
 	_uint					m_PartSize = 0;
 
-	_uint					m_iCurrentAnimIndex = 0;
+	_uint					m_iCurrentAnimIndex = 23;
 
+	_float					m_MouseSensity = 0.1f;
 public:
 	_bool					IsWalking() { return m_bWalk; }
 	_bool					IsRunning() { return m_bRunning; }
@@ -60,9 +66,15 @@ public:
 	_bool					IsAttack_1() { return m_bAttack_1; }
 	_bool					IsAttack_2() { return m_bAttack_2; }
 	_bool					IsJumping() { return m_bJumping; }
+
+	void					Set_State(PLAYER_STATE eState) { m_eState = eState; }
 	PLAYER_STATE			Get_State() { return m_eState; }
 
+	_bool					Get_CamTurn() { return m_bCamTurn; }
+
 private:
+	_bool					m_bCamTurn = false;
+	_bool					m_bAttacking = false;
 	_bool					m_bAttackClick = false;
 
 	_bool					m_bAttack_0 = false;

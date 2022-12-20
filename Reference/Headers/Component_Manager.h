@@ -9,6 +9,7 @@
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Cylinder.h"
+#include "VIBuffer_Rect_Instancing.h"
 
 #include "Transform.h"
 
@@ -31,6 +32,7 @@ public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
+	void	Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName);
 
 	void Imgui_ComponentViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	

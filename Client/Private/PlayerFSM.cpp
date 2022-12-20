@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Public\PlayerFSM.h"
 #include "GameInstance.h"
-#include "Timer.h"
 #include "Player.h"
 #include "Model.h"
 
@@ -19,6 +18,10 @@ HRESULT CPlayerFSM::Init(void * pArg)
 		.Transition(TEXT("Run"), FSM_TRANSITION(TEXT("Idle To Run"), [this]()
 	{
 		return m_pTarget->IsRunning() == true;
+	}))
+		.Transition(TEXT("Jump"), FSM_TRANSITION(TEXT("Run to Jump"), [this]()
+	{
+		return m_pTarget->IsJumping() == true;
 	}))
 		.Transition(TEXT("Attack_0"), FSM_TRANSITION(TEXT("Idle To Attack_0"), [this]()
 	{
@@ -104,7 +107,7 @@ void CPlayerFSM::Walk_Tick(_double TimeDelta)
 		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
 		break;
 	case CPlayer::BACK:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(103);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(28);
 		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
 		break;
 	case CPlayer::LEFT:
@@ -114,6 +117,26 @@ void CPlayerFSM::Walk_Tick(_double TimeDelta)
 	case CPlayer::RIGHT:
 		m_pTarget->Get_ModelCom()->Set_AnimationIndex(44);
 		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
+		break;
+	case CPlayer::LF:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(35);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 0.7);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
+		break;
+	case CPlayer::RF:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(36);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
+		break;
+	case CPlayer::LB:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(29);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 0.7);
+		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
+		break;
+	case CPlayer::RB:
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(30);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
+		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
 		break;
 	default:
 		break;
@@ -133,20 +156,27 @@ void CPlayerFSM::Run_End()
 
 void CPlayerFSM::Jump_Ing(_double TimeDelta)
 {
+	m_pTarget->Get_ModelCom()->Set_AnimationIndex(25);
 }
 
 void CPlayerFSM::Attack_Ing(_double TimeDelta)
 {
+	m_pTarget->Set_State(CPlayer::ATTACK);
+	m_pTarget->Set_CamTurn(false);
 	m_pTarget->Get_ModelCom()->Set_AnimationIndex(2);
 }
 
 void CPlayerFSM::Attack1_Ing(_double TimeDelta)
 {
+	m_pTarget->Set_State(CPlayer::ATTACK);
+	m_pTarget->Set_CamTurn(false);
 	m_pTarget->Get_ModelCom()->Set_AnimationIndex(4);
 }
 
 void CPlayerFSM::Attack2_Ing(_double TimeDelta)
 {
+	m_pTarget->Set_State(CPlayer::ATTACK);
+	m_pTarget->Set_CamTurn(false);
 	m_pTarget->Get_ModelCom()->Set_AnimationIndex(6);
 }
 

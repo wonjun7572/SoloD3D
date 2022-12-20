@@ -117,15 +117,18 @@ HRESULT CPlayer::Render()
 
 void CPlayer::Movement(_double TimeDelta)
 {
+	m_eState = IDLE;
 	m_bWalk = false;
 	m_bRunning = false;
-
+	m_bCamTurn = true;
+	
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	if (pGameInstance->Get_DIKeyState(DIK_W))
 	{
 		m_bWalk = true;
+		m_bCamTurn = false;
 		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 		{
 			m_bWalk = false;
@@ -137,19 +140,62 @@ void CPlayer::Movement(_double TimeDelta)
 	if (pGameInstance->Get_DIKeyState(DIK_S))
 	{
 		m_bWalk = true;
+		m_bCamTurn = false;
 		m_eState = CPlayer::BACK;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_A))
 	{
 		m_bWalk = true;
+		m_bCamTurn = false;
 		m_eState = CPlayer::LEFT;
 	}
 
 	if (pGameInstance->Get_DIKeyState(DIK_D))
 	{
 		m_bWalk = true;
+		m_bCamTurn = false;
 		m_eState = CPlayer::RIGHT;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_W) && pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_bWalk = true;
+		m_bCamTurn = false;
+		m_eState = CPlayer::LF;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_W) && pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_bWalk = true;
+		m_bCamTurn = false;
+		m_eState = CPlayer::RF;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S) && pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_bWalk = true;
+		m_bCamTurn = false;
+		m_eState = CPlayer::LB;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S) && pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_bWalk = true;
+		m_bCamTurn = false;
+		m_eState = CPlayer::RB;
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
+	{
+		m_pTransformCom->Jump(TimeDelta, 0.5f, 0.f);
+		m_bJumping = true;
+	}
+	else
+	{
+		m_bJumping = false;
+		if(m_pTransformCom->Get_World4x4()._42 >= 0.f)
+			m_pTransformCom->Go_Down(TimeDelta);
 	}
 	
 	if (pGameInstance->Mouse_Down(DIM_LB))
@@ -181,14 +227,17 @@ void CPlayer::Movement(_double TimeDelta)
 			m_bAttack_2 = false;
 		}
 	}
+	
+	if (m_bCamTurn == false && m_bAttack_0 == false)
+	{
+		_long MouseMove_X = 0;
 
-	//_long			MouseMove = 0;
-
-	//if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
-	//{
-	//	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
-	//}
-
+		if (MouseMove_X = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove_X * m_MouseSensity * TimeDelta);
+		}
+	}
+		
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -233,6 +282,7 @@ HRESULT CPlayer::SetUp_Parts()
 	Safe_AddRef(m_pTransformCom);
 
 	pPartObject = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Weapon"), &WeaponDesc);
+	
 	if (nullptr == pPartObject)
 		return E_FAIL;
 
@@ -264,8 +314,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.7f, 1.5f, 0.7f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+	ColliderDesc.vSize = _float3(0.5f, 2.f, 0.5f);
+	ColliderDesc.vCenter = _float3(0.f, 1.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
@@ -273,9 +323,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	/* For.Com_OBB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.0f, 1.0f, 1.0f);
-	ColliderDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+	ColliderDesc.vSize = _float3(0.5f, 2.f, 0.5f);
+	ColliderDesc.vCenter = _float3(0.f, 1.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
@@ -283,8 +332,8 @@ HRESULT CPlayer::SetUp_Components()
 
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
+	ColliderDesc.vSize = _float3(20.f, 20.f, 20.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))

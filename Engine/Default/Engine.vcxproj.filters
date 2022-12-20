@@ -145,6 +145,12 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Cell">
       <UniqueIdentifier>{1cd010b5-bebe-4561-9ac3-dcf91ce7c31f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Instancing">
+      <UniqueIdentifier>{56be755a-d040-4e37-a91e-4832525ab192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect">
+      <UniqueIdentifier>{2372c1e6-fabf-48ba-9176-f8da4296959d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -357,6 +363,12 @@
     <ClInclude Include="..\public\VIBuffer_Cell.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cell</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Instancing.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect_Instancing.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -541,6 +553,12 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Cell.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Instancing.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Rect_Instancing.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

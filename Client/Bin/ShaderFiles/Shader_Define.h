@@ -24,8 +24,40 @@ sampler NormalSampler = sampler_state
 	AddressV = wrap;
 };
 
-RasterizerState rsSolidframe{ FillMode = Solid; };
-RasterizerState rsWireframe{ FillMode = WireFrame; };
+
+RasterizerState RS_Default
+{
+	FillMode = Solid;
+	CullMode = Back;
+	FrontCounterClockwise = false;
+};
+
+RasterizerState RS_WireFrame
+{ 
+	FillMode = WireFrame; 
+	CullMode = Back;
+	FrontCounterClockwise = false;
+};
+
+RasterizerState RS_CW
+{
+	FillMode = Solid;
+	CullMode = Front;
+	FrontCounterClockwise = false;
+};
+
+DepthStencilState DS_Default
+{
+	DepthEnable = true;
+DepthWriteMask = all;
+DepthFunc = less_equal;
+};
+
+DepthStencilState DS_ZEnable_ZWriteEnable_FALSE
+{
+	DepthEnable = false;
+	DepthWriteMask = zero;
+};
 
 /* 텍스쳐로부터 픽셀의 색을 샘플링(가져온다) 해오는 방식. */
 sampler LinearSampler = sampler_state
@@ -56,7 +88,7 @@ DestBlend = inv_Src_Alpha;
 BlendOp = add;
 };
 
-BlendState BS_AddBlending
+BlendState BS_One
 {
 	BlendEnable[0] = true;
 

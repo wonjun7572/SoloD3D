@@ -173,10 +173,13 @@
     <Text Include="ToDoList.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.hpp" />
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
+    <ClInclude Include="..\public\Demon.h" />
+    <ClInclude Include="..\public\DemonFSM.h" />
+    <ClInclude Include="..\public\Effect_Rect.h" />
     <ClInclude Include="..\public\EmptyGameObject.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="..\public\PlayerCamera.h" />
     <ClInclude Include="..\public\PlayerFSM.h" />
     <ClInclude Include="..\public\Shield.h" />
+    <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
@@ -206,6 +210,9 @@
   <ItemGroup>
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\Demon.cpp" />
+    <ClCompile Include="..\private\DemonFSM.cpp" />
+    <ClCompile Include="..\private\Effect_Rect.cpp" />
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
@@ -222,6 +229,7 @@
     <ClCompile Include="..\private\PlayerCamera.cpp" />
     <ClCompile Include="..\private\PlayerFSM.cpp" />
     <ClCompile Include="..\private\Shield.cpp" />
+    <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />
@@ -244,8 +252,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstancing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

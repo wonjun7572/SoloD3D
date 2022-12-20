@@ -46,6 +46,22 @@ CComponent * CComponent_Manager::Clone_Component(_uint iLevelIndex, const wstrin
 	return pComponent;
 }
 
+void CComponent_Manager::Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName)
+{
+	auto   iter = find_if(m_pPrototypes[iLevel].begin(), m_pPrototypes[iLevel].end(), [&](auto Pair)->bool
+	{
+		if (Pair.first == pComponentName)
+			return true;
+		return false;
+	});
+
+	if (iter == m_pPrototypes[iLevel].end())
+		return;
+
+	Safe_Release(iter->second);
+	iter = m_pPrototypes[iLevel].erase(iter);
+}
+
 void CComponent_Manager::Imgui_ComponentViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
 {
 	if (m_iNumLevels <= iLevel)

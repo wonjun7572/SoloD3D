@@ -32,8 +32,12 @@ private:
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
 	_float4 m_vPlayerPos;
 
-	_float m_X = 0, m_Y = 0, m_Z = 0 , m_Y1 = 0;
-	_float m_RX = 0, m_RY = 0, m_RZ = 0;
+	_float m_fDistanceToTarget = 5.f;
+	_float m_fCamY = 0.f;
+	_float m_fCamTime = 0.f;
+
+	_bool m_bChange = false;
+
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

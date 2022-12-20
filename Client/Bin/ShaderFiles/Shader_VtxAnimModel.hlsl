@@ -1,4 +1,4 @@
-#include "Shader_Define.hpp"
+#include "Shader_Define.h"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
@@ -108,7 +108,8 @@ technique11 DefaultTechnique
 {
 	pass Default
 	{
-		SetRasterizerState(rsSolidframe);
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -119,7 +120,8 @@ technique11 DefaultTechnique
 
 	pass Socket
 	{
-		SetRasterizerState(rsSolidframe);
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
 		GeometryShader = NULL;

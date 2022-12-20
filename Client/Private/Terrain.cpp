@@ -23,6 +23,82 @@ HRESULT CTerrain::Init_Prototype()
 	return S_OK;
 }
 
+HRESULT	CTerrain::Ready_FilterBuffer()
+{
+	m_pPixel = new _ulong[128 * 128];
+
+	for (_uint i = 0; i < 128; ++i)
+	{
+		for (_uint j = 0; j < 128; ++j)
+		{
+			_uint iIndex = i * 128 + j;
+			m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CTerrain::Dynamic_FilterBuffer()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	ID3D11Texture2D*	pTexture2D = nullptr;
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	HRESULT hr = 0;
+
+	TextureDesc.Width = 128;		// 2의 배수로 맞춰야됀다.
+	TextureDesc.Height = 128;		// 2의 배수로 맞춰야됀다.
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+		return E_FAIL;
+
+	D3D11_MAPPED_SUBRESOURCE		SubResource;
+	ZeroMemory(&SubResource, sizeof SubResource);
+
+	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+
+	memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
+
+	m_pContext->Unmap(pTexture2D, 0);
+
+	Safe_Release(m_pTextureCom[TYPE_FILTER]);
+	Remove_Component(TEXT("Com_Filter"));
+
+	hr = DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"));
+
+	Safe_Release(pTexture2D);
+
+	pGameInstance->Remove_ProtoComponent(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_Filter"));
+
+	hr = (pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"), TYPE_FILTER)));
+
+	hr = __super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+		(CComponent**)&m_pTextureCom[TYPE_FILTER]);
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (FAILED(hr))
+	{
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CTerrain::Init(void * pArg)
 {
 	if (FAILED(__super::Init(pArg)))
@@ -30,6 +106,8 @@ HRESULT CTerrain::Init(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+
+	Ready_FilterBuffer();
 
 	m_iDiffuseTexCnt = m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex();
 
@@ -40,12 +118,22 @@ void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if (m_bPicking)
+	if (m_bPicking && m_bHeight)
 	{
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		if(pGameInstance->Get_DIMouseState(DIM_LB) && pGameInstance->Get_DIKeyState(DIK_LALT))
 			m_pVIBufferCom->DynamicBufferControlForSave(m_vBrushPos, m_fBrushRange, static_cast<unsigned char>(m_fHeight), TimeDelta , m_bDefaultHeight);
+		RELEASE_INSTANCE(CGameInstance);
+	}
+	else if (m_bPicking && m_bFilter)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		if (pGameInstance->Get_DIMouseState(DIM_LB))
+		{
+			PickingForFilter(m_pVIBufferCom, m_pTransformCom);
+			Dynamic_FilterBuffer();
+		}
 		RELEASE_INSTANCE(CGameInstance);
 	}
 }
@@ -168,10 +256,12 @@ void CTerrain::Imgui_RenderProperty()
 		ImGui::DragFloat("Brush_Range", &m_fBrushRange, 0.1f, 0.0f, 50.0f);
 
 		ImGui::Checkbox("IsPicking", &m_bPicking); ImGui::SameLine();
+		ImGui::Checkbox("Height", &m_bHeight);
 		ImGui::Checkbox("IsDefaultHeight", &m_bDefaultHeight);
 		ImGui::DragFloat("HeightY", &m_fHeight, 0.1f, 0.0f, 255.0f);
 		if (ImGui::Button("SaveHeight"))
 			m_pVIBufferCom->SaveHeightMap();
+		ImGui::Checkbox("Filter", &m_bFilter);
 	}
 }
 
@@ -264,8 +354,99 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	return _float4();
 }
 
-void CTerrain::EditBrushTex()
+_bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, const CTransform * pTerrainTransformCom)
 {
+	POINT		ptMouse{};
+
+	GetCursorPos(&ptMouse);
+	ScreenToClient(g_hWnd, &ptMouse);
+
+	_float3         vMousePos;
+
+	vMousePos.x = _float(ptMouse.x / (g_iWinSizeX * 0.5f) - 1);
+	vMousePos.y = _float(ptMouse.y / (g_iWinSizeY * -0.5f) + 1);
+	vMousePos.z = 0.f;
+
+	_vector	vecMousePos = XMLoadFloat3(&vMousePos);
+	vecMousePos = XMVectorSetW(vecMousePos, 1.f);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_matrix      ProjMatrixInv;
+	ProjMatrixInv = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ);
+	ProjMatrixInv = XMMatrixInverse(nullptr, ProjMatrixInv);
+	vecMousePos = XMVector3TransformCoord(vecMousePos, ProjMatrixInv);
+
+	_vector	vRayDir, vRayPos;
+
+	vRayPos = { 0.f, 0.f, 0.f , 1.f };
+	vRayDir = vecMousePos - vRayPos;
+
+	_matrix      ViewMatrixInv;
+	ViewMatrixInv = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+	ViewMatrixInv = XMMatrixInverse(nullptr, ViewMatrixInv);
+	vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrixInv);
+	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInv);
+	vRayDir = XMVector3Normalize(vRayDir);
+
+	vRayPos = XMVector3TransformCoord(vRayPos, pTerrainTransformCom->Get_WorldMatrixInverse());
+	vRayDir = XMVector3TransformNormal(vRayDir, pTerrainTransformCom->Get_WorldMatrixInverse());
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	const _float3* pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
+
+	_uint iVtxCntX = pTerrainBufferCom->Get_VtxCntX();
+	_uint iVtxCntZ = pTerrainBufferCom->Get_VtxCntZ();
+
+	_uint iVtxIdx[3]{};
+	_float fDist;
+
+	for (_uint i = 0; i < iVtxCntZ - 1; ++i)
+	{
+		for (_uint j = 0; j < iVtxCntX - 1; ++j)
+		{
+			_ulong dwIndex = i * iVtxCntX + j;
+
+			// 오른쪽 위
+			iVtxIdx[0] = dwIndex + iVtxCntX;
+			iVtxIdx[1] = dwIndex + iVtxCntX + 1;
+			iVtxIdx[2] = dwIndex + 1;
+
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]),
+				XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]), fDist))
+			{
+				 _float4 vPos = _float4(pTerrainVtx[iVtxIdx[1]].x + (pTerrainVtx[iVtxIdx[0]].x - pTerrainVtx[iVtxIdx[1]].x),
+					0.f,
+					pTerrainVtx[iVtxIdx[1]].z + (pTerrainVtx[iVtxIdx[2]].z - pTerrainVtx[iVtxIdx[1]].z),
+					1.f);
+				 _uint iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				 m_pPixel[iResult] = 0;
+				 return true;
+			}
+
+			// 왼쪽 아래
+			iVtxIdx[0] = dwIndex + iVtxCntX;
+			iVtxIdx[1] = dwIndex + 1;
+			iVtxIdx[2] = dwIndex;
+
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]),
+				XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]), fDist))
+			{
+				_float4 vPos = _float4(pTerrainVtx[iVtxIdx[2]].x + (pTerrainVtx[iVtxIdx[1]].x - pTerrainVtx[iVtxIdx[2]].x),
+					0.f,
+					pTerrainVtx[iVtxIdx[2]].z + (pTerrainVtx[iVtxIdx[0]].z - pTerrainVtx[iVtxIdx[2]].z),
+					1.f);
+				_uint iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				m_pPixel[iResult] = 0;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 HRESULT CTerrain::SetUp_Components()
@@ -395,6 +576,9 @@ void CTerrain::Free()
 	for (auto& pTexture : m_pTextureCom)
 		Safe_Release(pTexture);
 	
+	if (m_bClone)
+		Safe_Delete_Array(m_pPixel);
+
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);

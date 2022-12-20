@@ -1,5 +1,5 @@
 
-#include "Shader_Define.hpp"
+#include "Shader_Define.h"
 
 /* 9 : 네모, 지형, 모델을 그리기 위한 셰이더다. */
 /* 11 : 특정 구성을 가진 정점들로 이루어진 모델을 그리기위한 셰이더다. */
@@ -68,8 +68,10 @@ technique11 DefaultTechnique
 {
 	pass Rect
 	{
-		SetRasterizerState(rsSolidframe);
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_AlphaBlending,float4(0.f,0.f,0.f,1.f), 0xffffffff);
+		
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
 		HullShader = NULL;
@@ -79,7 +81,8 @@ technique11 DefaultTechnique
 
 	pass WireFrame
 	{
-		SetRasterizerState(rsWireframe);
+		SetRasterizerState(RS_WireFrame);
+		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -87,4 +90,5 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
 }

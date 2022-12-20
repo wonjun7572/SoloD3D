@@ -2,6 +2,7 @@
 
 #include "Client_Define.h"
 #include "GameObject.h"
+#include "Player.h"
 
 BEGIN(Engine)
 class CShader;
@@ -12,11 +13,12 @@ END
 
 BEGIN(Client)
 
-class CMonster final : public CGameObject
+class CMonster abstract : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
-private:
+
+protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMonster(const CMonster& rhs);
 	virtual ~CMonster() = default;
@@ -28,25 +30,18 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+	CModel* Get_ModelCom() { return m_pModelCom; }
+
+protected:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
-
-private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
-
-private:
-	void Collision_ToPlayer();
-
-private:
-	_bool	m_bAnimation = false;
+	_bool					m_bAnimation = false;
+	_uint					m_iCurrentAnimIndex = 0;
 
 public:
-	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 };
 

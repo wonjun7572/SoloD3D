@@ -74,6 +74,8 @@ public:
 	void Go_Up(_double TimeDelta);
 	void Go_Down(_double TimeDelta);
 
+	_bool Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight);
+
 	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	void Turn(_fvector vAxis, _double TimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */

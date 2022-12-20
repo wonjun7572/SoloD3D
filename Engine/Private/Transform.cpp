@@ -223,6 +223,28 @@ void CTransform::Go_Down(_double TimeDelta)
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }
 
+_bool CTransform::Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight)
+{
+	static _float fGravity = 8.81f;
+	_float4 vPos;
+	XMStoreFloat4(&vPos, Get_State(CTransform::STATE_TRANSLATION));
+
+	_float fVelocity = sqrtf(fabsf(fJumHeight * 2.f * fGravity));
+
+	if (vPos.y >= fVelocity)
+		fGravity *= -1.f;
+
+	m_WorldMatrix._42 = max(vPos.y + fGravity * TimeDelta, fLandHeight);
+
+	if (m_WorldMatrix._42 - fLandHeight <= 0.00001f)
+	{
+		fGravity *= -1.f;
+		return true;
+	}
+
+	return false;
+}
+
 void CTransform::Turn(_fvector vAxis, _double TimeDelta)
 {
 	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, m_TransformDesc.fRotationPerSec * static_cast<float>(TimeDelta));

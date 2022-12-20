@@ -56,18 +56,16 @@ HRESULT CCollider::Initialize(void * pArg)
 	switch (m_eType)
 	{
 	case CCollider::TYPE_AABB:
-		m_pAABB_Original = new BoundingBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f));
+		m_pAABB_Original = new BoundingBox(_float3(0.f, 0.f, 0.f), _float3(1.f, 1.f, 1.f));
 		m_pAABB_Original->Transform(*m_pAABB_Original,
 			XMMatrixScaling(ColliderDesc.vSize.x, ColliderDesc.vSize.y, ColliderDesc.vSize.z) *
 			XMMatrixTranslation(ColliderDesc.vCenter.x, ColliderDesc.vCenter.y, ColliderDesc.vCenter.z));
 		m_pAABB = new BoundingBox(*m_pAABB_Original);
-
-		break;
+		break; 
 
 	case CCollider::TYPE_OBB:
-		m_pOBB_Original = new BoundingOrientedBox(_float3(0.f, 0.f, 0.f), _float3(ColliderDesc.vSize.x * 0.5f, ColliderDesc.vSize.y * 0.5f, ColliderDesc.vSize.z * 0.5f), _float4(0.f, 0.f, 0.f, 1.f));
+		m_pOBB_Original = new BoundingOrientedBox(_float3(0.f, 0.f, 0.f), _float3(ColliderDesc.vSize.x, ColliderDesc.vSize.y, ColliderDesc.vSize.z), _float4(0.f, 0.f, 0.f, 1.f));
 		m_pOBB_Original->Transform(*m_pOBB_Original,
-			// XMMatrixScaling(ColliderDesc.vSize.x, ColliderDesc.vSize.y, ColliderDesc.vSize.z) *			
 			XMMatrixRotationX(ColliderDesc.vRotation.x) *
 			XMMatrixRotationY(ColliderDesc.vRotation.y) *
 			XMMatrixRotationZ(ColliderDesc.vRotation.z) *
@@ -76,7 +74,7 @@ HRESULT CCollider::Initialize(void * pArg)
 		break;
 
 	case CCollider::TYPE_SPHERE:
-		m_pSphere_Original = new BoundingSphere(_float3(0.f, 0.f, 0.f), 0.5f);
+		m_pSphere_Original = new BoundingSphere(_float3(0.f, 0.f, 0.f), 1.f);
 
 		m_pSphere_Original->Transform(*m_pSphere_Original,
 			XMMatrixScaling(ColliderDesc.vSize.x, ColliderDesc.vSize.y, ColliderDesc.vSize.z) *
@@ -91,6 +89,7 @@ HRESULT CCollider::Initialize(void * pArg)
 
 	return S_OK;
 }
+
 _float3 CCollider::Get_CollisionCenter()
 {
 	switch (m_eType)
@@ -110,6 +109,7 @@ _float3 CCollider::Get_CollisionCenter()
 
 	return _float3();
 }
+
 void CCollider::Update(_fmatrix TransformMatrix)
 {
 	switch (m_eType)
@@ -282,6 +282,93 @@ _bool CCollider::Collision_OBB(CCollider * pTargetCollider)
 	}
 
 	return m_isColl;
+}
+
+void CCollider::Imgui_RenderProperty()
+{
+	FixedSize();
+}
+
+void CCollider::FixedSize()
+{
+	if (ImGui::CollapsingHeader("AABB"))
+	{
+		if (m_pAABB != nullptr)
+		{
+			ImGui::DragFloat("X", &m_X, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("Y", &m_Y, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("Z", &m_Z, 0.01f, -50.f, 50.f);
+
+			ImGui::DragFloat("CX", &m_CX, 0.01f, 0.f, 50.f);
+			ImGui::DragFloat("CY", &m_CY, 0.01f, 0.f, 50.f);
+			ImGui::DragFloat("CZ", &m_CZ, 0.01f, 0.f, 50.f);
+
+			m_pAABB_Original->Center.x = m_X;
+			m_pAABB_Original->Center.y = m_Y;
+			m_pAABB_Original->Center.z = m_Z;
+			m_pAABB_Original->Extents.x = m_CX;
+			m_pAABB_Original->Extents.y = m_CY;
+			m_pAABB_Original->Extents.z = m_CZ;
+
+			ImGui::Text("X: %f", m_pAABB_Original->Center.x); ImGui::SameLine();
+			ImGui::Text("Y: %f", m_pAABB_Original->Center.y); ImGui::SameLine();
+			ImGui::Text("Z: %f", m_pAABB_Original->Center.z);
+			ImGui::Text("CX: %f", m_pAABB_Original->Extents.x); ImGui::SameLine();
+			ImGui::Text("CY: %f", m_pAABB_Original->Extents.y); ImGui::SameLine();
+			ImGui::Text("CZ: %f", m_pAABB_Original->Extents.z);
+		}
+	}
+
+	if (ImGui::CollapsingHeader("OBB"))
+	{
+		if (m_pOBB != nullptr)
+		{
+			ImGui::DragFloat("OBB_X", &m_OBBX, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("OBB_Y", &m_OBBY, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("OBB_Z", &m_OBBZ, 0.01f, -50.f, 50.f);
+
+			ImGui::DragFloat("OBB_CX", &m_OBBCX, 0.01f, 0.f, 50.f);
+			ImGui::DragFloat("OBB_CY", &m_OBBCY, 0.01f, 0.f, 50.f);
+			ImGui::DragFloat("OBB_CZ", &m_OBBCZ, 0.01f, 0.f, 50.f);
+
+			m_pOBB_Original->Center.x = m_OBBX;
+			m_pOBB_Original->Center.y = m_OBBY;
+			m_pOBB_Original->Center.z = m_OBBZ;
+			m_pOBB_Original->Extents.x = m_OBBCX;
+			m_pOBB_Original->Extents.y = m_OBBCY;
+			m_pOBB_Original->Extents.z = m_OBBCZ;
+
+			ImGui::Text("OBB_X: %f", m_pOBB_Original->Center.x); ImGui::SameLine();
+			ImGui::Text("OBB_Y: %f", m_pOBB_Original->Center.y); ImGui::SameLine();
+			ImGui::Text("OBB_Z: %f", m_pOBB_Original->Center.z);
+			ImGui::Text("OBB_CX: %f", m_pOBB_Original->Extents.x); ImGui::SameLine();
+			ImGui::Text("OBB_CY: %f", m_pOBB_Original->Extents.y); ImGui::SameLine();
+			ImGui::Text("OBB_CZ: %f", m_pOBB_Original->Extents.z);
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Sphere"))
+	{
+		if (m_pSphere != nullptr)
+		{
+			ImGui::DragFloat("Sphere_X", &m_SphereX, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("Sphere_Y", &m_SphereY, 0.01f, -50.f, 50.f);
+			ImGui::DragFloat("Sphere_Z", &m_SphereZ, 0.01f, -50.f, 50.f);
+
+			ImGui::DragFloat("Sphere_CX", &m_fRadius, 0.01f, 0.f, 50.f);
+
+			m_pSphere_Original->Center.x = m_SphereX;
+			m_pSphere_Original->Center.y = m_SphereY;
+			m_pSphere_Original->Center.z = m_SphereZ;
+			m_pSphere_Original->Radius = m_fRadius;
+
+			ImGui::Text("Sphere_X: %f", m_pSphere_Original->Center.x); ImGui::SameLine();
+			ImGui::Text("Sphere_Y: %f", m_pSphere_Original->Center.y); ImGui::SameLine();
+			ImGui::Text("Sphere_Z: %f", m_pSphere_Original->Center.z);
+			ImGui::Text("Sphere_Raduis: %f", m_pSphere_Original->Radius); 
+		}
+	}
+
 }
 
 #ifdef _DEBUG

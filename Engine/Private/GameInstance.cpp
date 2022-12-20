@@ -219,6 +219,14 @@ HRESULT CGameInstance::RenderLevel()
 	return	m_pLevelMgr->Render();
 }
 
+_uint CGameInstance::GetCurLevelIdx()
+{
+	if (m_pLevelMgr == nullptr)
+		return E_FAIL;
+
+	return	m_pLevelMgr->GetCurLevelIdx();
+}
+
 CComponent * CGameInstance::Get_ComponentPtr(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, _uint iIndex)
 {
 	if (nullptr == m_pObjectMgr)
@@ -318,6 +326,14 @@ void CGameInstance::Imgui_ComponentViewer(_uint iLevel, const _tchar *& szSelect
 		return;
 
 	m_pComponetMgr->Imgui_ComponentViewer(iLevel, szSelectedProto);
+}
+
+void CGameInstance::Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName)
+{
+	if (m_pComponetMgr == nullptr)
+		return;
+
+	m_pComponetMgr->Remove_ProtoComponent(iLevel, pComponentName);
 }
 
 void CGameInstance::Render_ImGui()

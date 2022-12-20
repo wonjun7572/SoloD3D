@@ -1,4 +1,6 @@
-﻿  Engine.vcxproj -> C:\Users\sam51\Desktop\SoloD3D\Engine\Default\../Bin\Engine.dll
+﻿  Transform.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\private\transform.cpp(237): warning C4244: '=': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
   1개 파일이 복사되었습니다.
@@ -60,7 +62,9 @@
   .\Engine\Public\VIBuffer_Cell.h
   .\Engine\Public\VIBuffer_Cube.h
   .\Engine\Public\VIBuffer_Cylinder.h
+  .\Engine\Public\VIBuffer_Instancing.h
   .\Engine\Public\VIBuffer_Rect.h
+  .\Engine\Public\VIBuffer_Rect_Instancing.h
   .\Engine\Public\VIBuffer_Sphere.h
   .\Engine\Public\VIBuffer_Terrain.h
   .\Engine\Public\DirectXTK\Audio.h
@@ -116,6 +120,6 @@
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  105개 파일이 복사되었습니다.
+  107개 파일이 복사되었습니다.
   .\Engine\Bin\ShaderFiles\Shader_Navigation.hlsl
   1개 파일이 복사되었습니다.

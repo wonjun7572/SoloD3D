@@ -34,7 +34,10 @@ public:
 
 private:/* For. Imgui*/
 	_float4	PickingOnTerrain(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
-	void	EditBrushTex();
+	_bool	PickingForFilter(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
+
+	HRESULT	Ready_FilterBuffer();
+	HRESULT Dynamic_FilterBuffer();
 
 private:
 	CShader*					m_pShaderCom = nullptr;
@@ -51,6 +54,9 @@ private: /* For. Imgui*/
 	bool			m_bDefaultHeight = false;
 
 	int				m_iPassNum = 0;
+	
+	_bool			m_bFilter = false;
+	_bool			m_bHeight = false;
 
 	int				m_iTexRadioBtn = 0;
 
@@ -63,6 +69,8 @@ private: /* For. Imgui*/
 	_float			m_fBrushRange = 5.f;
 
 	_uint			m_iFilterTexNum = 0;
+
+	_ulong*			m_pPixel = nullptr;
 
 private:
 	HRESULT SetUp_Components();
