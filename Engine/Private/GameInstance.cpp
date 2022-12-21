@@ -87,8 +87,6 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 
 	m_pObjectMgr->Late_Tick(TimeDelta);
 	m_pLevelMgr->Late_Tick(TimeDelta);
-
-	m_pInputDev->Reset_EveryKey();
 }
 
 void CGameInstance::Clear_Level(_uint iLevelIndex)
@@ -155,52 +153,36 @@ _long CGameInstance::Get_DIMouseMove(MOUSEMOVESTATE eMoveState)
 	return m_pInputDev->Get_DIMouseMove(eMoveState);
 }
 
-_bool CGameInstance::Mouse_Down(MOUSEKEYSTATE MouseButton)
+_bool CGameInstance::Mouse_Down(MOUSEKEYSTATE MouseButton, _bool* pData)
 {
 	if (m_pInputDev == nullptr)
 		return false;
 
-	return m_pInputDev->Mouse_Down(MouseButton);
+	return m_pInputDev->Mouse_Down(MouseButton, pData);
 }
 
-_bool CGameInstance::Mouse_Up(MOUSEKEYSTATE MouseButton)
+_bool CGameInstance::Mouse_Up(MOUSEKEYSTATE MouseButton, _bool* pData)
 {
 	if (m_pInputDev == nullptr)
 		return false;
 
-	return m_pInputDev->Mouse_Up(MouseButton);
+	return m_pInputDev->Mouse_Up(MouseButton, pData);
 }
 
-_bool CGameInstance::Mouse_DoubleClick(MOUSEKEYSTATE MouseButton)
+_bool CGameInstance::Key_Down(_ubyte byKeyID, _bool* pData)
 {
 	if (m_pInputDev == nullptr)
 		return false;
 
-	return m_pInputDev->Mouse_DoubleClick(MouseButton);
+	return m_pInputDev->Key_Down(byKeyID, pData);
 }
 
-_bool CGameInstance::Key_Down(_ubyte byKeyID)
+_bool CGameInstance::Key_Up(_ubyte byKeyID, _bool* pData)
 {
 	if (m_pInputDev == nullptr)
 		return false;
 
-	return m_pInputDev->Key_Down(byKeyID);
-}
-
-_bool CGameInstance::Key_Up(_ubyte byKeyID)
-{
-	if (m_pInputDev == nullptr)
-		return false;
-
-	return m_pInputDev->Key_Up(byKeyID);
-}
-
-void CGameInstance::Reset_EveryKey()
-{
-	if (m_pInputDev == nullptr)
-		return;
-
-	m_pInputDev->Reset_EveryKey();
+	return m_pInputDev->Key_Up(byKeyID, pData);
 }
 
 HRESULT CGameInstance::OpenLevel(_uint iLevelIndex, CLevel * pNewLevel)

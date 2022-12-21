@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "DemonFSM.h"
 #include "Weapon.h"
+#include "Animation.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -47,12 +48,12 @@ void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	CollisionToPlayer(TimeDelta);
-	CollisionToWeapon(TimeDelta);
+	//CollisionToPlayer(TimeDelta);
+	//CollisionToWeapon(TimeDelta);
 
 	m_pFSM->Tick(TimeDelta);
 
-	m_pModelCom->Play_Animation(TimeDelta, m_bAnimation);
+	m_pModelCom->Play_Animation(TimeDelta);
 }
 
 void CDemon::Late_Tick(_double TimeDelta)
@@ -83,7 +84,7 @@ HRESULT CDemon::Render()
 
 void CDemon::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
+	/*if (ImGui::CollapsingHeader("For.Animation"))
 	{
 		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
 
@@ -103,7 +104,7 @@ void CDemon::Imgui_RenderProperty()
 
 		ImGui::Text("Current Anim Index"); ImGui::SameLine();
 		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}
+	}*/
 }
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
@@ -157,28 +158,25 @@ void CDemon::CollisionToWeapon(_double TimeDelta)
 	_vector vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
 	_float fDot = XMVectorGetX(vDot);
 
-	if (pPlayer->Get_State() == CPlayer::ATTACK)
+	/*if (pPlayer->Get_State() == CPlayer::ATTACK)
 	{
-		for (_uint i = 0; i < 5; i++)
+		CCollider* pTargetCollider = static_cast<CWeapon*>(pPlayer->Get_PlayerParts()[0])->Get_Collider();
+
+		if (nullptr == pTargetCollider)
+			return;
+
+		if (m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider) == true)
 		{
-			CCollider* pTargetCollider = static_cast<CWeapon*>(pPlayer->Get_PlayerParts()[0])->Get_Collider(i);
+			if (fDot < 0)
+				m_eState = CDemon::PLAYER_BACK;
+			else
+				m_eState = CDemon::PLAYER_FRONT;
 
-			if (nullptr == pTargetCollider)
-				return;
-
-			if (m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider) == true)
-			{
-				if (fDot < 0)
-					m_eState = CDemon::PLAYER_BACK;
-				else
-					m_eState = CDemon::PLAYER_FRONT;
-
-				m_bHit = true;
-			}
+			m_bHit = true;
 		}
-	}
+	}*/
 
-	if (m_pModelCom->Get_AnimFinished() == true)
+	if (m_pModelCom->Get_CurAnim()->Get_IsFinish() == true)
 	{
 		m_bHit = false;
 	}

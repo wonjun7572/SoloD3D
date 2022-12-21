@@ -22,9 +22,12 @@ public:
 	HRESULT Initialize(CHANNELLOAD& pAIChannel, class CModel* pModel);
 	void	Update_TransformMatrix(_double PlayTime);
 	void	Reset_KeyFrameIndex() { m_iCurrentKeyFrameIndex = 0; }
-	void	Reset_LerpIndex(void) { m_iLerpFrameIndex = -1; }
 	char*	Get_ChannelName(void) { return m_szName; }
-	_bool	Lerp_TransformMatrix(_double PlayTime, CChannel* Sour, CChannel* Dest, _bool bFinish = false);
+
+	void	Blend_TransformMatrix(_double PlayTime, _float fBlendRatio);
+	void	Additive_TransformMatrix(_double PlayTime, _float fAdditiveRatio);
+
+	_float4			Get_MovePos() { return m_vMovePos; }
 
 private:
 	char			m_szName[MAX_PATH] = "";
@@ -34,8 +37,8 @@ private:
 	vector<KEYFRAME>	m_KeyFrames;
 
 	_uint				m_iCurrentKeyFrameIndex = 0;
-	_int				m_iLerpFrameIndex = -1;
-	_double				m_LerpRatio = 0;
+	_float4				m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+
 public:
 	static CChannel* Create(CHANNELLOAD& pAIChannel, class CModel* pModel);
 	virtual void Free() override;

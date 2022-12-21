@@ -31,8 +31,8 @@ HRESULT CWeapon::Init(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
-
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.15f, -0.85f, -2.015f, 1.f));
+	
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.2f, -0.87f, -2.018f, 1.f));
 	
 	return S_OK;
 }
@@ -61,8 +61,7 @@ void CWeapon::Late_Tick(_double TimeDelta)
 
 	XMStoreFloat4x4(&m_SocketMatrix, SocketMatrix);
 
-	for (_uint i = 0; i < 5; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix() * SocketMatrix);
+	m_pColliderCom->Update(m_pTransformCom->Get_WorldMatrix() * SocketMatrix);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -87,10 +86,7 @@ HRESULT CWeapon::Render()
 	}
 
 #ifdef _DEBUG
-	for (_uint i = 0; i < 5; ++i)
-	{
-		m_pColliderCom[i]->Render();
-	}
+	m_pColliderCom->Render();
 #endif 
 
 	return S_OK;
@@ -117,39 +113,11 @@ HRESULT CWeapon::SetUp_Components()
 	CCollider::COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 
-	ColliderDesc.vCenter = _float3(1.8f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(0.15f, 0.15f, 0.15f);
+	ColliderDesc.vCenter = _float3(1.5f, -0.2f, 0.28f);
+	ColliderDesc.vSize = _float3(0.5f, 0.5f, 0.5f);
 
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider_0"),
-		(CComponent**)&m_pColliderCom[0], &ColliderDesc)))
-		return E_FAIL;
-
-	ColliderDesc.vCenter = _float3(1.5f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(0.15f, 0.15f, 0.15f);
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider_1"),
-		(CComponent**)&m_pColliderCom[1], &ColliderDesc)))
-		return E_FAIL;
-
-	ColliderDesc.vCenter = _float3(1.2f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(0.15f, 0.15f, 0.15f);
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider_2"),
-		(CComponent**)&m_pColliderCom[2], &ColliderDesc)))
-		return E_FAIL;
-
-	ColliderDesc.vCenter = _float3(0.9f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(0.15f, 0.15f, 0.15f);
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider_3"),
-		(CComponent**)&m_pColliderCom[3], &ColliderDesc)))
-		return E_FAIL;
-
-	ColliderDesc.vCenter = _float3(0.6f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(0.15f, 0.15f, 0.15f);
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider_4"),
-		(CComponent**)&m_pColliderCom[4], &ColliderDesc)))
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider"),
+		(CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -174,7 +142,6 @@ HRESULT CWeapon::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
 		return E_FAIL;
 
-
 	/* For.Lights */
 	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
 	if (nullptr == pLightDesc)
@@ -189,7 +156,9 @@ void CWeapon::Imgui_RenderProperty()
 {
 	ImGui::Begin("Weapon");
 
-	/*if (ImGui::CollapsingHeader("Transform!"))
+	m_pColliderCom->FixedSize();
+
+	if (ImGui::CollapsingHeader("Transform!"))
 	{
 		ImGuizmo::BeginFrame();
 		ImGui::InputFloat("SpeedPerSec", &m_pTransformCom->m_TransformDesc.fSpeedPerSec);
@@ -266,8 +235,7 @@ void CWeapon::Imgui_RenderProperty()
 			mCurrentGizmoMode,
 			reinterpret_cast<float*>(&m_pTransformCom->m_WorldMatrix),
 			nullptr, useSnap ? &snap[0] : nullptr);
-	}*/
-	m_pColliderCom[1]->FixedSize();
+	}
 
 	ImGui::End();
 }
@@ -305,8 +273,8 @@ void CWeapon::Free()
 		Safe_Release(m_WeaponDesc.pSocket);
 		Safe_Release(m_WeaponDesc.pTargetTransform);
 	}
-	for (_uint i = 0; i < 5; ++i)
-		Safe_Release(m_pColliderCom[i]);
+
+	Safe_Release(m_pColliderCom);
 	
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

@@ -47,10 +47,8 @@ public:
 	_bool Collision(class CCollider* pTargetCollider);
 	_bool Collision_AABB(class CCollider* pTargetCollider);
 	_bool Collision_OBB(class CCollider* pTargetCollider);
-	
-	void Imgui_RenderProperty() override;
 
-public:
+public: /* For. Imgui*/
 	void	FixedSize();
 
 private:

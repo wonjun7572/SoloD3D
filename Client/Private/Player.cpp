@@ -2,10 +2,10 @@
 #include "..\public\Player.h"
 #include "GameInstance.h"
 #include "Weapon.h"
-#include "Shield.h"
 #include "Bone.h"
 #include "PlayerFSM.h"
 #include "Navigation.h"
+#include "Animation.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -46,20 +46,21 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_strObjName = L"Player";
 
-	m_iCurrentAnimIndex = 23;
-	m_PartSize =	static_cast<_uint>(m_PlayerParts.size());
+	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
+
 	return S_OK;
 }
 
 void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	
+
 	Movement(TimeDelta);
+	Set_AnimIndex(m_eState);
+	m_pModelCom->Play_Animation(TimeDelta);
+	MoveToAnim(TimeDelta);
 
-	m_pFSM->Tick(TimeDelta);
-
-	m_pModelCom->Play_Animation(TimeDelta, m_bAnimation);
+	//m_pFSM->Tick(TimeDelta);
 
 	for (_uint i = 0; i <m_PartSize; ++i)
 	{
@@ -115,130 +116,442 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+void CPlayer::Set_AnimIndex(PLAYER_STATE eType)
+{
+	switch (eType)
+	{
+	case PLAYER_FOR:
+		m_pModelCom->Set_AnimationIndex(113);
+		break;
+	case PLAYER_ATTACK3:
+		m_pModelCom->Set_AnimationIndex(6);
+		break;
+	case PLAYER_ATTACK2:
+		m_pModelCom->Set_AnimationIndex(4);
+		break;
+	case PLAYER_ATTACK1:
+		m_pModelCom->Set_AnimationIndex(2);
+		break;
+	case PLAYER_BR:
+		m_pModelCom->Set_AnimationIndex(32);
+		break;
+	case PLAYER_BL:
+		m_pModelCom->Set_AnimationIndex(31);
+		break;
+	case PLAYER_FR:
+		m_pModelCom->Set_AnimationIndex(38);
+		break;
+	case PLAYER_FL:
+		m_pModelCom->Set_AnimationIndex(37);
+		break;
+	case PLAYER_LM:
+		m_pModelCom->Set_AnimationIndex(45);
+		break;
+	case PLAYER_RM:
+		m_pModelCom->Set_AnimationIndex(46);
+		break;
+	case PLAYER_BM:
+		m_pModelCom->Set_AnimationIndex(30);
+		break;
+	case PLAYER_FM:
+		m_pModelCom->Set_AnimationIndex(34);
+		break;
+	case PLAYER_READY:
+		m_pModelCom->Set_AnimationIndex(24);
+		break;
+	case PLAYER_WALKF:
+		m_pModelCom->Set_AnimationIndex(115);
+		break;
+	case PLAYER_WALKB:
+		m_pModelCom->Set_AnimationIndex(114);
+		break;
+	case PLAYER_SK01:
+		m_pModelCom->Set_AnimationIndex(78);
+		break;
+	case PLAYER_SK02:
+		m_pModelCom->Set_AnimationIndex(58);
+		break;
+	case PLAYER_SK03:
+		m_pModelCom->Set_AnimationIndex(99);
+		break;
+	}
+}
+
+void CPlayer::MoveToAnim(_double TimeDelta)
+{
+	//if (m_eState == CPlayer::PLAYER_FOR)
+	{
+		_vector   vMovePos;
+		ZeroMemory(&vMovePos, sizeof(_vector));
+
+		vMovePos = XMLoadFloat4(&m_pModelCom->Get_MovePos());
+
+		_float4 vIsZero;
+		XMStoreFloat4(&vIsZero, vMovePos);
+
+		if (0 == vIsZero.x &&
+			0 == vIsZero.z)
+			return;
+
+		// Pivot만큼 줄여줌
+		XMVector3TransformCoord(vMovePos, XMMatrixRotationY(XMConvertToRadians(270.0f)));
+		vMovePos = XMVectorSetW(vMovePos, 1.f);
+
+		// 이전 이동값과 차이를 구함
+		_vector   vDifferent =	XMVectorSubtract(vMovePos, XMLoadFloat4(&m_vAnimationMove));
+		vDifferent = XMVectorSetW(vDifferent, 1.f);
+
+		// 이전 이동값과 현재 이동값 동기화
+		XMStoreFloat4(&m_vAnimationMove, vMovePos);
+
+		_float4   vMoving;
+		XMStoreFloat4(&vMoving, vDifferent);
+
+		m_pTransformCom->Go_Straight(vMoving.z * 5.f);
+		m_pTransformCom->Go_Right(vMoving.x* 5.f);
+	}
+}
+
 void CPlayer::Movement(_double TimeDelta)
 {
-	m_eState = IDLE;
-	m_bWalk = false;
-	m_bRunning = false;
-	m_bCamTurn = true;
-	
+	if (!m_bMove)
+		return;
+
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W))
+	if (m_bMove && !m_bAction)
 	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
 		{
-			m_bWalk = false;
 			m_bRunning = true;
+			m_eState = PLAYER_FM;
+			m_pTransformCom->Go_Straight(TimeDelta * m_fVelocity);
 		}
-		m_eState = CPlayer::FORWARD;
-	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_S))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		m_eState = CPlayer::BACK;
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		m_eState = CPlayer::LEFT;
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		m_eState = CPlayer::RIGHT;
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_W) && pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		if (m_eState == PLAYER_FM)
 		{
-			m_bWalk = false;
-			m_bRunning = true;
+			if (pGameInstance->Key_Up(DIK_W))
+			{
+				m_bRunning = false;
+				m_eState = PLAYER_READY;
+			}
 		}
-		m_eState = CPlayer::LF;
-	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_W) && pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		if (pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+		if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
 		{
-			m_bWalk = false;
 			m_bRunning = true;
+			m_eState = PLAYER_BM;
+			m_pTransformCom->Go_Backward(TimeDelta * m_fVelocity);
 		}
-		m_eState = CPlayer::RF;
-	}
 
-	if (pGameInstance->Get_DIKeyState(DIK_S) && pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		m_eState = CPlayer::LB;
-	}
+		if (m_eState == PLAYER_BM)
+		{
+			if (pGameInstance->Key_Up(DIK_S))
+			{
+				m_bRunning = false;
+				m_eState = PLAYER_READY;
+			}
+		}
 
-	if (pGameInstance->Get_DIKeyState(DIK_S) && pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_bWalk = true;
-		m_bCamTurn = false;
-		m_eState = CPlayer::RB;
-	}
+		if (pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_RM;
+			m_pTransformCom->Go_Right(TimeDelta);
+		}
 
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
-	{
-		m_pTransformCom->Jump(TimeDelta, 0.5f, 0.f);
-		m_bJumping = true;
-	}
-	else
-	{
-		m_bJumping = false;
-		if(m_pTransformCom->Get_World4x4()._42 >= 0.f)
-			m_pTransformCom->Go_Down(TimeDelta);
+		if (m_eState == PLAYER_RM)
+		{
+			if (pGameInstance->Key_Up(DIK_D))
+			{
+				m_bRunning = false;
+				m_eState = PLAYER_READY;
+			}
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_LM;
+			m_pTransformCom->Go_Left(TimeDelta);
+		}
+
+		if (m_eState == PLAYER_LM)
+		{
+			if (pGameInstance->Key_Up(DIK_A))
+			{
+				m_bRunning = false;
+				m_eState = PLAYER_READY;
+			}
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80 && pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_FR;
+		}
+
+		if (m_eState == PLAYER_FR)
+		{
+			if (pGameInstance->Key_Up(DIK_W))
+				m_eState = PLAYER_RM;
+
+			if (pGameInstance->Key_Up(DIK_D))
+				m_eState = PLAYER_FM;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80 && pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_FL;
+		}
+
+		if (m_eState == PLAYER_FL)
+		{
+			if (pGameInstance->Key_Up(DIK_W))
+				m_eState = PLAYER_LM;
+
+			if (pGameInstance->Key_Up(DIK_A))
+				m_eState = PLAYER_FM;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80 && pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_BR;
+		}
+
+		if (m_eState == PLAYER_BR)
+		{
+			if (pGameInstance->Key_Up(DIK_S))
+				m_eState = PLAYER_RM;
+
+			if (pGameInstance->Key_Up(DIK_D))
+				m_eState = PLAYER_BM;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80 && pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+		{
+			m_bRunning = true;
+			m_eState = PLAYER_BL;
+		}
+
+		if (m_eState == PLAYER_BL)
+		{
+			if (pGameInstance->Key_Up(DIK_W))
+				m_eState = PLAYER_LM;
+
+			if (pGameInstance->Key_Up(DIK_D))
+				m_eState = PLAYER_BM;
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80 && pGameInstance->Get_DIKeyState(DIK_C) & 0x80)
+		{
+			m_bRunning = false;
+			m_bWalk = true;
+			m_eState = PLAYER_FM;
+			m_fVelocity = 0.7f;
+		}
+
+		if (m_eState == PLAYER_WALKF)
+		{
+			if (pGameInstance->Key_Up(DIK_C))
+			{
+				m_bRunning = true;
+				m_bWalk = false;
+				m_eState = PLAYER_FM;
+				m_fVelocity = 1.f;
+			}
+		}
+
+		if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80 && pGameInstance->Get_DIKeyState(DIK_C) & 0x80)
+		{
+			m_bRunning = false;
+			m_bWalk = true;
+			m_eState = PLAYER_WALKB;
+			m_fVelocity = 0.7f;
+		}
+
+		if (m_eState == PLAYER_WALKB)
+		{
+			if (pGameInstance->Key_Up(DIK_C))
+			{
+				m_bRunning = true;
+				m_bWalk = false;
+				m_eState = PLAYER_BM;
+				m_fVelocity = 1.f;
+			}
+		}
 	}
 	
 	if (pGameInstance->Mouse_Down(DIM_LB))
 	{
-		m_bAttackClick = true;
-	}
+		m_bAction = TRUE;
 
-	if (m_bAttackClick && m_bAttack_1 == true)
-	{
-		m_bAttack_2 = true;
-		m_bAttackClick = false;
-	}
-	else if (m_bAttackClick && m_bAttack_0 == true)
-	{
-		m_bAttack_1 = true;
-		m_bAttackClick = false;
-	}																																											
-	else if (m_bAttackClick && m_bAttack_0 == false)
-	{
-		m_bAttack_0 = true;
-		m_bAttackClick = false;
-	}
-	else
-	{
-		if (m_pModelCom->Get_AnimFinished() == true)
+		switch (m_eState)
 		{
-			m_bAttack_0 = false;
-			m_bAttack_1 = false;
-			m_bAttack_2 = false;
+		case PLAYER_READY:
+			m_eState = PLAYER_ATTACK1;
+			break;
+		case PLAYER_ATTACK1:
+			m_bAttack = TRUE;
+			break;
+		case PLAYER_ATTACK2:
+			m_bAttack = TRUE;
+			break;
+		case PLAYER_ATTACK3:
+			m_bAttack = TRUE;
+			break;
+		case PLAYER_FR:
+			m_eState = PLAYER_ATTACK1;
 		}
 	}
-	
-	if (m_bCamTurn == false && m_bAttack_0 == false)
+
+	if (m_bAction)
+	{
+		if (m_eState == PLAYER_ATTACK1 && m_pModelCom->Check_AnimationSet(1.f))
+		{
+			if (m_bAttack)
+			{
+				m_eState = PLAYER_ATTACK2;
+				m_bAttack = false;
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			m_eState = PLAYER_READY;
+			m_bAttack = false;
+			m_bAction = false;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+
+		if (m_eState == PLAYER_ATTACK2 && m_pModelCom->Check_AnimationSet(5.f))
+		{
+			if (m_bAttack)
+			{
+				m_eState = PLAYER_ATTACK3;
+				m_bAttack = false;
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+			
+			m_eState = PLAYER_READY;
+			m_bAttack = false;
+			m_bAction = false;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+
+		if (m_eState == PLAYER_ATTACK3 && m_pModelCom->Check_AnimationSet(2.f))
+		{
+			if (m_bAttack)
+			{
+				m_eState = PLAYER_ATTACK1;
+				m_bAttack = false;
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+			m_eState = PLAYER_READY;
+			m_bAttack = false;
+			m_bAction = false;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+	}
+
+	if (pGameInstance->Mouse_Down(DIM_RB))
+	{
+		m_bAction = true;
+
+		switch (m_eState)
+		{
+		case Client::CPlayer::PLAYER_READY:
+			m_eState = PLAYER_SK03;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (m_eState == PLAYER_SK03 && m_pModelCom->Check_AnimationSet(0.4f))
+	{
+		m_eState = PLAYER_READY;
+		m_bAttack = false;
+		m_bAction = false;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (pGameInstance->Key_Down(DIK_E))
+	{
+		m_bAction = true;
+		
+		switch (m_eState)
+		{
+		case Client::CPlayer::PLAYER_READY:
+			m_eState = PLAYER_SK01;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (m_eState == PLAYER_SK01 && m_pModelCom->Check_AnimationSet(0.4f))
+	{
+		m_eState = PLAYER_READY;
+		m_bAttack = false;
+		m_bAction = false;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (pGameInstance->Key_Down(DIK_Q))
+	{
+		m_bAction = true;
+
+		switch (m_eState)
+		{
+		case Client::CPlayer::PLAYER_READY:
+			m_eState = PLAYER_SK02;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (m_eState == PLAYER_SK02 && m_pModelCom->Check_AnimationSet(0.4f))
+	{
+		m_eState = PLAYER_READY;
+		m_bAttack = false;
+		m_bAction = false;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (pGameInstance->Key_Down(DIK_LSHIFT))
+	{
+		m_bAction = true;
+		m_eState = PLAYER_FOR;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (m_eState == PLAYER_FOR)
+	{
+		if (m_pModelCom->Check_AnimationSet(0.4f))
+		{
+			m_eState = PLAYER_READY;
+			m_bAttack = false;
+			m_bAction = false;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+	}
+
+	if (m_bCamTurn == false && m_bAttack == false)
 	{
 		_long MouseMove_X = 0;
 
@@ -249,31 +562,12 @@ void CPlayer::Movement(_double TimeDelta)
 	}
 		
 	RELEASE_INSTANCE(CGameInstance);
+	return;
 }
 
 void CPlayer::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
-	{
-		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-					m_iCurrentAnimIndex = i;
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}
+	
 }
 
 HRESULT CPlayer::SetUp_Parts()

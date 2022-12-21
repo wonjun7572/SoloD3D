@@ -1,5 +1,6 @@
-﻿  PlayerCamera.cpp
-  Loader.cpp
-  코드를 생성하고 있습니다...
+﻿  Player.cpp
+DirectXTKd.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(ScreenGrab.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(ScreenGrab.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

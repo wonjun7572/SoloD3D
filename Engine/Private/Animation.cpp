@@ -30,12 +30,14 @@ HRESULT CAnimation::Initialize(ANIMATIONLOAD& pAIAnimation, CModel* pModel)
 	return S_OK;
 }
 
-_bool CAnimation::Update_Bones(_double TimeDelta)
+void CAnimation::Update_Bones(_double TimeDelta)
 {
+	m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+
 	if (true == m_isFinished &&
 		false == m_isLooping)
 	{
-		return false;
+		return;
 	}
 
 	m_PlayTime += m_TickPerSecond * TimeDelta;
@@ -44,57 +46,88 @@ _bool CAnimation::Update_Bones(_double TimeDelta)
 	{
 		m_PlayTime = 0.0;
 		m_isFinished = true;
-		return true;
-	}
-
-	if (m_isLooping && m_isFinished)
-	{
-		for (auto pChannel : m_Channels)
-			pChannel->Reset_KeyFrameIndex();
 	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
+
+		if (!strcmp("BN_Head", m_Channels[i]->Get_ChannelName()))
+			m_vMovePos = m_Channels[i]->Get_MovePos();
 	}
 
-	return false;
+	if (m_isFinished == true)
+		m_isFinished = false;
 }
 
-_bool CAnimation::AnimLerpTime(_double TimeDelta, CAnimation * pNext, _bool bFinish)
+void CAnimation::Update_Bones_Blend(_double TimeDelta, _float fBlendRatio)
 {
-	if (m_isLerping)
+	if (true == m_isFinished &&
+		false == m_isLooping)
 	{
-		m_PlayTime = 0.f;
-
-		for (auto pChannel : m_Channels)
-		{
-			pChannel->Reset_KeyFrameIndex();
-			pChannel->Reset_LerpIndex();
-		}
-
-		m_isLerping = false;
-
-		return false;
+		return;
 	}
-	else
-	{
-		for (auto pChannel : m_Channels)
-		{
-			for (auto pNext : pNext->m_Channels)
-			{
-				if (!strcmp(pChannel->Get_ChannelName(), pNext->Get_ChannelName()))
-				{
-					m_isLerping = pChannel->Lerp_TransformMatrix(TimeDelta, pChannel, pNext, bFinish);
-					break;
-				}
-			}
-		}
 
+	m_PlayTime += m_TickPerSecond * TimeDelta;
+
+	if (m_PlayTime >= m_Duration)
+	{
+		m_PlayTime = 0.0;
+		m_isFinished = true;
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
+		m_Channels[i]->Blend_TransformMatrix(m_PlayTime, fBlendRatio);
+	}
+
+	if (m_isFinished == true)
+		m_isFinished = false;
+}
+
+void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
+{
+	if (true == m_isFinished &&
+		false == m_isLooping)
+	{
+		return;
+	}
+
+	m_PlayTime += m_TickPerSecond * TimeDelta;
+
+	if (m_PlayTime >= m_Duration)
+	{
+		m_PlayTime = 0.0;
+		m_isFinished = true;
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (true == m_isFinished)
+			m_Channels[i]->Reset_KeyFrameIndex();
+
+		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fAdditiveRatio);
+	}
+}
+
+void CAnimation::Set_IsFinish(_bool isFinish)
+{
+	Reset_PlayTime();
+	m_isFinished = isFinish;
+}
+
+_bool CAnimation::Check_AnimationSet(const _float & fTime)
+{
+	if (m_Duration <= m_PlayTime + fTime)
 		return true;
-	}
 
-	return true;
+	return false;
 }
 
 CAnimation * CAnimation::Create(ANIMATIONLOAD& pAIAnimation, CModel* pModel)

@@ -163,9 +163,6 @@
     <ClInclude Include="..\public\PlayerFSM.h">
       <Filter>GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Shield.h">
-      <Filter>GameObject\Player\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>GameObject\Camera</Filter>
     </ClInclude>
@@ -252,9 +249,6 @@
     </ClCompile>
     <ClCompile Include="..\private\PlayerFSM.cpp">
       <Filter>GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Shield.cpp">
-      <Filter>GameObject\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>GameObject\Camera</Filter>

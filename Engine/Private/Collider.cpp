@@ -284,11 +284,6 @@ _bool CCollider::Collision_OBB(CCollider * pTargetCollider)
 	return m_isColl;
 }
 
-void CCollider::Imgui_RenderProperty()
-{
-	FixedSize();
-}
-
 void CCollider::FixedSize()
 {
 	if (ImGui::CollapsingHeader("AABB"))

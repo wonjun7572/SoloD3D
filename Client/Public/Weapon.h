@@ -35,13 +35,13 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	CCollider*				Get_Collider(_uint iIndex) { return m_pColliderCom[iIndex]; }
+	CCollider*				Get_Collider() { return m_pColliderCom; }
 
 private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom[5] = { nullptr };
+	CCollider*				m_pColliderCom =  nullptr;
 	
 private:
 	WEAPONDESC				m_WeaponDesc;

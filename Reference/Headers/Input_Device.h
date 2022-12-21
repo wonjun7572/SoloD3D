@@ -24,12 +24,10 @@ public:
 	}
 
 public:
-	_bool		Mouse_Down(MOUSEKEYSTATE MouseButton);
-	_bool		Mouse_Up(MOUSEKEYSTATE MouseButton);
-	_bool		Mouse_DoubleClick(MOUSEKEYSTATE MouseButton);
-	_bool		Key_Down(_ubyte byKeyID);
-	_bool		Key_Up(_ubyte byKeyID);
-	void		Reset_EveryKey();
+	_bool		Mouse_Down(MOUSEKEYSTATE byKeyID, _bool* pData = nullptr);
+	_bool		Mouse_Up(MOUSEKEYSTATE byKeyID, _bool* pData = nullptr);
+	_bool		Key_Down(_ubyte byKeyID, _bool* pData = nullptr);
+	_bool		Key_Up(_ubyte byKeyID, _bool* pData = nullptr);
 
 public:
 	HRESULT	Ready_Input_Device(HINSTANCE hInst, HWND hWnd);
@@ -43,8 +41,12 @@ private:
 private:
 	_byte							m_byKeyState[256];
 	DIMOUSESTATE					m_MouseState;
-	_bool							m_bKeyState[256];
-	_bool							m_bMouseState[3];
+
+	_bool							m_bKeyDown[256];
+	_bool							m_bKeyUp[256];
+
+	_bool							m_bMouseDown[DIM_END];
+	_bool							m_bMouseUp[DIM_END];
 
 	_int							m_iClickedCnt = 0;
 

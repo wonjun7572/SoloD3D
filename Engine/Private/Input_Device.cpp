@@ -7,80 +7,144 @@ CInput_Device::CInput_Device()
 {
 	ZeroMemory(m_byKeyState, sizeof(m_byKeyState));
 	ZeroMemory(&m_MouseState, sizeof(m_MouseState));
-	ZeroMemory(m_bKeyState, sizeof(_bool) * 256);
-	ZeroMemory(m_bMouseState, sizeof(_bool) * 3);
+
+	ZeroMemory(m_bKeyUp, sizeof(_bool) * 256);
+	ZeroMemory(m_bKeyDown, sizeof(_bool) * 256);
+
+	ZeroMemory(m_bMouseUp, sizeof(_bool) * DIM_END);
+	ZeroMemory(m_bMouseDown, sizeof(_bool) * DIM_END);
 }
 
-_bool CInput_Device::Mouse_Down(MOUSEKEYSTATE MouseButton)
+_bool CInput_Device::Mouse_Down(MOUSEKEYSTATE byKeyID, _bool* pData)
 {
-	if (!m_bMouseState[MouseButton] && (m_MouseState.rgbButtons[MouseButton] & 0x80))
+	_bool* pCompareData = NULL;
+
+	if (pData == NULL)
 	{
-		m_bMouseState[MouseButton] = true;
-		return true;
+		pCompareData = &m_bMouseDown[byKeyID];
+	}
+	else
+	{
+		pCompareData = pData;
 	}
 
-	return false;
+	if (m_MouseState.rgbButtons[byKeyID] & 0x80)
+	{
+		//  눌리는 순간 true
+		if (*pCompareData == false)
+		{
+			*pCompareData = true;
+			return TRUE;
+		}
+	}
+	else
+	{
+		//  떼는 순간 false
+		if (*pCompareData == true)
+		{
+			*pCompareData = false;
+		}
+	}
+
+	return FALSE;
 }
 
-_bool CInput_Device::Mouse_Up(MOUSEKEYSTATE MouseButton)
+_bool CInput_Device::Mouse_Up(MOUSEKEYSTATE byKeyID, _bool* pData)
 {
-	if (m_bMouseState[MouseButton] && !(m_MouseState.rgbButtons[MouseButton] & 0x80))
+	_bool* pCompareData = NULL;
+	if (pData == NULL)
 	{
-		m_bMouseState[MouseButton] = false;
-		return true;
+		pCompareData = &m_bMouseUp[byKeyID];
+	}
+	else
+	{
+		pCompareData = pData;
 	}
 
-	return false;
+	if (m_MouseState.rgbButtons[byKeyID] & 0x80)
+	{
+		//  눌리는 순간 true
+		if (*pCompareData == false)
+		{
+			*pCompareData = true;
+		}
+	}
+	else
+	{
+		if (*pCompareData == true)//  떼는 순간 false
+		{
+			*pCompareData = false;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
-_bool CInput_Device::Mouse_DoubleClick(MOUSEKEYSTATE MouseButton)
+_bool CInput_Device::Key_Down(_ubyte byKeyID, _bool* pData)
 {
-	return _bool();
+	_bool* pCompareData = NULL;
+	if (pData == NULL)
+	{
+		pCompareData = &m_bKeyDown[byKeyID];
+	}
+	else
+	{
+		pCompareData = pData;
+	}
+
+	if (m_byKeyState[byKeyID] & 0x80)
+	{
+		//  눌리는 순간 true
+		if (*pCompareData == false)
+		{
+			*pCompareData = true;
+			return TRUE;
+		}
+	}
+	else
+	{
+		//  떼는 순간 false
+		if (*pCompareData == true)
+		{
+			*pCompareData = false;
+		}
+	}
+
+	return FALSE;
 }
 
-_bool CInput_Device::Key_Down(_ubyte byKeyID)
+_bool CInput_Device::Key_Up(_ubyte byKeyID, _bool* pData)
 {
-	if (!m_bKeyState[byKeyID] && (Get_DIKeyState(byKeyID) & 0x80))
+	_bool* pCompareData = NULL;
+
+	if (pData == NULL)
 	{
-		m_bKeyState[byKeyID] = true;
-		return true;
+		pCompareData = &m_bKeyUp[byKeyID];
+	}
+	else
+	{
+		pCompareData = pData;
 	}
 
-	return false;
-}
-
-_bool CInput_Device::Key_Up(_ubyte byKeyID)
-{
-	if (m_bKeyState[byKeyID] && !(Get_DIKeyState(byKeyID) & 0x80))
+	if (m_byKeyState[byKeyID] & 0x80)
 	{
-		m_bKeyState[byKeyID] = false;
-		return true;
+		//  눌리는 순간 true
+		if (*pCompareData == false)
+		{
+			*pCompareData = true;
+		}
+	}
+	else
+	{
+		if (*pCompareData == true)//  떼는 순간 false
+		{
+			*pCompareData = false;
+			return TRUE;
+		}
 	}
 
-	return false;
-}
-
-void CInput_Device::Reset_EveryKey()
-{
-	/* Reset MouseState */
-	for (int i = 0; i < DIM_END; ++i)
-	{
-		if (m_bMouseState[i] && !(m_MouseState.rgbButtons[i] & 0x80))
-			m_bMouseState[i] = false;
-
-		else if (!m_bMouseState[i] && (m_MouseState.rgbButtons[i] & 0x80))
-			m_bMouseState[i] = true;
-	}
-
-	/* Reset KeyState */
-	for (int i = 0; i < 256; ++i)
-	{
-		if (m_bKeyState[i] && !(Get_DIKeyState(i) & 0x80))
-			m_bKeyState[i] = false;
-
-		else if (!m_bKeyState[i] && (Get_DIKeyState(i) & 0x80))
-			m_bKeyState[i] = true;
-	}
+	return FALSE;
 }
 
 HRESULT CInput_Device::Ready_Input_Device(HINSTANCE hInst, HWND hWnd)

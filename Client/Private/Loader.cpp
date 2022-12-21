@@ -22,7 +22,6 @@
 #include "ForkLift.h"
 
 #include "Weapon.h"
-#include "Shield.h"
 
 #include "Demon.h"
 
@@ -209,19 +208,13 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_Model_Sword*/
 	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) 
-		* XMMatrixRotationX(XMConvertToRadians(180.0f)) 
-		* XMMatrixRotationY(XMConvertToRadians(270.0f)) 
-		* XMMatrixRotationZ(XMConvertToRadians(90.0f));
+		* XMMatrixRotationX(XMConvertToRadians(97.5f)) 
+		* XMMatrixRotationY(XMConvertToRadians(78.7f)) 
+		* XMMatrixRotationZ(XMConvertToRadians(1.f));
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/OSW/OSW.model"), PivotMatrix))))
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/TAX/TAX.model"), PivotMatrix))))
 		return E_FAIL;
-
-	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f);
-	/* For. Prototype_Component_Model_Shield */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shield"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/SLD/SLD.model"), PivotMatrix))))
-		return E_FAIL;
-
+	
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
 	/* For.Prototype_Component_Shader_VtxModel*/
@@ -265,10 +258,6 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_GameObject_Weapon*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Weapon"), CWeapon::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Shield*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Shield"), CShield::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Demon*/

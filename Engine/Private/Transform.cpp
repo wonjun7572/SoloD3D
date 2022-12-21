@@ -234,7 +234,7 @@ _bool CTransform::Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight)
 	if (vPos.y >= fVelocity)
 		fGravity *= -1.f;
 
-	m_WorldMatrix._42 = max(vPos.y + fGravity * TimeDelta, fLandHeight);
+	m_WorldMatrix._42 = max(vPos.y + fGravity * (float)TimeDelta, fLandHeight);
 
 	if (m_WorldMatrix._42 - fLandHeight <= 0.00001f)
 	{

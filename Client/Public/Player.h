@@ -9,6 +9,7 @@ class CShader;
 class CCollider;
 class CRenderer;
 class CNavigation;
+class CAnimation;
 END
 
 BEGIN(Client)
@@ -17,7 +18,17 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
-	enum PLAYER_STATE { IDLE, ATTACK, FORWARD, LEFT, RIGHT, BACK ,LF, RF, LB, RB, STATE_END };
+	
+	enum PLAYER_STATE 
+	{
+		PLAYER_READY, PLAYER_FM, PLAYER_BM, PLAYER_RM, PLAYER_LM
+		, PLAYER_FR, PLAYER_FL, PLAYER_BR, PLAYER_BL, PLAYER_FOR
+		, PLAYER_WALKF,PLAYER_WALKB
+		, PLAYER_GETUP, PLAYER_DOWN, PLAYER_PASSOUT
+		, PLAYER_ATTACK1, PLAYER_ATTACK2, PLAYER_ATTACK3
+		, PLAYER_SK01, PLAYER_SK02, PLAYER_SK03
+		, PLAYER_DMG_F , STATE_END
+	};
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,6 +44,10 @@ public:
 
 	CModel*					Get_ModelCom() { return m_pModelCom; }
 	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
+
+	void	Set_AnimIndex(PLAYER_STATE eType);
+
+	void	MoveToAnim(_double TimeDelta);
 
 	void	Movement(_double TimeDelta);
 
@@ -55,16 +70,15 @@ public:
 private:
 	vector<CGameObject*>	m_PlayerParts;
 	_uint					m_PartSize = 0;
-
-	_uint					m_iCurrentAnimIndex = 23;
-
 	_float					m_MouseSensity = 0.1f;
+
 public:
-	_bool					IsWalking() { return m_bWalk; }
 	_bool					IsRunning() { return m_bRunning; }
-	_bool					IsAttack_0() { return m_bAttack_0; }
-	_bool					IsAttack_1() { return m_bAttack_1; }
-	_bool					IsAttack_2() { return m_bAttack_2; }
+
+	_bool					IsWalking() { return m_bWalk; }
+
+	_bool					IsAttack() { return m_bAttack; }
+
 	_bool					IsJumping() { return m_bJumping; }
 
 	void					Set_State(PLAYER_STATE eState) { m_eState = eState; }
@@ -73,26 +87,22 @@ public:
 	_bool					Get_CamTurn() { return m_bCamTurn; }
 
 private:
+	_bool					m_bMove = true;
+	_bool					m_bAction = false;
+
 	_bool					m_bCamTurn = false;
-	_bool					m_bAttacking = false;
-	_bool					m_bAttackClick = false;
 
-	_bool					m_bAttack_0 = false;
-	_bool					m_bAttack_1 = false;
-	_bool					m_bAttack_2 = false;
-	_bool					m_bAttack_3 = false;
-
-	_double					m_AttackTime_0 = 0.0;
+	_bool					m_bAttack = false;
 
 	_bool					m_bWalk = false;
 	_bool					m_bRunning = false;
-
 	_bool					m_bJumping = false;
 
-	PLAYER_STATE			m_eState = STATE_END;
+	_float					m_fVelocity = 1.f;
 
-private:
-	_bool					m_bAnimation = true;
+	PLAYER_STATE			m_eState = PLAYER_READY;
+
+	_float4					m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
 
 private:
 	HRESULT SetUp_Parts();

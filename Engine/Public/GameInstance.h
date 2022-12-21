@@ -33,13 +33,10 @@ public:		/* For InputDevice */
 	_byte		Get_DIKeyState(_ubyte byKeyID);
 	_byte		Get_DIMouseState(MOUSEKEYSTATE byMouseID);
 	_long		Get_DIMouseMove(MOUSEMOVESTATE eMoveState);
-	_bool		Mouse_Down(MOUSEKEYSTATE MouseButton);
-	_bool		Mouse_Up(MOUSEKEYSTATE MouseButton);
-	_bool		Mouse_DoubleClick(MOUSEKEYSTATE MouseButton);
-	_bool		Key_Down(_ubyte byKeyID);
-	_bool		Key_Up(_ubyte byKeyID);
-	void		Reset_EveryKey();
-
+	_bool		Mouse_Down(MOUSEKEYSTATE MouseButton, _bool* pData = nullptr);
+	_bool		Mouse_Up(MOUSEKEYSTATE MouseButton, _bool* pData = nullptr);
+	_bool		Key_Down(_ubyte byKeyID, _bool* pData = nullptr);
+	_bool		Key_Up(_ubyte byKeyID, _bool* pData = nullptr);
 	
 public: // Level_Manager
 	HRESULT OpenLevel(_uint iLevelIndex, class CLevel* pNewLevel);

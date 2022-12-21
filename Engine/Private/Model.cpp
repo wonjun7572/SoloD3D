@@ -35,8 +35,6 @@ CModel::CModel(const CModel & rhs)
 		m_Meshes.push_back(static_cast<CMesh*>(pMesh->Clone()));
 
 	wcscpy_s(m_FilePath, rhs.m_FilePath);
-
-	m_bAnimationChanged = false;
 }
 
 CBone * CModel::Get_BonePtr(const char * pBoneName)
@@ -113,40 +111,102 @@ HRESULT CModel::Init(void * pArg)
 	return S_OK;
 }
 
-void CModel::Play_Animation(_double TimeDelta, _bool bFinished)
+void CModel::Play_Animation(_double TimeDelta)
 {
-	if (m_eType == CModel::TYPE_NONANIM)
+	if (TYPE_NONANIM == m_eType)
 		return;
 
-	if (m_bAnimationChanged)
+	if (!m_isUpper)
 	{
-		m_bAnimationChanged = m_Animations[m_iCurrentAnimIndex]->AnimLerpTime(TimeDelta, m_Animations[m_iNextAnimindex], bFinished);
+		if (m_fBlendCurTime < m_fBlendDuration)
+		{
+			_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
+			m_Animations[m_iPreAnimIndex]->Update_Bones(TimeDelta);
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones_Blend(TimeDelta, fBlendRatio);
 
-		if (!m_bAnimationChanged)
-			m_iCurrentAnimIndex = m_iNextAnimindex;
+			m_fBlendCurTime += (float)TimeDelta;
+		}
+		else
+		{
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
+		}
+
+		for (auto& pBone : m_Bones)
+		{
+			if (nullptr != pBone)
+				pBone->Compute_CombindTransformationMatrix();
+		}
+
+		m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+		m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
 	}
 	else
-		m_bAnimFinished = m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
-
-	for (auto& pBone : m_Bones)
 	{
-		if (pBone != nullptr)
-			pBone->Compute_CombindTransformationMatrix();
+		if (m_fBlendCurUpperTime < m_fBlendDuration)
+		{
+			_float fBlendRatio = m_fBlendCurUpperTime / m_fBlendDuration;
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
+			m_Animations[m_iCurUpperAnimIndex]->Update_Bones_Blend(TimeDelta, fBlendRatio);
+
+			m_fBlendCurUpperTime += (float)TimeDelta;
+		}
+		else
+		{
+			m_Animations[m_iCurUpperAnimIndex]->Update_Bones(TimeDelta);
+		}
+
+		for (_uint i = 0; i < 129; ++i)
+		{
+			m_Bones[i]->Compute_CombindTransformationMatrix();
+		}
+
+		if (m_fBlendCurUnderTime < m_fBlendDuration)
+		{
+			_float fBlendRatio = m_fBlendCurUnderTime / m_fBlendDuration;
+			m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
+			m_Animations[m_iCurUnderAnimIndex]->Update_Bones_Blend(TimeDelta, fBlendRatio);
+
+			m_fBlendCurUnderTime += (float)TimeDelta;
+		}
+		else
+		{
+			m_Animations[m_iCurUnderAnimIndex]->Update_Bones(TimeDelta);
+		}
+		for (_uint i = 129; i < m_iNumBones; ++i)
+		{
+			m_Bones[i]->Compute_CombindTransformationMatrix();
+		}
 	}
 }
 
 void CModel::Set_AnimationIndex(_uint iIndex)
 {
-	if (0 > iIndex || m_iNumAnimations <= iIndex || m_iCurrentAnimIndex == iIndex)
-		return;
+	if (m_iCurrentAnimIndex != iIndex)
+	{
+		m_iPreAnimIndex = m_iCurrentAnimIndex;
+		m_fBlendCurTime = 0.f;
+	}
 
-	m_iNextAnimindex = iIndex;
-	m_bAnimationChanged = true;
+	m_iCurrentAnimIndex = iIndex;
 }
 
-_double CModel::Get_AnimDuration(_uint iIndex)
+void CModel::Set_UpperAnimationIndex(_uint iUpperIndex, _uint iUnderIndex)
 {
-	return m_Animations[iIndex]->Get_Duration();
+	if (m_iCurUpperAnimIndex != iUpperIndex)
+	{
+		m_iPreUpperAnimIndex = m_iCurUpperAnimIndex;
+		m_fBlendCurTime = 0.f;
+	}
+	
+	m_iCurUpperAnimIndex = iUpperIndex;
+
+	if (m_iCurUnderAnimIndex != iUnderIndex)
+	{
+		m_iPreUnderAnimIndex = m_iCurUnderAnimIndex;
+		m_fBlendCurTime = 0.f;
+	}
+
+	m_iCurUnderAnimIndex = iUnderIndex;
 }
 
 HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, TextureType eType, const char * pConstantName)
@@ -233,6 +293,30 @@ void CModel::Imgui_RenderProperty()
 		}
 		ImGui::EndTabBar();
 	}
+
+	if (ImGui::CollapsingHeader("For.Animation"))
+	{
+		const char* combo_preview_value = Get_CurAnim()->Get_Name();
+
+		if (ImGui::BeginCombo("ANIM", combo_preview_value))
+		{
+			_uint iAnimSize = m_Animations.size();
+			for (_uint i = 0; i < iAnimSize; i++)
+			{
+				const bool is_selected = (m_iCurrentAnimIndex == i);
+				if (ImGui::Selectable(m_Animations[i]->Get_Name(), is_selected))
+					m_iCurrentAnimIndex = i;
+
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::Text("Current Anim Index"); ImGui::SameLine();
+		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
+	}
+
 	ImGui::End();
 }
 
@@ -406,7 +490,9 @@ HRESULT CModel::Load_Bones(HANDLE hFile, CBone* pParent)
 	if (pBone == nullptr)
 		return E_FAIL;
 
+	m_iNumBones++;
 	m_Bones.push_back(pBone);
+
 
 	//NumChildren
 	_uint NumChildren;
@@ -461,9 +547,19 @@ HRESULT CModel::Load_Animations(HANDLE hFile)
 	return S_OK;
 }
 
-void CModel::Set_AnimLooping(_bool isLooping)
+CAnimation * CModel::FindAnim(const string & strAnim)
 {
-	m_Animations[m_iCurrentAnimIndex]->Set_isLooping(isLooping);
+	auto itr = find_if(m_Animations.begin(), m_Animations.end(),
+		[strAnim](CAnimation* pAnim) {
+		return  0 == strcmp(strAnim.c_str(), pAnim->Get_Name());
+	});
+
+	return *itr;
+}
+
+_bool CModel::Check_AnimationSet(const _float & fTime)
+{
+	return m_Animations[m_iCurrentAnimIndex]->Check_AnimationSet(fTime);
 }
 
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix)

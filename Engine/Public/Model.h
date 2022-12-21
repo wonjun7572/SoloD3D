@@ -26,15 +26,14 @@ public:
 	virtual HRESULT Init(void* pArg);
 
 public:
-	void	Play_Animation(_double TimeDelta, _bool bFinished);
+	void	Play_Animation(_double TimeDelta);
+	
 	HRESULT Bind_Material(class CShader * pShader, _uint iMeshIndex, TextureType eType, const char* pConstantName);
 	HRESULT Render(class CShader* pShader, _uint iMeshIndex,  _uint iPassIndex = 0, const char* pBoneConstantName = nullptr);
 
 	void	Set_AnimationIndex(_uint iIndex);
-
-	_double Get_AnimDuration(_uint iIndex);
-	_bool	Get_AnimFinished() { return m_bAnimFinished; }
-
+	void	Set_UpperAnimationIndex(_uint iUpperIndex, _uint iUnderIndex);
+	
 	vector<const char*>&	Get_AnimationName() { return m_strAnimationName; }
 	_uint	Get_AnimationsNum() { return m_iNumAnimations; }
 
@@ -45,7 +44,14 @@ public:
 	HRESULT  Load_Bones(HANDLE hFile, class CBone* pParent);
 	HRESULT  Load_Animations(HANDLE hFile);
 
-	void	Set_AnimLooping(_bool isLooping);
+	class CAnimation* FindAnim(const string& strAnim);
+	class CAnimation* Get_IndexAnim(_uint iIndex) { return m_Animations[iIndex]; }
+	class CAnimation* Get_CurAnim() { return m_Animations[m_iCurrentAnimIndex]; }
+
+	_bool	Check_AnimationSet(const _float& fTime);
+	void	TurnOn_UpperAnim(_bool isUpper) { m_isUpper = isUpper; }
+
+	_float4				Get_MovePos(void) { return m_vMovePos; }
 
 private:
 	TYPE									m_eType = TYPE_END;
@@ -61,6 +67,15 @@ private:
 	vector<class CBone*>					m_Bones;
 
 	_uint									m_iCurrentAnimIndex = 0;
+
+	_uint									m_iCurUpperAnimIndex = 0;
+	_uint									m_iCurUnderAnimIndex = 0;
+
+	_uint									m_iPreAnimIndex = 0;
+
+	_uint									m_iPreUpperAnimIndex = 0;
+	_uint									m_iPreUnderAnimIndex = 0;
+
 	_uint									m_iNumAnimations = 0;
 	vector<class CAnimation*>				m_Animations;
 	vector<const char*>						m_strAnimationName;
@@ -71,10 +86,16 @@ private:
 
 	_tchar									m_FilePath[MAX_PATH];
 
-	_bool									m_bAnimationChanged = false;
-	_int									m_iNextAnimindex = 0;
-	_bool									m_bAnimFinished = false;
-	_float3									m_vMovePos = _float3(0.f, 0.f, 0.f);
+	_float									m_fBlendCurTime = 0.2f;
+
+	_float									m_fBlendCurUpperTime = 0.2f;
+	_float									m_fBlendCurUnderTime = 0.2f;
+
+	_float									m_fBlendDuration = 0.2f;
+
+	_bool									m_isUpper = false;
+
+	_float4									m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix);

@@ -37,8 +37,6 @@ protected:
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
-	_bool					m_bAnimation = false;
-	_uint					m_iCurrentAnimIndex = 0;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

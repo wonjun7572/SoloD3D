@@ -17,20 +17,15 @@ HRESULT CPlayerFSM::Init(void * pArg)
 	}))
 		.Transition(TEXT("Run"), FSM_TRANSITION(TEXT("Idle To Run"), [this]()
 	{
-		return m_pTarget->IsRunning() == true;
+		return m_pTarget->IsRunning() == true || m_pTarget->IsAttack() == true;
 	}))
-		.Transition(TEXT("Jump"), FSM_TRANSITION(TEXT("Run to Jump"), [this]()
+		.Transition(TEXT("Jump"), FSM_TRANSITION(TEXT("Idle to Jump"), [this]()
 	{
 		return m_pTarget->IsJumping() == true;
 	}))
-		.Transition(TEXT("Attack_0"), FSM_TRANSITION(TEXT("Idle To Attack_0"), [this]()
-	{
-		return m_pTarget->IsAttack_0() == true;
-	}))
-
+		
 		.AddState(L"Run")
 		.Tick(this, &CPlayerFSM::Run_Tick)
-		.OnExit(this, &CPlayerFSM::Run_End)
 		.Transition(TEXT("Idle"), FSM_TRANSITION(TEXT("Run to Idle"), [this]()
 	{
 		return m_pTarget->IsRunning() == false;
@@ -39,42 +34,14 @@ HRESULT CPlayerFSM::Init(void * pArg)
 	{
 		return m_pTarget->IsJumping() == true;
 	}))
-
+		
 		.AddState(L"Jump")
 		.Tick(this, &CPlayerFSM::Jump_Ing)
 		.Transition(TEXT("Run"), FSM_TRANSITION(TEXT("Jump to Run"), [this]()
 	{
 		return m_pTarget->IsJumping() == false;
 	}))
-		.AddState(L"Attack_0")
-		.Tick(this, &CPlayerFSM::Attack_Ing)
-		.Transition(TEXT("Idle"), FSM_TRANSITION(TEXT("Attack_0 to Idle"), [this]()
-	{
-		return m_pTarget->IsAttack_0() == false;
-	}))
-		.Transition(TEXT("Attack_1"), FSM_TRANSITION(TEXT("Attack_0 to Attack_1"), [this]()
-	{
-		return m_pTarget->IsAttack_1() == true;
-	}))
-
-		.AddState(L"Attack_1")
-		.Tick(this, &CPlayerFSM::Attack1_Ing)
-		.Transition(TEXT("Idle"), FSM_TRANSITION(TEXT("Attack_1 to Idle"), [this]()
-	{
-		return m_pTarget->IsAttack_1() == false;
-	}))
-		.Transition(TEXT("Attack_2"), FSM_TRANSITION(TEXT("Attack_1 to Attack_2"), [this]()
-	{
-		return m_pTarget->IsAttack_2() == true;
-	}))
-
-		.AddState(L"Attack_2")
-		.Tick(this, &CPlayerFSM::Attack2_Ing)
-		.Transition(TEXT("Idle"), FSM_TRANSITION(TEXT("Attack_2 to Idle"), [this]()
-	{
-		return m_pTarget->IsAttack_2() == false;
-	}))
-
+				
 		.AddState(L"Walk")
 		.Tick(this, &CPlayerFSM::Walk_Tick)
 		.Transition(TEXT("Idle"), FSM_TRANSITION(TEXT("Walk to Idle"), [this]()
@@ -95,47 +62,21 @@ HRESULT CPlayerFSM::Init(void * pArg)
 
 void CPlayerFSM::Idle_Tick(_double TimeDelta)
 {
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(23);
+	m_pTarget->Get_ModelCom()->Set_AnimationIndex(24);
 }
 
 void CPlayerFSM::Walk_Tick(_double TimeDelta)
 {
 	switch (m_pTarget->Get_State())
 	{
-	case CPlayer::FORWARD:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(103);
+	case CPlayer::PLAYER_FM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(115);
 		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
 		break;
-	case CPlayer::BACK:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(28);
-		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
-		break;
-	case CPlayer::LEFT:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(43);
-		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 0.7);
-		break;
-	case CPlayer::RIGHT:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(44);
-		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
-		break;
-	case CPlayer::LF:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(35);
-		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 0.7);
-		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
-		break;
-	case CPlayer::RF:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(36);
-		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
-		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 0.7);
-		break;
-	case CPlayer::LB:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(29);
-		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 0.7);
-		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
-		break;
-	case CPlayer::RB:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(30);
-		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 0.7);
+	case CPlayer::PLAYER_BM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(114);
 		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta * 0.7);
 		break;
 	default:
@@ -147,52 +88,68 @@ void CPlayerFSM::Run_Tick(_double TimeDelta)
 {
 	switch (m_pTarget->Get_State())
 	{
-	case CPlayer::FORWARD:
+	case CPlayer::PLAYER_FM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(34);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta);
+		break;
+	case CPlayer::PLAYER_BM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(30);
+		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta);
+		break;
+	case CPlayer::PLAYER_LM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(45);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta);
+		break;
+	case CPlayer::PLAYER_RM:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(46);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta);
+		break;
+	case CPlayer::PLAYER_FL:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(37);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta);
+		break;
+	case CPlayer::PLAYER_FR:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(38);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta);
+		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta);
+		break;
+	case CPlayer::PLAYER_BL:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(31);
+		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta);
+		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta);
+		break;
+	case CPlayer::PLAYER_BR:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
 		m_pTarget->Get_ModelCom()->Set_AnimationIndex(32);
-		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta);
+		m_pTarget->Get_TransformCom()->Go_Backward(TimeDelta);
 		break;
-	case CPlayer::LF:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(35);
-		m_pTarget->Get_TransformCom()->Go_Left(TimeDelta * 1.2);
-		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+	case CPlayer::PLAYER_ATTACK1:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(2);
 		break;
-	case CPlayer::RF:
-		m_pTarget->Get_ModelCom()->Set_AnimationIndex(36);
-		m_pTarget->Get_TransformCom()->Go_Right(TimeDelta * 1.2);
-		m_pTarget->Get_TransformCom()->Go_Straight(TimeDelta * 1.2);
+	case CPlayer::PLAYER_ATTACK2:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(4);
+		break;
+	case CPlayer::PLAYER_ATTACK3:
+		m_pTarget->Get_ModelCom()->TurnOn_UpperAnim(false);
+		m_pTarget->Get_ModelCom()->Set_AnimationIndex(6);
 		break;
 	}
 }
 
-void CPlayerFSM::Run_End()
-{
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(31);
-}
-
 void CPlayerFSM::Jump_Ing(_double TimeDelta)
 {
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(25);
-}
-
-void CPlayerFSM::Attack_Ing(_double TimeDelta)
-{
-	m_pTarget->Set_State(CPlayer::ATTACK);
-	m_pTarget->Set_CamTurn(false);
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(2);
-}
-
-void CPlayerFSM::Attack1_Ing(_double TimeDelta)
-{
-	m_pTarget->Set_State(CPlayer::ATTACK);
-	m_pTarget->Set_CamTurn(false);
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(4);
-}
-
-void CPlayerFSM::Attack2_Ing(_double TimeDelta)
-{
-	m_pTarget->Set_State(CPlayer::ATTACK);
-	m_pTarget->Set_CamTurn(false);
-	m_pTarget->Get_ModelCom()->Set_AnimationIndex(6);
+	//m_pTarget->Get_ModelCom()->Set_AnimationIndex(25);
 }
 
 CPlayerFSM * CPlayerFSM::Create(CPlayer * pTarget)
