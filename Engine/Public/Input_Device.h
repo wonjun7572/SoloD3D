@@ -14,6 +14,7 @@ private:
 
 public:
 	_byte		Get_DIKeyState(_ubyte byKeyID) { return m_byKeyState[byKeyID]; }
+	
 	_byte		Get_DIMouseState(MOUSEKEYSTATE byMouseID)
 	{
 		return m_MouseState.rgbButtons[byMouseID];
@@ -26,6 +27,8 @@ public:
 public:
 	_bool		Mouse_Down(MOUSEKEYSTATE byKeyID, _bool* pData = nullptr);
 	_bool		Mouse_Up(MOUSEKEYSTATE byKeyID, _bool* pData = nullptr);
+	
+	_bool		Key_Pressing(_ubyte byKeyID);
 	_bool		Key_Down(_ubyte byKeyID, _bool* pData = nullptr);
 	_bool		Key_Up(_ubyte byKeyID, _bool* pData = nullptr);
 

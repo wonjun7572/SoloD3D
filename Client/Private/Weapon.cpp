@@ -2,6 +2,7 @@
 #include "..\Public\Weapon.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "Effect_Point.h"
 
 CWeapon::CWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -48,9 +49,9 @@ void CWeapon::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	_matrix			SocketMatrix = 
-		XMLoadFloat4x4(&m_WeaponDesc.pSocket->Get_OffsetMatrix()) * 
-		XMLoadFloat4x4(&m_WeaponDesc.pSocket->Get_CombindMatrix()) * 
+	_matrix			SocketMatrix =
+		XMLoadFloat4x4(&m_WeaponDesc.pSocket->Get_OffsetMatrix()) *
+		XMLoadFloat4x4(&m_WeaponDesc.pSocket->Get_CombindMatrix()) *
 		XMLoadFloat4x4(&m_WeaponDesc.PivotMatrix);
 
 	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
@@ -157,6 +158,10 @@ void CWeapon::Imgui_RenderProperty()
 	ImGui::Begin("Weapon");
 
 	m_pColliderCom->FixedSize();
+
+	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
 
 	if (ImGui::CollapsingHeader("Transform!"))
 	{

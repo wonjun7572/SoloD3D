@@ -34,13 +34,14 @@ public:
 	char*	Get_AnimationName() { return m_szName; }
 	ANIMATIONLOAD&	Get_ANIMATIONLOAD() { return m_ANIMATIONLOAD; }
 
+	_double  Get_PlayRate() {return m_PlayTime / m_Duration; }
+
 public:
-	void		Reset() { m_PlayTime = 0.0; m_isFinished = false; }
-	void		Reset_PlayTime(void) { m_PlayTime = 0.0; }
+	void		Reset();
+
 	_float4		Get_MovePos(void) { return m_vMovePos; }
 	_double		Get_Duration() { return m_Duration; }
 
-	void		Set_IsFinish(_bool isFinish);
 	_bool		Get_IsFinish() { return m_isFinished; }
 
 	void		Set_IsLoop(_bool isLoop) { m_isLooping = isLoop; }
@@ -50,11 +51,14 @@ public:
 
 	_bool		Check_AnimationSet(const _float& fTime);
 
+	void		Set_MulSecond(_double time) { m_MulSecond = time; }
+
 private:
 	char								m_szName[MAX_PATH];
+
 	_double								m_Duration = 0.0;
 	_double								m_TickPerSecond;
-
+	_double								m_MulSecond = 1.0;
 	_double								m_PlayTime = 0.0;
 
 	_bool								m_isLooping = true;

@@ -47,6 +47,8 @@ private:
 	WEAPONDESC				m_WeaponDesc;
 	_float4x4				m_SocketMatrix;
 
+	_float m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

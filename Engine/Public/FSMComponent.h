@@ -1,52 +1,49 @@
 #pragma once
-#include "Component.h"
+#include "Base.h"
 
 BEGIN(Engine)
 
+struct cmp_char
+{
+   bool operator()(const char* a, const char* b) const
+   {
+      return std::strcmp(a, b) < 0;
+   }
+};
+template<typename VALUE>
+using cmap = map<const char*, VALUE, cmp_char>;
+
 /*-------------------
-*    FSM_TRANSITION
---------------------*/
+ *    FSM_TRANSITION
+ --------------------*/
 // FSM의 Transition(상태변경조건)을 정의하는 구조체
-typedef struct ENGINE_DLL tagFSM_Transition
+typedef struct ENGINE_DLL tagFSM_Transition : public CBase
 {
 	// 이 변경 조건의 이름
-	const _tchar* pTransitionName;
-	// 이 변경 조건의 순위
+	const char* pTransitionName = nullptr;
+	// 조건 달성시 이동할 상태 이름
+	const char* pNextStateName = nullptr;
+	// 이 변경 조건의 순위, 작을수록 먼저 실행된다.
 	_uint iPriority = 0;
 	// 이 변경 조건 확인 함수
-	std::function<_bool()> Predicator;
+	std::function<_bool()> Predicator = nullptr;
 
 	tagFSM_Transition() = delete;
+	tagFSM_Transition(const char* pTransitionName, const char* pNextStateName)
+		: pTransitionName(pTransitionName), pNextStateName(pNextStateName){}
 
-	// 람다 및 함수 포인터 바인드용 생성자
-	tagFSM_Transition(const _tchar* pTransitionName, const std::function<_bool()>& Predicator, _uint iPriority = 0);
+	virtual void Free() override{}
 
-	// 멤버함수 바인드용 생성자
-	template<typename T>
-	tagFSM_Transition(const _tchar* pTransitionName, T* obj, bool (T::*memFunc)(), _uint iPriority = 0)
-		: pTransitionName(pTransitionName), iPriority(iPriority)
-	{
-		Predicator = [obj, memFunc]()
-		{
-			return (obj->*memFunc)();
-		};
-	}
-
-	// 복사 및 이동 생성자
-	tagFSM_Transition(const tagFSM_Transition& other);
-	tagFSM_Transition(tagFSM_Transition&& other) noexcept;
-	tagFSM_Transition& operator=(const tagFSM_Transition& other);
-	tagFSM_Transition& operator=(tagFSM_Transition&& other) noexcept;
 } FSM_TRANSITION;
 
 /*-------------------
-*    FSM_STATE
---------------------*/
+ *    FSM_STATE
+ --------------------*/
 // FSM의 상태를 정의하는 구조체
-typedef struct ENGINE_DLL tagFSM_State
+typedef struct ENGINE_DLL tagFSM_State : public CBase
 {
 	// 상태 이름
-	const _tchar* pStateName;
+	const char* pStateName;
 	// 이 상태를 시작할 때 실행하는 함수
 	std::function<void()> OnStart = nullptr;
 	// 이 상태를 반복할 때 실행하는 함수
@@ -54,221 +51,265 @@ typedef struct ENGINE_DLL tagFSM_State
 	// 이 상태를 나갈때 실행하는 함수
 	std::function<void()> OnExit = nullptr;
 
-	// 각 transition vector는 priority로 정렬되어서 priority가 높은 transition을 먼저 확인한다.
-	// 이 상태에서 다른 상태로 전이되는 조건(transtition)의 맵
-	map<const _tchar*, vector<FSM_TRANSITION>> mapTransition;
-	//key : 이동할 node이름, value : 이동 조건
+	// 이 상태에서 다른 상태로 전이될 조건들
+	vector<FSM_TRANSITION*> Transitions;
 
-	tagFSM_State(const _tchar* szNodeName) : pStateName(szNodeName) {}
+	virtual void Free() override
+	{
+		for (auto pTransition : Transitions)
+			Safe_Release(pTransition);
+		Transitions.clear();
+	}
 
-	// 복사 및 이동 생성자
-	tagFSM_State(const tagFSM_State& other);
-	tagFSM_State(tagFSM_State&& other) noexcept;
-	tagFSM_State& operator=(const tagFSM_State& other);
-	tagFSM_State& operator=(tagFSM_State&& other) noexcept;
+	tagFSM_State(const char* pStateName) : pStateName(pStateName){}
 
 } FSM_STATE;
 
 /*-------------------
-*    CFSMComponent
---------------------*/
-class ENGINE_DLL CFSMComponent : public CComponent
+ *    CFSMComponent
+ --------------------*/
+// 굳이 component로 만들필요 없다고 생각되서 CBase로 수정함
+// 빌더로 만들고 바로 사용하면 됩니다.
+class ENGINE_DLL CFSMComponent : public CBase
 {
 protected:
 	CFSMComponent();
-	CFSMComponent(const CFSMComponent& rhs);
-
-protected:
-	virtual ~CFSMComponent() override = default;
+	virtual ~CFSMComponent() = default;
 
 public:
 	void Tick(_double TimeDelta);
 
 	// CFSMComponentBuilder을 통해 FMS을 만들고 이를 pArg로 전해준다.
-	virtual HRESULT Init(void* pArg) override;
-	static  CFSMComponent* Create();
-	virtual CComponent* Clone(void* pArg) override;
-	virtual void Imgui_RenderProperty() override;
+	virtual HRESULT Initialize(class CFSMComponentBuilder* pBuilder);
+	virtual void Imgui_RenderProperty();
+
+	const char* GetCurStateName() const { return m_pCurStateName; }
 
 private:
-	void StateHistoryUpdate(const _tchar* pNextStateName);
+	void StateHistoryUpdate(const char* pNextStateName);
 
 private:
-	map<const _tchar*, FSM_STATE> m_mapState;
-	const _tchar* m_pCurStateName; // set init node at initialize
+	cmap<FSM_STATE*> m_mapState;
+	const char* m_pCurStateName; // set init node at initialize
 
 	// for debug
-	const _tchar* m_pLastTransitionName = nullptr;
+	const char* m_pLastTransitionName = nullptr;
 	list<string> m_strDebugQue;
 	_uint m_iDebugQueSize = 10;
 	bool m_bStoreHistory = false;
 	// for debug
+
+public:
+	static CFSMComponent* Create(class CFSMComponentBuilder* pBuilder);
+	virtual void Free() override;
 };
 
 /*-------------------
-*    CFSMComponentBuilder
---------------------*/
-/*
-* FSM의 노드(상태)와 트랜지션(상태변경조건)을 정의하는 빌더 패턴 클래스.
-* 빌더패턴?  복잡한 객체를 생성하는 클래스(CFSMComponentBuilder)와 표현하는 클래스CFSMComponent)를 분리하여,
-* 동일한 절차에서도 서로 다른 표현을 생성하는 방법을 제공한다. 자세한건 구글링
-*
-* 사용예시
-* 	CFSMComponentBuilder builder = CFSMComponentBuilder() // 빌더 생성
-.InitState(TEXT("Idle"))								  // 최초 시작 노드의 이름
-.AddState(TEXT("Idle"))								  // Idle 상태노드 정의 시작
-.OnStart(this, &CBackGround::Idle_OnStart)	      // Idle 상태 시작할 때 CBackGround::Idle_OnStart함수 실행(상태당 하나의 함수 정의, 생략가능)
-.Tick(this, &CBackGround::Idle_Tick)		      // Idle 상태 유지 될 때 프레임마다 CBackGround::Idle_Tick함수 실행(상태당 하나의 함수 정의, 생략가능)
-.OnExit(this, &CBackGround::Idle_OnExit)          // Idle 상태에서 다른 상태로 이동할 때 실행하는 함수 정의(상태당 하나의 함수 정의, 생략가능)
-.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk KeyInput"), this, &CBackGround::Idle2Walk_KeyInput))
-// Idle에서 Walk로 전이하는 조건 정의, CBackGround::Predic_Idle2Walk함수 실행결과
-// true면 Walk로 전이한다. 이하 반복
-.Transition(TEXT("Walk"), FSM_TRANSITION(TEXT("Idle To Walk Pushed"), this, &CBackGround::Idle2Walk_Pushed))
-// 다수 transition정의 가능
-.AddState(TEXT("Walk")) // Walk상태 노드 정의 시작
-.Transition(TEXT("Idle"), FSM_TRANSITION(L"Walk To Idle", this, &CBackGround::Predic_Walk2Idle))
-.Build();										      // 모든 상태를 만들면 Build()함수로 최종 Builder를 만든다.(종료함수)
+ *    CFSMComponentBuilder
+ --------------------*/
+/* 예시
+ * 	m_pAbilityC_FSM = CFSMComponentBuilder()
+		.InitState("Idle")
+		.AddState("Idle")
+			.AddTransition("Idle to Intro", "Intro")
+				.Predicator([this]()
+				{
+					return !m_bAbilityC && !m_bAbility && m_pController->KeyDown(CController::C);
+				})
 
-if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_FSM"), TEXT("Com_FSM"),
-(CComponent**)&m_pFSM, &builder)))			      // 만들어진 CFSMComponentBuilder의 포인터를 pArg로 넘겨준다.
-// 이렇게 넘겨진 클래스는 "이동" 되므로 다시 사용할 수 없다.
+		.AddState("Intro")
+			.OnStart([this]()
+			{
+				CWeapon* pCurrentWeapon = m_WeaponSocket[static_cast<_uint>(m_eCurWeaponType)];
+				pCurrentWeapon->SetVisible(false);
+				m_bAbilityC = true;
+				m_bAbility = true;
+				pCurrentWeapon->PlayAnimSocket_FPS("AnimSocket_UpperBody", m_pFPS_AbilityC_Intro);
+				pCurrentWeapon->PlayAnimSocket_TPS("AnimSocket_UpperBody", m_pTPS_AbilityC_Intro);
+			})
+			.AddTransition("Intro to Loop", "Loop")
+				.Predicator([this]()
+				{
+					return m_pFPS_AbilityC_Intro->GetPlayRatio() > 0.9f;
+				})
 
-위 예시는 멤버함수를 사용하지만 람다 및 함수 포인터도 인자로 사용가능
-*/
+		.AddState("Loop")
+			.OnStart([this]
+			{
+				CWeapon* pCurrentWeapon = m_WeaponSocket[static_cast<_uint>(m_eCurWeaponType)];
+				pCurrentWeapon->PlayAnimSocket_FPS("AnimSocket_UpperBody", m_pFPS_AbilityC_Loop);
+				pCurrentWeapon->PlayAnimSocket_TPS("AnimSocket_UpperBody", m_pTPS_AbilityC_Loop);
+			})
+			.AddTransition("Loop to Outro", "Outro")
+				.Predicator([this] {return m_pController->KeyUp(CController::C); })
+
+		.AddState("Outro")
+			.OnStart([this]
+			{
+				CWeapon* pCurrentWeapon = m_WeaponSocket[static_cast<_uint>(m_eCurWeaponType)];
+				pCurrentWeapon->PlayAnimSocket_FPS("AnimSocket_UpperBody", m_pFPS_AbilityC_Outro);
+				pCurrentWeapon->PlayAnimSocket_TPS("AnimSocket_UpperBody", m_pTPS_AbilityC_Outro);
+			})
+			.OnExit([this]
+			{
+				CWeapon* pCurrentWeapon = m_WeaponSocket[static_cast<_uint>(m_eCurWeaponType)];
+				m_bAbilityC = false;
+				m_bAbility = false;
+				pCurrentWeapon->SetVisible(true);
+				pCurrentWeapon->EquipFast();
+			})
+			.AddTransition("Outro to Idle", "Idle")
+				.Predicator([this]
+				{
+					return m_pFPS_AbilityC_Outro->GetPlayRatio() > 0.9f;
+				})
+		.Build();
+ */
 class ENGINE_DLL CFSMComponentBuilder
 {
 public:
-	CFSMComponentBuilder& InitState(const _tchar* szNodeName)
+	CFSMComponentBuilder& InitState(const char* szNodeName)
 	{
+		assert(m_pInitStateName == nullptr);
 		m_pInitStateName = szNodeName;
 		return *this;
 	}
-
-	CFSMComponentBuilder& AddState(const _tchar* szNodeName)
+	
+	CFSMComponentBuilder& AddState(const char* pNodeName)
 	{
-		m_mapStates.insert({ szNodeName, FSM_STATE(szNodeName) });
-		m_pBuildStateName = szNodeName;
+		m_pBuildTransition = nullptr;
+		m_pBuildState = new FSM_STATE(pNodeName);
+		m_mapStates.emplace(pNodeName, m_pBuildState);
 		return *this;
 	}
-
-	CFSMComponentBuilder& Transition(const _tchar* szNextNodeNmae, const FSM_TRANSITION& tTransition)
-	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		auto NextNodeItr = find_if(itr->second.mapTransition.begin(), itr->second.mapTransition.end(), CTag_Finder(szNextNodeNmae));
-		if (NextNodeItr == itr->second.mapTransition.end())
-		{
-			itr->second.mapTransition.insert({ szNextNodeNmae, vector<FSM_TRANSITION>{tTransition} });
-		}
-		else
-		{
-			NextNodeItr->second.push_back(tTransition);
-		}
-
-		return *this;
-	}
-
 	CFSMComponentBuilder& OnStart(const std::function<void()>& onStart)
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.OnStart = onStart;
-
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->OnStart == nullptr);
+		m_pBuildState->OnStart = onStart;
 		return *this;
 	}
-
+	
 	template<typename T>
 	CFSMComponentBuilder& OnStart(T* obj, void (T::*memFunc)())
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.OnStart = [obj, memFunc]()
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->OnStart == nullptr);
+		m_pBuildState->OnStart = [obj, memFunc]()
 		{
 			(obj->*memFunc)();
 		};
 		return *this;
 	}
-
+	
 	CFSMComponentBuilder& Tick(const std::function<void(_double)>& tick)
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.Tick = tick;
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->Tick == nullptr);
+		m_pBuildState->Tick = tick;
 		return *this;
 	}
-
+	
 	template<typename T>
 	CFSMComponentBuilder& Tick(T* obj, void (T::*memFunc)(_double))
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.Tick = [obj, memFunc](_double TimeDelta)
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->Tick == nullptr);
+		m_pBuildState->Tick = [obj, memFunc](_double TimeDelta)
 		{
 			(obj->*memFunc)(TimeDelta);
 		};
 		return *this;
 	}
-
+	
 	CFSMComponentBuilder& OnExit(const std::function<void()>& onExit)
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.OnExit = onExit;
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->OnExit == nullptr);
+		m_pBuildState->OnExit = onExit;
 		return *this;
 	}
-
+	
 	template<typename T>
 	CFSMComponentBuilder& OnExit(T* obj, void (T::*memFunc)())
 	{
-		const auto itr = find_if(m_mapStates.begin(), m_mapStates.end(), CTag_Finder(m_pBuildStateName));
-		assert(itr != m_mapStates.end());
-
-		itr->second.OnExit = [obj, memFunc]()
+		assert(m_pBuildState != nullptr);
+		assert(m_pBuildState->OnExit == nullptr);
+		m_pBuildState->OnExit = [obj, memFunc]()
 		{
 			(obj->*memFunc)();
 		};
 		return *this;
 	}
 
-	CFSMComponentBuilder& Build()
+	CFSMComponentBuilder& AddTransition(const char* pTransitionName, const char* pNextStateName)
+	{
+		assert(m_pBuildState != nullptr);
+		m_pBuildTransition = new FSM_TRANSITION(pTransitionName, pNextStateName);
+		m_pBuildState->Transitions.push_back(m_pBuildTransition);
+		return *this;
+	}
+
+	CFSMComponentBuilder& Priority(_uint iPriority)
+	{
+		assert(m_pBuildTransition != nullptr);
+		m_pBuildTransition->iPriority = iPriority;
+		return *this;
+	}
+
+	CFSMComponentBuilder& Predicator(std::function<_bool()> Predicator)
+	{
+		assert(m_pBuildTransition != nullptr);
+		assert(m_pBuildTransition->Predicator == nullptr);
+		m_pBuildTransition->Predicator = Predicator;
+		return *this;
+	}
+
+	template<typename T>
+	CFSMComponentBuilder& Predicator(T* obj, bool (T::*memFunc)())
+	{
+		assert(m_pBuildTransition != nullptr);
+		assert(m_pBuildTransition->Predicator == nullptr);
+		m_pBuildTransition->Predicator = [obj, memFunc]()
+		{
+			return (obj->*memFunc)();
+		};
+		return *this;
+	}
+	
+	CFSMComponent* Build()
 	{
 		assert(m_pInitStateName != nullptr);
 
 		for (auto& NodePair : m_mapStates)
 		{
-			for (auto& TranPair : NodePair.second.mapTransition)
+			std::sort(NodePair.second->Transitions.begin(), NodePair.second->Transitions.end(), 
+				[](const FSM_TRANSITION* left, const FSM_TRANSITION* right)
 			{
-				std::sort(TranPair.second.begin(), TranPair.second.end(),
-					[](const FSM_TRANSITION& left, const FSM_TRANSITION& right)
-				{
-					return left.iPriority < right.iPriority; // 오름차순
-				});
-			}
+				return left->iPriority < right->iPriority; // 오름차순
+			});
 		}
-		return *this;
+	
+		return CFSMComponent::Create(this);
 	}
-
-	map<const _tchar*, FSM_STATE>& GetStates()
+	
+	cmap<FSM_STATE*>& GetStates()
 	{
 		return m_mapStates;
 	}
-
-	const _tchar* GetInitStateName() const
+	
+	const char* GetInitStateName() const
 	{
 		return m_pInitStateName;
 	}
 
-private:
-	const _tchar* m_pBuildStateName = nullptr;
 
-	map<const _tchar*, FSM_STATE> m_mapStates;
-	const _tchar* m_pInitStateName = nullptr;
+private:
+	cmap<FSM_STATE*> m_mapStates;
+	const char* m_pInitStateName = nullptr;
+
+	FSM_STATE* m_pBuildState = nullptr;
+	FSM_TRANSITION* m_pBuildTransition = nullptr;
 };
 
 END

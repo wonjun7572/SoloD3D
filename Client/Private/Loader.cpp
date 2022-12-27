@@ -22,12 +22,20 @@
 #include "ForkLift.h"
 
 #include "Weapon.h"
+#include "Upper.h"
+#include "Lower.h"
+#include "Glove.h"
+#include "Shoulder.h"
+#include "Boots.h"
+#include "Belt.h"
+#include "Helmet.h"
 
 #include "Demon.h"
 
 #include "PlayerCamera.h"
 
 #include "Effect_Rect.h"
+#include "Effect_Point.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice(pDevice),
@@ -141,7 +149,22 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky.dds")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Snow*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Snow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Weapon_Effect*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_blizzardDecal_01_TEX_KJS.png")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Weapon_Skill1_Effect*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Skill1_Effect"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_AuraHole_001_TEX_HKB.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Ocean_Height*/
@@ -154,6 +177,26 @@ HRESULT CLoader::Loading_ForChapter_1()
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Sphere */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Sphere"),
+		CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 1.f))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Cube */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Rect_Instancing */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
+		CVIBuffer_Rect_Instancing::Create(m_pDevice, m_pContext, 3))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Point_Instancing */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Point_Instancing"),
+		CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("콜라이더를 로딩중입니다. ");
@@ -173,27 +216,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
-	/* For.Prototype_Component_VIBuffer_Sphere */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Sphere"),
-		CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 1.f))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Rect_Instancing */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Rect_Instancing"),
-		CVIBuffer_Rect_Instancing::Create(m_pDevice, m_pContext, 100))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_HumanF */
 	_matrix			PivotMatrix = XMMatrixIdentity();
-	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/HumanF/HumanF.model"), PivotMatrix))))
-		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Demon */
 	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
@@ -205,6 +228,54 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ForkLift"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/ForkLift/ForkLift.model"), PivotMatrix))))
 		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_HumanF */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Glove/Glove.model"), PivotMatrix))))
+		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_Upper */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Upper/Upper.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Lower */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Lower/Lower.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Glove */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Shoulder */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Shoulder/Shoulder.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Boots */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Boots/Boots.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Belt */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Belt/Belt.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Helmet */
+	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Helmet/Helmet.model"), PivotMatrix))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Sword*/
 	PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) 
@@ -214,7 +285,81 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/TAX/TAX.model"), PivotMatrix))))
 		return E_FAIL;
-	
+
+	// For. Maps
+	{
+		/* For.BlackForest_BCastle_Brick01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Brick01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Brick01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Brick02 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Brick02"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Brick02.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Brick03 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Brick03"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Brick03.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Bridge01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Bridge01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Bridge01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Buttress01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Buttress01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Buttress01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Buttress02 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Buttress02"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Buttress02.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_EntranceFloor01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_EntranceFloor01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_EntranceFloor01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Gate01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Gate01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Gate01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Gate02 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Gate02"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Gate02.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_Gate03 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_Gate03"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_Gate03.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_GatePillar01 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_GatePillar01"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_GatePillar01.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.BlackForest_BCastle_GatePillar02 */
+		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BlackForest_BCastle_GatePillar02"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/BlackForest_BCastle/BlackForest_BCastle_GatePillar02.model"), PivotMatrix))))
+			return E_FAIL;
+	}
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
 	/* For.Prototype_Component_Shader_VtxModel*/
@@ -231,15 +376,27 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxCubeTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCubeTex.hlsl"), VTXCUBETEX_DECLARATION::Elements, VTXCUBETEX_DECLARATION::iNumElements))))
 		return E_FAIL;
+
 	/* For.Prototype_Component_Shader_VtxRectInstancing */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxRectInstancing"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxRectInstancing.hlsl"), VTXRECTINSTANCE_DECLARATION::Elements, VTXRECTINSTANCE_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPointInstancing */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxPointInstancing"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstancing.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("네비게이션 정보 로딩중입니다. ");
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Navigation.dat")))))
+		return E_FAIL;
+
+	m_strLoadingText = TEXT("FSM 로딩중입니다. ");
+
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_STATE"),
+		CState::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
@@ -260,6 +417,34 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Weapon"), CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Upper*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Upper"), CUpper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Lower*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lower"), CLower::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Glove*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Glove"), CGlove::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Shoulder*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Shoulder"), CShoulder::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Boots*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Boots"), CBoots::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Belt*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Belt"), CBelt::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Helmet*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Helmet"), CHelmet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Demon*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Demon"), CDemon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -276,6 +461,13 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect"), CEffect_Rect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For. Prototype_GameObject_Effect_Point*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point"), Effect_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Cube*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cube"), CTestCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 

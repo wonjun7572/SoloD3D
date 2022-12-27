@@ -81,6 +81,14 @@ _bool CInput_Device::Mouse_Up(MOUSEKEYSTATE byKeyID, _bool* pData)
 	return FALSE;
 }
 
+_bool CInput_Device::Key_Pressing(_ubyte byKeyID)
+{
+	if (Get_DIKeyState(byKeyID) & 0x80)
+		return true;
+
+	return false;
+}
+
 _bool CInput_Device::Key_Down(_ubyte byKeyID, _bool* pData)
 {
 	_bool* pCompareData = NULL;

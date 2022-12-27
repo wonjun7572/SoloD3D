@@ -30,6 +30,14 @@ HRESULT CAnimation::Initialize(ANIMATIONLOAD& pAIAnimation, CModel* pModel)
 	return S_OK;
 }
 
+void CAnimation::Reset()
+{
+	m_PlayTime = 0.0; 
+	m_isFinished = false; 
+	for (auto& pChannel : m_Channels)
+		pChannel->Reset_KeyFrameIndex();
+}
+
 void CAnimation::Update_Bones(_double TimeDelta)
 {
 	m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
@@ -40,7 +48,7 @@ void CAnimation::Update_Bones(_double TimeDelta)
 		return;
 	}
 
-	m_PlayTime += m_TickPerSecond * TimeDelta;
+	m_PlayTime += m_TickPerSecond * TimeDelta * m_MulSecond;
 
 	if (m_PlayTime >= m_Duration)
 	{
@@ -55,7 +63,7 @@ void CAnimation::Update_Bones(_double TimeDelta)
 
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
 
-		if (!strcmp("BN_Head", m_Channels[i]->Get_ChannelName()))
+		if (!strcmp("Bip01", m_Channels[i]->Get_ChannelName()))
 			m_vMovePos = m_Channels[i]->Get_MovePos();
 	}
 
@@ -71,7 +79,7 @@ void CAnimation::Update_Bones_Blend(_double TimeDelta, _float fBlendRatio)
 		return;
 	}
 
-	m_PlayTime += m_TickPerSecond * TimeDelta;
+	m_PlayTime += m_TickPerSecond * TimeDelta * m_MulSecond;
 
 	if (m_PlayTime >= m_Duration)
 	{
@@ -112,14 +120,33 @@ void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
 		if (true == m_isFinished)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
+		if (!strcmp("Glove.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+		
+		if (!strcmp("Upper", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Lower.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Face.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("AN_PC_HumA_F_MS0001_A00_Shoulder.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Belt.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Boots.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Helmet.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+
 		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fAdditiveRatio);
 	}
-}
-
-void CAnimation::Set_IsFinish(_bool isFinish)
-{
-	Reset_PlayTime();
-	m_isFinished = isFinish;
 }
 
 _bool CAnimation::Check_AnimationSet(const _float & fTime)

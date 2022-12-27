@@ -1,5 +1,99 @@
-﻿  Model.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(303): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Shader_Navigation.cso
+  ImSequencer.cpp
+  imgui_widgets.cpp
+  imgui_tables.cpp
+  imgui_impl_win32.cpp
+  imgui_impl_dx11.cpp
+  imgui_draw.cpp
+  imgui_demo.cpp
+  ImGuizmo.cpp
+  ImGuiFileDialog.cpp
+  imgui.cpp
+  ImGradient.cpp
+  ImCurveEdit.cpp
+  GraphEditor.cpp
+  VIBuffer_Sphere.cpp
+  VIBuffer_Rect.cpp
+  VIBuffer_Cube.cpp
+  VIBuffer.cpp
+  Transform.cpp
+  Texture.cpp
+  VIBuffer_Terrain.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  VIBuffer_Rect_Instancing.cpp
+  VIBuffer_Point_Instancing.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\private\vibuffer_point_instancing.cpp(138): warning C4244: '-=': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  VIBuffer_Instancing.cpp
+  VIBuffer_Cylinder.cpp
+  VIBuffer_Cell.cpp
+  Timer_Manager.cpp
+  Timer.cpp
+  State.cpp
+  Shader.cpp
+  RigidBody.cpp
+  Renderer.cpp
+  PipeLine.cpp
+  Object_Manager.cpp
+  Navigation.cpp
+  Model.cpp
+c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(261): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Mesh.cpp
+  Level_Manager.cpp
+  Level.cpp
+  Layer.cpp
+  Input_Device.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  ImGui_PropertyEditor.cpp
+  ImGui_Manager.cpp
+  ImGuiObject.cpp
+  Graphic_Device.cpp
+  GameUtils.cpp
+  GameObject.cpp
+  MathUtils.cpp
+  Light_Manager.cpp
+  Light.cpp
+  ImGui_ProtoEditor.cpp
+  Imgui_MapEditor.cpp
+  GameInstance.cpp
+  FSMComponent.cpp
+  Font_Manager.cpp
+  Engine_Struct.cpp
+  DebugDraw.cpp
+  CustomFont.cpp
+  Component_Manager.cpp
+  Component.cpp
+  Collider.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Channel.cpp
+  Cell.cpp
+  Camera.cpp
+  Bone.cpp
+  Base.cpp
+  Animation.cpp
+  코드를 생성하고 있습니다...
+     ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
+Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectAPI.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectLoad.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectReflection.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+Effects11d.lib(EffectRuntime.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(BasicEffect.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(BasicEffect.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(CommonStates.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(CommonStates.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(DDSTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(DDSTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(BinaryReader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(BinaryReader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(EffectCommon.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(EffectCommon.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(SpriteBatch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SpriteBatch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(PrimitiveBatch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(PrimitiveBatch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(SpriteFont.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SpriteFont.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(VertexTypes.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(VertexTypes.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Engine.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Default\../Bin\Engine.dll
   Engine.vcxproj -> ../Bin\Engine.pdb (Full PDB)
   .\Engine\Bin\Engine.lib
@@ -37,6 +131,7 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(303): warni
   .\Engine\Public\Graphic_Device.h
   .\Engine\Public\ImGuiObject.h
   .\Engine\Public\ImGui_Manager.h
+  .\Engine\Public\Imgui_MapEditor.h
   .\Engine\Public\ImGui_PropertyEditor.h
   .\Engine\Public\ImGui_ProtoEditor.h
   .\Engine\Public\Input_Device.h
@@ -54,6 +149,7 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(303): warni
   .\Engine\Public\Renderer.h
   .\Engine\Public\RigidBody.h
   .\Engine\Public\Shader.h
+  .\Engine\Public\State.h
   .\Engine\Public\Texture.h
   .\Engine\Public\Timer.h
   .\Engine\Public\Timer_Manager.h
@@ -63,6 +159,7 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(303): warni
   .\Engine\Public\VIBuffer_Cube.h
   .\Engine\Public\VIBuffer_Cylinder.h
   .\Engine\Public\VIBuffer_Instancing.h
+  .\Engine\Public\VIBuffer_Point_Instancing.h
   .\Engine\Public\VIBuffer_Rect.h
   .\Engine\Public\VIBuffer_Rect_Instancing.h
   .\Engine\Public\VIBuffer_Sphere.h
@@ -120,6 +217,6 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(303): warni
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  107개 파일이 복사되었습니다.
+  110개 파일이 복사되었습니다.
   .\Engine\Bin\ShaderFiles\Shader_Navigation.hlsl
   1개 파일이 복사되었습니다.

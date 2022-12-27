@@ -116,8 +116,6 @@ void CModel::Play_Animation(_double TimeDelta)
 	if (TYPE_NONANIM == m_eType)
 		return;
 
-	if (!m_isUpper)
-	{
 		if (m_fBlendCurTime < m_fBlendDuration)
 		{
 			_float fBlendRatio = m_fBlendCurTime / m_fBlendDuration;
@@ -139,47 +137,26 @@ void CModel::Play_Animation(_double TimeDelta)
 
 		m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
 		m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
-	}
-	else
-	{
-		if (m_fBlendCurUpperTime < m_fBlendDuration)
-		{
-			_float fBlendRatio = m_fBlendCurUpperTime / m_fBlendDuration;
-			m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
-			m_Animations[m_iCurUpperAnimIndex]->Update_Bones_Blend(TimeDelta, fBlendRatio);
-
-			m_fBlendCurUpperTime += (float)TimeDelta;
-		}
-		else
-		{
-			m_Animations[m_iCurUpperAnimIndex]->Update_Bones(TimeDelta);
-		}
-
-		for (_uint i = 0; i < 129; ++i)
-		{
-			m_Bones[i]->Compute_CombindTransformationMatrix();
-		}
-
-		if (m_fBlendCurUnderTime < m_fBlendDuration)
-		{
-			_float fBlendRatio = m_fBlendCurUnderTime / m_fBlendDuration;
-			m_Animations[m_iCurrentAnimIndex]->Update_Bones(TimeDelta);
-			m_Animations[m_iCurUnderAnimIndex]->Update_Bones_Blend(TimeDelta, fBlendRatio);
-
-			m_fBlendCurUnderTime += (float)TimeDelta;
-		}
-		else
-		{
-			m_Animations[m_iCurUnderAnimIndex]->Update_Bones(TimeDelta);
-		}
-		for (_uint i = 129; i < m_iNumBones; ++i)
-		{
-			m_Bones[i]->Compute_CombindTransformationMatrix();
-		}
-	}
 }
 
-void CModel::Set_AnimationIndex(_uint iIndex)
+void CModel::Play_AddtivieAnim(_double TimeDelta, _float fRatio)
+{
+	if (TYPE_NONANIM == m_eType)
+		return;
+
+	m_Animations[m_iAdditiveAnimIndex]->Update_Bones_Add(TimeDelta, fRatio);
+
+	for (auto& pBone : m_Bones)
+	{
+		if (nullptr != pBone)
+			pBone->Compute_CombindTransformationMatrix();
+	}
+
+	m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+	m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
+}
+
+void CModel::Set_AnimationIndex(_uint iIndex , _double time)
 {
 	if (m_iCurrentAnimIndex != iIndex)
 	{
@@ -188,25 +165,6 @@ void CModel::Set_AnimationIndex(_uint iIndex)
 	}
 
 	m_iCurrentAnimIndex = iIndex;
-}
-
-void CModel::Set_UpperAnimationIndex(_uint iUpperIndex, _uint iUnderIndex)
-{
-	if (m_iCurUpperAnimIndex != iUpperIndex)
-	{
-		m_iPreUpperAnimIndex = m_iCurUpperAnimIndex;
-		m_fBlendCurTime = 0.f;
-	}
-	
-	m_iCurUpperAnimIndex = iUpperIndex;
-
-	if (m_iCurUnderAnimIndex != iUnderIndex)
-	{
-		m_iPreUnderAnimIndex = m_iCurUnderAnimIndex;
-		m_fBlendCurTime = 0.f;
-	}
-
-	m_iCurUnderAnimIndex = iUnderIndex;
 }
 
 HRESULT CModel::Bind_Material(CShader * pShader, _uint iMeshIndex, TextureType eType, const char * pConstantName)
@@ -555,6 +513,21 @@ CAnimation * CModel::FindAnim(const string & strAnim)
 	});
 
 	return *itr;
+}
+
+CAnimation * CModel::Get_IndexAnim(_uint iIndex)
+{
+	return m_Animations[iIndex];
+}
+
+CAnimation * CModel::Get_CurAnim()
+{
+	return m_Animations[m_iCurrentAnimIndex];
+}
+
+void CModel::Reset_AnimPlayTime(_uint iIndex)
+{
+	m_Animations[iIndex]->Reset();
 }
 
 _bool CModel::Check_AnimationSet(const _float & fTime)

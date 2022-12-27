@@ -64,8 +64,6 @@ void CLoadingBackGround::Tick(_double TimeDelta)
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//pGameInstance->Render_Font(TEXT("Font_Nexon"), L"을(를) 눌러 시작하기", XMVectorSet(m_fX + m_fSizeX * 0.5f, m_fY, 0.f, 1.f), XMVectorSet(1.f, 1.f, 1.f, 1.f));
-
 	RELEASE_INSTANCE(CGameInstance);
 }
 

@@ -67,9 +67,6 @@
     <Filter Include="LevelDesign\Loading\UI">
       <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Player\Weapon">
-      <UniqueIdentifier>{8b3ce01a-7eba-41bc-b524-71711ee5f671}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Env">
       <UniqueIdentifier>{8ef51747-abb6-4e3c-a06b-7456d4a9005c}</UniqueIdentifier>
     </Filter>
@@ -87,6 +84,33 @@
     </Filter>
     <Filter Include="GameObject\Monster\Demon">
       <UniqueIdentifier>{3d011677-53a1-473d-85cf-be6b88c4ca17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts">
+      <UniqueIdentifier>{9c125740-ae65-4e50-9408-932b661a13cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Shoulder">
+      <UniqueIdentifier>{baa6e886-686b-4072-b5e2-4835871be9a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Upper">
+      <UniqueIdentifier>{55d3ae10-8403-4de5-b172-5fc9b46ded02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Lower">
+      <UniqueIdentifier>{2c02864e-f1e2-4cf4-b4ad-f93b899b0517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Glove">
+      <UniqueIdentifier>{913da08b-361b-45ed-8203-5844ac0cca28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Weapon">
+      <UniqueIdentifier>{8b3ce01a-7eba-41bc-b524-71711ee5f671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Boots">
+      <UniqueIdentifier>{10e9a13e-f1c6-43f3-a70f-341e27b811aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Belt">
+      <UniqueIdentifier>{020c6003-7834-475e-93d8-963181317f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Player\Parts\Helmet">
+      <UniqueIdentifier>{654188f5-d93e-483e-925c-0a47d3f6ba2c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -149,7 +173,7 @@
       <Filter>GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Weapon.h">
-      <Filter>GameObject\Player\Weapon</Filter>
+      <Filter>GameObject\Player\Parts\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ForkLift.h">
       <Filter>GameObject\Env</Filter>
@@ -159,9 +183,6 @@
     </ClInclude>
     <ClInclude Include="..\public\LoadingBackGround.h">
       <Filter>LevelDesign\Loading\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\PlayerFSM.h">
-      <Filter>GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>GameObject\Camera</Filter>
@@ -181,7 +202,37 @@
     <ClInclude Include="..\public\Demon.h">
       <Filter>GameObject\Monster\Demon</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DemonFSM.h">
+    <ClInclude Include="..\public\Effect_Point.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Glove.h">
+      <Filter>GameObject\Player\Parts\Glove</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Lower.h">
+      <Filter>GameObject\Player\Parts\Lower</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shoulder.h">
+      <Filter>GameObject\Player\Parts\Shoulder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Upper.h">
+      <Filter>GameObject\Player\Parts\Upper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Parts.h">
+      <Filter>GameObject\Player\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Boots.h">
+      <Filter>GameObject\Player\Parts\Boots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Belt.h">
+      <Filter>GameObject\Player\Parts\Belt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Helmet.h">
+      <Filter>GameObject\Player\Parts\Helmet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Player_State.h">
+      <Filter>GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Demon_State.h">
       <Filter>GameObject\Monster\Demon</Filter>
     </ClInclude>
   </ItemGroup>
@@ -236,7 +287,7 @@
       <Filter>GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Weapon.cpp">
-      <Filter>GameObject\Player\Weapon</Filter>
+      <Filter>GameObject\Player\Parts\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ForkLift.cpp">
       <Filter>GameObject\Env</Filter>
@@ -246,9 +297,6 @@
     </ClCompile>
     <ClCompile Include="..\private\LoadingBackGround.cpp">
       <Filter>LevelDesign\Loading\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PlayerFSM.cpp">
-      <Filter>GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>GameObject\Camera</Filter>
@@ -265,8 +313,38 @@
     <ClCompile Include="..\private\Demon.cpp">
       <Filter>GameObject\Monster\Demon</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemonFSM.cpp">
+    <ClCompile Include="..\private\Effect_Point.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Glove.cpp">
+      <Filter>GameObject\Player\Parts\Glove</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Lower.cpp">
+      <Filter>GameObject\Player\Parts\Lower</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shoulder.cpp">
+      <Filter>GameObject\Player\Parts\Shoulder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Upper.cpp">
+      <Filter>GameObject\Player\Parts\Upper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Parts.cpp">
+      <Filter>GameObject\Player\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Boots.cpp">
+      <Filter>GameObject\Player\Parts\Boots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Belt.cpp">
+      <Filter>GameObject\Player\Parts\Belt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Helmet.cpp">
+      <Filter>GameObject\Player\Parts\Helmet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Demon_State.cpp">
       <Filter>GameObject\Monster\Demon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Player_State.cpp">
+      <Filter>GameObject\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +391,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstancing.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstancing.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT Init(const wstring& pFontFilePath);
-	HRESULT Render(const wstring& pText, _fvector vPosition, _fvector vColor);
+	HRESULT Render(const _tchar* pText, const _float2& vPosition, _float fRadian, _float2 vScale, _fvector vColor);
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;

@@ -47,9 +47,6 @@ void CTestSphere::Tick(_double TimeDelta)
 
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-
-	m_pFSMCom->Tick(TimeDelta);
-
 	/*if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
 		m_pTransformCom->Go_Straight(TimeDelta);
 
@@ -265,7 +262,6 @@ CGameObject * CTestSphere::Clone(void * pArg)
 void CTestSphere::Free()
 {
 	__super::Free();
-	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);

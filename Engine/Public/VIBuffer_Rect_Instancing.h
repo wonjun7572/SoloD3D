@@ -13,8 +13,12 @@ public:
 
 public:
 	virtual HRESULT Init_Prototype(_uint iNumInstance);
-	virtual HRESULT Init(void* pArg);
+	virtual HRESULT Init(void* pArg) override;
+	virtual HRESULT Tick(_double TimeDelta) override;
 	virtual HRESULT Render();
+
+private:
+	_double*	m_pSpeeds = nullptr;
 
 public:
 	static CVIBuffer_Rect_Instancing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iNumInstance = 1);

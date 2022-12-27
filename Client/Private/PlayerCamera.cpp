@@ -67,12 +67,37 @@ void CPlayerCamera::Tick(_double TimeDelta)
 	if(m_bFix)
 		Mouse_Fix();
 
-	m_pTarget = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player");
-	
-	if (m_vLookAt.w == -1.f)
-		XMStoreFloat4(&m_vLookAt, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK));
 
-	if (m_pTarget != nullptr && static_cast<CPlayer*>(m_pTarget)->Get_CamTurn() == true)
+	
+	Safe_Release(pGameInstance);
+}
+
+void CPlayerCamera::Imgui_RenderProperty()
+{
+	ImGui::Text("%f", &m_fDistanceToTarget);
+}
+
+void CPlayerCamera::Late_Tick(_double TimeDelta)
+{
+	__super::Late_Tick(TimeDelta);
+}
+
+HRESULT CPlayerCamera::Render()
+{
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (m_vLookAt.w == -1.f)
+		XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+
+	if (pTarget && bCamTurn == true)
 	{
 		_long			MouseMove_X = 0, MouseMove_Y = 0;
 		_long			MouseZoom = 0;
@@ -105,7 +130,7 @@ void CPlayerCamera::Tick(_double TimeDelta)
 				m_fDistanceToTarget = 7.f;
 		}
 
-		XMStoreFloat4(&m_vPlayerPos, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+		XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 		_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 		_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 5.f + m_fCamY, 0.f, 0.f));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
@@ -122,21 +147,21 @@ void CPlayerCamera::Tick(_double TimeDelta)
 				m_fCamTime = 0.f;
 				m_bChange = true;
 			}
-			XMStoreFloat4(&m_vLookAt, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK));
-			XMStoreFloat4(&m_vPlayerPos, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 5.f, 0.f, 0.f));
-			
+
 			_vector V = XMVectorSubtract(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos);
 			_vector X = XMVector4Length(V);
 			_float fDistance = XMVectorGetX(V);
-			if( fabs(fDistance) > 0.3f)
+			if (fabs(fDistance) > 0.3f)
 				m_pTransformCom->Chase(vCamPos, static_cast<float>(TimeDelta) * 10.f);
 		}
 		else
 		{
-			XMStoreFloat4(&m_vLookAt, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_LOOK));
-			XMStoreFloat4(&m_vPlayerPos, m_pTarget->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 5.f, 0.f, 0.f));
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
@@ -144,26 +169,8 @@ void CPlayerCamera::Tick(_double TimeDelta)
 		}
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
 	}
-	
-	Safe_Release(pGameInstance);
-}
 
-void CPlayerCamera::Imgui_RenderProperty()
-{
-	ImGui::Text("%f", &m_fDistanceToTarget);
-}
-
-void CPlayerCamera::Late_Tick(_double TimeDelta)
-{
-	__super::Late_Tick(TimeDelta);
-}
-
-HRESULT CPlayerCamera::Render()
-{
-	if (FAILED(__super::Render()))
-		return E_FAIL;
-
-	return S_OK;
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CPlayerCamera::Mouse_Fix()
@@ -172,7 +179,7 @@ void CPlayerCamera::Mouse_Fix()
 
 	ClientToScreen(g_hWnd, &pt);
 	SetCursorPos(pt.x, pt.y);
-	ShowCursor(false);
+	//ShowCursor(false);
 }
 
 CPlayerCamera * CPlayerCamera::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

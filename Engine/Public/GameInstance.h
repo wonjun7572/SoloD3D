@@ -37,7 +37,8 @@ public:		/* For InputDevice */
 	_bool		Mouse_Up(MOUSEKEYSTATE MouseButton, _bool* pData = nullptr);
 	_bool		Key_Down(_ubyte byKeyID, _bool* pData = nullptr);
 	_bool		Key_Up(_ubyte byKeyID, _bool* pData = nullptr);
-	
+	_bool		Key_Pressing(_ubyte byKeyID);
+
 public: // Level_Manager
 	HRESULT OpenLevel(_uint iLevelIndex, class CLevel* pNewLevel);
 	HRESULT RenderLevel();
@@ -82,7 +83,7 @@ public: /* For.Timer_Manager */
 
 public: /* For.Font_Manager */
 	HRESULT Add_Fonts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontTag, const wstring& pFontFilePath);
-	HRESULT Render_Font(const wstring& pFontTag, const wstring& pText, _fvector vPos, _fvector vColor);
+	HRESULT Render_Font(const _tchar* pFontTag, const _tchar* pText, const _float2& vPos, _float fRadian, _float2 vScale, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f));
 
 public: /* For. Light_Manager*/
 	const LIGHTDESC* Get_LightDesc(_uint iIndex);

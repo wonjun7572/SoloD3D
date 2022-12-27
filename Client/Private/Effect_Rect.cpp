@@ -34,22 +34,32 @@ HRESULT CEffect_Rect::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(5.f, 0.f, 0.f, 1.f));
-	
+	m_pTransformCom->Set_Scaled(_float3(7.f,7.f,0.f));
+	m_pTransformCom->Rotation(XMVectorSet(1.f, 0.f, 0.f, 1.f),XMConvertToRadians(90.f));
+	m_strObjName = L"Effect_Rect";
+
 	return S_OK;
 }
 
 void CEffect_Rect::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
+	if (m_bTick)
+	{
+		__super::Tick(TimeDelta);
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -TimeDelta * 3.f);
+		m_pVIBufferCom->Tick(TimeDelta);
+	}
 }
 
 void CEffect_Rect::Late_Tick(_double TimeDelta)
 {
-	__super::Late_Tick(TimeDelta);
+	if (m_bTick)
+	{
+		__super::Late_Tick(TimeDelta);
 
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		if (nullptr != m_pRendererCom)
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+	}
 }
 
 HRESULT CEffect_Rect::Render()
@@ -65,6 +75,11 @@ HRESULT CEffect_Rect::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CEffect_Rect::LinkPlayer(_double TimeDelta, _fvector targetpos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, targetpos);
 }
 
 HRESULT CEffect_Rect::SetUp_Components()
@@ -85,7 +100,7 @@ HRESULT CEffect_Rect::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Skill1_Effect"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 	

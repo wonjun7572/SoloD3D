@@ -7,6 +7,7 @@ CVIBuffer_Cube::CVIBuffer_Cube(ID3D11Device * pDevice, ID3D11DeviceContext * pCo
 
 CVIBuffer_Cube::CVIBuffer_Cube(const CVIBuffer_Cube & rhs)
 	:CVIBuffer(rhs)
+	, m_pPos(rhs.m_pPos)
 {
 }
 
@@ -39,29 +40,39 @@ HRESULT CVIBuffer_Cube::Init_Prototype()
 	VTXCUBETEX*			pVertices = new VTXCUBETEX[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXCUBETEX));
 
+	m_pPos = new _float4[m_iNumVertices];
+
 	pVertices[0].vPosition = _float3(-0.5f, 0.5f, -0.5f);
 	pVertices[0].vTexUV = pVertices[0].vPosition;
+	m_pPos[0] = _float4(-0.5f, 0.5f, -0.5f, 1.f);
 
 	pVertices[1].vPosition = _float3(0.5f, 0.5f, -0.5f);
 	pVertices[1].vTexUV = pVertices[1].vPosition;
+	m_pPos[1] = _float4(0.5f, 0.5f, -0.5f, 1.f);
 
 	pVertices[2].vPosition = _float3(0.5f, -0.5f, -0.5f);
 	pVertices[2].vTexUV = pVertices[2].vPosition;
+	m_pPos[2] = _float4(0.5f, -0.5f, -0.5f, 1.f);
 
 	pVertices[3].vPosition = _float3(-0.5f, -0.5f, -0.5f);
 	pVertices[3].vTexUV = pVertices[3].vPosition;
+	m_pPos[3] = _float4(-0.5f, -0.5f, -0.5f, 1.f);
 
 	pVertices[4].vPosition = _float3(-0.5f, 0.5f, 0.5f);
 	pVertices[4].vTexUV = pVertices[4].vPosition;
+	m_pPos[4] = _float4(-0.5f, 0.5f, 0.5f, 1.f);
 
 	pVertices[5].vPosition = _float3(0.5f, 0.5f, 0.5f);
 	pVertices[5].vTexUV = pVertices[5].vPosition;
+	m_pPos[5] = _float4(0.5f, 0.5f, 0.5f, 1.f);
 
 	pVertices[6].vPosition = _float3(0.5f, -0.5f, 0.5f);
 	pVertices[6].vTexUV = pVertices[6].vPosition;
+	m_pPos[6] = _float4(0.5f, -0.5f, 0.5f, 1.f);
 
 	pVertices[7].vPosition = _float3(-0.5f, -0.5f, 0.5f);
 	pVertices[7].vTexUV = pVertices[7].vPosition;
+	m_pPos[7] = _float4(-0.5f, -0.5f, 0.5f, 1.f);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -159,4 +170,9 @@ CComponent * CVIBuffer_Cube::Clone(void * pArg)
 void CVIBuffer_Cube::Free()
 {
 	__super::Free();
+
+	if (!m_bClone)
+	{
+		Safe_Delete_Array(m_pPos);
+	}
 }

@@ -5,6 +5,7 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
+class CTransform;
 class CVIBuffer_Rect_Instancing;
 END
 
@@ -24,11 +25,18 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	LinkPlayer(_double TimeDelta, _fvector targetpos);
+
+	void	Set_Tick(_bool isTick) { m_bTick = isTick; }
+
 private:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Rect_Instancing*	m_pVIBufferCom = nullptr;
+
+private:
+	_bool						m_bTick = false;
 
 private:
 	HRESULT SetUp_Components();

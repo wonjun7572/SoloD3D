@@ -2,6 +2,7 @@
 #include "..\public\Terrain.h"
 #include "GameInstance.h"
 #include "MathUtils.h"
+#include "TestCube.h"
 
 CTerrain::CTerrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -99,6 +100,238 @@ HRESULT CTerrain::Dynamic_FilterBuffer()
 	return S_OK;
 }
 
+void CTerrain::Dynamic_Navi()
+{
+	DWORD	dwByte = 0;
+
+	HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation.dat")
+		, GENERIC_WRITE
+		, 0
+		, nullptr
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (0 == hFile)
+		return;
+
+	for (auto& iter : m_NaviPosList)
+		WriteFile(hFile, &iter, sizeof(_float3), &dwByte, nullptr);
+
+	CloseHandle(hFile);
+}
+
+void CTerrain::Save_Navi()
+{
+	DWORD	dwByte = 0;
+
+	HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation_CHAP1.dat")
+		, GENERIC_WRITE
+		, 0
+		, nullptr
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (0 == hFile)
+		return;
+
+	for (auto& iter : m_NaviPosList)
+		WriteFile(hFile, &iter, sizeof(_float3), &dwByte, nullptr);
+
+	CloseHandle(hFile);
+}
+
+void CTerrain::AdjustCellPoint()
+{
+	//함수가 실행됐다는 건 배열이 다 찼다는 의미.
+	const _vector vPointA = XMLoadFloat3(&m_vPoints[0]);
+	const _vector vPointB = XMLoadFloat3(&m_vPoints[1]);
+	const _vector vPointC = XMLoadFloat3(&m_vPoints[2]);
+
+	const _vector vAB = vPointB - vPointA;
+	const _vector vBC = vPointC - vPointB;
+
+	_float3 vCross;
+	XMStoreFloat3(&vCross, XMVector3Cross(vAB, vBC));
+
+	//// 수직 안되
+	//if (CMathUtils::FloatCmp(vCross.y, 0.f))
+	//	return false;
+
+	// 반시계면 변경
+	if (vCross.y < 0)
+	{
+		_float3 tmp = m_vPoints[1];
+		m_vPoints[1] = m_vPoints[2];
+		m_vPoints[2] = tmp;
+	}
+}
+
+void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const class CVIBuffer_Terrain* pTerrainBufferCom, const class CTransform* pTerrainTransformCom)
+{
+	POINT		ptMouse{};
+
+	GetCursorPos(&ptMouse);
+	ScreenToClient(hWnd, &ptMouse);
+
+	_float3		fPoint;
+
+	fPoint.x = _float(ptMouse.x / (iWinsizeX * 0.5f) - 1.f);
+	fPoint.y = _float(ptMouse.y / -(iWinsizey * 0.5f) + 1.f);
+	fPoint.z = 1.f;
+
+	_vector		vecPoint = XMLoadFloat3(&fPoint);
+
+	vecPoint = XMVectorSetW(vecPoint, 1.f);
+
+	CGameInstance*  pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_matrix		matProj;
+
+	matProj = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ);
+
+	matProj = XMMatrixInverse(nullptr, matProj);
+
+	vecPoint = XMVector3TransformCoord(vecPoint, matProj);
+
+	_float3 fRayPos = { 0.f, 0.f, 0.f };
+
+	_vector		vecRayPos = XMLoadFloat3(&fRayPos);
+
+	vecRayPos = XMVectorSetW(vecRayPos, 1.f);
+	
+	_vector		vecDir = vecPoint - vecRayPos;
+
+	_matrix		matView;
+
+	matView = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+
+	matView = XMMatrixInverse(nullptr, matView);
+	vecRayPos = XMVector3TransformCoord(vecRayPos, matView); // XMVector3TransformCoord입력 벡터의 w 구성요소를 무시하고 값 1.0을 대신 사용합니다. 반환된 벡터의 w 구성 요소는 항상 1.0입니다.
+	vecDir = XMVector3TransformNormal(vecDir, matView); // XMVector3TransformNormal 는 회전 및 크기 조정을 위해 입력 행렬 행 0, 1 및 2를 사용하여 변환을 수행하고 행 3을 무시합니다.
+
+	_matrix		matWorld = pTerrainTransformCom->Get_WorldMatrix();
+
+	matWorld = XMMatrixInverse(nullptr, matWorld);
+	vecRayPos = XMVector3TransformCoord(vecRayPos, matWorld);
+	vecDir = XMVector3Normalize(XMVector3TransformNormal(vecDir, matWorld));
+
+	_vector	fTest = vecRayPos;
+	_vector	fNorDir = vecDir;
+
+	const _float4*	pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
+
+	_ulong		dwVtxCntX = pTerrainBufferCom->Get_VtxCntX();
+	_ulong		dwVtxCntZ = pTerrainBufferCom->Get_VtxCntZ();
+
+	_ulong	dwVtxIdx[3]{};
+	_float	fU = 0.f;
+	_float	fV = 0.f;
+	_float  fDist = 0.f;
+
+	_uint iCount = 0;
+
+	for (auto& iter : m_pCubeList)
+	{
+		if (static_cast<CTestCube*>(iter)->Peeking())
+		{
+			_vector vImshi = iter->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+			m_vPoints[iA] = _float3(XMVectorGetX(vImshi), XMVectorGetY(vImshi), XMVectorGetZ(vImshi));
+
+			++iA;
+
+			if (iA != 3)
+			{
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+
+		}
+		else
+			++iCount;
+	}
+
+	if (iCount == m_pCubeList.size())
+	{
+		for (_ulong i = 0; i < dwVtxCntZ - 1; ++i)
+		{
+			for (_ulong j = 0; j < dwVtxCntX - 1; ++j)
+			{
+				_ulong dwIndex = i * dwVtxCntX + j;
+
+
+				dwVtxIdx[0] = dwIndex + dwVtxCntX;
+				dwVtxIdx[1] = dwIndex + dwVtxCntX + 1;
+				dwVtxIdx[2] = dwIndex + 1;
+
+				//  FXMVECTOR Origin, FXMVECTOR Direction, FXMVECTOR V0, GXMVECTOR V1, HXMVECTOR V2, float& Dist
+				// Origin, Direction, Triangle initial vector 3 pack, cross distance
+				if (TriangleTests::Intersects(vecRayPos, vecDir,
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[1]]),
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[0]]),
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[2]]),
+					fDist))
+				{
+					fTest += fNorDir * fDist;
+					fTest = XMVectorSetW(fTest, 1.f);
+					CTestCube* pTestCube = static_cast<CTestCube*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Cube")));
+					CTransform* pTestCubeTrans = dynamic_cast<CTransform*>(pTestCube->Get_TransformCom());
+					pTestCubeTrans->Set_State(CTransform::STATE_TRANSLATION, fTest);
+					m_vPoints[iA] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
+
+					m_pCubeList.push_back(pTestCube);
+
+					++iA;
+
+					break;
+				}
+
+				dwVtxIdx[0] = dwIndex + dwVtxCntX;
+				dwVtxIdx[1] = dwIndex + 1;
+				dwVtxIdx[2] = dwIndex;
+
+				if (TriangleTests::Intersects(vecRayPos, vecDir,
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[2]]),
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[1]]),
+					XMLoadFloat4(&pTerrainVtx[dwVtxIdx[0]]),
+					fDist))
+				{
+					fTest += fNorDir * fDist;
+					fTest = XMVectorSetW(fTest, 1.f);
+					CTestCube* pTestCube = static_cast<CTestCube*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Cube")));
+					CTransform* pTestCubeTrans = dynamic_cast<CTransform*>(pTestCube->Get_TransformCom());
+					pTestCubeTrans->Set_State(CTransform::STATE_TRANSLATION, fTest);
+					m_vPoints[iA] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
+					m_pCubeList.push_back(pTestCube);
+
+					++iA;
+
+					break;
+				}
+			}
+		}
+	}
+	
+ 	if (iA >= 3)
+	{
+		AdjustCellPoint();
+		m_NaviPosList.push_back(m_vPoints[0]);
+		m_NaviPosList.push_back(m_vPoints[1]);
+		m_NaviPosList.push_back(m_vPoints[2]);
+		Dynamic_Navi();
+
+		m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
+
+		iA = 0;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return;
+}
+
 HRESULT CTerrain::Init(void * pArg)
 {
 	if (FAILED(__super::Init(pArg)))
@@ -118,6 +351,9 @@ void CTerrain::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	for (auto iter : m_pCubeList)
+		iter->Tick(TimeDelta);
+
 	if (m_bPicking && m_bHeight)
 	{
 		m_vBrushPos = PickingOnTerrain(m_pVIBufferCom, m_pTransformCom);
@@ -136,11 +372,23 @@ void CTerrain::Tick(_double TimeDelta)
 		}
 		RELEASE_INSTANCE(CGameInstance);
 	}
+	else if (m_bNavi)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		if (pGameInstance->Mouse_Down(DIM_LB))
+		{
+			Add_NaviCell(g_hWnd, g_iWinSizeX, g_iWinSizeY, m_pVIBufferCom, m_pTransformCom);
+		}
+		RELEASE_INSTANCE(CGameInstance);
+	}
 }
 
 void CTerrain::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
+
+	for (auto iter : m_pCubeList)
+		iter->Late_Tick(TimeDelta);
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
@@ -159,6 +407,8 @@ HRESULT CTerrain::Render()
 	m_pVIBufferCom->Render();
 
 #ifdef _DEBUG
+	for (auto& iter : m_pCubeList)
+		iter->Render();
 	m_pNavigationCom->Render();
 #endif
 
@@ -263,6 +513,14 @@ void CTerrain::Imgui_RenderProperty()
 			m_pVIBufferCom->SaveHeightMap();
 		ImGui::Checkbox("Filter", &m_bFilter);
 	}
+	if (ImGui::CollapsingHeader("For. Navi"))
+	{
+		ImGui::Checkbox("Navi", &m_bNavi);
+		if (ImGui::Button("SaveNavi"))
+		{
+			Save_Navi();
+		}
+	}
 }
 
 _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, const CTransform * pTerrainTransformCom)
@@ -305,7 +563,7 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 	
 	RELEASE_INSTANCE(CGameInstance);
 
-	const _float3* pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
+	const _float4* pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
 
 	_uint iVtxCntX = pTerrainBufferCom->Get_VtxCntX();
 	_uint iVtxCntZ = pTerrainBufferCom->Get_VtxCntZ();
@@ -324,9 +582,9 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 			iVtxIdx[1] = dwIndex + iVtxCntX + 1;
 			iVtxIdx[2] = dwIndex + 1;
 
-			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]), fDist))
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat4(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[0]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[2]]), fDist))
 			{
 				return _float4(pTerrainVtx[iVtxIdx[1]].x + (pTerrainVtx[iVtxIdx[0]].x - pTerrainVtx[iVtxIdx[1]].x),
 					0.f,
@@ -339,9 +597,9 @@ _float4 CTerrain::PickingOnTerrain(const CVIBuffer_Terrain * pTerrainBufferCom, 
 			iVtxIdx[1] = dwIndex + 1;
 			iVtxIdx[2] = dwIndex;
 
-			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]), fDist))
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat4(&pTerrainVtx[iVtxIdx[2]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[0]]), fDist))
 			{
 				return _float4(pTerrainVtx[iVtxIdx[2]].x + (pTerrainVtx[iVtxIdx[1]].x - pTerrainVtx[iVtxIdx[2]].x),
 					0.f,
@@ -394,7 +652,7 @@ _bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, co
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	const _float3* pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
+	const _float4* pTerrainVtx = pTerrainBufferCom->Get_VtxPos();
 
 	_uint iVtxCntX = pTerrainBufferCom->Get_VtxCntX();
 	_uint iVtxCntZ = pTerrainBufferCom->Get_VtxCntZ();
@@ -413,9 +671,9 @@ _bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, co
 			iVtxIdx[1] = dwIndex + iVtxCntX + 1;
 			iVtxIdx[2] = dwIndex + 1;
 
-			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]), fDist))
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat4(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[0]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[2]]), fDist))
 			{
 				 _float4 vPos = _float4(pTerrainVtx[iVtxIdx[1]].x + (pTerrainVtx[iVtxIdx[0]].x - pTerrainVtx[iVtxIdx[1]].x),
 					0.f,
@@ -431,9 +689,9 @@ _bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, co
 			iVtxIdx[1] = dwIndex + 1;
 			iVtxIdx[2] = dwIndex;
 
-			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat3(&pTerrainVtx[iVtxIdx[2]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[1]]),
-				XMLoadFloat3(&pTerrainVtx[iVtxIdx[0]]), fDist))
+			if (TriangleTests::Intersects(vRayPos, vRayDir, XMLoadFloat4(&pTerrainVtx[iVtxIdx[2]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[1]]),
+				XMLoadFloat4(&pTerrainVtx[iVtxIdx[0]]), fDist))
 			{
 				_float4 vPos = _float4(pTerrainVtx[iVtxIdx[2]].x + (pTerrainVtx[iVtxIdx[1]].x - pTerrainVtx[iVtxIdx[2]].x),
 					0.f,
@@ -583,4 +841,11 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+
+	for (auto& pTestCube : m_pCubeList)
+		Safe_Release(pTestCube);
+
+	m_pCubeList.clear();
+
+	m_NaviPosList.clear();
 }

@@ -42,7 +42,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	m_iNumVerticesX = m_iH.biWidth;
 	m_iNumVerticesZ = m_iH.biHeight;
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
-	m_pPos = new _float3[m_iNumVertices];
+	m_pPos = new _float4[m_iNumVertices];
 
 	m_pHeightPixel = new _ulong[m_iNumVertices];
 	ZeroMemory(m_pHeightPixel, sizeof(_ulong) * m_iNumVertices);
@@ -71,7 +71,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
 			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), static_cast<float>(m_pHeightPixel[iIndex] & 0x000000ff), static_cast<float>(i));
-			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
+			m_pPos[iIndex] = _float4(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z,1.f);
 			m_pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
@@ -204,7 +204,7 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 				_ulong fY = static_cast<_ulong>(m_pVertices[iIndex].vPosition.y);
 				m_pHeightPixel[iIndex] = D3DCOLOR_ARGB(fY, fY, fY, fY);
 			}
-			m_pPos[iIndex] = m_pVertices[iIndex].vPosition;
+			m_pPos[iIndex] = _float4(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z,1.f);
 		}
 	}
 

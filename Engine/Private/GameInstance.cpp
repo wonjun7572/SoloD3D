@@ -8,6 +8,7 @@
 #include "Timer_Manager.h"
 #include "Font_Manager.h"
 #include "Light_Manager.h"
+#include "State.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -183,6 +184,14 @@ _bool CGameInstance::Key_Up(_ubyte byKeyID, _bool* pData)
 		return false;
 
 	return m_pInputDev->Key_Up(byKeyID, pData);
+}
+
+_bool CGameInstance::Key_Pressing(_ubyte byKeyID)
+{
+	if (m_pInputDev == nullptr)
+		return false;
+
+	return m_pInputDev->Key_Pressing(byKeyID);
 }
 
 HRESULT CGameInstance::OpenLevel(_uint iLevelIndex, CLevel * pNewLevel)
@@ -426,12 +435,12 @@ HRESULT CGameInstance::Add_Fonts(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pFontMgr->Add_Fonts(pDevice, pContext, pFontTag, pFontFilePath);
 }
 
-HRESULT CGameInstance::Render_Font(const wstring & pFontTag, const wstring & pText, _fvector vPos, _fvector vColor)
+HRESULT CGameInstance::Render_Font(const _tchar* pFontTag, const _tchar* pText, const _float2& vPos, _float fRadian, _float2 vScale, _fvector vColor)
 {
 	if (nullptr == m_pFontMgr)
 		return E_FAIL;
 
-	return m_pFontMgr->Render_Font(pFontTag, pText, vPos, vColor);
+	return m_pFontMgr->Render_Font(pFontTag, pText, vPos, fRadian, vScale, vColor);
 }
 
 const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)

@@ -151,6 +151,9 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect">
       <UniqueIdentifier>{2372c1e6-fabf-48ba-9176-f8da4296959d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Instancing\Point">
+      <UniqueIdentifier>{fb3fe0d0-f690-4fe6-b983-4efc8f73cdf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -327,9 +330,6 @@
     <ClInclude Include="..\Public\Light_Manager.h">
       <Filter>Singleton\Light\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FSMComponent.h">
-      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Model.h">
       <Filter>Singleton\ComponentManager\Component\Model</Filter>
     </ClInclude>
@@ -368,6 +368,16 @@
     </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Rect_Instancing.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Point_Instancing.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\State.h">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Imgui_MapEditor.h" />
+    <ClInclude Include="..\Public\FSMComponent.h">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -518,9 +528,6 @@
     <ClCompile Include="..\Private\Light_Manager.cpp">
       <Filter>Singleton\Light\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FSMComponent.cpp">
-      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Model.cpp">
       <Filter>Singleton\ComponentManager\Component\Model</Filter>
     </ClCompile>
@@ -559,6 +566,16 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect_Instancing.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Point_Instancing.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\State.cpp">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Imgui_MapEditor.cpp" />
+    <ClCompile Include="..\Private\FSMComponent.cpp">
+      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

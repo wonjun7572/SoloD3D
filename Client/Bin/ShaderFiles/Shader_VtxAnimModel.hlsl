@@ -64,10 +64,20 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 
 	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
 
-	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	float			fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+	matrix			BoneMatrix = g_BoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+		g_BoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+		g_BoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+		g_BoneMatrices[In.vBlendIndex.w] * fWeightW;
+
+	vector		vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+	vector		vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+
+	vPosition = mul(vPosition, g_WorldMatrix);
 	vPosition = mul(vPosition, g_SocketMatrix);
 
-	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	vNormal = mul(vNormal, g_WorldMatrix);
 	vNormal = mul(vNormal, g_SocketMatrix);
 
 	Out.vPosition = mul(vPosition, matVP);

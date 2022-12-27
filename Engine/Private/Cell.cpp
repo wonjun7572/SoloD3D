@@ -30,30 +30,30 @@ HRESULT CCell::Init(const _float3 * pPoints, _int iIndex)
 
 _bool CCell::Compare_Points(const _float3& SourPoint, const _float3& DestPoint)
 {
-	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&SourPoint)))
+	if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&SourPoint), XMVectorSet(0.1f,0.1f,0.1f, 1.f)))
 	{
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 	}
 
-	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&SourPoint)))
+	if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&SourPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 	{
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 	}
 
-	if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&SourPoint)))
+	if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_C]), XMLoadFloat3(&SourPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 	{
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 
-		if (true == XMVector3Equal(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint)))
+		if (true == XMVector3NearEqual(XMLoadFloat3(&m_vPoints[POINT_B]), XMLoadFloat3(&DestPoint), XMVectorSet(0.1f, 0.1f, 0.1f, 1.f)))
 			return true;
 	}
 

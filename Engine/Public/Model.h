@@ -27,12 +27,14 @@ public:
 
 public:
 	void	Play_Animation(_double TimeDelta);
+	void	Play_AddtivieAnim(_double TimeDelta , _float fRatio);
+
+	void	Set_AdditiveAnimIndex(_uint iIndex) {m_iAdditiveAnimIndex = iIndex; }
 	
 	HRESULT Bind_Material(class CShader * pShader, _uint iMeshIndex, TextureType eType, const char* pConstantName);
 	HRESULT Render(class CShader* pShader, _uint iMeshIndex,  _uint iPassIndex = 0, const char* pBoneConstantName = nullptr);
 
-	void	Set_AnimationIndex(_uint iIndex);
-	void	Set_UpperAnimationIndex(_uint iUpperIndex, _uint iUnderIndex);
+	void	Set_AnimationIndex(_uint iIndex , _double time = 1.0);
 	
 	vector<const char*>&	Get_AnimationName() { return m_strAnimationName; }
 	_uint	Get_AnimationsNum() { return m_iNumAnimations; }
@@ -45,13 +47,20 @@ public:
 	HRESULT  Load_Animations(HANDLE hFile);
 
 	class CAnimation* FindAnim(const string& strAnim);
-	class CAnimation* Get_IndexAnim(_uint iIndex) { return m_Animations[iIndex]; }
-	class CAnimation* Get_CurAnim() { return m_Animations[m_iCurrentAnimIndex]; }
+
+	class CAnimation* Get_IndexAnim(_uint iIndex);
+
+	class CAnimation* Get_CurAnim();			
+
+	void	Set_BlendCurTime(_float BlendCurTime) { m_fBlendCurTime = BlendCurTime; }
+
+	void    Reset_AnimPlayTime(_uint iIndex);
 
 	_bool	Check_AnimationSet(const _float& fTime);
-	void	TurnOn_UpperAnim(_bool isUpper) { m_isUpper = isUpper; }
 
-	_float4				Get_MovePos(void) { return m_vMovePos; }
+	_float4	Get_MovePos(void) { return m_vMovePos; }
+
+	void	Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
 
 private:
 	TYPE									m_eType = TYPE_END;
@@ -67,14 +76,9 @@ private:
 	vector<class CBone*>					m_Bones;
 
 	_uint									m_iCurrentAnimIndex = 0;
-
-	_uint									m_iCurUpperAnimIndex = 0;
-	_uint									m_iCurUnderAnimIndex = 0;
-
 	_uint									m_iPreAnimIndex = 0;
 
-	_uint									m_iPreUpperAnimIndex = 0;
-	_uint									m_iPreUnderAnimIndex = 0;
+	_uint									m_iAdditiveAnimIndex = 0;
 
 	_uint									m_iNumAnimations = 0;
 	vector<class CAnimation*>				m_Animations;
@@ -87,13 +91,7 @@ private:
 	_tchar									m_FilePath[MAX_PATH];
 
 	_float									m_fBlendCurTime = 0.2f;
-
-	_float									m_fBlendCurUpperTime = 0.2f;
-	_float									m_fBlendCurUnderTime = 0.2f;
-
 	_float									m_fBlendDuration = 0.2f;
-
-	_bool									m_isUpper = false;
 
 	_float4									m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
 

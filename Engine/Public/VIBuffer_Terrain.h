@@ -12,7 +12,7 @@ protected:
 	virtual ~CVIBuffer_Terrain() = default;
 
 public:
-	const _float3*		Get_VtxPos() const { return m_pPos; }
+	const _float4*		Get_VtxPos() const { return m_pPos; }
 	_uint	Get_VtxCntX() const { return m_iNumVerticesX; }
 	_uint	Get_VtxCntZ() const { return m_iNumVerticesZ; }
 
@@ -34,7 +34,7 @@ private:
 	FACEINDICES32*  m_pIndices= nullptr;
 	_ulong*			m_pHeightPixel = nullptr;
 	_double			m_height = 0.0;
-	_float3*		m_pPos;
+	_float4*		m_pPos;
 	wstring			m_strFilePath;
 
 	BITMAPFILEHEADER	m_fH;

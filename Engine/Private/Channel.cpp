@@ -64,10 +64,10 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 		vPosition = XMVectorLerp(vSourPosition, vDestPosition, static_cast<_float>(Ratio));
 		vPosition = XMVectorSetW(vPosition, 1.f);
 
-		if (!strcmp("BN_Head", m_szName))
+		if (!strcmp("Bip01", m_szName))
 		{
 			XMStoreFloat4(&m_vMovePos, vPosition);
-			vPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			vPosition = XMVectorSet(0.f,0.f,XMVectorGetZ(vPosition),1.f);
 		}
 	}
 
@@ -136,17 +136,12 @@ void CChannel::Additive_TransformMatrix(_double PlayTime, _float fAdditiveRatio)
 	_vector vBaseScale, vBaseRot, vBasePos;
 	XMMatrixDecompose(&vBaseScale, &vBaseRot, &vBasePos, XMLoadFloat4x4(&m_pBone->Get_TransformMatrix()));
 
-	_vector			vScale;
 	_vector			vRotation;
-	_vector			vPosition;
 
-	/* 현재 재생된 시간이 마지막 키프레임시간보다 커지며.ㄴ */
+	
 	if (PlayTime >= m_KeyFrames.back().Time)
 	{
-		vScale = XMLoadFloat3(&m_KeyFrames.back().vScale);
 		vRotation = XMLoadFloat4(&m_KeyFrames.back().vRotation);
-		vPosition = XMLoadFloat3(&m_KeyFrames.back().vPosition);
-		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
 	else
 	{
@@ -158,29 +153,16 @@ void CChannel::Additive_TransformMatrix(_double PlayTime, _float fAdditiveRatio)
 		_double			Ratio = (PlayTime - m_KeyFrames[m_iCurrentKeyFrameIndex].Time) /
 			(m_KeyFrames[m_iCurrentKeyFrameIndex + 1].Time - m_KeyFrames[m_iCurrentKeyFrameIndex].Time);
 
-		_vector			vSourScale, vDestScale;
 		_vector			vSourRotation, vDestRotation;
-		_vector			vSourPosition, vDestPosition;
-
-		vSourScale = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex].vScale);
 		vSourRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex].vRotation);
-		vSourPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex].vPosition);
-
-		vDestScale = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vScale);
 		vDestRotation = XMLoadFloat4(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vRotation);
-		vDestPosition = XMLoadFloat3(&m_KeyFrames[m_iCurrentKeyFrameIndex + 1].vPosition);
-
-		vScale = XMVectorLerp(vSourScale, vDestScale, (float)Ratio);
 		vRotation = XMQuaternionSlerp(vSourRotation, vDestRotation, (float)Ratio);
-		vPosition = XMVectorLerp(vSourPosition, vDestPosition, (float)Ratio);
-		vPosition = XMVectorSetW(vPosition, 1.f);
 	}
-
 
 	vRotation = XMQuaternionSlerp(XMQuaternionIdentity(), vRotation, fAdditiveRatio);
 	vRotation = XMQuaternionMultiply(vBaseRot, vRotation);
 
-	_matrix TransformMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
+	_matrix TransformMatrix = XMMatrixAffineTransformation(vBaseScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vBasePos);
 
 	m_pBone->Set_TransformMatrix(TransformMatrix);
 }

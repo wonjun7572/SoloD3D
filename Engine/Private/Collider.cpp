@@ -385,6 +385,8 @@ HRESULT CCollider::Render()
 
 	m_pContext->IASetInputLayout(m_pInputLayout);
 
+	m_pContext->GSSetShader(nullptr,nullptr, 0);
+
 	m_pBatch->Begin();
 
 	switch (m_eType)

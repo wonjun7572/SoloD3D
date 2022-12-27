@@ -10,10 +10,9 @@
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Cylinder.h"
 #include "VIBuffer_Rect_Instancing.h"
+#include "VIBuffer_Point_Instancing.h"
 
 #include "Transform.h"
-
-#include "FSMComponent.h"
 
 #include "Model.h"
 #include "Collider.h"

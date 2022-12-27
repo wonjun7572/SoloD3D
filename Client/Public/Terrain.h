@@ -35,9 +35,15 @@ public:
 private:/* For. Imgui*/
 	_float4	PickingOnTerrain(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
 	_bool	PickingForFilter(const CVIBuffer_Terrain* pTerrainBufferCom, const CTransform* pTerrainTransformCom);
+	void	Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const class CVIBuffer_Terrain* pTerrainBufferCom, const class CTransform* pTerrainTransformCom);
 
 	HRESULT	Ready_FilterBuffer();
 	HRESULT Dynamic_FilterBuffer();
+
+	void	Dynamic_Navi();
+	void	Save_Navi();
+
+	void AdjustCellPoint();
 
 private:
 	CShader*					m_pShaderCom = nullptr;
@@ -71,6 +77,14 @@ private: /* For. Imgui*/
 	_uint			m_iFilterTexNum = 0;
 
 	_ulong*			m_pPixel = nullptr;
+
+	_bool			m_bNavi = false;
+
+	_uint				iA = 0;
+
+	_float3				m_vPoints[3];
+	list<CGameObject*>	m_pCubeList;
+	list<_float3>		m_NaviPosList;
 
 private:
 	HRESULT SetUp_Components();

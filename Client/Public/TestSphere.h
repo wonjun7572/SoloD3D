@@ -8,7 +8,6 @@ class CShader;
 class CRenderer;
 class CVIBuffer_Sphere;
 class CTexture;
-class CFSMComponent;
 END
 
 BEGIN(Client)
@@ -41,7 +40,6 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CVIBuffer_Sphere*		m_pVIBufferCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
-	CFSMComponent*			m_pFSMCom = nullptr;
 
 private:
 	HRESULT		SetUp_Components();

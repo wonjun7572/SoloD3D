@@ -1,6 +1,8 @@
 #include "..\public\Navigation.h"
 #include "Cell.h"
 #include "Shader.h"
+#include "PipeLine.h"
+#include "DebugDraw.h"
 
 CNavigation::CNavigation(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -38,7 +40,7 @@ HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 		if (0 == dwByte)
 			break;
 
-		CCell*		pCell = CCell::Create(m_pDevice, m_pContext, vPoints, (_int)m_Cells.size());
+	CCell*		pCell = CCell::Create(m_pDevice, m_pContext, vPoints, (_int)m_Cells.size());
 		if (nullptr == pCell)
 			return E_FAIL;
 
@@ -51,7 +53,6 @@ HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 		return E_FAIL;
 
 #ifdef _DEBUG
-
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECLARATION::Elements, VTXPOS_DECLARATION::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
@@ -78,8 +79,10 @@ _bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
 
 	/* 움직이고 난 결과위치가 쎌 안에 있다면.  */
 	if (true == m_Cells[m_NaviDesc.iCurrentIndex]->isIn(TargetPos, &iNeighborIndex))
+	{
 		return true; // 움직여. 
 					 /* 움직이고 난 결과위치가 이쎌을 벗어난다면. */
+	}
 	else
 	{
 		/* 나간방향으로 이웃이 있었다면ㄴ. */
@@ -114,13 +117,13 @@ HRESULT CNavigation::Render()
 
 	if (-1 == m_NaviDesc.iCurrentIndex)
 	{
-		fHeight = 0.0f;
+		fHeight = 0.1f;
 		HRESULT hr = m_pShader->Set_RawValue("g_fHeight", &fHeight, sizeof(_float));
 		m_pShader->Set_RawValue("g_vColor", &_float4(0.f, 1.f, 0.f, 1.f), sizeof(_float4));
 	}
 	else
 	{
-		fHeight = 0.1f;
+		fHeight = 0.2f;
 		HRESULT hr = m_pShader->Set_RawValue("g_fHeight", &fHeight, sizeof(_float));
 		m_pShader->Set_RawValue("g_vColor", &_float4(1.f, 0.f, 0.f, 1.f), sizeof(_float4));
 
@@ -164,6 +167,53 @@ HRESULT CNavigation::Ready_Neighbor()
 			}
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CNavigation::Update(const wstring pNavigationDataFilePath)
+{
+	DWORD	dwByte = 0;
+
+	HANDLE	hFile = CreateFile(pNavigationDataFilePath.c_str(),
+		GENERIC_READ,
+		0,
+		nullptr,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		0);
+
+	if (hFile == INVALID_HANDLE_VALUE)
+		return E_FAIL;
+
+	for (auto& iter : m_Cells)
+		Safe_Release(iter);
+
+	m_Cells.clear();
+
+	_float3		vPoints[CCell::POINT_END];
+
+	while (true)
+	{
+		for (_uint i = 0; i < 3; ++i)
+			ReadFile(hFile, &vPoints[i], sizeof(_float3), &dwByte, nullptr);
+
+		if (dwByte == 0)
+			break;
+
+		CCell*		pCell = CCell::Create(m_pDevice, m_pContext, vPoints, (_int)m_Cells.size());
+
+		if (pCell == nullptr)
+			return E_FAIL;
+
+		m_Cells.push_back(pCell);
+	}
+
+	CloseHandle(hFile);
+
+	if (FAILED(Ready_Neighbor()))
+		return E_FAIL;
+
 
 	return S_OK;
 }

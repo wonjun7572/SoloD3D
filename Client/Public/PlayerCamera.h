@@ -3,6 +3,10 @@
 #include "Client_Define.h"
 #include "Camera.h"
 
+BEGIN(Engine)
+class CTransform;
+END
+
 BEGIN(Client)
 
 class CPlayerCamera : public CCamera
@@ -19,6 +23,8 @@ public:
 	virtual void Late_Tick(_double TimeDelta)override;
 	virtual HRESULT Render() override;
 
+	void LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn);
+
 private:
 	void	Imgui_RenderProperty() override;
 
@@ -26,8 +32,6 @@ private:
 	void Mouse_Fix();
 	
 	bool m_bFix = true;
-
-	CGameObject* m_pTarget = nullptr;
 
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
 	_float4 m_vPlayerPos;

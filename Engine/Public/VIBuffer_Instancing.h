@@ -6,7 +6,7 @@ BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer_Instancing abstract : public CVIBuffer
 {
-public:
+protected:
 	CVIBuffer_Instancing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CVIBuffer_Instancing(const CVIBuffer_Instancing& rhs);
 	virtual ~CVIBuffer_Instancing() = default;
@@ -14,6 +14,7 @@ public:
 public:
 	virtual HRESULT Init_Prototype();
 	virtual HRESULT Init(void* pArg);
+	virtual HRESULT Tick(_double TimeDelta) = 0;
 	virtual HRESULT Render();
 
 protected:

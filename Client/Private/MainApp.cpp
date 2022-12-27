@@ -36,7 +36,7 @@ HRESULT CMainApp::Init()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Nexon"), TEXT("../Bin/Resources/Fonts/130.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/131.spritefont"))))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL_LOGO)))
@@ -50,6 +50,10 @@ void CMainApp::Tick(_double deltaTime)
 	if (m_pGameInstance == nullptr)
 		return;
 	
+#ifdef _DEBUG
+	m_TimeAcc += deltaTime;
+#endif 
+
 	m_pGameInstance->Tick_Engine(deltaTime);
 }
 
@@ -67,6 +71,23 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Render_Update_ImGui();
 
 	m_pGameInstance->RenderLevel();
+
+#ifdef _DEBUG
+
+	++m_iNumCallDraw;
+
+	if (m_TimeAcc >= 1.f)
+	{
+		wsprintf(m_szFPS, TEXT("¹è°íÆÄ : %d"), m_iNumCallDraw);
+
+
+		m_iNumCallDraw = 0;
+		m_TimeAcc = 0.f;
+	}
+
+	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));
+
+#endif
 
 	m_pGameInstance->Present();
 

@@ -23,6 +23,8 @@ public:
 
 public:
 	_bool isMove_OnNavigation(_fvector TargetPos);
+	
+	HRESULT Update(const wstring pNavigationDataFilePath);
 
 #ifdef _DEBUG
 public:

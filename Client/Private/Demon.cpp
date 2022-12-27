@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "..\Public\Demon.h"
 #include "GameInstance.h"
-#include "DemonFSM.h"
 #include "Weapon.h"
 #include "Animation.h"
+#include "Demon_State.h"
+
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -39,7 +40,9 @@ HRESULT CDemon::Init(void * pArg)
 
 	m_strObjName = L"Demon";
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(30.f, 0.f, 30.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(50.f, 0.f, 50.f, 1.f));
+
+	m_pDemon_State = CDemon_State::Create(this);
 
 	return S_OK;
 }
@@ -48,11 +51,12 @@ void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	//CollisionToPlayer(TimeDelta);
+	//if (!m_bDamaged_B && !m_bDamaged_F && !m_bHitDown)
+	//{
+	//	CollisionToPlayer(TimeDelta);
+	//}
 	//CollisionToWeapon(TimeDelta);
-
-	m_pFSM->Tick(TimeDelta);
-
+	//m_pState->Tick(TimeDelta);
 	m_pModelCom->Play_Animation(TimeDelta);
 }
 
@@ -84,17 +88,19 @@ HRESULT CDemon::Render()
 
 void CDemon::Imgui_RenderProperty()
 {
-	/*if (ImGui::CollapsingHeader("For.Animation"))
+	if (ImGui::CollapsingHeader("For.Animation"))
 	{
-		const char* combo_preview_value = m_pModelCom->Get_AnimationName()[m_iCurrentAnimIndex];
+		const char* combo_preview_value = m_pModelCom->Get_CurAnim()->Get_Name();
 
 		if (ImGui::BeginCombo("ANIM", combo_preview_value))
 		{
 			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
 			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
+				const bool is_selected = i;
 				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-					m_iCurrentAnimIndex = i;
+				{
+					m_pModelCom->Set_AnimationIndex(i);
+				}
 
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
@@ -103,85 +109,143 @@ void CDemon::Imgui_RenderProperty()
 		}
 
 		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
-	}*/
+		ImGui::Text(m_pModelCom->Get_CurAnim()->Get_Name());
+	}
 }
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
 {
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CPlayer*		pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
-	_vector			vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_vector			vPlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	//CPlayer*		pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+	//_vector			vTargetToDir = XMVector3Normalize(XMVectorSubtract(pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)));
+	//_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
+	//_float			fDot = XMVectorGetX(vDot);
 
-	_vector			V = XMVectorSubtract(vPos, vPlayerPos);
-	_vector			X = XMVector4Length(V);
-	_float			fDistanceToTarget = XMVectorGetX(X);
+	//if ((pPlayer->Get_State() == CPlayer::PLAYER_WALKF 
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_WALKB) 
+	//	&& fDot < 0 )
+	//{
+	//	m_bMove = false;
+	//	RELEASE_INSTANCE(CGameInstance);
+	//	return;
+	//}
 
-	if (fabs(fDistanceToTarget) < 3)
-	{
-		m_pTransformCom->LookAt(vPlayerPos);
-		m_bAttack = true;
-	}
-	else
-	{
-		CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-		CCollider*		pTargetCollider_AABB = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	//_vector			vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	//_vector			vPlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	//_vector			V = XMVectorSubtract(vPos, vPlayerPos);
+	//_vector			X = XMVector4Length(V);
+	//_float			fDistanceToTarget = XMVectorGetX(X);
 
-		if (nullptr == pTargetCollider)
-			return;
+	//if (fabs(fDistanceToTarget) < 3)
+	//{
+	//	m_bAttack1 = true;
+	//	m_bMove = false;
+	//}
+	//else
+	//{
+	//	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
 
-		if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
-		{
-			m_bRun = true;
-			m_pTransformCom->LookAt(vPlayerPos);
-			m_pTransformCom->Chase(vPlayerPos, TimeDelta);
-		}
-		else
-		{
-			m_bRun = false;
-		}
-		m_bAttack = false;
-	}
-	RELEASE_INSTANCE(CGameInstance);
+	//	if (nullptr == pTargetCollider)
+	//		return;
+
+	//	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
+	//	{
+	//		m_bAttack1 = false;
+	//		m_bAttack2 = false;
+	//		m_bMove = true;
+	//	}
+	//	else
+	//	{
+	//		m_bAttack1 = false;
+	//		m_bAttack2 = false;
+	//		m_bMove = false;
+	//	}
+	//}
+
+	//RELEASE_INSTANCE(CGameInstance);
 }
 
 void CDemon::CollisionToWeapon(_double TimeDelta)
 {
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	//CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+	//CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
 
-	_vector vTargetToDir = XMVector3Normalize(XMVectorSubtract(pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)));
-	
-	_vector vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
-	_float fDot = XMVectorGetX(vDot);
+	//_vector vTargetToDir = XMVector3Normalize(XMVectorSubtract(pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)));
 
-	/*if (pPlayer->Get_State() == CPlayer::ATTACK)
-	{
-		CCollider* pTargetCollider = static_cast<CWeapon*>(pPlayer->Get_PlayerParts()[0])->Get_Collider();
+	//_vector vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
+	//_float fDot = XMVectorGetX(vDot);
 
-		if (nullptr == pTargetCollider)
-			return;
+	//if (pPlayer->Get_State() == CPlayer::PLAYER_ATTACK1
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_ATTACK2
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_ATTACK3
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK01
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK02
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK03
+	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK04FIRE)
+	//{
+	//	CCollider* pTargetCollider = static_cast<CWeapon*>(pPlayer->Get_PlayerParts()[0])->Get_Collider();
 
-		if (m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider) == true)
-		{
-			if (fDot < 0)
-				m_eState = CDemon::PLAYER_BACK;
-			else
-				m_eState = CDemon::PLAYER_FRONT;
+	//	if (nullptr == pTargetCollider)
+	//		return;
 
-			m_bHit = true;
-		}
-	}*/
+	//	m_DamagedCoolTime += TimeDelta;
+	//	
+	//	if (m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider) == true)
+	//	{
+	//		if (pPlayer->Get_State() == CPlayer::PLAYER_SK01 
+	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK02
+	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK03
+	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK04FIRE)
+	//		{
+	//			m_bMove = false;
+	//			m_bAttack1 = false;
+	//			m_bAttack2 = false;
+	//			m_bDamaged_F = false;
+	//			m_bDamaged_B = false;
+	//			m_bHitDown = true;
+	//			m_DamagedCoolTime = 0.0;
+	//			RELEASE_INSTANCE(CGameInstance);
+	//			return;
+	//		}
+	//		else if (fDot < 0)
+	//		{
+	//			m_bMove = false;
+	//			m_bAttack1 = false;
+	//			m_bAttack2 = false;
+	//			m_bHitDown = false;
+	//			m_bDamaged_B = true;
+	//			RELEASE_INSTANCE(CGameInstance);
+	//			m_DamagedCoolTime = 0.0;
+	//			return;
+	//		}
+	//		else
+	//		{
+	//			m_bMove = false;
+	//			m_bAttack1 = false;
+	//			m_bAttack2 = false;
+	//			m_bHitDown = false;
+	//			m_bDamaged_F = true;
+	//			RELEASE_INSTANCE(CGameInstance);
+	//			m_DamagedCoolTime = 0.0;
+	//			return;
+	//		}
+	//	}
+	//}
 
-	if (m_pModelCom->Get_CurAnim()->Get_IsFinish() == true)
-	{
-		m_bHit = false;
-	}
+	//if (m_bDamaged_F || m_bDamaged_B || m_bHitDown)
+	//	m_DamagedCoolTime += TimeDelta;
 
-	RELEASE_INSTANCE(CGameInstance);
+	//if (m_DamagedCoolTime > 5.0)
+	//{
+	//	m_bDamaged_B = false;
+	//	m_bDamaged_F = false;
+	//	m_bHitDown = false;
+	//	m_DamagedCoolTime = 0.0;
+	//}
+
+	//RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CDemon::SetUp_Components()
@@ -231,9 +295,10 @@ HRESULT CDemon::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 
-	m_pFSM = CDemonFSM::Create(this);
-	m_Components.insert({ L"FSM", m_pFSM });
-	Safe_AddRef(m_pFSM);
+	/* For.Com_State */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_STATE"), TEXT("Com_State"),
+		(CComponent**)&m_pState)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -302,5 +367,6 @@ CGameObject * CDemon::Clone(void * pArg)
 void CDemon::Free()
 {
 	__super::Free();
-	Safe_Release(m_pFSM);
+	Safe_Release(m_pState);
+	Safe_Release(m_pDemon_State);
 }

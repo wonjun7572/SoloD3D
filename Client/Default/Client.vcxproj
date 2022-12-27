@@ -175,13 +175,18 @@
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.h" />
     <ClInclude Include="..\Public\BackGround.h" />
+    <ClInclude Include="..\public\Belt.h" />
+    <ClInclude Include="..\public\Boots.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\Demon.h" />
-    <ClInclude Include="..\public\DemonFSM.h" />
+    <ClInclude Include="..\public\Demon_State.h" />
+    <ClInclude Include="..\public\Effect_Point.h" />
     <ClInclude Include="..\public\Effect_Rect.h" />
     <ClInclude Include="..\public\EmptyGameObject.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
+    <ClInclude Include="..\public\Glove.h" />
+    <ClInclude Include="..\public\Helmet.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
     <ClInclude Include="..\Public\Level_ChapTwo.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -189,17 +194,21 @@
     <ClInclude Include="..\public\Level_Tool.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\LoadingBackGround.h" />
+    <ClInclude Include="..\public\Lower.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Ocean.h" />
+    <ClInclude Include="..\public\Parts.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerCamera.h" />
-    <ClInclude Include="..\public\PlayerFSM.h" />
+    <ClInclude Include="..\public\Player_State.h" />
+    <ClInclude Include="..\public\Shoulder.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
+    <ClInclude Include="..\public\Upper.h" />
     <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -208,12 +217,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\BackGround.cpp" />
+    <ClCompile Include="..\private\Belt.cpp" />
+    <ClCompile Include="..\private\Boots.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
-    <ClCompile Include="..\private\DemonFSM.cpp" />
+    <ClCompile Include="..\private\Demon_State.cpp" />
+    <ClCompile Include="..\private\Effect_Point.cpp" />
     <ClCompile Include="..\private\Effect_Rect.cpp" />
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
+    <ClCompile Include="..\private\Glove.cpp" />
+    <ClCompile Include="..\private\Helmet.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
     <ClCompile Include="..\Private\Level_ChapTwo.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -221,17 +235,21 @@
     <ClCompile Include="..\private\Level_Tool.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingBackGround.cpp" />
+    <ClCompile Include="..\private\Lower.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
+    <ClCompile Include="..\private\Parts.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerCamera.cpp" />
-    <ClCompile Include="..\private\PlayerFSM.cpp" />
+    <ClCompile Include="..\private\Player_State.cpp" />
+    <ClCompile Include="..\private\Shoulder.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
+    <ClCompile Include="..\private\Upper.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -253,6 +271,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstancing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstancing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>
