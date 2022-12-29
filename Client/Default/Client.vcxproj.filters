@@ -115,6 +115,9 @@
     <Filter Include="GameObject\Monster\SkeletonWarrior">
       <UniqueIdentifier>{881e9a5e-02c4-4a3f-9cdd-62dfdc608e8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Env\Map">
+      <UniqueIdentifier>{e0ffa2f9-d816-4395-b2ff-34cd4b820b79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -235,6 +238,9 @@
     <ClInclude Include="..\public\SkeletonWarrior.h">
       <Filter>GameObject\Monster\SkeletonWarrior</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Anor.h">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -342,6 +348,9 @@
     </ClCompile>
     <ClCompile Include="..\private\SkeletonWarrior.cpp">
       <Filter>GameObject\Monster\SkeletonWarrior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Anor.cpp">
+      <Filter>GameObject\Env\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

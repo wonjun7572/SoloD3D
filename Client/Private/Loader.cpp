@@ -376,10 +376,8 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For.Map1 */
 		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Map1"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Map/Map.model"), PivotMatrix))))
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Anor_Londo/Anor.model"), PivotMatrix))))
 			return E_FAIL;
-
-
 	}
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
 
