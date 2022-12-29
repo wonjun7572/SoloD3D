@@ -39,6 +39,7 @@ public:
 
 public:
 	_float3 Get_CollisionCenter();
+	_float Get_SphereRadius();
 
 public:
 	void Update(_fmatrix TransformMatrix);
@@ -49,17 +50,19 @@ public:
 	_bool Collision_OBB(class CCollider* pTargetCollider);
 
 public: /* For. Imgui*/
-	void	FixedSize();
+	void	FixedSphereSize(const _float& fX, const _float& fY, const _float& fZ, const _float& fSize);
+
+	void	FixedSizeForImgui(_uint iIndex);
 
 private:
 	_float	m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
-	_float  m_CX = 0.f, m_CY = 0.f, m_CZ = 0.f;
+	_float  m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;
 
 	_float	m_OBBX = 0.f, m_OBBY = 0.f, m_OBBZ = 0.f;
-	_float  m_OBBCX = 0.f, m_OBBCY = 0.f, m_OBBCZ = 0.f;
+	_float  m_OBBCX = 1.f, m_OBBCY = 1.f, m_OBBCZ = 1.f;
 
 	_float	m_SphereX = 0.f, m_SphereY = 0.f, m_SphereZ = 0.f;
-	_float  m_fRadius = 0.f;
+	_float  m_fRadius = 1.f;
 
 #ifdef _DEBUG
 public:
@@ -84,7 +87,7 @@ private:
 	_float4												m_vColor;
 #endif // _DEBUG
 
-private:
+public:
 	_matrix Remove_Rotation(_fmatrix TransformMatrix);
 	_float3 Compute_Min();
 	_float3 Compute_Max();

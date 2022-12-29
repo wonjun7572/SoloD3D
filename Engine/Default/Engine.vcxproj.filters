@@ -372,9 +372,6 @@
     <ClInclude Include="..\public\VIBuffer_Point_Instancing.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Point</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\State.h">
-      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Imgui_MapEditor.h" />
     <ClInclude Include="..\Public\FSMComponent.h">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
@@ -569,9 +566,6 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Point_Instancing.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing\Point</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\State.cpp">
-      <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\Private\FSMComponent.cpp">

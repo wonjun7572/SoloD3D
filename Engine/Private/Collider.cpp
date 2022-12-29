@@ -110,6 +110,14 @@ _float3 CCollider::Get_CollisionCenter()
 	return _float3();
 }
 
+_float CCollider::Get_SphereRadius()
+{
+	if (m_pSphere == nullptr)
+		return 0.f;
+
+	return m_pSphere->Radius;
+}
+
 void CCollider::Update(_fmatrix TransformMatrix)
 {
 	switch (m_eType)
@@ -284,86 +292,105 @@ _bool CCollider::Collision_OBB(CCollider * pTargetCollider)
 	return m_isColl;
 }
 
-void CCollider::FixedSize()
+void CCollider::FixedSphereSize(const _float& fX, const _float& fY, const _float& fZ, const _float& fSize)
 {
-	if (ImGui::CollapsingHeader("AABB"))
+	if (m_pSphere != nullptr)
 	{
-		if (m_pAABB != nullptr)
+		m_pSphere_Original->Center.x = fX;
+		m_pSphere_Original->Center.y = fY;
+		m_pSphere_Original->Center.z = fZ;
+		m_pSphere_Original->Radius = fSize;
+	}
+}
+
+void CCollider::FixedSizeForImgui(_uint iIndex)
+{
+	if (iIndex == 0)
+	{
+		if (ImGui::CollapsingHeader("AABB"))
 		{
-			ImGui::DragFloat("X", &m_X, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("Y", &m_Y, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("Z", &m_Z, 0.01f, -50.f, 50.f);
+			if (m_pAABB != nullptr)
+			{
+				ImGui::DragFloat("X", &m_X, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("Y", &m_Y, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("Z", &m_Z, 0.01f, -50.f, 50.f);
 
-			ImGui::DragFloat("CX", &m_CX, 0.01f, 0.f, 50.f);
-			ImGui::DragFloat("CY", &m_CY, 0.01f, 0.f, 50.f);
-			ImGui::DragFloat("CZ", &m_CZ, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("CX", &m_CX, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("CY", &m_CY, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("CZ", &m_CZ, 0.01f, 0.f, 50.f);
 
-			m_pAABB_Original->Center.x = m_X;
-			m_pAABB_Original->Center.y = m_Y;
-			m_pAABB_Original->Center.z = m_Z;
-			m_pAABB_Original->Extents.x = m_CX;
-			m_pAABB_Original->Extents.y = m_CY;
-			m_pAABB_Original->Extents.z = m_CZ;
+				m_pAABB_Original->Center.x = m_X;
+				m_pAABB_Original->Center.y = m_Y;
+				m_pAABB_Original->Center.z = m_Z;
+				m_pAABB_Original->Extents.x = m_CX;
+				m_pAABB_Original->Extents.y = m_CY;
+				m_pAABB_Original->Extents.z = m_CZ;
 
-			ImGui::Text("X: %f", m_pAABB_Original->Center.x); ImGui::SameLine();
-			ImGui::Text("Y: %f", m_pAABB_Original->Center.y); ImGui::SameLine();
-			ImGui::Text("Z: %f", m_pAABB_Original->Center.z);
-			ImGui::Text("CX: %f", m_pAABB_Original->Extents.x); ImGui::SameLine();
-			ImGui::Text("CY: %f", m_pAABB_Original->Extents.y); ImGui::SameLine();
-			ImGui::Text("CZ: %f", m_pAABB_Original->Extents.z);
+				ImGui::Text("X: %f", m_pAABB_Original->Center.x); ImGui::SameLine();
+				ImGui::Text("Y: %f", m_pAABB_Original->Center.y); ImGui::SameLine();
+				ImGui::Text("Z: %f", m_pAABB_Original->Center.z);
+				ImGui::Text("CX: %f", m_pAABB_Original->Extents.x); ImGui::SameLine();
+				ImGui::Text("CY: %f", m_pAABB_Original->Extents.y); ImGui::SameLine();
+				ImGui::Text("CZ: %f", m_pAABB_Original->Extents.z);
+			}
 		}
 	}
 
-	if (ImGui::CollapsingHeader("OBB"))
+	if (iIndex == 1)
 	{
-		if (m_pOBB != nullptr)
+		if (ImGui::CollapsingHeader("Sphere"))
 		{
-			ImGui::DragFloat("OBB_X", &m_OBBX, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("OBB_Y", &m_OBBY, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("OBB_Z", &m_OBBZ, 0.01f, -50.f, 50.f);
+			if (m_pSphere != nullptr)
+			{
+				ImGui::DragFloat("Sphere_X", &m_SphereX, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("Sphere_Y", &m_SphereY, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("Sphere_Z", &m_SphereZ, 0.01f, -50.f, 50.f);
 
-			ImGui::DragFloat("OBB_CX", &m_OBBCX, 0.01f, 0.f, 50.f);
-			ImGui::DragFloat("OBB_CY", &m_OBBCY, 0.01f, 0.f, 50.f);
-			ImGui::DragFloat("OBB_CZ", &m_OBBCZ, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("Sphere_CX", &m_fRadius, 0.01f, 0.f, 50.f);
 
-			m_pOBB_Original->Center.x = m_OBBX;
-			m_pOBB_Original->Center.y = m_OBBY;
-			m_pOBB_Original->Center.z = m_OBBZ;
-			m_pOBB_Original->Extents.x = m_OBBCX;
-			m_pOBB_Original->Extents.y = m_OBBCY;
-			m_pOBB_Original->Extents.z = m_OBBCZ;
+				m_pSphere_Original->Center.x = m_SphereX;
+				m_pSphere_Original->Center.y = m_SphereY;
+				m_pSphere_Original->Center.z = m_SphereZ;
+				m_pSphere_Original->Radius = m_fRadius;
 
-			ImGui::Text("OBB_X: %f", m_pOBB_Original->Center.x); ImGui::SameLine();
-			ImGui::Text("OBB_Y: %f", m_pOBB_Original->Center.y); ImGui::SameLine();
-			ImGui::Text("OBB_Z: %f", m_pOBB_Original->Center.z);
-			ImGui::Text("OBB_CX: %f", m_pOBB_Original->Extents.x); ImGui::SameLine();
-			ImGui::Text("OBB_CY: %f", m_pOBB_Original->Extents.y); ImGui::SameLine();
-			ImGui::Text("OBB_CZ: %f", m_pOBB_Original->Extents.z);
+				ImGui::Text("Sphere_X: %f", m_pSphere_Original->Center.x); ImGui::SameLine();
+				ImGui::Text("Sphere_Y: %f", m_pSphere_Original->Center.y); ImGui::SameLine();
+				ImGui::Text("Sphere_Z: %f", m_pSphere_Original->Center.z);
+				ImGui::Text("Sphere_Raduis: %f", m_pSphere_Original->Radius);
+			}
 		}
 	}
 
-	if (ImGui::CollapsingHeader("Sphere"))
+	if (iIndex == 2)
 	{
-		if (m_pSphere != nullptr)
+		if (ImGui::CollapsingHeader("OBB"))
 		{
-			ImGui::DragFloat("Sphere_X", &m_SphereX, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("Sphere_Y", &m_SphereY, 0.01f, -50.f, 50.f);
-			ImGui::DragFloat("Sphere_Z", &m_SphereZ, 0.01f, -50.f, 50.f);
+			if (m_pOBB != nullptr)
+			{
+				ImGui::DragFloat("OBB_X", &m_OBBX, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("OBB_Y", &m_OBBY, 0.01f, -50.f, 50.f);
+				ImGui::DragFloat("OBB_Z", &m_OBBZ, 0.01f, -50.f, 50.f);
 
-			ImGui::DragFloat("Sphere_CX", &m_fRadius, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("OBB_CX", &m_OBBCX, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("OBB_CY", &m_OBBCY, 0.01f, 0.f, 50.f);
+				ImGui::DragFloat("OBB_CZ", &m_OBBCZ, 0.01f, 0.f, 50.f);
 
-			m_pSphere_Original->Center.x = m_SphereX;
-			m_pSphere_Original->Center.y = m_SphereY;
-			m_pSphere_Original->Center.z = m_SphereZ;
-			m_pSphere_Original->Radius = m_fRadius;
+				m_pOBB_Original->Center.x = m_OBBX;
+				m_pOBB_Original->Center.y = m_OBBY;
+				m_pOBB_Original->Center.z = m_OBBZ;
+				m_pOBB_Original->Extents.x = m_OBBCX;
+				m_pOBB_Original->Extents.y = m_OBBCY;
+				m_pOBB_Original->Extents.z = m_OBBCZ;
 
-			ImGui::Text("Sphere_X: %f", m_pSphere_Original->Center.x); ImGui::SameLine();
-			ImGui::Text("Sphere_Y: %f", m_pSphere_Original->Center.y); ImGui::SameLine();
-			ImGui::Text("Sphere_Z: %f", m_pSphere_Original->Center.z);
-			ImGui::Text("Sphere_Raduis: %f", m_pSphere_Original->Radius); 
+				ImGui::Text("OBB_X: %f", m_pOBB_Original->Center.x); ImGui::SameLine();
+				ImGui::Text("OBB_Y: %f", m_pOBB_Original->Center.y); ImGui::SameLine();
+				ImGui::Text("OBB_Z: %f", m_pOBB_Original->Center.z);
+				ImGui::Text("OBB_CX: %f", m_pOBB_Original->Extents.x); ImGui::SameLine();
+				ImGui::Text("OBB_CY: %f", m_pOBB_Original->Extents.y); ImGui::SameLine();
+				ImGui::Text("OBB_CZ: %f", m_pOBB_Original->Extents.z);
+			}
 		}
 	}
-
 }
 
 #ifdef _DEBUG

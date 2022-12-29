@@ -8,7 +8,6 @@
 #include "Timer_Manager.h"
 #include "Font_Manager.h"
 #include "Light_Manager.h"
-#include "State.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -271,6 +270,11 @@ CGameObject * CGameInstance::Find_GameObject(_uint iLevelIndex, const wstring & 
 	return m_pObjectMgr->Get_GameObject(iLevelIndex, pLayerTag, strObjName);
 }
 
+const list<CGameObject*>& CGameInstance::Find_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
+{
+	return m_pObjectMgr->Get_LayerList(iLevelIndex, pLayerTag);
+}
+
 void CGameInstance::SaveData(_uint iLevel, const wstring& strDirectory)
 {
 	if (nullptr == m_pObjectMgr)
@@ -287,12 +291,20 @@ void CGameInstance::LoadData(_uint iLevel, const wstring& strDirectory)
 	m_pObjectMgr->LoadData(iLevel, strDirectory);
 }
 
-CLayer * CGameInstance::Find_Layer(_uint iLevelIndex, const wstring & pLayerTag)
+void CGameInstance::SaveMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory)
 {
 	if (nullptr == m_pObjectMgr)
-		return  nullptr;
+		return;
 
-	return m_pObjectMgr->Find_Layer(iLevelIndex, pLayerTag);
+	m_pObjectMgr->SaveMapObjectData(iLevel, pLayerTag, strDirectory);
+}
+
+void CGameInstance::LoadMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory)
+{
+	if (nullptr == m_pObjectMgr)
+		return;
+
+	m_pObjectMgr->LoadMapObjectData(iLevel, pLayerTag, strDirectory);
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, CComponent * pPrototype)
@@ -317,6 +329,14 @@ void CGameInstance::Imgui_ComponentViewer(_uint iLevel, const _tchar *& szSelect
 		return;
 
 	m_pComponetMgr->Imgui_ComponentViewer(iLevel, szSelectedProto);
+}
+
+void CGameInstance::Imgui_ModelComponetViewer(_uint iLevel, OUT const _tchar *& szSelectedProto)
+{
+	if (m_pComponetMgr == nullptr)
+		return;
+
+	m_pComponetMgr->Imgui_ModelComponetViewer(iLevel, szSelectedProto);
 }
 
 void CGameInstance::Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName)

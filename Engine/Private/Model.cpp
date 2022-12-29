@@ -135,8 +135,8 @@ void CModel::Play_Animation(_double TimeDelta)
 				pBone->Compute_CombindTransformationMatrix();
 		}
 
-		m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
-		m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
+		//m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+		//m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
 }
 
 void CModel::Play_AddtivieAnim(_double TimeDelta, _float fRatio)
@@ -152,8 +152,8 @@ void CModel::Play_AddtivieAnim(_double TimeDelta, _float fRatio)
 			pBone->Compute_CombindTransformationMatrix();
 	}
 
-	m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
-	m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
+	//m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
+	//m_vMovePos = m_Animations[m_iCurrentAnimIndex]->Get_MovePos();
 }
 
 void CModel::Set_AnimationIndex(_uint iIndex , _double time)

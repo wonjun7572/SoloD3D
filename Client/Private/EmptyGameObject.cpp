@@ -88,7 +88,7 @@ void CEmptyGameObject::Imgui_RenderProperty()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	static const _tchar* szModelName = L"";
-	pGameInstance->Imgui_ComponentViewer(LEVEL_CHAP1, szModelName);
+	pGameInstance->Imgui_ModelComponetViewer(LEVEL_CHAP1, szModelName);
 	
 	ImGui::NewLine();
 
@@ -188,7 +188,7 @@ CGameObject * CEmptyGameObject::Clone(void * pArg)
 void CEmptyGameObject::Free()
 {
 	__super::Free();
-
+	Safe_Delete_Array(m_szModelTag);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

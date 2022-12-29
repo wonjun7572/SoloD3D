@@ -42,7 +42,7 @@ HRESULT CPlayerCamera::Init(void * pArg)
 		CameraDesc.fNear = 0.02f;
 		CameraDesc.fFar = 500.f;
 
-		CameraDesc.TransformDesc.fSpeedPerSec = 2.f;
+		CameraDesc.TransformDesc.fSpeedPerSec = 7.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
 
@@ -66,8 +66,6 @@ void CPlayerCamera::Tick(_double TimeDelta)
 
 	if(m_bFix)
 		Mouse_Fix();
-
-
 	
 	Safe_Release(pGameInstance);
 }
@@ -168,6 +166,48 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			m_fCamY = 0.f;
 		}
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CPlayerCamera::DynamicCamera(_double TimeDelta)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Get_DIKeyState(DIK_W))
+	{
+		m_pTransformCom->Go_Straight(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_S))
+	{
+		m_pTransformCom->Go_Backward(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_A))
+	{
+		m_pTransformCom->Go_Left(TimeDelta);
+	}
+
+	if (pGameInstance->Get_DIKeyState(DIK_D))
+	{
+		m_pTransformCom->Go_Right(TimeDelta);
+	}
+
+	_long			MouseMove = 0;
+
+	if (m_bFix)
+	{
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * 0.1f);
+		}
+
+		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * 0.1f);
+		}
 	}
 
 	RELEASE_INSTANCE(CGameInstance);

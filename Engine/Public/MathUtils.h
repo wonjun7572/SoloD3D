@@ -215,6 +215,7 @@ public:
 	static XMFLOAT4 MulNum_Float4(const float& f1, const XMFLOAT4& v1);
 	static XMFLOAT3 MulNum_Float3(const float& f1, const XMFLOAT3& v1);
 
+	static float	GetHeightFromPoints(const XMFLOAT3& vPosition, const XMFLOAT3& vPointA, const XMFLOAT3& vPointB, const XMFLOAT3& vPointC);
 #pragma endregion
 
 };

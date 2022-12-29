@@ -112,6 +112,9 @@
     <Filter Include="GameObject\Player\Parts\Helmet">
       <UniqueIdentifier>{654188f5-d93e-483e-925c-0a47d3f6ba2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Monster\SkeletonWarrior">
+      <UniqueIdentifier>{881e9a5e-02c4-4a3f-9cdd-62dfdc608e8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -199,9 +202,6 @@
     <ClInclude Include="..\public\Effect_Rect.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Demon.h">
-      <Filter>GameObject\Monster\Demon</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect_Point.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
@@ -229,11 +229,11 @@
     <ClInclude Include="..\public\Helmet.h">
       <Filter>GameObject\Player\Parts\Helmet</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Player_State.h">
-      <Filter>GameObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Demon_State.h">
+    <ClInclude Include="..\public\Demon.h">
       <Filter>GameObject\Monster\Demon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SkeletonWarrior.h">
+      <Filter>GameObject\Monster\SkeletonWarrior</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -310,9 +310,6 @@
     <ClCompile Include="..\private\Effect_Rect.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Demon.cpp">
-      <Filter>GameObject\Monster\Demon</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect_Point.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
@@ -340,11 +337,11 @@
     <ClCompile Include="..\private\Helmet.cpp">
       <Filter>GameObject\Player\Parts\Helmet</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Demon_State.cpp">
+    <ClCompile Include="..\private\Demon.cpp">
       <Filter>GameObject\Monster\Demon</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Player_State.cpp">
-      <Filter>GameObject\Player</Filter>
+    <ClCompile Include="..\private\SkeletonWarrior.cpp">
+      <Filter>GameObject\Monster\SkeletonWarrior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

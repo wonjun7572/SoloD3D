@@ -309,6 +309,12 @@ _bool CTestCube::Peeking()
 	return false;
 }
 
+void CTestCube::Imgui_Transform(OUT _float3* vPos)
+{
+	m_pTransformCom->Imgui_RenderProperty();
+	XMStoreFloat3(vPos,m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+}
+
 CTestCube * CTestCube::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CTestCube*		pInstance = new CTestCube(pDevice, pContext);

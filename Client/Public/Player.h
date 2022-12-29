@@ -2,7 +2,6 @@
 
 #include "Client_Define.h"
 #include "GameObject.h"
-#include "State.h"
 
 BEGIN(Engine)
 class CModel;
@@ -81,7 +80,6 @@ private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& rhs);
 	virtual ~CPlayer() = default;
-	friend class CPlayer_State;
 
 public:
 	virtual HRESULT Init_Prototype() override;
@@ -92,28 +90,26 @@ public:
 
 	CModel*					Get_ModelCom() { return m_pModelCom; }
 	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
+	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
 
 	void    SetUp_FSM();
-
-	void	MoveToAnim(_double TimeDelta);
+	//void	MoveToAnim(_double TimeDelta);
 	void	Movement(_double TimeDelta);
 	void	AdditiveAnim(_double TimeDelta);
 	void	LinkObject(_double TimeDelta);
-	void	Set_CamTurn(_bool isTurn) { m_bCamTurn = false; }
+
+	void	Reset_Anim(ANIMATION eAnim);
+	void	Set_Anim(ANIMATION eAnim);
 
 private:
-	void Imgui_RenderProperty() override;
+	void	Imgui_RenderProperty() override;
 
 private:
 	CModel*					m_pModelCom = nullptr;
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
-	
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
-
-public:
-	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
 
 private:
 	vector<CGameObject*>	m_PlayerParts;
@@ -126,18 +122,39 @@ public:
 	void					Walk_Tick(_double TImeDelat);
 	void					Run_Tick(_double TimeDelta);
 
+public:
+	CCollider*				Get_WeaponCollider();
+
 private:
 	_bool					m_bCamTurn = false;
 
 	_float					m_fVelocity = 1.f;
-	_float4					m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+	/* 로컬 애니메이션 움직임때문에 넣었으나 현재 그냥 조종해주는것이 더 낫다고 판단 */
+	//_float4					m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+
+	/* 피격을 위해서 */
+public:
+	void					BackDamagedToMonster();
+	void					FrontDamagedToMonster();
+
+	/* 타격을 위해서*/
+public:
+	void					MonsterNormalAttack(_bool bAttack);
+	
+	void					MonsterSkill02(_bool bAttack);
+	void					MonsterSkill04(_bool bAttack);
 
 private:
 	CFSMComponent*			m_pFSM = nullptr;
 	PLAYER_DIRECTION		m_eState = PLAYER_FM;
+	
+	/* 애니메이션 시간 체크를 위한 함수*/
 	_bool					AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
+	_bool					AnimIntervalChecker(ANIMATION eAnim, _double StartRate,	_double FinishRate);
 	void					AnimEditPlayTime(ANIMATION eAnim, _double PlayTime);
+	/*******************************/
 
+	/* FSM을 위한 변수들 */
 	_bool					m_bMove = true;
 	_bool					m_bRunning = false;
 	_bool					m_bWalking = false;
@@ -155,10 +172,17 @@ private:
 	_bool					m_bSK03 = false;
 	_bool					m_bSK04_Charging = false;
 
-	_bool					m_bDamage = false;
-
 	_bool					m_bV_DEF = false;
-	
+	/*******************/
+
+	/*피격을 위한 변수*/
+	_bool					m_bFrontDamagedToMonster = false;
+	_bool					m_bFrontDamage = false;
+
+	_bool					m_bBackDamagedToMonster = false;
+	_bool					m_bBackDamaged = false;
+	/****************/
+
 	_bool					CheckFinish_Attack1();
 	_bool					CheckFinish_Attack2();
 	_bool					CheckFinish_Attack3();
@@ -170,6 +194,16 @@ private:
 	_bool					CheckFinish_Skill4();
 
 	_bool					CheckFinish_V_DEF();
+	
+	_bool					m_bCamChange = false;
+
+	/* 체력 및 공격력 세팅 값*/
+
+	_int	m_iHp = 0;
+	_int	m_iAttack = 0;
+	_int	m_iDefence = 0;
+
+	/********************/
 
 private:
 	HRESULT SetUp_Parts();

@@ -475,6 +475,22 @@ XMFLOAT3 CMathUtils::MulNum_Float3(const float & f1, const XMFLOAT3 & v1)
 	return XMFLOAT3(f1 * v1.x, f1* v1.y, f1*v1.z);
 }
 
+float CMathUtils::GetHeightFromPoints(const XMFLOAT3& vPosition, const XMFLOAT3& vPointA, const XMFLOAT3& vPointB, const XMFLOAT3& vPointC)
+{
+	_float4 vPlane;
+	XMStoreFloat4(&vPlane, XMPlaneFromPoints(XMLoadFloat3(&vPointA), XMLoadFloat3(&vPointB), XMLoadFloat3(&vPointC)));
+
+	float x = vPosition.x;
+	float y = vPosition.y;
+	float z = vPosition.z;
+	float a = vPlane.x;
+	float b = vPlane.y;
+	float c = vPlane.z;
+	float d = vPlane.w;
+
+	return -(a*x + c*z + d) / b;
+}
+
 XMFLOAT4X4 CMathUtils::Add_Matrix(const XMFLOAT4X4 & M1, const XMFLOAT4X4 & M2)
 {
 	XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));

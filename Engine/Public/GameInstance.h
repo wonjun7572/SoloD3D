@@ -52,14 +52,17 @@ public: /* For.Object_Manager */
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 	class	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	class	CGameObject* Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName);
+	const class	list<CGameObject*>& Find_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
 	void	SaveData(_uint iLevel,const wstring& strDirectory);
 	void	LoadData(_uint iLevel, const wstring& strDirectory);
-	class   CLayer*	Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
+	void	SaveMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory);
+	void	LoadMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& pPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void* pArg = nullptr);
 	void	Imgui_ComponentViewer(_uint iLevel, const _tchar*& szSelectedProto);
+	void	Imgui_ModelComponetViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
 	void	Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName);
 
 public: // for imgui manager

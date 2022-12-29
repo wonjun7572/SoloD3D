@@ -25,8 +25,10 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
-
+	
 	_bool	Peeking();
+
+	void	Imgui_Transform(OUT _float3* vPos);
 
 private:
 	CShader*				m_pShaderCom = nullptr;
@@ -36,6 +38,8 @@ private:
 
 	double					m_fTimeDelta = 0;
 
+	_float					m_Y = 0.f;
+	
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

@@ -75,8 +75,8 @@ public:
 	void Go_Down(_double TimeDelta);
 
 	_bool Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight);
-
-	// Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	// TODO : Jump 수정 & SlidingVector
+	
 	void Turn(_fvector vAxis, _double TimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
 
@@ -85,10 +85,14 @@ public:
 	void LookAt(_fvector vTargetPos);
 
 	/* 추적한다 .*/
-	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f);
+	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f, class CNavigation* pNaviCom = nullptr);
+
+	void ChaseAndLookAt(_fvector vTargetPos, _double TimeDelta, _float fLimit = 0.1f, class CNavigation* pNaviCom = nullptr);
 
 	void SetWorldMatrix(_float4x4 matrix) { m_WorldMatrix = matrix; }
 	void SetWorldMatrix(_fmatrix matrix) { XMStoreFloat4x4(&m_WorldMatrix, matrix); }
+
+	void Set_Height(_float Ypos);
 
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShaderCom, const char* pConstantName);

@@ -22,9 +22,16 @@ public:
 	virtual HRESULT Init(void* pArg) override;
 
 public:
-	_bool isMove_OnNavigation(_fvector TargetPos);
-	
+	_bool isMove_OnNavigation(_fvector TargetPos, OUT _float4* vOldPos );
+
 	HRESULT Update(const wstring pNavigationDataFilePath);
+
+	_bool Set_CurreuntIndex(_fvector TargetPos);
+
+	void DeleteRecentCell();
+	
+	_bool isHeighit_OnNavigation(_fvector TargetPos, _float* yPos);
+
 
 #ifdef _DEBUG
 public:

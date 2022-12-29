@@ -139,6 +139,8 @@ void CTerrain::Save_Navi()
 	for (auto& iter : m_NaviPosList)
 		WriteFile(hFile, &iter, sizeof(_float3), &dwByte, nullptr);
 
+	MSG_BOX("Save_Complete!!");
+
 	CloseHandle(hFile);
 }
 
@@ -238,11 +240,11 @@ void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const c
 		{
 			_vector vImshi = iter->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-			m_vPoints[iA] = _float3(XMVectorGetX(vImshi), XMVectorGetY(vImshi), XMVectorGetZ(vImshi));
+			m_vPoints[m_iNaviPointCount] = _float3(XMVectorGetX(vImshi), XMVectorGetY(vImshi), XMVectorGetZ(vImshi));
 
-			++iA;
+			++m_iNaviPointCount;
 
-			if (iA != 3)
+			if (m_iNaviPointCount != 3)
 			{
 				RELEASE_INSTANCE(CGameInstance);
 				return;
@@ -279,11 +281,10 @@ void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const c
 					CTestCube* pTestCube = static_cast<CTestCube*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Cube")));
 					CTransform* pTestCubeTrans = dynamic_cast<CTransform*>(pTestCube->Get_TransformCom());
 					pTestCubeTrans->Set_State(CTransform::STATE_TRANSLATION, fTest);
-					m_vPoints[iA] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
-
+					m_vPoints[m_iNaviPointCount] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
 					m_pCubeList.push_back(pTestCube);
 
-					++iA;
+					++m_iNaviPointCount;
 
 					break;
 				}
@@ -302,11 +303,12 @@ void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const c
 					fTest = XMVectorSetW(fTest, 1.f);
 					CTestCube* pTestCube = static_cast<CTestCube*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Cube")));
 					CTransform* pTestCubeTrans = dynamic_cast<CTransform*>(pTestCube->Get_TransformCom());
+					
 					pTestCubeTrans->Set_State(CTransform::STATE_TRANSLATION, fTest);
-					m_vPoints[iA] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
+					m_vPoints[m_iNaviPointCount] = _float3(XMVectorGetX(fTest), XMVectorGetY(fTest), XMVectorGetZ(fTest));
 					m_pCubeList.push_back(pTestCube);
 
-					++iA;
+					++m_iNaviPointCount;
 
 					break;
 				}
@@ -314,19 +316,6 @@ void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const c
 		}
 	}
 	
- 	if (iA >= 3)
-	{
-		AdjustCellPoint();
-		m_NaviPosList.push_back(m_vPoints[0]);
-		m_NaviPosList.push_back(m_vPoints[1]);
-		m_NaviPosList.push_back(m_vPoints[2]);
-		Dynamic_Navi();
-
-		m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
-
-		iA = 0;
-	}
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return;
@@ -375,7 +364,7 @@ void CTerrain::Tick(_double TimeDelta)
 	else if (m_bNavi)
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		if (pGameInstance->Mouse_Down(DIM_LB))
+		if (pGameInstance->Mouse_Down(DIM_LB) && pGameInstance->Key_Pressing(DIK_R))
 		{
 			Add_NaviCell(g_hWnd, g_iWinSizeX, g_iWinSizeY, m_pVIBufferCom, m_pTransformCom);
 		}
@@ -516,6 +505,59 @@ void CTerrain::Imgui_RenderProperty()
 	if (ImGui::CollapsingHeader("For. Navi"))
 	{
 		ImGui::Checkbox("Navi", &m_bNavi);
+		
+		if (ImGui::Button("DeleteRecentCell"))
+		{
+			m_pNavigationCom->DeleteRecentCell();
+
+			Safe_Release(m_pCubeList.back());
+			m_pCubeList.pop_back();
+
+			m_NaviPosList.pop_back();
+			m_NaviPosList.pop_back();
+			m_NaviPosList.pop_back();
+
+			Dynamic_Navi();
+			m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
+			m_iNaviPointCount = 0;
+		}
+
+		if (m_iNaviPointCount >= 3)
+		{
+			AdjustCellPoint();
+			for (auto& pCube : m_pCubeList)
+			{
+				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[0])))
+				{
+					ImGui::Begin("Point_A");
+					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[0]);
+					ImGui::End();
+				}
+				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[1])))
+				{
+					ImGui::Begin("Point_B");
+					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[1]);
+					ImGui::End();
+				}
+				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[2])))
+				{
+					ImGui::Begin("Point_C");
+					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[2]);
+					ImGui::End();
+				}
+			}
+
+			if (ImGui::Button("RealSetUp"))
+			{
+				m_NaviPosList.push_back(m_vPoints[0]);
+				m_NaviPosList.push_back(m_vPoints[1]);
+				m_NaviPosList.push_back(m_vPoints[2]);
+				Dynamic_Navi();
+				m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
+				m_iNaviPointCount = 0;
+			}
+		}
+
 		if (ImGui::Button("SaveNavi"))
 		{
 			Save_Navi();

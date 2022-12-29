@@ -34,7 +34,8 @@ public:
 	void	Remove_ProtoComponent(_uint iLevel, const wstring & pComponentName);
 
 	void Imgui_ComponentViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
-	
+	void Imgui_ModelComponetViewer(_uint iLevel, OUT const _tchar*& szSelectedProto);
+
 private:
 	_uint										m_iNumLevels = 0;
 

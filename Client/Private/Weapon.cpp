@@ -157,7 +157,7 @@ void CWeapon::Imgui_RenderProperty()
 {
 	ImGui::Begin("Weapon");
 
-	m_pColliderCom->FixedSize();
+	m_pColliderCom->FixedSizeForImgui(1);
 
 	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
 	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);

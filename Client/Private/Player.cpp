@@ -10,7 +10,7 @@
 #include "Upper.h"
 #include "Lower.h"
 #include "Glove.h"
-#include "Player_State.h"
+#include "Monster.h"
 #include "FSMComponent.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -56,6 +56,12 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(5.f, 0.f, 3.f, 1.f));
 
+
+	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
+	m_iHp = 100;
+	m_iAttack = 20;
+	m_iDefence = 100;
+
 	SetUp_FSM();
 	
 	return S_OK;
@@ -65,10 +71,14 @@ void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	_float yPos = 0.f;
+	m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
+	m_pTransformCom->Set_Height(yPos);
+
 	Movement(TimeDelta);
 
 	m_pFSM->Tick(TimeDelta);
-
+	
 	for (_uint i = PART_UPPER; i < PART_END; ++i)
 	{
 		m_PlayerParts[i]->Tick(TimeDelta);
@@ -81,8 +91,6 @@ void CPlayer::Tick(_double TimeDelta)
 	
 	LinkObject(TimeDelta);
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CPlayer::Late_Tick(_double TimeDelta)
@@ -91,6 +99,9 @@ void CPlayer::Late_Tick(_double TimeDelta)
 
 	for (_uint i = 0; i < m_PartSize; ++i)
 		m_PlayerParts[i]->Late_Tick(TimeDelta);
+
+	for (_uint i = 0; i < COLLTYPE_END; ++i)
+		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
@@ -133,10 +144,6 @@ void CPlayer::SetUp_FSM()
 		.InitState("Idle")
 		.AddState("Idle")
 		.Tick(this, &CPlayer::Idle_Tick)
-		.OnExit([this]()
-	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-	})
 		.AddTransition("Idle to Move", "Move")
 		.Predicator([this]()
 	{
@@ -170,10 +177,6 @@ void CPlayer::SetUp_FSM()
 		
 		/* 움직임을 위한 */
 		.AddState("Move")
-		.OnExit([this]()
-		{
-			m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-		})
 		.AddTransition("Move to Walk", "Walk")
 		.Predicator([this]() 
 	{
@@ -193,10 +196,6 @@ void CPlayer::SetUp_FSM()
 		/* For. walk */
 		.AddState("Walk")
 		.Tick(this, &CPlayer::Walk_Tick)
-		.OnExit([this]()
-	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-	})
 		.AddTransition("Walk to Move", "Move")
 		.Predicator([this]()
 	{
@@ -211,10 +210,6 @@ void CPlayer::SetUp_FSM()
 		/* For. run */
 		.AddState("Run")
 		.Tick(this, &CPlayer::Run_Tick)
-		.OnExit([this]()
-	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-	})
 		.AddTransition("Run to Move", "Move")
 		.Predicator([this]()
 	{
@@ -235,25 +230,12 @@ void CPlayer::SetUp_FSM()
 		.AddState("V_DEF")
 		.OnStart([this]()
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_V_DEF);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_V_DEF);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_V_DEF);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-		{
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_V_DEF);
-		}
+		Reset_Anim(PLAYER_V_DEF);
+		Set_Anim(PLAYER_V_DEF);
 	})
 		.Tick([this](_double TimeDelta) 
 	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-	})
-		.OnExit([this]()
-	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		m_pTransformCom->Go_Straight(TimeDelta, m_pNavigationCom);
 	})
 		.AddTransition("V_DEF to Run", "Run")
 		.Predicator([this]()
@@ -264,19 +246,17 @@ void CPlayer::SetUp_FSM()
 		/* For. Attack */
 		.AddState("Attack_1")
 		.OnStart([this]()
-		{
-			m_pModelCom->Reset_AnimPlayTime(PLAYER_ATK_01);
-			for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-				static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_ATK_01);
-
-			m_pModelCom->Set_AnimationIndex(PLAYER_ATK_01);
-			for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-				static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_ATK_01);
-		})
-		.OnExit([this]()
-		{
-			m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-		})
+	{
+		Reset_Anim(PLAYER_ATK_01);
+		Set_Anim(PLAYER_ATK_01);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		if (AnimIntervalChecker(PLAYER_ATK_01, 0.1, 0.3))
+			MonsterNormalAttack(true);
+		else
+			MonsterNormalAttack(false);
+	})
 		.AddTransition("Attack_1 to Idle", "Idle")
 		.Predicator([this]()
 	{
@@ -291,17 +271,15 @@ void CPlayer::SetUp_FSM()
 			.AddState("Attack_2")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_ATK_02);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_ATK_02);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_ATK_02);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_ATK_02);
+		Reset_Anim(PLAYER_ATK_02);
+		Set_Anim(PLAYER_ATK_02);
 	})
-		.OnExit([this]()
+		.Tick([this](_double TimeDelta)
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		if (AnimIntervalChecker(PLAYER_ATK_02, 0.1, 0.3))
+			MonsterNormalAttack(true);
+		else
+			MonsterNormalAttack(false);
 	})
 		.AddTransition("Attack_2 to Idle", "Idle")
 		.Predicator([this]()
@@ -317,17 +295,15 @@ void CPlayer::SetUp_FSM()
 		.AddState("Attack_3")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_ATK_03);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_ATK_03);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_ATK_03);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_ATK_03);
+		Reset_Anim(PLAYER_ATK_03);
+		Set_Anim(PLAYER_ATK_03);
 	})
-		.OnExit([this]()
+		.Tick([this](_double TimeDelta)
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		if (AnimIntervalChecker(PLAYER_ATK_03, 0.1, 0.3))
+			MonsterNormalAttack(true);
+		else
+			MonsterNormalAttack(false);
 	})
 		.AddTransition("Attack_3 to Idle", "Idle")
 		.Predicator([this]()
@@ -346,17 +322,20 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_1")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_SK24);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_SK24);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_SK24);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_SK24);
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 1.f);
+		Reset_Anim(PLAYER_SK24);
+		Set_Anim(PLAYER_SK24);
 	})
-		.OnExit([this]()
+		.Tick([this](_double TimeDelta)
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		if (AnimIntervalChecker(PLAYER_SK24, 0.1, 0.9))
+			MonsterNormalAttack(true);
+		else
+			MonsterNormalAttack(false);
+	})
+		.OnExit([this]() 
+	{
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 0.5f);
 	})
 		.AddTransition("Skill_1 to Idle", "Idle")
 		.Predicator([this]()
@@ -367,24 +346,26 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_2")
 		.OnStart([this]()
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
-
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_SK09);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_SK09);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_SK09);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_SK09);
+		m_bCamTurn = true;
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 5.f);
+		Reset_Anim(PLAYER_SK09);
+		Set_Anim(PLAYER_SK09);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		if (!AnimFinishChecker(PLAYER_SK09, 0.3))
 			m_pTransformCom->Go_Straight(TimeDelta * 2.f, m_pNavigationCom);
+
+		if (AnimIntervalChecker(PLAYER_SK09, 0.1, 0.9))
+			MonsterSkill02(true);
+		else
+			MonsterSkill02(false);
 	})
 		.OnExit([this]()
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 0.5f);
+		MonsterSkill02(false);
+		m_bCamTurn = false;
 	})
 		.AddTransition("Skill_2 to Idle", "Idle")
 		.Predicator([this]()
@@ -396,17 +377,15 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_3")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_SK35);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_SK35);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_SK35);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_SK35);
+		Reset_Anim(PLAYER_SK35);
+		Set_Anim(PLAYER_SK35);
 	})
-		.OnExit([this]()
+		.Tick([this](_double TimeDelta)
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		if (AnimIntervalChecker(PLAYER_SK35, 0, 0.2) || AnimIntervalChecker(PLAYER_SK35, 0.7, 0.9))
+			MonsterNormalAttack(true);
+		else
+			MonsterNormalAttack(false);
 	})
 		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
@@ -418,13 +397,7 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_4_Charging")
 		.Tick([this](_double TimeDelta)
 	{
-		m_pModelCom->Set_AnimationIndex(PLAYER_SK27_CHARGING_);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_SK27_CHARGING_);
-	})
-		.OnExit([this]()
-	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		Set_Anim(PLAYER_SK29_CHARGING_);
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -435,17 +408,21 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_4_Attacking")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_SK27_FIRING);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_SK27_FIRING);
-
-		m_pModelCom->Set_AnimationIndex(PLAYER_SK27_FIRING);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(PLAYER_SK27_FIRING);
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 2.f);
+		Reset_Anim(PLAYER_SK27_FIRING);
+		Set_Anim(PLAYER_SK27_FIRING);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		if (AnimIntervalChecker(PLAYER_SK27_FIRING, 0.1, 0.9))
+			MonsterSkill04(true);
+		else
+			MonsterSkill04(false);
 	})
 		.OnExit([this]()
 	{
-		m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
+		Get_WeaponCollider()->FixedSphereSize(1.5f, -0.2f, 0.28f, 0.5f);
+		MonsterSkill04(false);
 	})
 		.AddTransition("Skill_4_Attacking to Idle", "Idle")
 		.Predicator([this]()
@@ -456,7 +433,9 @@ void CPlayer::SetUp_FSM()
 		.Build();
 }
 
-void CPlayer::MoveToAnim(_double TimeDelta)
+// 로컬 애니메이션 움직임 때문에 넣어놨으나 그냥 조종해주는 것이 더 낫다고 판단
+
+/*void CPlayer::MoveToAnim(_double TimeDelta)
 {
 	_vector   vMovePos;
 	ZeroMemory(&vMovePos, sizeof(_vector));
@@ -483,7 +462,7 @@ void CPlayer::MoveToAnim(_double TimeDelta)
 	XMStoreFloat4(&vMoving, vDifferent);
 
 	m_pTransformCom->Go_Straight(TimeDelta * vMoving.x * 40, m_pNavigationCom);
-}
+}*/
 
 void CPlayer::Movement(_double TimeDelta)
 {
@@ -828,7 +807,7 @@ void CPlayer::Movement(_double TimeDelta)
 		return;
 	}
 
-	//if (m_bCamTurn == false)
+	if (m_bCamTurn == false)
 	{
 		_long MouseMove_X = 0;
 
@@ -844,18 +823,13 @@ void CPlayer::Movement(_double TimeDelta)
 
 void CPlayer::AdditiveAnim(_double TimeDelta)
 {
-	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
-
-	// 앞에서 맞을때잉
-	if (pInst->Key_Down(DIK_SPACE))
+	if (m_bFrontDamagedToMonster)
 	{
-		m_pModelCom->Reset_AnimPlayTime(PLAYER_ADD_DMG_F);
-		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
-			static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(PLAYER_ADD_DMG_F);
-		m_bDamage = true;
+		Reset_Anim(PLAYER_ADD_DMG_F);
+		m_bFrontDamage = true;
 	}
 
-	if (m_bDamage)
+	if (m_bFrontDamage)
 	{
 		m_pModelCom->Set_AdditiveAnimIndex(PLAYER_ADD_DMG_F);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
@@ -869,10 +843,35 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 
 	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_F))
 	{
-		m_bDamage = false;
+		m_bFrontDamage = false;
+		m_bFrontDamagedToMonster = false;
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+	///////////////////////////////////////
+	
+	if (m_bBackDamagedToMonster)
+	{
+		Reset_Anim(PLAYER_ADD_DMG_B);
+		m_bBackDamaged = true;
+	}
+
+	if (m_bBackDamaged)
+	{
+		m_pModelCom->Set_AdditiveAnimIndex(PLAYER_ADD_DMG_B);
+		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
+
+		for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
+		{
+			static_cast<CParts*>(m_PlayerParts[i])->Set_AdditiveAnimIndex(PLAYER_ADD_DMG_B);
+			static_cast<CParts*>(m_PlayerParts[i])->Play_AdditiveAnim(TimeDelta, 1.f);
+		}
+	}
+
+	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_B))
+	{
+		m_bBackDamaged = false;
+		m_bBackDamagedToMonster = false;
+	}
 }
 
 void CPlayer::LinkObject(_double TimeDelta)
@@ -881,8 +880,13 @@ void CPlayer::LinkObject(_double TimeDelta)
 	
 	CPlayerCamera* pCam = (CPlayerCamera*)pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Camera", L"PlayerCamera");
 	
-	if(pCam != nullptr)
+	if (pGameInstance->Key_Down(DIK_F2))
+		m_bCamChange = !m_bCamChange;
+		
+	if (pCam != nullptr && !m_bCamChange)
 		pCam->LinkPlayer(TimeDelta, m_pTransformCom, m_bCamTurn);
+	else if (pCam != nullptr && m_bCamChange)
+		pCam->DynamicCamera(TimeDelta);
 
 	CEffect_Rect* pEffect = (CEffect_Rect*)pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Effect", L"Effect_Rect");
 	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
@@ -894,6 +898,20 @@ void CPlayer::LinkObject(_double TimeDelta)
 		pEffect->Set_Tick(false);
 
 	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CPlayer::Reset_Anim(ANIMATION eAnim)
+{
+	m_pModelCom->Reset_AnimPlayTime(eAnim);
+	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
+		static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Reset_AnimPlayTime(eAnim);
+}
+
+void CPlayer::Set_Anim(ANIMATION eAnim)
+{
+	m_pModelCom->Set_AnimationIndex(eAnim);
+	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
+		static_cast<CParts*>(m_PlayerParts[i])->Set_AnimIndex(eAnim);
 }
 
 void CPlayer::Imgui_RenderProperty()
@@ -983,9 +1001,68 @@ void CPlayer::Run_Tick(_double TimeDelta)
 	}
 }
 
+CCollider* CPlayer::Get_WeaponCollider()
+{
+	return static_cast<CWeapon*>(m_PlayerParts[PART_WEAPON])->Get_Collider();
+}
+
+void CPlayer::BackDamagedToMonster()
+{
+	m_bBackDamaged = true;
+}
+
+void CPlayer::FrontDamagedToMonster()
+{
+	m_bFrontDamage = true;
+}
+
+void CPlayer::MonsterNormalAttack(_bool bAttack)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	{
+		static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CPlayer::MonsterSkill02(_bool bAttack)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	{
+		static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CPlayer::MonsterSkill04(_bool bAttack)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	{
+		static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack , 40);
+	}
+	RELEASE_INSTANCE(CGameInstance);
+}
+
 _bool CPlayer::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
 {
 	return m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
+}
+
+_bool CPlayer::AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate)
+{
+	if (m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() > StartRate &&
+		m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() <= FinishRate)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void CPlayer::AnimEditPlayTime(ANIMATION eAnim, _double PlayTime)

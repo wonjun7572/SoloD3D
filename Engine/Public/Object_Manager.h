@@ -10,6 +10,7 @@ BEGIN(Engine)
 class CObject_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CObject_Manager);
+
 private:
 	CObject_Manager();
 	virtual ~CObject_Manager() = default;
@@ -31,6 +32,8 @@ public:
 	
 	class CGameObject* Get_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& strObjName);
 	class CLayer* Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
+	
+	const list<class CGameObject*>& Get_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
 
 public: /* imgui */
 	// 모든 원본 Object를 Imgui로 출력한다.
@@ -44,6 +47,9 @@ public: /* imgui */
 
 	void SaveData(_uint iLevel, wstring strDirectory);
 	void LoadData(_uint iLevel, wstring strDirectory);
+
+	void SaveMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory);
+	void LoadMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory);
 
 private: /* 원형객체들을 모아놓는다. */
 	map<wstring, class CGameObject*>			m_Prototypes;

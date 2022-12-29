@@ -40,8 +40,6 @@ void CAnimation::Reset()
 
 void CAnimation::Update_Bones(_double TimeDelta)
 {
-	m_vMovePos = _float4(0.f, 0.f, 0.f, 1.f);
-
 	if (true == m_isFinished &&
 		false == m_isLooping)
 	{
@@ -62,9 +60,6 @@ void CAnimation::Update_Bones(_double TimeDelta)
 			m_Channels[i]->Reset_KeyFrameIndex();
 
 		m_Channels[i]->Update_TransformMatrix(m_PlayTime);
-
-		if (!strcmp("Bip01", m_Channels[i]->Get_ChannelName()))
-			m_vMovePos = m_Channels[i]->Get_MovePos();
 	}
 
 	if (m_isFinished == true)
@@ -144,6 +139,11 @@ void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
 		if (!strcmp("Helmet.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 
+		if(!strcmp("SkeletonWarrior_SK_ATR.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Skeletonwolf_SK_KVN.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
 
 		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fAdditiveRatio);
 	}

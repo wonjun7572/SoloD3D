@@ -60,7 +60,7 @@ _bool CCell::Compare_Points(const _float3& SourPoint, const _float3& DestPoint)
 	return false;
 }
 
-_bool CCell::isIn(_fvector vTargetPos, _int * pNeighborIndex)
+_bool CCell::isIn(_fvector vTargetPos, OUT _float4* vOldPos, OUT _int* pNeighborIndex)
 {
 	for (_uint i = 0; i < NEIGHBOR_END; ++i)
 	{
@@ -71,10 +71,41 @@ _bool CCell::isIn(_fvector vTargetPos, _int * pNeighborIndex)
 		if (0 < XMVectorGetX(XMVector3Dot(vNormal, vDir)))
 		{
 			*pNeighborIndex = m_iNeighborIndices[i];
+
+			_vector vOld = XMLoadFloat4(vOldPos);
+			_vector vPosDir = vTargetPos - vOld;
+			_float fDot = abs(XMVectorGetX(XMVector3Dot(vPosDir, vNormal)));
+			_vector vSliding = vPosDir - fDot * vNormal;
+			_vector vOrigin = vOld;
+			vOld += vSliding;
+
+			_float fLength   = XMVectorGetX(XMVector3Length(vLine));
+			_float fLength_1 = XMVectorGetX(XMVector3Length(vOld - XMLoadFloat3(&m_vPoints[i])));
+			_float fLength_2 = XMVectorGetX(XMVector3Length(vOld - XMLoadFloat3(&m_vPoints[(i + 1) % NEIGHBOR_END])));
+		
+			if (fLength < fLength_1 || fLength < fLength_2)
+				vOld = vOrigin;
+
+			*vOldPos = vOld;
+
 			return false;
 		}
 	}
 
+	return true;
+}
+
+_bool CCell::isIn(_fvector vTargetPos)
+{
+	for (_uint i = 0; i < NEIGHBOR_END; ++i)
+	{
+		_vector		vLine = XMLoadFloat3(&m_vPoints[(i + 1) % NEIGHBOR_END]) - XMLoadFloat3(&m_vPoints[i]);
+		_vector		vNormal = XMVector3Normalize(XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f));
+		_vector		vDir = XMVector3Normalize(vTargetPos - XMLoadFloat3(&m_vPoints[i]));
+
+		if (0 < XMVectorGetX(XMVector3Dot(vNormal, vDir)))
+			return false;
+	}
 	return true;
 }
 

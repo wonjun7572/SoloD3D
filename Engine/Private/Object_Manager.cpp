@@ -399,6 +399,138 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 	CloseHandle(hFile);
 }
 
+void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag, const wstring& strDirectory)
+{
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	HANDLE      hFile = CreateFile(strDirectory.c_str()
+		, GENERIC_WRITE
+		, 0
+		, nullptr
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	auto iter = m_pLayers[iLevel].find(pLayerTag);
+
+	if (iter == m_pLayers[iLevel].end())
+		return;
+
+
+	CLayer* pLayer = iter->second;
+	DWORD dwByte = 0;
+
+	_uint gameObjSize = static_cast<_uint>(pLayer->GetGameObjects().size());
+	WriteFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& obj : pLayer->GetGameObjects())
+	{
+		char szName[256] = {};
+		strcpy_s(szName, 256, typeid(*obj).name());
+		WriteFile(hFile, &szName, 256, &dwByte, nullptr);
+	}
+
+
+	for (auto& obj : pLayer->GetGameObjects())
+	{
+		auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
+
+		if (iter == obj->GetComponents().end())
+			return;
+
+		_matrix worldMatrix = dynamic_cast<CTransform*>(iter->second)->Get_WorldMatrix();
+		WriteFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
+	}
+	
+
+	for (auto& obj : pLayer->GetGameObjects())
+	{
+		if (obj->Get_ModelTag() != nullptr)
+		{
+			_tchar szModelTag[MAX_PATH];
+			wcscpy_s(szModelTag, obj->Get_ModelTag());
+			WriteFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+		}
+	}
+
+	CloseHandle(hFile);
+	MSG_BOX("Save_Complete!!!");
+}
+
+void CObject_Manager::LoadMapObjectData(_uint iLevel, const wstring & pLayerTag, const wstring& strDirectory)
+{
+	if (m_iNumLevels <= iLevel)
+		return;
+
+	//  TODO : 파일 저장 불러오기 하는부분에서 파일 HANDLE 
+	HANDLE      hFile = CreateFile(strDirectory.c_str()
+		, GENERIC_READ
+		, FILE_SHARE_READ
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+		
+	DWORD dwByte = 0;
+	
+	_uint gameObjSize = 0;
+	ReadFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
+
+	for (_uint j = 0; j < gameObjSize; ++j)
+	{
+		char szName[256];
+		ReadFile(hFile, &szName, 256, &dwByte, nullptr);
+
+		for (auto& proto : m_Prototypes)
+		{
+			if (!strcmp(szName, typeid(*(proto.second)).name()))
+			{
+				Clone_GameObject(iLevel, pLayerTag, proto.first);
+			}
+		}
+	}
+
+	auto iter = m_pLayers[iLevel].find(pLayerTag);
+
+	if (iter == m_pLayers[iLevel].end())
+		return;
+
+	CLayer* pLayer = iter->second;
+
+	for (auto& obj : pLayer->GetGameObjects())
+	{
+		auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
+
+		if (iter == obj->GetComponents().end())
+			return;
+
+		_matrix worldMatrix = XMMatrixIdentity();
+		ReadFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
+		_float4x4 world4x4;
+		XMStoreFloat4x4(&world4x4, worldMatrix);
+		dynamic_cast<CTransform*>(iter->second)->SetWorldMatrix(world4x4);
+	}
+
+	for (auto& obj : pLayer->GetGameObjects())
+	{
+		if (obj->Get_ModelTag() != nullptr)
+		{
+			_tchar szModelTag[MAX_PATH];
+			ReadFile(hFile, &szModelTag, MAX_PATH, &dwByte, nullptr);
+			obj->Set_ModelTag(szModelTag);
+		}
+	}
+
+	CloseHandle(hFile);
+}
+
 CGameObject * CObject_Manager::Find_Prototype(const wstring& pPrototypeTag)
 {
 	auto iter = m_Prototypes.find(pPrototypeTag);
@@ -417,6 +549,12 @@ CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const wstring& pLayerTag
 		return nullptr;
 
 	return iter->second;
+}
+
+const list<class CGameObject*>& CObject_Manager::Get_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	return pLayer->GetGameObjects();
 }
 
 void CObject_Manager::Free()

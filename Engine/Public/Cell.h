@@ -24,7 +24,9 @@ public:
 
 public:
 	_bool	Compare_Points(const _float3& SourPoint, const _float3& DestPoint);
-	_bool	isIn(_fvector vTargetPos, _int* pNeighborIndex);
+	_bool	isIn(_fvector vTargetPos, OUT _float4* vOldPos, OUT _int* pNeighborIndex);
+
+	_bool	isIn(_fvector vTargetPos);
 
 #ifdef _DEBUG
 public:

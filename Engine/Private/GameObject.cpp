@@ -43,7 +43,6 @@ HRESULT CGameObject::Init(void * pArg)
 
 void CGameObject::Tick(_double TimeDelta)
 {
-	
 }
 
 void CGameObject::Late_Tick(_double TimeDelta)

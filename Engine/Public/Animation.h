@@ -39,7 +39,7 @@ public:
 public:
 	void		Reset();
 
-	_float4		Get_MovePos(void) { return m_vMovePos; }
+	//_float4		Get_MovePos(void) { return m_vMovePos; }
 	_double		Get_Duration() { return m_Duration; }
 
 	_bool		Get_IsFinish() { return m_isFinished; }
@@ -70,7 +70,7 @@ private:
 	ANIMATIONLOAD						m_ANIMATIONLOAD;
 
 private:
-	_float4								m_vMovePos = _float4(0.f,0.f,0.f,1.f);
+	//_float4								m_vMovePos = _float4(0.f,0.f,0.f,1.f);
 
 public:
 	static CAnimation* Create(ANIMATIONLOAD& pAIAnimation, class CModel* pModel);

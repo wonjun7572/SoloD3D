@@ -19,13 +19,8 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
-
-	//CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	//pGameInstance->LoadData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
-	//Safe_Release(pGameInstance);
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
@@ -36,6 +31,8 @@ HRESULT Client::CLevel_ChapOne::Init()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -64,14 +61,47 @@ HRESULT Client::CLevel_ChapOne::Render()
 
 void CLevel_ChapOne::ImguiRenderTab()
 {
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-	if (ImGui::Button("Transform_Save"))
+	if (ImGui::Button("SetSaveFilePath"))
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileForSave", "Choose File", ".dat", "../Bin/");
+
+	if (ImGuiFileDialog::Instance()->Display("ChooseFileForSave"))
 	{
-		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-		pGameInstance->SaveData(LEVEL_CHAP1, TEXT("../Bin/MapData/CHAP1_TRANSFORM.dat"));
-		Safe_Release(pGameInstance);
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+
+			//string to wstring
+			m_pSaveMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
+
+			pGameInstance->SaveMapObjectData(LEVEL_CHAP1, TEXT("Layer_MapObject"), m_pSaveMapObjectFilePath);
+			
+		}
+		// close
+		ImGuiFileDialog::Instance()->Close();
 	}
+
+	if (ImGui::Button("SetLoadFilePath"))
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileForLoad", "Choose File", ".dat", "../Bin/");
+
+	if (ImGuiFileDialog::Instance()->Display("ChooseFileForLoad"))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+
+			m_pLoadMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
+
+			pGameInstance->LoadMapObjectData(LEVEL_CHAP1, TEXT("Layer_MapObject"), m_pLoadMapObjectFilePath);
+		}
+
+		// close
+		ImGuiFileDialog::Instance()->Close();
+	}
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CLevel_ChapOne::Ready_Lights()
@@ -116,8 +146,8 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-		return E_FAIL;*/
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+	//	return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
@@ -143,8 +173,14 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"))))
 		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"))))
+		return E_FAIL;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWolf"))))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -160,6 +196,15 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Effect_Point"))))
 	//	return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	RELEASE_INSTANCE(CGameInstance);
 

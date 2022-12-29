@@ -80,7 +80,9 @@ private: /* For. Imgui*/
 
 	_bool			m_bNavi = false;
 
-	_uint				iA = 0;
+	_bool			m_bRealNaviSetUp = false;
+
+	_uint				m_iNaviPointCount = 0;
 
 	_float3				m_vPoints[3];
 	list<CGameObject*>	m_pCubeList;

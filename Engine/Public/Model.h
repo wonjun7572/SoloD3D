@@ -58,7 +58,7 @@ public:
 
 	_bool	Check_AnimationSet(const _float& fTime);
 
-	_float4	Get_MovePos(void) { return m_vMovePos; }
+	//_float4	Get_MovePos(void) { return m_vMovePos; }
 
 	void	Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
 
@@ -93,7 +93,7 @@ private:
 	_float									m_fBlendCurTime = 0.2f;
 	_float									m_fBlendDuration = 0.2f;
 
-	_float4									m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
+	//_float4									m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix);

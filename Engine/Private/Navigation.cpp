@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "PipeLine.h"
 #include "DebugDraw.h"
+#include "MathUtils.h"
 
 CNavigation::CNavigation(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -28,7 +29,14 @@ CNavigation::CNavigation(const CNavigation & rhs)
 HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 { 
 	_ulong		dwByte = 0;
-	HANDLE		hFile = CreateFile(pNavigationDataFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	HANDLE		hFile = CreateFile(pNavigationDataFilePath,
+		GENERIC_READ
+		, 0
+		, nullptr
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
 	if (0 == hFile)
 		return E_FAIL;
 
@@ -56,7 +64,6 @@ HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Navigation.hlsl"), VTXPOS_DECLARATION::Elements, VTXPOS_DECLARATION::iNumElements);
 	if (nullptr == m_pShader)
 		return E_FAIL;
-
 #endif
 
 	return S_OK;
@@ -70,7 +77,7 @@ HRESULT CNavigation::Init(void * pArg)
 	return S_OK;
 }
 
-_bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
+_bool CNavigation::isMove_OnNavigation(_fvector TargetPos, OUT _float4* vOldPos)
 {
 	if (-1 == m_NaviDesc.iCurrentIndex)
 		return false;
@@ -78,14 +85,14 @@ _bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
 	_int		iNeighborIndex = -1;
 
 	/* 움직이고 난 결과위치가 쎌 안에 있다면.  */
-	if (true == m_Cells[m_NaviDesc.iCurrentIndex]->isIn(TargetPos, &iNeighborIndex))
+	if (true == m_Cells[m_NaviDesc.iCurrentIndex]->isIn(TargetPos, vOldPos, &iNeighborIndex))
 	{
 		return true; // 움직여. 
 					 /* 움직이고 난 결과위치가 이쎌을 벗어난다면. */
 	}
 	else
 	{
-		/* 나간방향으로 이웃이 있었다면ㄴ. */
+		/* 나간방향으로 이웃이 있었다면. */
 		if (-1 != iNeighborIndex)
 		{
 			while (true)
@@ -94,7 +101,7 @@ _bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
 				{
 					return false;
 				}
-				if (true == m_Cells[iNeighborIndex]->isIn(TargetPos, &iNeighborIndex))
+				if (true == m_Cells[iNeighborIndex]->isIn(TargetPos, vOldPos, &iNeighborIndex))
 				{
 					// m_NaviDesc.iCurrentIndex = 이웃의 인덱스;
 					m_NaviDesc.iCurrentIndex = iNeighborIndex;
@@ -108,6 +115,22 @@ _bool CNavigation::isMove_OnNavigation(_fvector TargetPos)
 			return false;
 		}
 	}
+}
+
+_bool CNavigation::isHeighit_OnNavigation(_fvector TargetPos, _float * yPos)
+{
+	if (-1 == m_NaviDesc.iCurrentIndex)
+		return false;
+
+	_float3 vPos; 
+	XMStoreFloat3(&vPos, TargetPos);
+	
+	*yPos = CMathUtils::GetHeightFromPoints(vPos,
+		m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_A),
+		m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_B),
+		m_Cells[m_NaviDesc.iCurrentIndex]->Get_Point(CCell::POINT_C));
+
+	return true;
 }
 
 #ifdef _DEBUG
@@ -216,6 +239,27 @@ HRESULT CNavigation::Update(const wstring pNavigationDataFilePath)
 
 
 	return S_OK;
+}
+
+_bool CNavigation::Set_CurreuntIndex(_fvector TargetPos)
+{
+	_uint iSize = m_Cells.size();
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		if (m_Cells[i]->isIn(TargetPos))
+		{
+			m_NaviDesc.iCurrentIndex = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+void CNavigation::DeleteRecentCell()
+{
+	Safe_Release(m_Cells.back());
+	m_Cells.pop_back();
 }
 
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pNavigationDataFilePath)

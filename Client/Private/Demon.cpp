@@ -3,8 +3,7 @@
 #include "GameInstance.h"
 #include "Weapon.h"
 #include "Animation.h"
-#include "Demon_State.h"
-
+#include "FSMComponent.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -42,22 +41,12 @@ HRESULT CDemon::Init(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(50.f, 0.f, 50.f, 1.f));
 
-	m_pDemon_State = CDemon_State::Create(this);
-
 	return S_OK;
 }
 
 void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	//if (!m_bDamaged_B && !m_bDamaged_F && !m_bHitDown)
-	//{
-	//	CollisionToPlayer(TimeDelta);
-	//}
-	//CollisionToWeapon(TimeDelta);
-	//m_pState->Tick(TimeDelta);
-	m_pModelCom->Play_Animation(TimeDelta);
 }
 
 void CDemon::Late_Tick(_double TimeDelta)
@@ -248,6 +237,19 @@ void CDemon::CollisionToWeapon(_double TimeDelta)
 	//RELEASE_INSTANCE(CGameInstance);
 }
 
+void CDemon::SetUp_FSM()
+{
+	m_pFSM = CFSMComponentBuilder()
+		.InitState("Idle")
+		.AddState("Idle")
+		.Tick([this](_double TimeDelta)
+	{
+		m_pModelCom->Set_AnimationIndex(1);
+	})
+
+		.Build();
+}
+
 HRESULT CDemon::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -276,16 +278,6 @@ HRESULT CDemon::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
 		return E_FAIL;
 
-	/* For.Com_OBB */
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.2f, 3.f, 1.2f);
-	ColliderDesc.vRotation = _float3(0.f, 0.0f, 0.f);
-	ColliderDesc.vCenter = _float3(0.f, 3.5, 0.f);
-
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
-		(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
-		return E_FAIL;
-
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vSize = _float3(20.f, 20.f, 20.f);
@@ -293,11 +285,6 @@ HRESULT CDemon::SetUp_Components()
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
-		return E_FAIL;
-
-	/* For.Com_State */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_STATE"), TEXT("Com_State"),
-		(CComponent**)&m_pState)))
 		return E_FAIL;
 
 	return S_OK;
@@ -367,6 +354,4 @@ CGameObject * CDemon::Clone(void * pArg)
 void CDemon::Free()
 {
 	__super::Free();
-	Safe_Release(m_pState);
-	Safe_Release(m_pDemon_State);
 }

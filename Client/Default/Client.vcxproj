@@ -180,7 +180,6 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\Demon.h" />
-    <ClInclude Include="..\public\Demon_State.h" />
     <ClInclude Include="..\public\Effect_Point.h" />
     <ClInclude Include="..\public\Effect_Rect.h" />
     <ClInclude Include="..\public\EmptyGameObject.h" />
@@ -201,8 +200,8 @@
     <ClInclude Include="..\public\Parts.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerCamera.h" />
-    <ClInclude Include="..\public\Player_State.h" />
     <ClInclude Include="..\public\Shoulder.h" />
+    <ClInclude Include="..\public\SkeletonWarrior.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
@@ -221,7 +220,6 @@
     <ClCompile Include="..\private\Boots.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
-    <ClCompile Include="..\private\Demon_State.cpp" />
     <ClCompile Include="..\private\Effect_Point.cpp" />
     <ClCompile Include="..\private\Effect_Rect.cpp" />
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
@@ -242,8 +240,8 @@
     <ClCompile Include="..\private\Parts.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerCamera.cpp" />
-    <ClCompile Include="..\private\Player_State.cpp" />
     <ClCompile Include="..\private\Shoulder.cpp" />
+    <ClCompile Include="..\private\SkeletonWarrior.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
