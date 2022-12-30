@@ -178,6 +178,7 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Belt.h" />
     <ClInclude Include="..\public\Boots.h" />
+    <ClInclude Include="..\public\BridgeCastle.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\Demon.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="..\public\LoadingBackGround.h" />
     <ClInclude Include="..\public\Lower.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\Medieval_City.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\Ocean.h" />
     <ClInclude Include="..\public\Parts.h" />
@@ -204,10 +206,12 @@
     <ClInclude Include="..\public\Shoulder.h" />
     <ClInclude Include="..\public\SkeletonWarrior.h" />
     <ClInclude Include="..\public\Sky.h" />
+    <ClInclude Include="..\public\Stair.h" />
     <ClInclude Include="..\public\Terrain.h" />
     <ClInclude Include="..\public\TestCube.h" />
     <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
+    <ClInclude Include="..\public\TownA.h" />
     <ClInclude Include="..\public\Upper.h" />
     <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
@@ -220,6 +224,7 @@
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Belt.cpp" />
     <ClCompile Include="..\private\Boots.cpp" />
+    <ClCompile Include="..\private\BridgeCastle.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
     <ClCompile Include="..\private\Effect_Point.cpp" />
@@ -237,6 +242,7 @@
     <ClCompile Include="..\private\LoadingBackGround.cpp" />
     <ClCompile Include="..\private\Lower.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\private\Medieval_City.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
     <ClCompile Include="..\private\Parts.cpp" />
@@ -245,10 +251,12 @@
     <ClCompile Include="..\private\Shoulder.cpp" />
     <ClCompile Include="..\private\SkeletonWarrior.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
+    <ClCompile Include="..\private\Stair.cpp" />
     <ClCompile Include="..\private\Terrain.cpp" />
     <ClCompile Include="..\private\TestCube.cpp" />
     <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
+    <ClCompile Include="..\private\TownA.cpp" />
     <ClCompile Include="..\private\Upper.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />

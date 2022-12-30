@@ -28,10 +28,19 @@ public:
 
 	_bool Set_CurreuntIndex(_fvector TargetPos);
 
+	void ResetCell();
 	void DeleteRecentCell();
 	
 	_bool isHeighit_OnNavigation(_fvector TargetPos, _float* yPos);
 
+	_int isPicking_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey);
+
+	HRESULT CreateCell(_float3* pPoints);
+	HRESULT DeleteCell(_uint iCellnum);
+
+	HRESULT Save_Navigation(_uint iIndex);
+
+	void	Imgui_CellProperty();
 
 #ifdef _DEBUG
 public:
@@ -42,7 +51,7 @@ private:
 	vector<class CCell*>	m_Cells;
 	NAVIDESC				m_NaviDesc;
 
-private:
+public:
 	HRESULT Ready_Neighbor();
 
 #ifdef _DEBUG

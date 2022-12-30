@@ -40,10 +40,18 @@ private:/* For. Imgui*/
 	HRESULT	Ready_FilterBuffer();
 	HRESULT Dynamic_FilterBuffer();
 
-	void	Dynamic_Navi();
-	void	Save_Navi();
+	HRESULT	Dynamic_Navi();
+	HRESULT	Save_Navi(_int iIndex);
+
+	HRESULT Load_CubeList(_int iIndex);
+	HRESULT Save_CubeList(_int iIndex);
+
 
 	void AdjustCellPoint();
+
+private:
+	_bool	m_bDeleteCell = false;
+	_uint	m_iDeleteCellNum = 0;
 
 private:
 	CShader*					m_pShaderCom = nullptr;
@@ -53,6 +61,8 @@ private:
 	CNavigation*				m_pNavigationCom = nullptr;
 
 private: /* For. Imgui*/
+
+	int				m_iChapNum = 2;
 
 	_float			m_fHeight = 0.f;
 
@@ -86,7 +96,6 @@ private: /* For. Imgui*/
 
 	_float3				m_vPoints[3];
 	list<CGameObject*>	m_pCubeList;
-	list<_float3>		m_NaviPosList;
 
 private:
 	HRESULT SetUp_Components();

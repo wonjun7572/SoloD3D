@@ -100,8 +100,9 @@ HRESULT CTerrain::Dynamic_FilterBuffer()
 	return S_OK;
 }
 
-void CTerrain::Dynamic_Navi()
+HRESULT CTerrain::Dynamic_Navi()
 {
+	/*
 	DWORD	dwByte = 0;
 
 	HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation.dat")
@@ -119,13 +120,96 @@ void CTerrain::Dynamic_Navi()
 		WriteFile(hFile, &iter, sizeof(_float3), &dwByte, nullptr);
 
 	CloseHandle(hFile);
+	*/
+	if (FAILED(m_pNavigationCom->CreateCell(m_vPoints)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
-void CTerrain::Save_Navi()
+HRESULT CTerrain::Save_Navi(_int iIndex)
 {
+	if (FAILED(m_pNavigationCom->Save_Navigation(iIndex)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CTerrain::Load_CubeList(_int iIndex)
+{
+	_tchar* pDataName = new _tchar[MAX_PATH];
+	
+	switch (iIndex)
+	{
+	case LEVEL_CHAP1:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_1_CUBE.dat"));
+		break;
+	case LEVEL_CHAP2:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_2_CUBE.dat"));
+		break;
+	case LEVEL_CHAP3:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_3_CUBE.dat"));
+		break;
+	}
+
 	DWORD	dwByte = 0;
 
-	HANDLE		hFile = CreateFile(TEXT("../Bin/Data/Navigation_CHAP1.dat")
+	HANDLE      hFile = CreateFile(pDataName
+		, GENERIC_READ
+		, FILE_SHARE_READ
+		, 0
+		, OPEN_EXISTING
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	_uint iSize = 0;
+	ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, nullptr);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		CTestCube* pTestCube = static_cast<CTestCube*>(pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Cube")));
+		_vector vPos;
+		ReadFile(hFile, &vPos, sizeof(_vector), &dwByte, nullptr);
+		pTestCube->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, vPos);
+		m_pCubeList.push_back(pTestCube);
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	MSG_BOX("Load_Complete!!");
+
+	CloseHandle(hFile);
+
+	Safe_Delete_Array(pDataName);
+
+	return S_OK;
+}
+
+HRESULT CTerrain::Save_CubeList(_int iIndex)
+{
+	_tchar* pDataName = new _tchar[MAX_PATH];
+
+	switch (iIndex)
+	{
+	case LEVEL_CHAP1:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_1_CUBE.dat"));
+		break;
+	case LEVEL_CHAP2:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_2_CUBE.dat"));
+		break;
+	case LEVEL_CHAP3:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_3_CUBE.dat"));
+		break;
+	}
+
+	DWORD	dwByte = 0;
+
+	HANDLE      hFile = CreateFile(pDataName
 		, GENERIC_WRITE
 		, 0
 		, nullptr
@@ -133,15 +217,27 @@ void CTerrain::Save_Navi()
 		, FILE_ATTRIBUTE_NORMAL
 		, 0);
 
-	if (0 == hFile)
-		return;
 
-	for (auto& iter : m_NaviPosList)
-		WriteFile(hFile, &iter, sizeof(_float3), &dwByte, nullptr);
+	if (0 == hFile)
+		return E_FAIL;
+
+	_uint i = 0;
+	i = m_pCubeList.size();
+	WriteFile(hFile, &i, sizeof(_uint), &dwByte, nullptr);
+
+	for (auto& pCube : m_pCubeList)
+	{
+		_vector cubepos = pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+		WriteFile(hFile, &cubepos, sizeof(_vector), &dwByte, nullptr);
+	}
 
 	MSG_BOX("Save_Complete!!");
 
 	CloseHandle(hFile);
+
+	Safe_Delete_Array(pDataName);
+
+	return S_OK;
 }
 
 void CTerrain::AdjustCellPoint()
@@ -506,21 +602,25 @@ void CTerrain::Imgui_RenderProperty()
 	{
 		ImGui::Checkbox("Navi", &m_bNavi);
 		
-		if (ImGui::Button("DeleteRecentCell"))
+		if (!m_bDeleteCell)
 		{
-			m_pNavigationCom->DeleteRecentCell();
-
-			Safe_Release(m_pCubeList.back());
-			m_pCubeList.pop_back();
-
-			m_NaviPosList.pop_back();
-			m_NaviPosList.pop_back();
-			m_NaviPosList.pop_back();
-
-			Dynamic_Navi();
-			m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
-			m_iNaviPointCount = 0;
+			_uint i = m_pNavigationCom->isPicking_NaviCell(g_hWnd, g_iWinSizeX, g_iWinSizeY);
+			m_iDeleteCellNum = i;
 		}
+
+		if (ImGui::IsMouseClicked(0))
+		{
+			m_bDeleteCell = true;
+		}
+		
+		ImGui::Text("DeleteCell? -> "); ImGui::SameLine();
+		ImGui::Text("%d", m_iDeleteCellNum);
+				
+		if (ImGui::Button("DeleteCell"))
+			m_pNavigationCom->DeleteCell(m_iDeleteCellNum);
+
+		if (ImGui::Button("ResetPicking"))
+			m_bDeleteCell = false;
 
 		if (m_iNaviPointCount >= 3)
 		{
@@ -549,18 +649,43 @@ void CTerrain::Imgui_RenderProperty()
 
 			if (ImGui::Button("RealSetUp"))
 			{
-				m_NaviPosList.push_back(m_vPoints[0]);
-				m_NaviPosList.push_back(m_vPoints[1]);
-				m_NaviPosList.push_back(m_vPoints[2]);
 				Dynamic_Navi();
-				m_pNavigationCom->Update(TEXT("../Bin/Data/Navigation.dat"));
 				m_iNaviPointCount = 0;
 			}
 		}
 
+		ImGui::RadioButton("CHAP_ONE", &m_iChapNum, 2); ImGui::SameLine();
+		ImGui::RadioButton("CHAP_TWO", &m_iChapNum, 3); ImGui::SameLine();
+		ImGui::RadioButton("CHAP_THREE", &m_iChapNum, 4);
+
 		if (ImGui::Button("SaveNavi"))
+		{	
+			// 저장할떄 큐브도 저장하자
+			Save_Navi(m_iChapNum);
+			Save_CubeList(m_iChapNum);
+		}
+
+		if (ImGui::Button("LoadCube"))
 		{
-			Save_Navi();
+			Load_CubeList(m_iChapNum);
+		}
+
+		ImGui::NewLine();
+		
+		if (ImGui::Button("DeleteRecentCell"))
+		{
+			m_pNavigationCom->DeleteRecentCell();
+			m_iNaviPointCount = 0;
+		}
+
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::NewLine();
+
+		if (ImGui::Button("Reset"))
+		{
+			m_pNavigationCom->ResetCell();
 		}
 	}
 }
@@ -888,6 +1013,4 @@ void CTerrain::Free()
 		Safe_Release(pTestCube);
 
 	m_pCubeList.clear();
-
-	m_NaviPosList.clear();
 }

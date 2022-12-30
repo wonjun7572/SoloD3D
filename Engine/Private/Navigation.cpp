@@ -4,6 +4,7 @@
 #include "PipeLine.h"
 #include "DebugDraw.h"
 #include "MathUtils.h"
+#include "GameInstance.h"
 
 CNavigation::CNavigation(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -133,6 +134,148 @@ _bool CNavigation::isHeighit_OnNavigation(_fvector TargetPos, _float * yPos)
 	return true;
 }
 
+_int CNavigation::isPicking_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey)
+{
+	POINT		ptMouse{};
+
+	GetCursorPos(&ptMouse);
+	ScreenToClient(hWnd, &ptMouse);
+
+	_float3         vMousePos;
+
+	vMousePos.x = _float(ptMouse.x / (iWinsizeX * 0.5f) - 1);
+	vMousePos.y = _float(ptMouse.y / (iWinsizey * -0.5f) + 1);
+	vMousePos.z = 0.f;
+
+	_vector	vecMousePos = XMLoadFloat3(&vMousePos);
+	vecMousePos = XMVectorSetW(vecMousePos, 1.f);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	_matrix      ProjMatrixInv;
+	ProjMatrixInv = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_PROJ);
+	ProjMatrixInv = XMMatrixInverse(nullptr, ProjMatrixInv);
+	vecMousePos = XMVector3TransformCoord(vecMousePos, ProjMatrixInv);
+
+	_vector	vRayDir, vRayPos;
+
+	vRayPos = { 0.f, 0.f, 0.f , 1.f };
+	vRayDir = vecMousePos - vRayPos;
+
+	_matrix      ViewMatrixInv;
+	ViewMatrixInv = pGameInstance->Get_TransformMatrix(CPipeLine::D3DTS_VIEW);
+	ViewMatrixInv = XMMatrixInverse(nullptr, ViewMatrixInv);
+	vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrixInv);
+	vRayDir = XMVector3TransformNormal(vRayDir, ViewMatrixInv);
+	vRayDir = XMVector3Normalize(vRayDir);
+	
+	RELEASE_INSTANCE(CGameInstance);
+
+	_float  fDist = 0.f;
+
+	_uint iSize = m_Cells.size();
+
+	for (_uint i = 0; i < iSize; ++i)
+	{
+		if (TriangleTests::Intersects(vRayPos, vRayDir,
+			XMLoadFloat4(&_float4(m_Cells[i]->Get_Point(CCell::POINT_A).x, m_Cells[i]->Get_Point(CCell::POINT_A).y, m_Cells[i]->Get_Point(CCell::POINT_A).z, 1.f)),
+			XMLoadFloat4(&_float4(m_Cells[i]->Get_Point(CCell::POINT_B).x, m_Cells[i]->Get_Point(CCell::POINT_B).y, m_Cells[i]->Get_Point(CCell::POINT_B).z, 1.f)),
+			XMLoadFloat4(&_float4(m_Cells[i]->Get_Point(CCell::POINT_C).x, m_Cells[i]->Get_Point(CCell::POINT_C).y, m_Cells[i]->Get_Point(CCell::POINT_C).z, 1.f)),
+			fDist))
+		{
+			return i;
+		}
+	}
+
+	return 0;
+}
+
+HRESULT CNavigation::CreateCell(_float3 * pPoints)
+{
+	_float3		vPoints[CCell::POINT_END];
+
+	vPoints[CCell::POINT_A] = pPoints[0];
+	vPoints[CCell::POINT_B] = pPoints[1];
+	vPoints[CCell::POINT_C] = pPoints[2];
+
+	CCell*		pCell = CCell::Create(m_pDevice, m_pContext, vPoints, (_int)m_Cells.size());
+	if (nullptr == pCell)
+		return E_FAIL;
+
+	m_Cells.push_back(pCell);
+
+	if (FAILED(Ready_Neighbor()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CNavigation::DeleteCell(_uint iCellnum)
+{
+	m_Cells.erase(m_Cells.begin() + iCellnum);
+	
+	if (FAILED(Ready_Neighbor()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CNavigation::Save_Navigation(_uint iIndex)
+{
+	_tchar* pDataName = new _tchar[MAX_PATH];
+
+	switch (iIndex)
+	{
+	case 2:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_CHAP1.dat"));
+		break;
+	case 3:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_CHAP2.dat"));
+		break;
+	case 4:
+		lstrcpy(pDataName, TEXT("../Bin/Data/Navigation_CHAP3.dat"));
+		break;
+	}
+
+	DWORD	dwByte = 0;
+
+	HANDLE      hFile = CreateFile(pDataName
+		, GENERIC_WRITE
+		, 0
+		, nullptr
+		, CREATE_ALWAYS
+		, FILE_ATTRIBUTE_NORMAL
+		, 0);
+
+	if (0 == hFile)
+		return E_FAIL;
+
+	for (auto& pCell : m_Cells)
+	{
+		WriteFile(hFile, &pCell->Get_Point(CCell::POINT_A), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &pCell->Get_Point(CCell::POINT_B), sizeof(_float3), &dwByte, nullptr);
+		WriteFile(hFile, &pCell->Get_Point(CCell::POINT_C), sizeof(_float3), &dwByte, nullptr);
+	}
+
+	MSG_BOX("Save_Complete!!");
+
+	CloseHandle(hFile);
+	Safe_Delete_Array(pDataName);
+	return S_OK;
+}
+
+void CNavigation::Imgui_CellProperty()
+{
+	//if (ImGui::Button("Delete Cell"))
+	//{
+	//	m_Cells.erase(m_Cells.begin() + iSelect);
+	//	if (FAILED(Ready_Neighbor()))
+	//		return;
+	//
+	//	return;
+	//}
+}
+
 #ifdef _DEBUG
 HRESULT CNavigation::Render()
 {
@@ -155,6 +298,8 @@ HRESULT CNavigation::Render()
 		return S_OK;
 	}
 	
+	// 피킹된 셀 파란색으로 ㄱㄱ
+
 	for (auto& pCell : m_Cells)
 	{
 		if (nullptr != pCell)
@@ -237,7 +382,6 @@ HRESULT CNavigation::Update(const wstring pNavigationDataFilePath)
 	if (FAILED(Ready_Neighbor()))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
@@ -254,6 +398,14 @@ _bool CNavigation::Set_CurreuntIndex(_fvector TargetPos)
 		}
 	}
 	return false;
+}
+
+void CNavigation::ResetCell()
+{
+	for (auto& pCell : m_Cells)
+		Safe_Release(pCell);
+
+	m_Cells.clear();
 }
 
 void CNavigation::DeleteRecentCell()

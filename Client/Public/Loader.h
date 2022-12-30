@@ -17,7 +17,7 @@ public:
 	HRESULT Loading_ForLogo();
 	HRESULT Loading_ForChapter_1();
 	HRESULT Loading_ForChapter_2();
-	HRESULT Loading_ForTool();
+	HRESULT Loading_ForChapter_3();
 
 	void SwitchForThread(LEVEL eNextLevelID);
 

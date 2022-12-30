@@ -73,9 +73,8 @@ HRESULT CEmptyGameObject::Render()
 
 		for (_uint i = 0; i < iNumMeshes; ++i)
 		{
-			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture")))
-				return E_FAIL;
-
+			m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+			
 			if (FAILED(m_pModelCom->Render(m_pShaderCom, i)))
 				return E_FAIL;
 		}
@@ -119,7 +118,7 @@ HRESULT CEmptyGameObject::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),	(CComponent**)&m_pShaderCom)))
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),	(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -188,6 +187,7 @@ CGameObject * CEmptyGameObject::Clone(void * pArg)
 void CEmptyGameObject::Free()
 {
 	__super::Free();
+
 	Safe_Delete_Array(m_szModelTag);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

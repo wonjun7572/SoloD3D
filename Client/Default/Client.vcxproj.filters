@@ -118,6 +118,9 @@
     <Filter Include="GameObject\Env\Map">
       <UniqueIdentifier>{e0ffa2f9-d816-4395-b2ff-34cd4b820b79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Env\Prop">
+      <UniqueIdentifier>{9e4f50f0-ed88-4249-a3c1-135b62f5d001}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -241,6 +244,16 @@
     <ClInclude Include="..\public\Anor.h">
       <Filter>GameObject\Env\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TownA.h">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BridgeCastle.h">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Medieval_City.h">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Stair.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -352,6 +365,16 @@
     <ClCompile Include="..\private\Anor.cpp">
       <Filter>GameObject\Env\Map</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\TownA.cpp">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BridgeCastle.cpp">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Medieval_City.cpp">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Stair.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
