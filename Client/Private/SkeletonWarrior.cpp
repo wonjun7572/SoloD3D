@@ -33,7 +33,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 5 + 17.f, 0.f, rand() % 3 + 17.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
@@ -42,7 +42,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 
 	m_strObjName = L"Skeleton";
 
-	m_iHp = 50;
+	m_iHp = 100;
 	m_iAttack = 10;
 	m_iDefence = 5;
 

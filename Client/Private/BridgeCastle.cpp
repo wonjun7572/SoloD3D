@@ -31,7 +31,7 @@ HRESULT CBridgeCastle::Init(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Scaled(_float3(1.5f, 1.5f, 1.5f));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(115.f, 0.f, 65.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(115.f, 0.f, 72.5f, 1.f));
 
 	return S_OK;
 }

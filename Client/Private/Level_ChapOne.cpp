@@ -149,6 +149,9 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
 
+	//if (FAILED(pGameInstance->Clone_GameObject(CGameInstance::Get_StaticLevelIndex(), pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -160,7 +163,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Player"))))
 		return E_FAIL;
-	
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

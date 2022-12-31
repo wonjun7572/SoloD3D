@@ -494,6 +494,10 @@ HRESULT CTerrain::Render()
 #ifdef _DEBUG
 	for (auto& iter : m_pCubeList)
 		iter->Render();
+	
+	if(m_iDeleteCellNum != -1)
+		m_pNavigationCom->Render_pickingCell(m_iDeleteCellNum);
+	
 	m_pNavigationCom->Render();
 #endif
 
@@ -608,7 +612,7 @@ void CTerrain::Imgui_RenderProperty()
 			m_iDeleteCellNum = i;
 		}
 
-		if (ImGui::IsMouseClicked(0))
+		if (ImGui::IsMouseClicked(1))
 		{
 			m_bDeleteCell = true;
 		}

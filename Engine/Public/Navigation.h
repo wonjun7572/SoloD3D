@@ -40,16 +40,17 @@ public:
 
 	HRESULT Save_Navigation(_uint iIndex);
 
-	void	Imgui_CellProperty();
-
 #ifdef _DEBUG
 public:
 	HRESULT Render();
+	HRESULT Render_pickingCell(_int ipickingIndex);
 #endif
 
 private:
 	vector<class CCell*>	m_Cells;
 	NAVIDESC				m_NaviDesc;
+
+	int						m_iPickingCell = 0;
 
 public:
 	HRESULT Ready_Neighbor();

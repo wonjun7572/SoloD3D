@@ -30,7 +30,8 @@ HRESULT CStair::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
+	m_pTransformCom->Set_Scaled(_float3(4.f, 4.f, 4.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(105.f, 0.f, 20.f, 1.f));
 
 	return S_OK;
 }

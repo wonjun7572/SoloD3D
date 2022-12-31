@@ -187,7 +187,7 @@ _int CNavigation::isPicking_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey
 		}
 	}
 
-	return 0;
+	return -1;
 }
 
 HRESULT CNavigation::CreateCell(_float3 * pPoints)
@@ -212,7 +212,10 @@ HRESULT CNavigation::CreateCell(_float3 * pPoints)
 
 HRESULT CNavigation::DeleteCell(_uint iCellnum)
 {
-	m_Cells.erase(m_Cells.begin() + iCellnum);
+	if (iCellnum == m_Cells.size())
+		m_Cells.pop_back();
+	else
+		m_Cells.erase(m_Cells.begin() + iCellnum);
 	
 	if (FAILED(Ready_Neighbor()))
 		return E_FAIL;
@@ -264,18 +267,6 @@ HRESULT CNavigation::Save_Navigation(_uint iIndex)
 	return S_OK;
 }
 
-void CNavigation::Imgui_CellProperty()
-{
-	//if (ImGui::Button("Delete Cell"))
-	//{
-	//	m_Cells.erase(m_Cells.begin() + iSelect);
-	//	if (FAILED(Ready_Neighbor()))
-	//		return;
-	//
-	//	return;
-	//}
-}
-
 #ifdef _DEBUG
 HRESULT CNavigation::Render()
 {
@@ -298,12 +289,27 @@ HRESULT CNavigation::Render()
 		return S_OK;
 	}
 	
-	// 피킹된 셀 파란색으로 ㄱㄱ
-
 	for (auto& pCell : m_Cells)
 	{
 		if (nullptr != pCell)
 			pCell->Render(m_pShader);
+	}
+
+	return S_OK;
+}
+
+HRESULT CNavigation::Render_pickingCell(_int ipickingIndex)
+{
+	if (m_Cells.size() < ipickingIndex)
+		return E_FAIL;
+
+	if (m_Cells[ipickingIndex] != nullptr)
+	{
+		_float	fHeight = 0.2f;
+		HRESULT hr = m_pShader->Set_RawValue("g_fHeight", &fHeight, sizeof(_float));
+		m_pShader->Set_RawValue("g_vColor", &_float4(0.f, 0.f, 1.f, 1.f), sizeof(_float4));
+
+		m_Cells[ipickingIndex]->Render(m_pShader);
 	}
 
 	return S_OK;
@@ -412,6 +418,8 @@ void CNavigation::DeleteRecentCell()
 {
 	Safe_Release(m_Cells.back());
 	m_Cells.pop_back();
+
+	Ready_Neighbor();
 }
 
 CNavigation * CNavigation::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pNavigationDataFilePath)

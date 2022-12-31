@@ -308,7 +308,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 			return E_FAIL;
 
 		/* For.Stair */
-		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(90.0f));
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Stair"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Stair/Stair.model"), PivotMatrix))))
 			return E_FAIL;

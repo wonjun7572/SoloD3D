@@ -54,7 +54,7 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(5.f, 0.f, 3.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
 
 
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
