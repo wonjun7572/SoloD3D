@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Sky.h"
 #include "GameInstance.h"
+#include "Level_Loading.h"
 
 CSky::CSky(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -67,6 +68,8 @@ HRESULT CSky::Render()
 
 HRESULT CSky::SetUp_Components()
 {
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
@@ -77,15 +80,33 @@ HRESULT CSky::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom)))
+			return E_FAIL;
 
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
+		/* For.Com_VIBuffer */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIBufferCom)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+
+		/* For.Com_VIBuffer */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIBufferCom)))
+			return E_FAIL;
+
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

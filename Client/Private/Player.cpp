@@ -888,14 +888,17 @@ void CPlayer::LinkObject(_double TimeDelta)
 	else if (pCam != nullptr && m_bCamChange)
 		pCam->DynamicCamera(TimeDelta);
 
-	CEffect_Rect* pEffect = (CEffect_Rect*)pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Effect", L"Effect_Rect");
-	_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	pEffect->LinkPlayer(TimeDelta, XMVectorSet(XMVectorGetX(vPos), XMVectorGetY(vPos) + 2.f, XMVectorGetZ(vPos), 1.f));
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		CEffect_Rect* pEffect = (CEffect_Rect*)pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Effect", L"Effect_Rect");
+		_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		pEffect->LinkPlayer(TimeDelta, XMVectorSet(XMVectorGetX(vPos), XMVectorGetY(vPos) + 2.f, XMVectorGetZ(vPos), 1.f));
 
-	if (m_bSK01 && !CheckFinish_Skill1())
-		pEffect->Set_Tick(true);
-	else
-		pEffect->Set_Tick(false);
+		if (m_bSK01 && !CheckFinish_Skill1())
+			pEffect->Set_Tick(true);
+		else
+			pEffect->Set_Tick(false);
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -1020,10 +1023,28 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+		}
 	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP3, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+		}
+	}
+	
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -1031,10 +1052,28 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+		}
 	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP3, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+		}
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -1042,10 +1081,28 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack , 40);
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 40);
+		}
 	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 40);
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		for (auto& pMonster : pGameInstance->Find_LayerList(LEVEL_CHAP3, L"Layer_Monster"))
+		{
+			static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 40);
+		}
+	}
+
 	RELEASE_INSTANCE(CGameInstance);
 }
 

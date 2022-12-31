@@ -12,6 +12,8 @@ extern bool			g_bNeedResizeSwapChain;
 extern unsigned int	g_iWinSizeX;
 extern unsigned int	g_iWinSizeY;
 
+extern unsigned int	g_LEVEL;
+
 using namespace Client;
 
 #include "MathUtils.h"

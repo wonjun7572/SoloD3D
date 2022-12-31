@@ -253,7 +253,9 @@
     <ClInclude Include="..\public\Medieval_City.h">
       <Filter>GameObject\Env\Map</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Stair.h" />
+    <ClInclude Include="..\public\Stair.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -374,7 +376,9 @@
     <ClCompile Include="..\private\Medieval_City.cpp">
       <Filter>GameObject\Env\Map</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Stair.cpp" />
+    <ClCompile Include="..\private\Stair.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

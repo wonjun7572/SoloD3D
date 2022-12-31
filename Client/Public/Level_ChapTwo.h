@@ -17,6 +17,20 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void ImguiRenderTab();
+
+private:
+	HRESULT Ready_Ligths();
+	HRESULT Ready_Layer_BackGround(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Camera(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Player(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Monster(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Effect(const wstring& pLayerTag);
+	HRESULT Ready_Layer_MapObject(const wstring& pLayerTag);
+
+	wstring m_pSaveMapObjectFilePath;
+	wstring m_pLoadMapObjectFilePath;
+
 public:
 	static CLevel_ChapTwo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Free() override;

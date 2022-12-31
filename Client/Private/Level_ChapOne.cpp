@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Level_ChapOne.h"
 
+#include "Level_Loading.h"
+
 #include "GameInstance.h"
 #include "Camera_Dynamic.h"
 #include "ImGui_ProtoEditor.h"
@@ -42,6 +44,15 @@ void Client::CLevel_ChapOne::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
 	ImguiRenderTab();
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Key_Down(DIK_RETURN))
+	{
+		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP2))))
+			return;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void Client::CLevel_ChapOne::Late_Tick(_double TimeDelta)

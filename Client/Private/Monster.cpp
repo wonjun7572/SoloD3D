@@ -41,8 +41,13 @@ HRESULT CMonster::Init(void * pArg)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
-	
+	if(g_LEVEL == LEVEL_CHAP1)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Player"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	SetUp_FSM();

@@ -377,7 +377,14 @@ void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	CCollider*		pTargetCollider = nullptr;
+
+	if(g_LEVEL == LEVEL_CHAP1)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	else if(g_LEVEL == LEVEL_CHAP2)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	else if(g_LEVEL == LEVEL_CHAP3)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
 
 	if (nullptr == pTargetCollider)
 		return;
@@ -394,7 +401,14 @@ void CSkeletonWarrior::CollisionToAttack(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	CCollider*		pTargetCollider = nullptr;
+
+	if (g_LEVEL == LEVEL_CHAP1)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_AABB"));
 
 	if (nullptr == pTargetCollider)
 		return;
@@ -476,54 +490,160 @@ void CSkeletonWarrior::CollisionToMonster(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 	
-	_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size();
-	
-	for (_uint i = 0; i < iLayerSize; ++i)
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-		// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size();
 
-		if(pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-			continue;
-
-		Safe_AddRef(pTargetCollider);
-		m_MonsterColliders.push_back(pTargetCollider);
-	}
-
-	// 이 콜라이더는 sphere여야만함
-	_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-	_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
-
-	_uint iMonsterColliderSize = m_MonsterColliders.size();
-
-	for (_uint i = 0; i < iMonsterColliderSize; ++i)
-	{
-		// sphere -> AttackColCom
-		// AABB -> m_MonsterColliders
-		_float3	p;
-		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-		_vector v = p - sphereCenter;
-
-		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-		if (fDistance_Squared <= sphereRadius * sphereRadius)
+		for (_uint i = 0; i < iLayerSize; ++i)
 		{
-			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-			{
-				v = XMVector3Normalize(v);
-			}
-			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
 
-			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
 		}
-	}
-	
-	for (auto pCollider : m_MonsterColliders)
-		Safe_Release(pCollider);
 
-	m_MonsterColliders.clear();
+		// 이 콜라이더는 sphere여야만함
+		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
+		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
+
+		_uint iMonsterColliderSize = m_MonsterColliders.size();
+
+		for (_uint i = 0; i < iMonsterColliderSize; ++i)
+		{
+			// sphere -> AttackColCom
+			// AABB -> m_MonsterColliders
+			_float3	p;
+			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+			_vector v = p - sphereCenter;
+
+			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+			if (fDistance_Squared <= sphereRadius * sphereRadius)
+			{
+				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+				{
+					v = XMVector3Normalize(v);
+				}
+				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
+		}
+
+		for (auto pCollider : m_MonsterColliders)
+			Safe_Release(pCollider);
+
+		m_MonsterColliders.clear();
+
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size();
+
+		for (_uint i = 0; i < iLayerSize; ++i)
+		{
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
+		}
+
+		// 이 콜라이더는 sphere여야만함
+		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
+		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
+
+		_uint iMonsterColliderSize = m_MonsterColliders.size();
+
+		for (_uint i = 0; i < iMonsterColliderSize; ++i)
+		{
+			// sphere -> AttackColCom
+			// AABB -> m_MonsterColliders
+			_float3	p;
+			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+			_vector v = p - sphereCenter;
+
+			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+			if (fDistance_Squared <= sphereRadius * sphereRadius)
+			{
+				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+				{
+					v = XMVector3Normalize(v);
+				}
+				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
+		}
+
+		for (auto pCollider : m_MonsterColliders)
+			Safe_Release(pCollider);
+
+		m_MonsterColliders.clear();
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size();
+
+		for (_uint i = 0; i < iLayerSize; ++i)
+		{
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
+		}
+
+		// 이 콜라이더는 sphere여야만함
+		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
+		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
+
+		_uint iMonsterColliderSize = m_MonsterColliders.size();
+
+		for (_uint i = 0; i < iMonsterColliderSize; ++i)
+		{
+			// sphere -> AttackColCom
+			// AABB -> m_MonsterColliders
+			_float3	p;
+			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+			_vector v = p - sphereCenter;
+
+			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+			if (fDistance_Squared <= sphereRadius * sphereRadius)
+			{
+				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+				{
+					v = XMVector3Normalize(v);
+				}
+				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
+		}
+
+		for (auto pCollider : m_MonsterColliders)
+			Safe_Release(pCollider);
+
+		m_MonsterColliders.clear();
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
 }

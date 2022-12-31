@@ -20,7 +20,7 @@ HRESULT CLevel_Loading::Init(LEVEL eNextLevelID)
 		return E_FAIL;
 
 	m_eNextLevelID = eNextLevelID;
-
+	
 	/* eNextLevelID를 위한 자원을 쓰레드에게 준비해라. */
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, eNextLevelID);
 	if (nullptr == m_pLoader)
