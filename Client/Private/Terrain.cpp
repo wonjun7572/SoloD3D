@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "MathUtils.h"
 #include "TestCube.h"
+#include "Cell.h"
 
 CTerrain::CTerrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -26,14 +27,43 @@ HRESULT CTerrain::Init_Prototype()
 
 HRESULT	CTerrain::Ready_FilterBuffer()
 {
-	m_pPixel = new _ulong[128 * 128];
-
-	for (_uint i = 0; i < 128; ++i)
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		for (_uint j = 0; j < 128; ++j)
+		m_pPixel = new _ulong[128 * 128];
+
+		for (_uint i = 0; i < 128; ++i)
 		{
-			_uint iIndex = i * 128 + j;
-			m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			for (_uint j = 0; j < 128; ++j)
+			{
+				_uint iIndex = i * 128 + j;
+				m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_pPixel = new _ulong[512 * 512];
+
+		for (_uint i = 0; i < 512; ++i)
+		{
+			for (_uint j = 0; j < 512; ++j)
+			{
+				_uint iIndex = i * 512 + j;
+				m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		m_pPixel = new _ulong[256 * 256];
+
+		for (_uint i = 0; i < 256; ++i)
+		{
+			for (_uint j = 0; j < 256; ++j)
+			{
+				_uint iIndex = i * 256 + j;
+				m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
+			}
 		}
 	}
 
@@ -44,59 +74,166 @@ HRESULT CTerrain::Dynamic_FilterBuffer()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	ID3D11Texture2D*	pTexture2D = nullptr;
-
-	D3D11_TEXTURE2D_DESC	TextureDesc;
-	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-
-	HRESULT hr = 0;
-
-	TextureDesc.Width = 128;		// 2의 배수로 맞춰야됀다.
-	TextureDesc.Height = 128;		// 2의 배수로 맞춰야됀다.
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
-
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
-	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
-	TextureDesc.MiscFlags = 0;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
-		return E_FAIL;
-
-	D3D11_MAPPED_SUBRESOURCE		SubResource;
-	ZeroMemory(&SubResource, sizeof SubResource);
-
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
-
-	memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
-
-	m_pContext->Unmap(pTexture2D, 0);
-
-	Safe_Release(m_pTextureCom[TYPE_FILTER]);
-	Remove_Component(TEXT("Com_Filter"));
-
-	hr = DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"));
-
-	Safe_Release(pTexture2D);
-
-	pGameInstance->Remove_ProtoComponent(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_Filter"));
-
-	hr = (pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"), TYPE_FILTER)));
-
-	hr = __super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-		(CComponent**)&m_pTextureCom[TYPE_FILTER]);
-	RELEASE_INSTANCE(CGameInstance);
-
-	if (FAILED(hr))
+	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		return E_FAIL;
+		ID3D11Texture2D*	pTexture2D = nullptr;
+
+		D3D11_TEXTURE2D_DESC	TextureDesc;
+		ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+		HRESULT hr = 0;
+
+		TextureDesc.Width = 128;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.Height = 128;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.MipLevels = 1;
+		TextureDesc.ArraySize = 1;
+		TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		TextureDesc.SampleDesc.Quality = 0;
+		TextureDesc.SampleDesc.Count = 1;
+
+		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+		TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+		TextureDesc.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+			return E_FAIL;
+
+		D3D11_MAPPED_SUBRESOURCE		SubResource;
+		ZeroMemory(&SubResource, sizeof SubResource);
+
+		m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+
+		memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
+
+		m_pContext->Unmap(pTexture2D, 0);
+
+		Safe_Release(m_pTextureCom[TYPE_FILTER]);
+		Remove_Component(TEXT("Com_Filter"));
+
+		hr = DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"));
+
+		Safe_Release(pTexture2D);
+
+		pGameInstance->Remove_ProtoComponent(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_Filter"));
+
+		hr = (pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/NewFilter.dds"), TYPE_FILTER)));
+
+		hr = __super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER]);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		ID3D11Texture2D*	pTexture2D = nullptr;
+
+		D3D11_TEXTURE2D_DESC	TextureDesc;
+		ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+		HRESULT hr = 0;
+
+		TextureDesc.Width = 512;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.Height = 512;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.MipLevels = 1;
+		TextureDesc.ArraySize = 1;
+		TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		TextureDesc.SampleDesc.Quality = 0;
+		TextureDesc.SampleDesc.Count = 1;
+
+		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+		TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+		TextureDesc.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+			return E_FAIL;
+
+		D3D11_MAPPED_SUBRESOURCE		SubResource;
+		ZeroMemory(&SubResource, sizeof SubResource);
+
+		m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+
+		memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
+
+		m_pContext->Unmap(pTexture2D, 0);
+
+		Safe_Release(m_pTextureCom[TYPE_FILTER]);
+		Remove_Component(TEXT("Com_Filter"));
+
+		hr = DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap2_Change.dds"));
+
+		Safe_Release(pTexture2D);
+
+		pGameInstance->Remove_ProtoComponent(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_Filter"));
+
+
+		hr = (pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Filter"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap2_Change.dds"), TYPE_FILTER)));
+
+		hr = __super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER]);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		ID3D11Texture2D*	pTexture2D = nullptr;
+
+		D3D11_TEXTURE2D_DESC	TextureDesc;
+		ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+		HRESULT hr = 0;
+
+		TextureDesc.Width = 256;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.Height = 256;		// 2의 배수로 맞춰야됀다.
+		TextureDesc.MipLevels = 1;
+		TextureDesc.ArraySize = 1;
+		TextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		TextureDesc.SampleDesc.Quality = 0;
+		TextureDesc.SampleDesc.Count = 1;
+
+		TextureDesc.Usage = D3D11_USAGE_DYNAMIC;	// 동적으로 만들어야지 락 언락가능
+		TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// CPU는 동적할때 무조건
+		TextureDesc.MiscFlags = 0;
+
+		if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pTexture2D)))
+			return E_FAIL;
+
+		D3D11_MAPPED_SUBRESOURCE		SubResource;
+		ZeroMemory(&SubResource, sizeof SubResource);
+
+		m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);  //DX_9 Lock ==Map
+
+		memcpy(SubResource.pData, m_pPixel, (sizeof(_ulong) * TextureDesc.Width * TextureDesc.Height));
+
+		m_pContext->Unmap(pTexture2D, 0);
+
+		Safe_Release(m_pTextureCom[TYPE_FILTER]);
+		Remove_Component(TEXT("Com_Filter"));
+
+		hr = DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap3_Change.dds"));
+
+		Safe_Release(pTexture2D);
+
+		pGameInstance->Remove_ProtoComponent(pGameInstance->GetCurLevelIdx(), TEXT("Prototype_Component_Texture_Filter"));
+
+
+		hr = (pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Filter"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap3_Change.dds"), TYPE_FILTER)));
+
+		hr = __super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER]);
+
+		if (FAILED(hr))
+			return E_FAIL;
 	}
 
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 
@@ -218,7 +355,7 @@ HRESULT CTerrain::Save_CubeList(_int iIndex)
 		, 0);
 
 
-	if (0 == hFile)
+	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
 
 	_uint i = 0;
@@ -495,10 +632,13 @@ HRESULT CTerrain::Render()
 	for (auto& iter : m_pCubeList)
 		iter->Render();
 	
-	if(m_iDeleteCellNum != -1)
-		m_pNavigationCom->Render_pickingCell(m_iDeleteCellNum);
-	
-	m_pNavigationCom->Render();
+	if (m_pNavigationCom)
+	{
+		if (m_iDeleteCellNum != -1)
+			m_pNavigationCom->Render_pickingCell(m_iDeleteCellNum);
+
+		m_pNavigationCom->Render();
+	}
 #endif
 
 	return S_OK;
@@ -602,94 +742,122 @@ void CTerrain::Imgui_RenderProperty()
 			m_pVIBufferCom->SaveHeightMap();
 		ImGui::Checkbox("Filter", &m_bFilter);
 	}
-	if (ImGui::CollapsingHeader("For. Navi"))
+	if (m_pNavigationCom)
 	{
-		ImGui::Checkbox("Navi", &m_bNavi);
-		
-		if (!m_bDeleteCell)
+		if (ImGui::CollapsingHeader("For. Navi"))
 		{
-			_uint i = m_pNavigationCom->isPicking_NaviCell(g_hWnd, g_iWinSizeX, g_iWinSizeY);
-			m_iDeleteCellNum = i;
-		}
+			ImGui::Checkbox("Navi", &m_bNavi);
 
-		if (ImGui::IsMouseClicked(1))
-		{
-			m_bDeleteCell = true;
-		}
-		
-		ImGui::Text("DeleteCell? -> "); ImGui::SameLine();
-		ImGui::Text("%d", m_iDeleteCellNum);
-				
-		if (ImGui::Button("DeleteCell"))
-			m_pNavigationCom->DeleteCell(m_iDeleteCellNum);
-
-		if (ImGui::Button("ResetPicking"))
-			m_bDeleteCell = false;
-
-		if (m_iNaviPointCount >= 3)
-		{
-			AdjustCellPoint();
-			for (auto& pCube : m_pCubeList)
+			if (!m_bDeleteCell)
 			{
-				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[0])))
+				_uint i = m_pNavigationCom->isPicking_NaviCell(g_hWnd, g_iWinSizeX, g_iWinSizeY);
+				m_iDeleteCellNum = i;
+			}
+
+			if (ImGui::IsMouseClicked(1))
+			{
+				m_bDeleteCell = true;
+			}
+
+			ImGui::Text("DeleteCell? -> "); ImGui::SameLine();
+			ImGui::Text("%d", m_iDeleteCellNum);
+
+			if (ImGui::Button("DeleteCell"))
+				m_pNavigationCom->DeleteCell(m_iDeleteCellNum);
+
+			if (ImGui::Button("ResetPicking"))
+				m_bDeleteCell = false;
+
+			if (m_iNaviPointCount >= 3)
+			{
+				for (auto& pCube : m_pCubeList)
 				{
-					ImGui::Begin("Point_A");
-					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[0]);
-					ImGui::End();
+					if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[0])))
+					{
+						ImGui::Begin("Point_A");
+						static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[0]);
+						ImGui::End();
+					}
+					if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[1])))
+					{
+						ImGui::Begin("Point_B");
+						static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[1]);
+						ImGui::End();
+					}
+					if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[2])))
+					{
+						ImGui::Begin("Point_C");
+						static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[2]);
+						ImGui::End();
+					}
 				}
-				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[1])))
+
+				if (ImGui::Button("RealSetUp"))
 				{
-					ImGui::Begin("Point_B");
-					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[1]);
-					ImGui::End();
-				}
-				if (XMVector3Equal(pCube->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), XMLoadFloat3(&m_vPoints[2])))
-				{
-					ImGui::Begin("Point_C");
-					static_cast<CTestCube*>(pCube)->Imgui_Transform(&m_vPoints[2]);
-					ImGui::End();
+					AdjustCellPoint();
+					Dynamic_Navi();
+					m_iNaviPointCount = 0;
 				}
 			}
 
-			if (ImGui::Button("RealSetUp"))
+			ImGui::RadioButton("CHAP_ONE", &m_iChapNum, 2); ImGui::SameLine();
+			ImGui::RadioButton("CHAP_TWO", &m_iChapNum, 3); ImGui::SameLine();
+			ImGui::RadioButton("CHAP_THREE", &m_iChapNum, 4);
+
+			if (ImGui::Button("SaveNavi"))
 			{
-				Dynamic_Navi();
+				// 저장할떄 큐브도 저장하자
+				Save_Navi(m_iChapNum);
+				Save_CubeList(m_iChapNum);
+			}
+
+			if (ImGui::Button("LoadCube"))
+			{
+				Load_CubeList(m_iChapNum);
+			}
+
+			ImGui::NewLine();
+
+			if (ImGui::Button("DeleteRecentCell"))
+			{
+				m_pNavigationCom->DeleteRecentCell();
 				m_iNaviPointCount = 0;
 			}
-		}
 
-		ImGui::RadioButton("CHAP_ONE", &m_iChapNum, 2); ImGui::SameLine();
-		ImGui::RadioButton("CHAP_TWO", &m_iChapNum, 3); ImGui::SameLine();
-		ImGui::RadioButton("CHAP_THREE", &m_iChapNum, 4);
+			ImGui::NewLine();
+			ImGui::NewLine();
+			ImGui::NewLine();
 
-		if (ImGui::Button("SaveNavi"))
-		{	
-			// 저장할떄 큐브도 저장하자
-			Save_Navi(m_iChapNum);
-			Save_CubeList(m_iChapNum);
-		}
+			if (m_pNavigationCom->Get_Cell(m_iDeleteCellNum) != nullptr)
+			{
+				CCell* pCell = m_pNavigationCom->Get_Cell(m_iDeleteCellNum);
+				if (pCell != nullptr)
+				{
+					_float vA[3];
+					vA[0] = pCell->Get_Point(CCell::POINT_A).x;
+					vA[1] = pCell->Get_Point(CCell::POINT_A).y;
+					vA[2] = pCell->Get_Point(CCell::POINT_A).z;
+					_float vB[3];
+					vB[0] = pCell->Get_Point(CCell::POINT_B).x;
+					vB[1] = pCell->Get_Point(CCell::POINT_B).y;
+					vB[2] = pCell->Get_Point(CCell::POINT_B).z;
+					_float vC[3];
+					vC[0] = pCell->Get_Point(CCell::POINT_C).x;
+					vC[1] = pCell->Get_Point(CCell::POINT_C).y;
+					vC[2] = pCell->Get_Point(CCell::POINT_C).z;
 
-		if (ImGui::Button("LoadCube"))
-		{
-			Load_CubeList(m_iChapNum);
-		}
+					ImGui::InputFloat3("vA", vA);
+					ImGui::InputFloat3("vB", vB);
+					ImGui::InputFloat3("vC", vC);
+				}
+			}
 
-		ImGui::NewLine();
-		
-		if (ImGui::Button("DeleteRecentCell"))
-		{
-			m_pNavigationCom->DeleteRecentCell();
-			m_iNaviPointCount = 0;
-		}
+			ImGui::NewLine();
 
-		ImGui::NewLine();
-		ImGui::NewLine();
-		ImGui::NewLine();
-		ImGui::NewLine();
-
-		if (ImGui::Button("Reset"))
-		{
-			m_pNavigationCom->ResetCell();
+			if (ImGui::Button("Reset"))
+			{
+				m_pNavigationCom->ResetCell();
+			}
 		}
 	}
 }
@@ -850,7 +1018,16 @@ _bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, co
 					0.f,
 					pTerrainVtx[iVtxIdx[1]].z + (pTerrainVtx[iVtxIdx[2]].z - pTerrainVtx[iVtxIdx[1]].z),
 					1.f);
-				 _uint iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				
+				 _uint iResult = 0;
+				
+				 if(g_LEVEL == LEVEL_CHAP1)
+					iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				 else if (g_LEVEL == LEVEL_CHAP2)
+					 iResult = (static_cast<_uint>(vPos.z) * 512) + (static_cast<_uint>(vPos.x));
+				 else if (g_LEVEL == LEVEL_CHAP3)
+					 iResult = (static_cast<_uint>(vPos.z) * 256) + (static_cast<_uint>(vPos.x));
+	                 
 				 m_pPixel[iResult] = 0;
 				 return true;
 			}
@@ -868,7 +1045,16 @@ _bool CTerrain::PickingForFilter(const CVIBuffer_Terrain * pTerrainBufferCom, co
 					0.f,
 					pTerrainVtx[iVtxIdx[2]].z + (pTerrainVtx[iVtxIdx[0]].z - pTerrainVtx[iVtxIdx[2]].z),
 					1.f);
-				_uint iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				
+				_uint iResult = 0;
+
+				if (g_LEVEL == LEVEL_CHAP1)
+					iResult = (static_cast<_uint>(vPos.z) * 128) + (static_cast<_uint>(vPos.x));
+				else if (g_LEVEL == LEVEL_CHAP2)
+					iResult = (static_cast<_uint>(vPos.z) * 512) + (static_cast<_uint>(vPos.x));
+				else if (g_LEVEL == LEVEL_CHAP3)
+					iResult = (static_cast<_uint>(vPos.z) * 256) + (static_cast<_uint>(vPos.x));
+
 				m_pPixel[iResult] = 0;
 				return true;
 			}
@@ -889,31 +1075,91 @@ HRESULT CTerrain::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
-		(CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-		(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-		return E_FAIL;
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		/* For.Com_VIBuffer */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIBufferCom)))
+			return E_FAIL;
+		
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
 
-	/* For.Com_Brush*/
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
-		(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
-		return E_FAIL;
+		/* For.Com_Brush*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+			(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
+			return E_FAIL;
 
-	/* For.Com_Filter*/
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-		(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-		return E_FAIL;
+		/* For.Com_Filter*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
 
-	/* For.Com_Navigation */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-		(CComponent**)&m_pNavigationCom)))
-		return E_FAIL;
+		/* For.Com_Navigation */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom)))
+			return E_FAIL;
+
+		m_iDiffuseATexNum = 3;
+		m_iDiffuseBTexNum = 4;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_VIBuffer */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIBufferCom)))
+			return E_FAIL;
+
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+
+		/* For.Com_Brush*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+			(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
+			return E_FAIL;
+
+		/* For.Com_Filter*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+
+		/* For.Com_Navigation */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_VIBuffer */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
+			(CComponent**)&m_pVIBufferCom)))
+			return E_FAIL;
+
+		/* For.Com_Texture */ 
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
+			return E_FAIL;
+
+		/* For.Com_Brush*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
+			(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
+			return E_FAIL;
+
+		/* For.Com_Filter*/
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
+			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
+			return E_FAIL;
+
+		/* For.Com_Navigation */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

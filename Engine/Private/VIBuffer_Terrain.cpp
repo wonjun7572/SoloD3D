@@ -32,7 +32,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 
 	_ulong		dwByte = 0;
 	HANDLE		hFile = CreateFile(pHeightMapFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
+	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
 
 	m_pHeightPixel = nullptr;

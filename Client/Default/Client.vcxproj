@@ -189,6 +189,7 @@
     <ClInclude Include="..\public\Glove.h" />
     <ClInclude Include="..\public\Helmet.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
+    <ClInclude Include="..\public\Level_ChapThree.h" />
     <ClInclude Include="..\Public\Level_ChapTwo.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="..\private\Glove.cpp" />
     <ClCompile Include="..\private\Helmet.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
+    <ClCompile Include="..\private\Level_ChapThree.cpp" />
     <ClCompile Include="..\Private\Level_ChapTwo.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />

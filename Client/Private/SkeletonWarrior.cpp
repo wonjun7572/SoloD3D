@@ -117,7 +117,11 @@ void CSkeletonWarrior::Imgui_RenderProperty()
 		ImGui::Text("Current Anim Index"); ImGui::SameLine();
 		ImGui::Text(m_pModelCom->Get_CurAnim()->Get_Name());
 	}
-	m_pSwordColCom->FixedSizeForImgui(1);
+	
+	if (ImGui::Button("Navi~"))
+	{
+		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	}
 }
 
 void CSkeletonWarrior::SetUp_FSM()
@@ -736,16 +740,42 @@ HRESULT CSkeletonWarrior::SetUp_Components()
 		(CComponent**)&m_pSwordColCom, &ColliderDesc)))
 		return E_FAIL;
 
-	/* For.Com_Navigation */
-	CNavigation::NAVIDESC			NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
-	NaviDesc.iCurrentIndex = 0;
+		NaviDesc.iCurrentIndex = 0;
 
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-		(CComponent**)&m_pNavigationCom, nullptr)))
-		return E_FAIL;
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, nullptr)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 

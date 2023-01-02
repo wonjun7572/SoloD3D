@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Level_ChapTwo.h"
 
+#include "Level_Loading.h"
+
 #include "GameInstance.h"
 #include "ImGui_ProtoEditor.h"
 #include "ImGui_PropertyEditor.h"
@@ -41,6 +43,15 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
 	ImguiRenderTab();
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Key_Down(DIK_P))
+	{
+		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP3))))
+			return;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void Client::CLevel_ChapTwo::Late_Tick(_double TimeDelta)
@@ -150,6 +161,9 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
 
+	//if (FAILED(pGameInstance->Clone_GameObject(CGameInstance::Get_StaticLevelIndex(), pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -186,8 +200,8 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Effect_Rect"))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Effect_Rect"))))
+	//	return E_FAIL;
 
 	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Effect_Point"))))
 	//	return E_FAIL;
@@ -199,6 +213,13 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapTwo::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 

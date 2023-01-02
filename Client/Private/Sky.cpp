@@ -59,7 +59,7 @@ HRESULT CSky::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Render();
 
@@ -76,8 +76,13 @@ HRESULT CSky::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxCubeTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_VIBuffer */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Sphere"), TEXT("Com_VIBuffer"),
+		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -86,11 +91,6 @@ HRESULT CSky::SetUp_Components()
 		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
 			(CComponent**)&m_pTextureCom)))
 			return E_FAIL;
-
-		/* For.Com_VIBuffer */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
-			(CComponent**)&m_pVIBufferCom)))
-			return E_FAIL;
 	}
 	else if (g_LEVEL == LEVEL_CHAP2)
 	{
@@ -98,12 +98,13 @@ HRESULT CSky::SetUp_Components()
 		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
 			(CComponent**)&m_pTextureCom)))
 			return E_FAIL;
-
-		/* For.Com_VIBuffer */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
-			(CComponent**)&m_pVIBufferCom)))
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
+			(CComponent**)&m_pTextureCom)))
 			return E_FAIL;
-
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -119,7 +120,7 @@ HRESULT CSky::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture")))
 		return E_FAIL;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);

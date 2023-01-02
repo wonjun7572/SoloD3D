@@ -4,7 +4,6 @@
 #include "Level_Loading.h"
 
 #include "GameInstance.h"
-#include "Camera_Dynamic.h"
 #include "ImGui_ProtoEditor.h"
 #include "ImGui_PropertyEditor.h"
 
@@ -46,7 +45,7 @@ void Client::CLevel_ChapOne::Tick(_double TimeDelta)
 	ImguiRenderTab();
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (pGameInstance->Key_Down(DIK_RETURN))
+	if (pGameInstance->Key_Down(DIK_P))
 	{
 		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP2))))
 			return;

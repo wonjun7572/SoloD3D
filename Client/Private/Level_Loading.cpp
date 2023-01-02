@@ -7,6 +7,7 @@
 #include "Level_Logo.h"
 #include "Level_ChapOne.h"
 #include "Level_ChapTwo.h"
+#include "Level_ChapThree.h"
 #include "Level_Tool.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -60,6 +61,9 @@ void CLevel_Loading::Late_Tick(_double TimeDelta)
 			break;
 		case LEVEL_CHAP2:
 			pLevel = CLevel_ChapTwo::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL_CHAP3:
+			pLevel = CLevel_ChapThree::Create(m_pDevice, m_pContext);
 			break;
 		case LEVEL_TOOL:
 			pLevel = CLevel_Tool::Create(m_pDevice, m_pContext);

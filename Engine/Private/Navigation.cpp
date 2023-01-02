@@ -38,7 +38,7 @@ HRESULT CNavigation::Init_Prototype(const _tchar * pNavigationDataFilePath)
 		, FILE_ATTRIBUTE_NORMAL
 		, 0);
 
-	if (0 == hFile)
+	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
 
 	_float3		vPoints[CCell::POINT_END];
@@ -120,7 +120,7 @@ _bool CNavigation::isMove_OnNavigation(_fvector TargetPos, OUT _float4* vOldPos)
 
 _bool CNavigation::isHeighit_OnNavigation(_fvector TargetPos, _float * yPos)
 {
-	if (-1 == m_NaviDesc.iCurrentIndex)
+	if (-1 == m_NaviDesc.iCurrentIndex || m_Cells.size() <= 0)
 		return false;
 
 	_float3 vPos; 
@@ -250,7 +250,7 @@ HRESULT CNavigation::Save_Navigation(_uint iIndex)
 		, FILE_ATTRIBUTE_NORMAL
 		, 0);
 
-	if (0 == hFile)
+	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
 
 	for (auto& pCell : m_Cells)
@@ -265,6 +265,14 @@ HRESULT CNavigation::Save_Navigation(_uint iIndex)
 	CloseHandle(hFile);
 	Safe_Delete_Array(pDataName);
 	return S_OK;
+}
+
+CCell * CNavigation::Get_Cell(_uint iIndex)
+{
+	if(iIndex < 0 || m_Cells.size() < iIndex)
+		return nullptr;
+
+	return m_Cells[iIndex];
 }
 
 #ifdef _DEBUG

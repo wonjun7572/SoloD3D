@@ -54,9 +54,13 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
-
-
+	if(g_LEVEL == LEVEL_CHAP1)
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
+	else if(g_LEVEL == LEVEL_CHAP2)
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(320.f, 0.f, 30.f, 1.f));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(65.f, 0.f, 10.f, 1.f));
+	
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
 	m_iHp = 100;
 	m_iAttack = 20;
@@ -70,10 +74,6 @@ HRESULT CPlayer::Init(void * pArg)
 void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	_float yPos = 0.f;
-	m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
-	m_pTransformCom->Set_Height(yPos);
 
 	Movement(TimeDelta);
 
@@ -131,8 +131,8 @@ HRESULT CPlayer::Render()
 		if (nullptr != m_pColliderCom[i])
 			m_pColliderCom[i]->Render();
 	}
-
-	m_pNavigationCom->Render();
+	if(m_pNavigationCom)
+		m_pNavigationCom->Render();
 #endif
 
 	return S_OK;
@@ -467,6 +467,13 @@ void CPlayer::SetUp_FSM()
 void CPlayer::Movement(_double TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (m_pNavigationCom != nullptr)
+	{
+		_float yPos = 0.f;
+		m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
+		m_pTransformCom->Set_Height(yPos);
+	}
 
 	if (!pGameInstance->Key_Pressing(DIK_W) &&
 		!pGameInstance->Key_Pressing(DIK_A) &&
@@ -1295,16 +1302,42 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 
-	/* For.Com_Navigation */
-	CNavigation::NAVIDESC			NaviDesc;
-	ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
-	NaviDesc.iCurrentIndex = 0;
+		NaviDesc.iCurrentIndex = 0;
 
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-		(CComponent**)&m_pNavigationCom, &NaviDesc)))
-		return E_FAIL;
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
 
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 

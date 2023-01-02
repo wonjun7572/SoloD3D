@@ -40,6 +40,8 @@ public:
 
 	HRESULT Save_Navigation(_uint iIndex);
 
+	class CCell* Get_Cell(_uint iIndex);
+
 #ifdef _DEBUG
 public:
 	HRESULT Render();

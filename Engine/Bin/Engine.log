@@ -38,7 +38,7 @@ c:\users\sam51\desktop\brightmemory\solod3d\engine\private\vibuffer_point_instan
   Object_Manager.cpp
   Navigation.cpp
 c:\users\sam51\desktop\brightmemory\solod3d\engine\private\navigation.cpp(176): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\navigation.cpp(396): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\sam51\desktop\brightmemory\solod3d\engine\private\navigation.cpp(404): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Model.cpp
 c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(261): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Mesh.cpp
