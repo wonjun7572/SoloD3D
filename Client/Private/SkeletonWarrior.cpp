@@ -40,7 +40,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	m_strObjName = L"Skeleton";
+	m_strObjName = L"SkeletonWarrior";
 
 	m_iHp = 100;
 	m_iAttack = 10;
@@ -53,14 +53,13 @@ void CSkeletonWarrior::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
-
 }
 
 void CSkeletonWarrior::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (m_bDead)
+	if (m_bDeadAnim)
 		return;
 
 	Adjust_Collision(TimeDelta);
@@ -94,34 +93,12 @@ HRESULT CSkeletonWarrior::Render()
 
 void CSkeletonWarrior::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
-	{
-		const char* combo_preview_value = m_pModelCom->Get_CurAnim()->Get_Name();
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = i;
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-				{
-					m_pModelCom->Set_AnimationIndex(i);
-				}
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(m_pModelCom->Get_CurAnim()->Get_Name());
-	}
-	
 	if (ImGui::Button("Navi~"))
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
+
+	m_pSwordColCom->FixedSizeForImgui(1);
 }
 
 void CSkeletonWarrior::SetUp_FSM()
@@ -151,7 +128,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("Idle to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		// Chase
@@ -198,7 +175,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("Chase to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		// Groggy
@@ -226,7 +203,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("Groggy to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		// HitDown
@@ -244,7 +221,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("HitDown to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		.AddState("HitDownLoop")
@@ -267,7 +244,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("HitDownLoop to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		.AddState("Getup")
@@ -288,7 +265,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("Getup to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 
@@ -329,7 +306,7 @@ void CSkeletonWarrior::SetUp_FSM()
 		.AddTransition("Attack to Dead", "Dead")
 		.Predicator([this]()
 	{
-		return m_bDead;
+		return m_bDeadAnim;
 	})
 
 		// Dead
@@ -348,6 +325,10 @@ void CSkeletonWarrior::SetUp_FSM()
 		.Tick([this](_double TimeDelta) 
 	{
 		m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_DeadBody);
+		m_dDeadTime += TimeDelta;
+
+		if (m_dDeadTime > 3.0)
+			m_bDead = true;
 	})
 
 		.Build();
@@ -493,10 +474,10 @@ void CSkeletonWarrior::CollisionToWeaponSkill04(_double TimeDelta)
 void CSkeletonWarrior::CollisionToMonster(_double TimeDelta)
 {
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
-	
+
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size();
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size());
 
 		for (_uint i = 0; i < iLayerSize; ++i)
 		{
@@ -509,46 +490,10 @@ void CSkeletonWarrior::CollisionToMonster(_double TimeDelta)
 			Safe_AddRef(pTargetCollider);
 			m_MonsterColliders.push_back(pTargetCollider);
 		}
-
-		// 이 콜라이더는 sphere여야만함
-		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
-
-		_uint iMonsterColliderSize = m_MonsterColliders.size();
-
-		for (_uint i = 0; i < iMonsterColliderSize; ++i)
-		{
-			// sphere -> AttackColCom
-			// AABB -> m_MonsterColliders
-			_float3	p;
-			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-			_vector v = p - sphereCenter;
-
-			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-			if (fDistance_Squared <= sphereRadius * sphereRadius)
-			{
-				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-				{
-					v = XMVector3Normalize(v);
-				}
-				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
-				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
-			}
-		}
-
-		for (auto pCollider : m_MonsterColliders)
-			Safe_Release(pCollider);
-
-		m_MonsterColliders.clear();
-
 	}
 	else if (g_LEVEL == LEVEL_CHAP2)
 	{
-		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size();
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size());
 
 		for (_uint i = 0; i < iLayerSize; ++i)
 		{
@@ -561,45 +506,10 @@ void CSkeletonWarrior::CollisionToMonster(_double TimeDelta)
 			Safe_AddRef(pTargetCollider);
 			m_MonsterColliders.push_back(pTargetCollider);
 		}
-
-		// 이 콜라이더는 sphere여야만함
-		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
-
-		_uint iMonsterColliderSize = m_MonsterColliders.size();
-
-		for (_uint i = 0; i < iMonsterColliderSize; ++i)
-		{
-			// sphere -> AttackColCom
-			// AABB -> m_MonsterColliders
-			_float3	p;
-			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-			_vector v = p - sphereCenter;
-
-			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-			if (fDistance_Squared <= sphereRadius * sphereRadius)
-			{
-				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-				{
-					v = XMVector3Normalize(v);
-				}
-				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
-				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
-			}
-		}
-
-		for (auto pCollider : m_MonsterColliders)
-			Safe_Release(pCollider);
-
-		m_MonsterColliders.clear();
 	}
 	else if (g_LEVEL == LEVEL_CHAP3)
 	{
-		_uint iLayerSize = pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size();
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size());
 
 		for (_uint i = 0; i < iLayerSize; ++i)
 		{
@@ -612,42 +522,48 @@ void CSkeletonWarrior::CollisionToMonster(_double TimeDelta)
 			Safe_AddRef(pTargetCollider);
 			m_MonsterColliders.push_back(pTargetCollider);
 		}
+	}
 
-		// 이 콜라이더는 sphere여야만함
-		_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-		_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
 
-		_uint iMonsterColliderSize = m_MonsterColliders.size();
+	// 이 콜라이더는 sphere여야만함
+	_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
+	_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
 
-		for (_uint i = 0; i < iMonsterColliderSize; ++i)
+	_uint iMonsterColliderSize = static_cast<_uint>(m_MonsterColliders.size());
+
+	for (_uint i = 0; i < iMonsterColliderSize; ++i)
+	{
+		// sphere -> AttackColCom
+		// AABB -> m_MonsterColliders
+		_float3	p;
+		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+		_vector v = p - sphereCenter;
+
+		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+		if (fDistance_Squared <= sphereRadius * sphereRadius)
 		{
-			// sphere -> AttackColCom
-			// AABB -> m_MonsterColliders
-			_float3	p;
-			ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-			_vector v = p - sphereCenter;
-
-			_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-			if (fDistance_Squared <= sphereRadius * sphereRadius)
+			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
 			{
-				if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-				{
-					v = XMVector3Normalize(v);
-				}
-				_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				v = XMVector3Normalize(v);
+			}
+			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
-				vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+
+			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
+			{
 				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
 			}
 		}
-
-		for (auto pCollider : m_MonsterColliders)
-			Safe_Release(pCollider);
-
-		m_MonsterColliders.clear();
 	}
+
+	for (auto pCollider : m_MonsterColliders)
+		Safe_Release(pCollider);
+
+	m_MonsterColliders.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -706,8 +622,8 @@ HRESULT CSkeletonWarrior::SetUp_Components()
 
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 1.7f, 0.f);
-	ColliderDesc.vSize = _float3(0.5f, 1.7f, 0.5f);
+	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
+	ColliderDesc.vSize = _float3(0.4f, 1.4f, 0.4f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
@@ -716,7 +632,7 @@ HRESULT CSkeletonWarrior::SetUp_Components()
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(13.f, 13.f, 13.f);
+	ColliderDesc.vSize = _float3(12.f, 12.f, 12.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
@@ -724,8 +640,8 @@ HRESULT CSkeletonWarrior::SetUp_Components()
 
 	/* For.Com_Attack */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 1.5f, 0.f);
-	ColliderDesc.vSize = _float3(2.f, 2.f, 2.f);
+	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
+	ColliderDesc.vSize = _float3(1.4f, 1.4f, 1.4f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Attack"),
 		(CComponent**)&m_pAttackColCom, &ColliderDesc)))
@@ -733,8 +649,8 @@ HRESULT CSkeletonWarrior::SetUp_Components()
 
 	/* For.Com_Sword */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 2.f, 1.7f);
-	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
+	ColliderDesc.vCenter = _float3(0.f, 1.6f, 1.45f);
+	ColliderDesc.vSize = _float3(0.6f, 0.6f, 0.6f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Sword"),
 		(CComponent**)&m_pSwordColCom, &ColliderDesc)))

@@ -1,5 +1,8 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_Trail.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
   compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_VtxAnimModel.cso
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
@@ -20,62 +23,58 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
   compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\Shader_VtxTex.cso
-  stdafx.cpp
-  Anor.cpp
-  BackGround.cpp
   Belt.cpp
   Boots.cpp
-  BridgeCastle.cpp
-  Camera_Dynamic.cpp
   Demon.cpp
-..\private\Demon.cpp(88): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
-  Effect_Point.cpp
-  Effect_Rect.cpp
-  EmptyGameObject.cpp
-  ForkLift.cpp
-..\Private\ForkLift.cpp(33): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Demon.cpp(105): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+..\private\Demon.cpp(272): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Demon.cpp(288): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Demon.cpp(304): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Demon.cpp(324): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Glove.cpp
   Helmet.cpp
   Level_ChapOne.cpp
-  Level_ChapThree.cpp
-  Level_ChapTwo.cpp
-  Level_Loading.cpp
-  Level_Logo.cpp
-  Level_Tool.cpp
   Loader.cpp
-  컴파일하고 있습니다...
-  LoadingBackGround.cpp
   Lower.cpp
   MainApp.cpp
-  Medieval_City.cpp
   Monster.cpp
-  Ocean.cpp
   Parts.cpp
   Player.cpp
+..\private\Player.cpp(329): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Player.cpp(360): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\Player.cpp(391): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   PlayerCamera.cpp
   Shoulder.cpp
   SkeletonWarrior.cpp
-..\private\SkeletonWarrior.cpp(105): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
-..\private\SkeletonWarrior.cpp(495): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-..\private\SkeletonWarrior.cpp(513): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-..\private\SkeletonWarrior.cpp(547): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-..\private\SkeletonWarrior.cpp(565): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-..\private\SkeletonWarrior.cpp(598): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-..\private\SkeletonWarrior.cpp(616): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Sky.cpp
-  Stair.cpp
-  Terrain.cpp
-..\private\Terrain.cpp(225): warning C4267: '=': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  TestCube.cpp
-  TestCylinder.cpp
-  TestSphere.cpp
-  TownA.cpp
+..\private\SkeletonWarrior.cpp(104): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+..\private\SkeletonWarrior.cpp(500): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\SkeletonWarrior.cpp(516): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\SkeletonWarrior.cpp(532): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\SkeletonWarrior.cpp(552): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Trail.cpp
+  TrollA.cpp
+..\private\TrollA.cpp(104): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+..\private\TrollA.cpp(500): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollA.cpp(516): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollA.cpp(532): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollA.cpp(552): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  TrollQ.cpp
+..\private\TrollQ.cpp(104): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+..\private\TrollQ.cpp(500): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollQ.cpp(516): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollQ.cpp(532): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\TrollQ.cpp(552): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Upper.cpp
-  Weapon.cpp
-  컴파일하고 있습니다...
-  Client.cpp
+  ZombieA.cpp
+..\private\ZombieA.cpp(104): warning C4800: 'Engine::_uint': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+..\private\ZombieA.cpp(500): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\ZombieA.cpp(516): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\ZombieA.cpp(532): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+..\private\ZombieA.cpp(552): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-  All 6206 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  10538 of 14866 functions (70.9%) were compiled, the rest were copied from previous compilation.
+    8788 functions were new in current compilation
+    1005 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
 DirectXTK.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 DirectXTK.lib(ScreenGrab.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTK.lib(ScreenGrab.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Release\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.

@@ -1,81 +1,16 @@
-﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
-  
-  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Shader_Navigation.cso
-  ImSequencer.cpp
-  imgui_widgets.cpp
-  imgui_tables.cpp
-  imgui_impl_win32.cpp
-  imgui_impl_dx11.cpp
-  imgui_draw.cpp
-  imgui_demo.cpp
-  ImGuizmo.cpp
-  ImGuiFileDialog.cpp
-  imgui.cpp
-  ImGradient.cpp
-  ImCurveEdit.cpp
-  GraphEditor.cpp
-  VIBuffer_Sphere.cpp
-  VIBuffer_Rect.cpp
-  VIBuffer_Cube.cpp
-  VIBuffer.cpp
-  Transform.cpp
-  Texture.cpp
+﻿  Transform.cpp
   VIBuffer_Terrain.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  VIBuffer_Rect_Instancing.cpp
-  VIBuffer_Point_Instancing.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\vibuffer_point_instancing.cpp(138): warning C4244: '-=': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  VIBuffer_Instancing.cpp
-  VIBuffer_Cylinder.cpp
-  VIBuffer_Cell.cpp
-  Timer_Manager.cpp
-  Timer.cpp
-  Shader.cpp
-  RigidBody.cpp
-  Renderer.cpp
-  PipeLine.cpp
+  QuadTree.cpp
   Object_Manager.cpp
   Navigation.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\navigation.cpp(176): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\navigation.cpp(404): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Model.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\engine\private\model.cpp(261): warning C4267: '초기화 중': 'size_t'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Mesh.cpp
   Level_Manager.cpp
-  Level.cpp
-  Layer.cpp
-  Input_Device.cpp
   ImGui_PropertyEditor.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  ImGui_Manager.cpp
-  ImGuiObject.cpp
-  Graphic_Device.cpp
-  GameUtils.cpp
   GameObject.cpp
-  MathUtils.cpp
-  Light_Manager.cpp
-  Light.cpp
   ImGui_ProtoEditor.cpp
   Imgui_MapEditor.cpp
   GameInstance.cpp
-  FSMComponent.cpp
-  Font_Manager.cpp
-  Engine_Struct.cpp
-  DebugDraw.cpp
-  CustomFont.cpp
   Component_Manager.cpp
-  Component.cpp
-  Collider.cpp
-  Channel.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  Cell.cpp
-  Camera.cpp
-  Bone.cpp
-  Base.cpp
-  Animation.cpp
   코드를 생성하고 있습니다...
      ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
 Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11d.pdb' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Engine\Bin\Effects11d.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
@@ -125,6 +60,7 @@ DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 '
   .\Engine\Public\Engine_Struct.h
   .\Engine\Public\Engine_Typedef.h
   .\Engine\Public\Font_Manager.h
+  .\Engine\Public\Frustum.h
   .\Engine\Public\FSMComponent.h
   .\Engine\Public\GameInstance.h
   .\Engine\Public\GameObject.h
@@ -147,6 +83,7 @@ DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 '
   .\Engine\Public\Navigation.h
   .\Engine\Public\Object_Manager.h
   .\Engine\Public\PipeLine.h
+  .\Engine\Public\QuadTree.h
   .\Engine\Public\Renderer.h
   .\Engine\Public\RigidBody.h
   .\Engine\Public\Shader.h
@@ -217,6 +154,6 @@ DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 '
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  109개 파일이 복사되었습니다.
+  111개 파일이 복사되었습니다.
   .\Engine\Bin\ShaderFiles\Shader_Navigation.hlsl
   1개 파일이 복사되었습니다.

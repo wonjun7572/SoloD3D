@@ -48,6 +48,8 @@ HRESULT CMonster::Init(void * pArg)
 	else if (g_LEVEL == LEVEL_CHAP3)
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
 
+	Safe_AddRef(m_pPlayer);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	SetUp_FSM();
@@ -61,6 +63,7 @@ void CMonster::Tick(_double TimeDelta)
 
 	if (m_pFSM)
 		m_pFSM->Tick(TimeDelta);
+
 	m_pModelCom->Play_Animation(TimeDelta);
 
 	if (m_pNavigationCom)
@@ -82,10 +85,15 @@ void CMonster::Late_Tick(_double TimeDelta)
 	}
 
 	if (m_iHp <= 0)
-		m_bDead = true;
+		m_bDeadAnim = true;
 
-	if (nullptr != m_pRendererCom)
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (nullptr != m_pRendererCom && 
+		 true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CMonster::Render()

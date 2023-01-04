@@ -55,13 +55,19 @@ RasterizerState RS_None
 DepthStencilState DS_Default
 {
 	DepthEnable = true;
-DepthWriteMask = all;
-DepthFunc = less_equal;
+	DepthWriteMask = all;
+	DepthFunc = less_equal;
 };
 
 DepthStencilState DS_ZEnable_ZWriteEnable_FALSE
 {
 	DepthEnable = false;
+	DepthWriteMask = zero;
+};
+
+DepthStencilState DS_Test
+{
+	DepthEnable = true;
 	DepthWriteMask = zero;
 };
 
@@ -89,19 +95,34 @@ BlendState BS_AlphaBlending
 {
 	BlendEnable[0] = true;
 
-SrcBlend = src_alpha;
-DestBlend = inv_Src_Alpha;
-BlendOp = add;
+	SrcBlend = src_alpha;
+	DestBlend = inv_Src_Alpha;
+	BlendOp = add;
 };
 
 BlendState BS_One
 {
 	BlendEnable[0] = true;
-
-SrcBlend = one;
-DestBlend = one;
-BlendOp = add;
+	SrcBlend = one;
+	DestBlend = one;
+	BlendOp = add;
 };
+
+BlendState BS_Trail
+{
+	BlendEnable[0] = true;
+	SrcBlend = src_alpha;
+	DestBlend = one;
+	BlendOp = add;
+};
+
+float3x3 Kx = { -1, 0, 1,
+-2, 0, 2,
+-1, 0, 1 };
+
+float3x3 Ky = { 1, 2, 1,
+0, 0, 0,
+-1,-2,-1 };
 
 
 /* 샘플링 해오는 함수 */

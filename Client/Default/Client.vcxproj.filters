@@ -124,6 +124,15 @@
     <Filter Include="LevelDesign\Chapter\3">
       <UniqueIdentifier>{f8c1abab-becb-4ca8-a24b-9299b20e7149}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Player\Trail">
+      <UniqueIdentifier>{3838a956-5424-4b3a-b2d7-0207d332b86b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Monster\Troll">
+      <UniqueIdentifier>{0efc6caa-4d21-4037-846f-d25251df73b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Monster\Zombie">
+      <UniqueIdentifier>{c753974f-aea1-48cd-b6b2-139515262361}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -262,6 +271,18 @@
     <ClInclude Include="..\public\Level_ChapThree.h">
       <Filter>LevelDesign\Chapter\3</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZombieA.h">
+      <Filter>GameObject\Monster\Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Trail.h">
+      <Filter>GameObject\Player\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrollA.h">
+      <Filter>GameObject\Monster\Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TrollQ.h">
+      <Filter>GameObject\Monster\Troll</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -388,6 +409,18 @@
     <ClCompile Include="..\private\Level_ChapThree.cpp">
       <Filter>LevelDesign\Chapter\3</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ZombieA.cpp">
+      <Filter>GameObject\Monster\Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Trail.cpp">
+      <Filter>GameObject\Player\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrollA.cpp">
+      <Filter>GameObject\Monster\Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TrollQ.cpp">
+      <Filter>GameObject\Monster\Troll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -436,6 +469,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstancing.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

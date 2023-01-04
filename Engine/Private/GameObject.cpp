@@ -6,8 +6,9 @@ wstring CGameObject::m_pTransformComTag = TEXT("Com_Transform");
 
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:m_pDevice(pDevice),
-	m_pContext(pContext)
-	,m_bClone(false)
+	m_pContext(pContext),
+	m_bClone(false),
+	m_bDead(false)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -15,8 +16,9 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 CGameObject::CGameObject(const CGameObject & rhs)
 	:m_pDevice(rhs.m_pDevice),
-	m_pContext(rhs.m_pContext)
-	, m_bClone(true)
+	m_pContext(rhs.m_pContext),
+	m_bClone(true),
+	m_bDead(false)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

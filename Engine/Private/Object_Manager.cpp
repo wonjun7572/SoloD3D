@@ -106,6 +106,16 @@ CGameObject * CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, vo
 	return pGameObject;
 }
 
+HRESULT CObject_Manager::Delete_GameObject(_uint iLevelIndex, const wstring & pLayerTag, CGameObject * pGameObject)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (pLayer == nullptr)
+		return E_FAIL;
+
+	return 	pLayer->Delete_GameObject(pGameObject);
+}
+
 void CObject_Manager::Tick(_double TimeDelta)
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)

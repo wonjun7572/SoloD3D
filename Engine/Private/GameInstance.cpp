@@ -8,6 +8,7 @@
 #include "Timer_Manager.h"
 #include "Font_Manager.h"
 #include "Light_Manager.h"
+#include "Frustum.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -24,8 +25,10 @@ CGameInstance::CGameInstance()
 	m_pPipeLine(CPipeLine::GetInstance()),
 	m_pTimerMgr(CTimer_Manager::GetInstance()),
 	m_pFontMgr(CFont_Manager::GetInstance()),
-	m_pLightMgr(CLight_Manager::GetInstance())
+	m_pLightMgr(CLight_Manager::GetInstance()),
+	m_pFrustum(CFrustum::GetInstance())
 {
+	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pGraphicDev);
 	Safe_AddRef(m_pInputDev);
 	Safe_AddRef(m_pLevelMgr);
@@ -66,6 +69,9 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
 		return E_FAIL;
 
+	if (FAILED(m_pFrustum->Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -84,6 +90,8 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 	m_pLevelMgr->Tick(TimeDelta);
 	
 	m_pPipeLine->Tick();
+
+	m_pFrustum->Transform_ToWorldSpace();
 
 	m_pObjectMgr->Late_Tick(TimeDelta);
 	m_pLevelMgr->Late_Tick(TimeDelta);
@@ -479,6 +487,22 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pLightMgr->Add_Light(pDevice, pContext, LightDesc);
 }
 
+_bool CGameInstance::isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->isInFrustum_WorldSpace(vWorldPos, fRange);
+}
+
+_bool CGameInstance::isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange)
+{
+	if (nullptr == m_pFrustum)
+		return false;
+
+	return m_pFrustum->isInFrustum_LocalSpace(vLocalPos, fRange);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -497,6 +521,8 @@ void CGameInstance::Release_Engine()
 
 	CLight_Manager::GetInstance()->DestroyInstance();
 
+	CFrustum::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
@@ -506,6 +532,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pFrustum);
 	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pComponetMgr);
 	Safe_Release(m_pPipeLine);

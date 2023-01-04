@@ -31,6 +31,9 @@
 
 #include "Demon.h"
 #include "SkeletonWarrior.h"
+#include "ZombieA.h"
+#include "TrollA.h"
+#include "TrollQ.h"
 
 #include "PlayerCamera.h"
 
@@ -43,6 +46,8 @@
 
 #include "Medieval_City.h"
 #include "Anor.h"
+
+#include "Trail.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -166,7 +171,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/cloud_sky.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap1_Sky.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Weapon_Effect*/
@@ -188,7 +193,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For.Prototype_Component_VIBuffer_Sphere */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Sphere"),
-		CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 1.f))))
+		CVIBuffer_Sphere::Create(m_pDevice, m_pContext, 0.1f))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
@@ -228,70 +233,88 @@ HRESULT CLoader::Loading_ForChapter_1()
 	// For. MONSTER
 	{
 		/* For.Prototype_Component_Model_Demon */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Demon"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Demon/Demon.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_SkeletonWarrior */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_SkeletonWarrior"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/SkeletonWarrior/SkeletonWarrior.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Model_ZombieA */
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ZombieA"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Zombie/ZombieA.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Model_TrollA */
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TrollA"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollA.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Model_TrollQ */
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TrollQ"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollQ.model"), PivotMatrix))))
 			return E_FAIL;
 	}
 
 	// For. PLAYER
 	{
 		/* For.Prototype_Component_Model_HumanF */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Glove/Glove.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Upper */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Upper/Upper.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Lower */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Lower/Lower.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Glove */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Shoulder */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Shoulder/Shoulder.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Boots */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Boots/Boots.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Belt */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Belt/Belt.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Helmet */
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Helmet/Helmet.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Sword*/
-		PivotMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f)
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
 			* XMMatrixRotationX(XMConvertToRadians(97.5f))
 			* XMMatrixRotationY(XMConvertToRadians(78.7f))
 			* XMMatrixRotationZ(XMConvertToRadians(1.f));
@@ -318,6 +341,27 @@ HRESULT CLoader::Loading_ForChapter_1()
 		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Stair"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Stair/Stair.model"), PivotMatrix))))
+			return E_FAIL;
+	}
+
+	// For. Trail
+	{
+		/* For.NormalAtk1_Trail */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("NormalAtk1_Trail"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/WeaponTrail/NormalAtk1/NormalAtk1_Trail.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.NormalAtk2_Trail */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("NormalAtk2_Trail"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/WeaponTrail/NormalAtk2/NormalAtk2_Trail.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.NormalAtk3_Trail */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("NormalAtk3_Trail"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/WeaponTrail/NormalAtk3/NormalAtk3_Trail.model"), PivotMatrix))))
 			return E_FAIL;
 	}
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
@@ -380,6 +424,18 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For.Prototype_GameObject_SkeletonWarrior*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkeletonWarrior"), CSkeletonWarrior::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
+
+		/* For.Prototype_GameObject_ZombieA*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ZombieA"), CZombieA::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For.Prototype_GameObject_TrollA*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollA"), CTrollA::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For.Prototype_GameObject_TrollQ*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollQ"), CTrollQ::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 	
 	/* For. Prototype_GameObject_Terrain*/
@@ -414,6 +470,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"), CStair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For. Prototype_GameObject_Trail*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Trail"), CTrail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("로딩끝. ");
 
 	m_isFinished = true;
@@ -446,7 +506,7 @@ HRESULT CLoader::Loading_ForChapter_2()
 
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/cloud_sky.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap2_Sky.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Weapon_Effect*/
@@ -553,7 +613,7 @@ HRESULT CLoader::Loading_ForChapter_3()
 
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/cloud_sky.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap3_Sky.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Weapon_Effect*/

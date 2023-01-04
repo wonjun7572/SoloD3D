@@ -73,6 +73,10 @@ void CPlayerCamera::Tick(_double TimeDelta)
 void CPlayerCamera::Imgui_RenderProperty()
 {
 	ImGui::Text("%f", &m_fDistanceToTarget);
+
+	ImGui::DragFloat("DistanceToTarget", &m_fDistanceToTarget, 0.01f, 0.f, 20.f);
+	ImGui::DragFloat("CamY", &m_fCamImguiY, 0.01f, 0.f, 20.f);
+	ImGui::DragFloat("CamLookY", &m_fCamImguiLookY, 0.01f, 0.f, 20.f);
 }
 
 void CPlayerCamera::Late_Tick(_double TimeDelta)
@@ -108,9 +112,9 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 
 		if (MouseMove_Y = pGameInstance->Get_DIMouseMove(DIMS_Y))
 		{
-			m_fCamY += MouseMove_Y * static_cast<float>(TimeDelta) * 0.1f;
+			m_fCamY += MouseMove_Y * static_cast<float>(TimeDelta);
 
-			if (m_fCamY < -35.f)
+			if (m_fCamY < -5.f)
 				m_fCamY = -5.f;
 
 			if (m_fCamY > 5.f)
@@ -139,12 +143,6 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 	{
 		if (!m_bChange)
 		{
-			m_fCamTime += static_cast<float>(TimeDelta);
-			if (m_fCamTime > 0.5f)
-			{
-				m_fCamTime = 0.f;
-				m_bChange = true;
-			}
 			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
 			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
@@ -153,8 +151,11 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			_vector V = XMVectorSubtract(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos);
 			_vector X = XMVector4Length(V);
 			_float fDistance = XMVectorGetX(V);
-			if (fabs(fDistance) > 0.3f)
-				m_pTransformCom->Chase(vCamPos, static_cast<float>(TimeDelta) * 10.f);
+			
+			if (fabs(fDistance) > 0.1f)
+				m_pTransformCom->Chase(vCamPos, static_cast<float>(TimeDelta) * 1.2f);
+			else
+				m_bChange = true;
 		}
 		else
 		{

@@ -97,6 +97,14 @@ private: /* For. Imgui*/
 	_float3				m_vPoints[3];
 	list<CGameObject*>	m_pCubeList;
 
+	/*For UVAnimation*/
+	_float						m_fTimeDelta = 0.f;
+	_float						m_fWaveTime = 0.1f;
+	_float						m_fWaveHeight = 5.f;
+	_float						m_fSpeed = 2.f;
+	_float						m_fWaveFrequency = 15.f;
+	_float						m_fUVSpeed = 0.15f;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

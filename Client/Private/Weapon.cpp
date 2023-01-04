@@ -33,7 +33,7 @@ HRESULT CWeapon::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 	
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.2f, -0.87f, -2.018f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.113f,-0.637f, -1.511f, 1.f));
 	
 	return S_OK;
 }
@@ -83,7 +83,7 @@ HRESULT CWeapon::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, 2);
+		m_pModelCom->Render(m_pShaderCom, i, 3);
 	}
 
 #ifdef _DEBUG
@@ -114,7 +114,7 @@ HRESULT CWeapon::SetUp_Components()
 	CCollider::COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 
-	ColliderDesc.vCenter = _float3(1.5f, -0.2f, 0.28f);
+	ColliderDesc.vCenter = _float3(1.2f, -0.02f, 0.25f);
 	ColliderDesc.vSize = _float3(0.5f, 0.5f, 0.5f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider"),

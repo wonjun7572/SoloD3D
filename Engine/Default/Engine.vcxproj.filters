@@ -154,6 +154,12 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Instancing\Point">
       <UniqueIdentifier>{fb3fe0d0-f690-4fe6-b983-4efc8f73cdf0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Frustum">
+      <UniqueIdentifier>{040c5046-806e-41eb-a6ba-9d732b0ac2d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree">
+      <UniqueIdentifier>{aeeee41c-7404-4d4a-a8b6-f1540e904d67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -376,6 +382,12 @@
     <ClInclude Include="..\Public\FSMComponent.h">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Frustum.h">
+      <Filter>Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\QuadTree.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -570,6 +582,12 @@
     <ClCompile Include="..\private\Imgui_MapEditor.cpp" />
     <ClCompile Include="..\Private\FSMComponent.cpp">
       <Filter>Singleton\ComponentManager\Component\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Frustum.cpp">
+      <Filter>Frustum</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\QuadTree.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

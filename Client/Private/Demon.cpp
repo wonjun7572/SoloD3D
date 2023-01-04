@@ -34,12 +34,18 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
+
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_strObjName = L"Demon";
+	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(50.f, 0.f, 50.f, 1.f));
+	m_strObjName = L"DEMON";
+
+	m_iHp = 100;
+	m_iAttack = 10;
+	m_iDefence = 5;
 
 	return S_OK;
 }
@@ -47,11 +53,18 @@ HRESULT CDemon::Init(void * pArg)
 void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+	AdditiveAnim(TimeDelta);
 }
 
 void CDemon::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
+
+	if (m_bDeadAnim)
+		return;
+
+	Adjust_Collision(TimeDelta);
+	CollisionToMonster(TimeDelta);
 }
 
 HRESULT CDemon::Render()
@@ -72,169 +85,288 @@ HRESULT CDemon::Render()
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}	
 
+#ifdef _DEBUG
+	m_pAttackColCom->Render();
+	m_pSwordColCom->Render();
+#endif
 	return S_OK;
 }
 
 void CDemon::Imgui_RenderProperty()
 {
-	if (ImGui::CollapsingHeader("For.Animation"))
+	if (ImGui::Button("Navi~"))
 	{
-		const char* combo_preview_value = m_pModelCom->Get_CurAnim()->Get_Name();
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
-		{
-			for (_uint i = 0; i < m_pModelCom->Get_AnimationsNum(); i++)
-			{
-				const bool is_selected = i;
-				if (ImGui::Selectable(m_pModelCom->Get_AnimationName()[i], is_selected))
-				{
-					m_pModelCom->Set_AnimationIndex(i);
-				}
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-
-		ImGui::Text("Current Anim Index"); ImGui::SameLine();
-		ImGui::Text(m_pModelCom->Get_CurAnim()->Get_Name());
+		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
+
+	m_pSwordColCom->FixedSizeForImgui(1);
+}
+
+void CDemon::Adjust_Collision(_double TimeDelta)
+{
+	if (m_pAttackColCom)
+		m_pAttackColCom->Update(m_pTransformCom->Get_WorldMatrix());
+
+	if (m_pSwordColCom)
+		m_pSwordColCom->Update(m_pTransformCom->Get_WorldMatrix());
+
+	CollisionToPlayer(TimeDelta);
+	CollisionToAttack(TimeDelta);
+
+	if (m_bPlayerAttackCommand)
+		CollisionToWeapon(TimeDelta);
+
+	if (m_bPlayerSkill02Command)
+		CollisionToWeaponSkill02(TimeDelta);
+
+	if (m_bPlayerSkill04Command)
+		CollisionToWeaponSkill04(TimeDelta);
+
+	if (!m_bPlayerSkill02Command && !m_bPlayerSkill04Command)
+		m_bPossibleSkillDamaged = false;
 }
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
 {
-	//CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//CPlayer*		pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
-	//_vector			vTargetToDir = XMVector3Normalize(XMVectorSubtract(pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)));
-	//_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
-	//_float			fDot = XMVectorGetX(vDot);
+	CCollider*		pTargetCollider = nullptr;
 
-	//if ((pPlayer->Get_State() == CPlayer::PLAYER_WALKF 
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_WALKB) 
-	//	&& fDot < 0 )
-	//{
-	//	m_bMove = false;
-	//	RELEASE_INSTANCE(CGameInstance);
-	//	return;
-	//}
+	if (g_LEVEL == LEVEL_CHAP1)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
 
-	//_vector			vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	//_vector			vPlayerPos = pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-	//_vector			V = XMVectorSubtract(vPos, vPlayerPos);
-	//_vector			X = XMVector4Length(V);
-	//_float			fDistanceToTarget = XMVectorGetX(X);
+	if (nullptr == pTargetCollider)
+		return;
 
-	//if (fabs(fDistanceToTarget) < 3)
-	//{
-	//	m_bAttack1 = true;
-	//	m_bMove = false;
-	//}
-	//else
-	//{
-	//	CCollider*		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
+	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
+		m_bPlayerChase = true;
+	else
+		m_bPlayerChase = false;
 
-	//	if (nullptr == pTargetCollider)
-	//		return;
+	RELEASE_INSTANCE(CGameInstance);
+}
 
-	//	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
-	//	{
-	//		m_bAttack1 = false;
-	//		m_bAttack2 = false;
-	//		m_bMove = true;
-	//	}
-	//	else
-	//	{
-	//		m_bAttack1 = false;
-	//		m_bAttack2 = false;
-	//		m_bMove = false;
-	//	}
-	//}
+void CDemon::CollisionToAttack(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//RELEASE_INSTANCE(CGameInstance);
+	CCollider*		pTargetCollider = nullptr;
+
+	if (g_LEVEL == LEVEL_CHAP1)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_AABB"));
+
+	if (nullptr == pTargetCollider)
+		return;
+
+	if (m_pAttackColCom->Collision(pTargetCollider) == true)
+		m_bPlayerAttack = true;
+	else
+		m_bPlayerAttack = false;
+
+	if (m_bRealAttack)
+	{
+		if (m_pSwordColCom->Collision(pTargetCollider) == true)
+		{
+			// 플레이어가 앞을 보고 있느냐 뒤를 보고 있느냐를 판단하자
+			_vector			vTargetLook = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+			_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetLook);
+			_float			fDot = XMVectorGetX(vDot);
+
+			// 0보다 작으면 내 앞에 있다.
+			if (fDot < 0)
+				m_pPlayer->FrontDamagedToMonster();
+			else
+				m_pPlayer->BackDamagedToMonster();
+		}
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CDemon::CollisionToWeapon(_double TimeDelta)
 {
-	//CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
-	//CPlayer* pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+	if (nullptr == pTargetCollider)
+		return;
 
-	//_vector vTargetToDir = XMVector3Normalize(XMVectorSubtract(pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)));
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		_vector			vTargetLook = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+		_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetLook);
+		_float			fDot = XMVectorGetX(vDot);
 
-	//_vector vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetToDir);
-	//_float fDot = XMVectorGetX(vDot);
+		if (fDot < 0)
+			m_bFrontDamaged = true;
+		else
+			m_bBackDamaged = true;
+	}
+}
 
-	//if (pPlayer->Get_State() == CPlayer::PLAYER_ATTACK1
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_ATTACK2
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_ATTACK3
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK01
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK02
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK03
-	//	|| pPlayer->Get_State() == CPlayer::PLAYER_SK04FIRE)
-	//{
-	//	CCollider* pTargetCollider = static_cast<CWeapon*>(pPlayer->Get_PlayerParts()[0])->Get_Collider();
+void CDemon::CollisionToWeaponSkill02(_double TimeDelta)
+{
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
-	//	if (nullptr == pTargetCollider)
-	//		return;
+	if (nullptr == pTargetCollider)
+		return;
 
-	//	m_DamagedCoolTime += TimeDelta;
-	//	
-	//	if (m_pColliderCom[COLLTYPE_OBB]->Collision(pTargetCollider) == true)
-	//	{
-	//		if (pPlayer->Get_State() == CPlayer::PLAYER_SK01 
-	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK02
-	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK03
-	//			|| pPlayer->Get_State() == CPlayer::PLAYER_SK04FIRE)
-	//		{
-	//			m_bMove = false;
-	//			m_bAttack1 = false;
-	//			m_bAttack2 = false;
-	//			m_bDamaged_F = false;
-	//			m_bDamaged_B = false;
-	//			m_bHitDown = true;
-	//			m_DamagedCoolTime = 0.0;
-	//			RELEASE_INSTANCE(CGameInstance);
-	//			return;
-	//		}
-	//		else if (fDot < 0)
-	//		{
-	//			m_bMove = false;
-	//			m_bAttack1 = false;
-	//			m_bAttack2 = false;
-	//			m_bHitDown = false;
-	//			m_bDamaged_B = true;
-	//			RELEASE_INSTANCE(CGameInstance);
-	//			m_DamagedCoolTime = 0.0;
-	//			return;
-	//		}
-	//		else
-	//		{
-	//			m_bMove = false;
-	//			m_bAttack1 = false;
-	//			m_bAttack2 = false;
-	//			m_bHitDown = false;
-	//			m_bDamaged_F = true;
-	//			RELEASE_INSTANCE(CGameInstance);
-	//			m_DamagedCoolTime = 0.0;
-	//			return;
-	//		}
-	//	}
-	//}
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		AdjustSetDamageToSkill();
+		m_bHitDown = true;
+	}
+}
 
-	//if (m_bDamaged_F || m_bDamaged_B || m_bHitDown)
-	//	m_DamagedCoolTime += TimeDelta;
+void CDemon::CollisionToWeaponSkill04(_double TimeDelta)
+{
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
-	//if (m_DamagedCoolTime > 5.0)
-	//{
-	//	m_bDamaged_B = false;
-	//	m_bDamaged_F = false;
-	//	m_bHitDown = false;
-	//	m_DamagedCoolTime = 0.0;
-	//}
+	if (nullptr == pTargetCollider)
+		return;
 
-	//RELEASE_INSTANCE(CGameInstance);
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		AdjustSetDamageToSkill();
+		m_bGroggy = true;
+	}
+}
+
+void CDemon::CollisionToMonster(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size());
+
+		for (_uint i = 0; i < iLayerSize; ++i)
+		{
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size());
+
+		for (_uint i = 0; i < iLayerSize; ++i)
+		{
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size());
+
+		for (_uint i = 0; i < iLayerSize; ++i)
+		{
+			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
+			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
+
+			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
+				continue;
+
+			Safe_AddRef(pTargetCollider);
+			m_MonsterColliders.push_back(pTargetCollider);
+		}
+	}
+
+
+	// 이 콜라이더는 sphere여야만함
+	_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
+	_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
+
+	_uint iMonsterColliderSize = static_cast<_uint>(m_MonsterColliders.size());
+
+	for (_uint i = 0; i < iMonsterColliderSize; ++i)
+	{
+		// sphere -> AttackColCom
+		// AABB -> m_MonsterColliders
+		_float3	p;
+		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+		_vector v = p - sphereCenter;
+
+		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+		if (fDistance_Squared <= sphereRadius * sphereRadius)
+		{
+			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+			{
+				v = XMVector3Normalize(v);
+			}
+			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+
+			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
+		}
+	}
+
+	for (auto pCollider : m_MonsterColliders)
+		Safe_Release(pCollider);
+
+	m_MonsterColliders.clear();
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CDemon::AdditiveAnim(_double TimeDelta)
+{
+	if (m_bFrontDamaged)
+	{
+		AdjustSetDamage();
+		m_pModelCom->Set_AdditiveAnimIndex(DEMON_ADD_DMG_F);
+		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
+	}
+
+	if (AnimFinishChecker(DEMON_ADD_DMG_F))
+	{
+		m_bFrontDamaged = false;
+		m_bPossibleDamaged = false;
+		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_F);
+	}
+
+	///////////////////////////////////////
+
+	if (m_bBackDamaged)
+	{
+		AdjustSetDamage();
+		m_pModelCom->Set_AdditiveAnimIndex(DEMON_ADD_DMG_B);
+		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
+	}
+
+	if (AnimFinishChecker(DEMON_ADD_DMG_B))
+	{
+		m_bBackDamaged = false;
+		m_bPossibleDamaged = false;
+		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_B);
+	}
 }
 
 void CDemon::SetUp_FSM()
@@ -244,7 +376,227 @@ void CDemon::SetUp_FSM()
 		.AddState("Idle")
 		.Tick([this](_double TimeDelta)
 	{
-		m_pModelCom->Set_AnimationIndex(1);
+		m_pModelCom->Set_AnimationIndex(DEMON_Idle_P_01);
+	})
+		.AddTransition("Idle to Chase", "Chase")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase;
+	})
+		.AddTransition("Idle to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Idle to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Idle to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		// Chase
+		.AddState("Chase")
+		.Tick([this](_double TimeDelta)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		_vector	vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+		if (!m_bPlayerAttack)
+		{
+			m_pModelCom->Set_AnimationIndex(DEMON_Run_F);
+			m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+		}
+		else
+		{
+			m_pModelCom->Set_AnimationIndex(DEMON_Idle_C);
+			m_pTransformCom->LookAt(vPlayerPos);
+		}
+
+		m_AttackDelayTime += TimeDelta;
+		RELEASE_INSTANCE(CGameInstance);
+	})
+		.AddTransition("Chase to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return !m_bPlayerChase;
+	})
+		.AddTransition("Chase to Attack", "Attack")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bPlayerAttack && m_AttackDelayTime > 3.0;
+	})
+		.AddTransition("Chase to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Chase to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Chase to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		// Groggy
+		.AddState("Groggy")
+		.OnStart([this]()
+	{
+		m_GroggyDelayTime = 0.0;
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Passout);
+		m_pModelCom->Set_AnimationIndex(DEMON_Passout);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		m_GroggyDelayTime += TimeDelta;
+		m_pModelCom->Set_AnimationIndex(DEMON_Passout);
+	})
+		.OnExit([this]()
+	{
+		m_bGroggy = false;
+	})
+		.AddTransition("Groggy to Chase", "Chase")
+		.Predicator([this]()
+	{
+		return  m_GroggyDelayTime >= 5.0;
+	})
+		.AddTransition("Groggy to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		// HitDown
+		.AddState("HitDown")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Hit_Down);
+		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Down);
+	})
+		.AddTransition("HitDown to HitDownLoop", "HitDownLoop")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_Hit_Down);
+	})
+		.AddTransition("HitDown to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		.AddState("HitDownLoop")
+		.OnStart([this]()
+	{
+		m_HitDownDelayTime = 0.0;
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Hit_Loop);
+		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Loop);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		m_HitDownDelayTime += TimeDelta;
+		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Loop);
+	})
+		.AddTransition("HitDownLoop to Getup", "Getup")
+		.Predicator([this]()
+	{
+		return m_HitDownDelayTime >= 5.0;
+	})
+		.AddTransition("HitDownLoop to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		.AddState("Getup")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Get_Up);
+		m_pModelCom->Set_AnimationIndex(DEMON_Get_Up);
+	})
+		.OnExit([this]()
+	{
+		m_bHitDown = false;
+	})
+		.AddTransition("Getup to Chase", "Chase")
+		.Predicator([this]()
+	{
+		return  AnimFinishChecker(DEMON_Get_Up);
+	})
+		.AddTransition("Getup to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+
+		// Attack
+		.AddState("Attack")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_01);
+		m_pModelCom->Set_AnimationIndex(DEMON_ATK_01);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		if (AnimIntervalChecker(DEMON_ATK_01, 0.2, 0.3))
+			m_bRealAttack = true;
+		else
+			m_bRealAttack = false;
+	})
+		.OnExit([this]()
+	{
+		m_bRealAttack = false;
+		m_AttackDelayTime = 0.0;
+	})
+		.AddTransition("Attack to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_ATK_01);
+	})
+		.AddTransition("Attack to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Attack to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Attack to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		// Dead
+		.AddState("Dead")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Die);
+		m_pModelCom->Set_AnimationIndex(DEMON_Die);
+	})
+		.AddTransition("Dead to DeadBody", "DeadBody")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_Die);
+	})
+		.AddState("DeadBody")
+		.Tick([this](_double TimeDelta)
+	{
+		m_pModelCom->Set_AnimationIndex(DEMON_DeadBody);
+		m_dDeadTime += TimeDelta;
+
+		if (m_dDeadTime > 3.0)
+			m_bDead = true;
 	})
 
 		.Build();
@@ -271,8 +623,8 @@ HRESULT CDemon::SetUp_Components()
 
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(1.2f, 3.f, 1.2f);
-	ColliderDesc.vCenter = _float3(0.f,3.5, 0.f);
+	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
+	ColliderDesc.vSize = _float3(0.4f, 1.4f, 0.4f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
@@ -280,13 +632,67 @@ HRESULT CDemon::SetUp_Components()
 
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(20.f, 20.f, 20.f);
 	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	ColliderDesc.vSize = _float3(12.f, 12.f, 12.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 
+	/* For.Com_Attack */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
+	ColliderDesc.vSize = _float3(1.4f, 1.4f, 1.4f);
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Attack"),
+		(CComponent**)&m_pAttackColCom, &ColliderDesc)))
+		return E_FAIL;
+
+	/* For.Com_Sword */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vCenter = _float3(0.f, 1.6f, 1.45f);
+	ColliderDesc.vSize = _float3(0.6f, 0.6f, 0.6f);
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Sword"),
+		(CComponent**)&m_pSwordColCom, &ColliderDesc)))
+		return E_FAIL;
+
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, nullptr)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_Navigation */
+		CNavigation::NAVIDESC			NaviDesc;
+		ZeroMemory(&NaviDesc, sizeof(CNavigation::NAVIDESC));
+
+		NaviDesc.iCurrentIndex = 0;
+
+		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
+			(CComponent**)&m_pNavigationCom, &NaviDesc)))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -327,6 +733,22 @@ HRESULT CDemon::SetUp_ShaderResources()
 	return S_OK;
 }
 
+_bool CDemon::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
+{
+	return m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
+}
+
+_bool CDemon::AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate)
+{
+	if (m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() > StartRate &&
+		m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() <= FinishRate)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 CDemon * CDemon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CDemon*		pInstance = new CDemon(pDevice, pContext);
@@ -354,4 +776,12 @@ CGameObject * CDemon::Clone(void * pArg)
 void CDemon::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pAttackColCom);
+	Safe_Release(m_pSwordColCom);
+
+	for (auto pCollider : m_MonsterColliders)
+		Safe_Release(pCollider);
+
+	m_MonsterColliders.clear();
 }

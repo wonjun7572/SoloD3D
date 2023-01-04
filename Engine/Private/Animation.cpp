@@ -142,7 +142,7 @@ void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
 		if(!strcmp("SkeletonWarrior_SK_ATR.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 
-		if (!strcmp("Skeletonwolf_SK_KVN.ao", m_Channels[i]->Get_ChannelName()))
+		if (!strcmp("Monster.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 
 		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fAdditiveRatio);

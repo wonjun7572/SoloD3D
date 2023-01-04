@@ -19,6 +19,9 @@ CComponent * CLayer::Get_ComponentPtr(const _tchar * pComponentTag, _uint iIndex
 	if (iter == m_GameObjects.end())
 		return nullptr;
 
+	if (*iter == nullptr)
+		return nullptr;
+
 	return (*iter)->Find_Component(pComponentTag);
 }
 
@@ -63,10 +66,25 @@ void CLayer::Tick(_double TimeDelta)
 
 void CLayer::Late_Tick(_double TimeDelta)
 {
-	for (auto& pGameObject : m_GameObjects)
+	for (auto iter = m_GameObjects.begin(); iter != m_GameObjects.end();)
 	{
-		if (pGameObject != nullptr)
-			pGameObject->Late_Tick(TimeDelta);
+		if ((*iter) != nullptr)
+		{
+			if ((*iter)->Get_Dead() == true)
+			{
+				Safe_Release(*iter);
+				iter = m_GameObjects.erase(iter);
+			}
+			else
+			{
+				(*iter)->Late_Tick(TimeDelta);
+				iter++;
+			}
+		}
+		else
+		{
+			iter++;
+		}
 	}
 }
 

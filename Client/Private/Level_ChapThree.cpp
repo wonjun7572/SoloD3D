@@ -135,9 +135,6 @@ HRESULT CLevel_ChapThree::Ready_Layer_BackGround(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Terrain"))))
-		return E_FAIL;
-
 	Safe_Release(pGameInstance);
 
 	return S_OK;

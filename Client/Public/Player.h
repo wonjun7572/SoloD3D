@@ -197,6 +197,18 @@ private:
 	
 	_bool					m_bCamChange = false;
 
+	/* For. Trail */
+	CGameObject*			m_pNormalAtkTrail = nullptr;
+
+	_float					m_fNormalAtk1TrailMove = -1.001f;
+	_float					m_fNormalAtk2TrailMove = -1.001f;
+	_float					m_fNormalAtk3TrailMove = -1.001f;
+
+	/* for . Imgui*/
+	_float					m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;
+	_float					m_RX = 0.f, m_RY = 0.f, m_RZ = 0.f;
+	_float					m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
+	
 	/* 체력 및 공격력 세팅 값*/
 
 	_int	m_iHp = 0;
@@ -209,6 +221,7 @@ private:
 	HRESULT SetUp_Parts();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUp_SecondShaderResources();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

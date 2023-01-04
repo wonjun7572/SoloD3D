@@ -56,7 +56,7 @@ HRESULT CMesh::Init_Prototype(CModel::TYPE eType, MeshLoadTag& tMeshLoad, class 
 	m_BufferDesc.StructureByteStride = 0;
 	m_BufferDesc.CPUAccessFlags = 0;
 	m_BufferDesc.MiscFlags = 0;
-
+	
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = tMeshLoad.pIndices;
 

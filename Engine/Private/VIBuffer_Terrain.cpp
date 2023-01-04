@@ -1,5 +1,7 @@
 #include "..\public\VIBuffer_Terrain.h"
 #include "GameUtils.h"
+#include "Frustum.h"
+#include "QuadTree.h"
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -18,7 +20,9 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain & rhs)
 	,m_pIndices(rhs.m_pIndices)
 	,m_pHeightPixel(rhs.m_pHeightPixel)
 	,m_strFilePath(rhs.m_strFilePath)
+	,m_pQuadTree(rhs.m_pQuadTree)
 {
+	Safe_AddRef(m_pQuadTree);
 	memcpy(&m_fH, &rhs.m_fH, sizeof(BITMAPFILEHEADER));
 	memcpy(&m_iH, &rhs.m_iH, sizeof(BITMAPINFOHEADER));
 }
@@ -42,7 +46,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	m_iNumVerticesX = m_iH.biWidth;
 	m_iNumVerticesZ = m_iH.biHeight;
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
-	m_pPos = new _float4[m_iNumVertices];
+	m_pPos = new _float3[m_iNumVertices];
 
 	m_pHeightPixel = new _ulong[m_iNumVertices];
 	ZeroMemory(m_pHeightPixel, sizeof(_ulong) * m_iNumVertices);
@@ -63,7 +67,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	
 #pragma region VERTEX_BUFFER
 	m_pVertices = new VTXNORTEX[m_iNumVertices];
-	ZeroMemory(m_pVertices, sizeof(VTXNORTEX));
+	ZeroMemory(m_pVertices, sizeof(VTXNORTEX) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVerticesZ; ++i)
 	{
@@ -71,7 +75,7 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 		{
 			_uint			iIndex = i * m_iNumVerticesX + j;
 			m_pVertices[iIndex].vPosition = _float3(static_cast<float>(j), static_cast<float>(m_pHeightPixel[iIndex] & 0x000000ff), static_cast<float>(i));
-			m_pPos[iIndex] = _float4(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z,1.f);
+			m_pPos[iIndex] = _float3(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z);
 			m_pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			m_pVertices[iIndex].vTexUV = _float2(j / (m_iNumVerticesX - 1.0f), i / (m_iNumVerticesZ - 1.0f));
 		}
@@ -161,6 +165,9 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	if (FAILED(__super::Create_IndexBuffer()))
 		return E_FAIL;
 
+	m_pQuadTree = CQuadTree::Create(m_iNumVerticesX * m_iNumVerticesZ - m_iNumVerticesX,
+		m_iNumVerticesX * m_iNumVerticesZ - 1, m_iNumVerticesX - 1, 0);
+
 	return S_OK;
 }
 
@@ -204,7 +211,7 @@ HRESULT CVIBuffer_Terrain::DynamicBufferControlForSave(_float4 vBrushPos, _float
 				_ulong fY = static_cast<_ulong>(m_pVertices[iIndex].vPosition.y);
 				m_pHeightPixel[iIndex] = D3DCOLOR_ARGB(fY, fY, fY, fY);
 			}
-			m_pPos[iIndex] = _float4(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z,1.f);
+			m_pPos[iIndex] = _float3(m_pVertices[iIndex].vPosition.x, m_pVertices[iIndex].vPosition.y, m_pVertices[iIndex].vPosition.z);
 		}
 	}
 
@@ -287,6 +294,77 @@ HRESULT CVIBuffer_Terrain::SaveHeightMap()
 	return S_OK;
 }
 
+void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
+{
+	CFrustum*			pFrustum = GET_INSTANCE(CFrustum);
+
+	pFrustum->Transform_ToLocalSpace(WorldMatrix);
+
+	_uint			iNumFaces = 0;
+
+//#ifdef USE_QUADTREE
+	m_pQuadTree->Culling(pFrustum, m_pPos, m_pIndices, &iNumFaces);
+
+//#else
+//	for (_uint i = 0; i < m_iNumVerticesZ - 1; ++i)
+//	{
+//		for (_uint j = 0; j < m_iNumVerticesX - 1; ++j)
+//		{
+//			_uint iIndex = i * m_iNumVerticesX + j;
+//
+//			_uint			iIndices[4] = {
+//				iIndex + m_iNumVerticesX,
+//				iIndex + m_iNumVerticesX + 1,
+//				iIndex + 1,
+//				iIndex
+//			};
+//
+//			_bool			isIn[4] = {
+//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[0]])),
+//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[1]])),
+//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[2]])),
+//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[3]]))
+//			};
+//
+//			/* 우상단 삼각형이 그려져야하니? */
+//			if (true == isIn[0] &&
+//				true == isIn[1] &&
+//				true == isIn[2])
+//			{
+//				m_pIndices[iNumFaces]._0 = iIndices[0];
+//				m_pIndices[iNumFaces]._1 = iIndices[1];
+//				m_pIndices[iNumFaces]._2 = iIndices[2];
+//				++iNumFaces;
+//			}
+//
+//			/* 좌하단 삼각형이 그려져야하니? */
+//			if (true == isIn[0] &&
+//				true == isIn[2] &&
+//				true == isIn[3])
+//			{
+//				m_pIndices[iNumFaces]._0 = iIndices[0];
+//				m_pIndices[iNumFaces]._1 = iIndices[2];
+//				m_pIndices[iNumFaces]._2 = iIndices[3];
+//				++iNumFaces;
+//			}
+//		}
+//	}
+//#endif
+
+	D3D11_MAPPED_SUBRESOURCE		SubResources;
+	ZeroMemory(&SubResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_pContext->Map(m_pIB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResources);
+
+	memcpy(SubResources.pData, m_pIndices, sizeof(FACEINDICES32) * iNumFaces);
+
+	m_pContext->Unmap(m_pIB, 0);
+
+	m_iNumIndices = iNumFaces * 3;
+
+	RELEASE_INSTANCE(CFrustum);
+}
+
 CVIBuffer_Terrain * CVIBuffer_Terrain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar* pHeightMapFilePath)
 {
 	CVIBuffer_Terrain*		pInstance = new CVIBuffer_Terrain(pDevice, pContext);
@@ -323,4 +401,6 @@ void CVIBuffer_Terrain::Free()
 		Safe_Delete_Array(m_pIndices);
 		Safe_Delete_Array(m_pPos);
 	}
+
+	Safe_Release(m_pQuadTree);
 }

@@ -85,7 +85,6 @@ void GS_MAIN( point GS_IN In[1], inout TriangleStream<GS_OUT> Vertices)
 	Vertices.Append(Out[2]);
 	Vertices.Append(Out[3]);
 	Vertices.RestartStrip();
-
 }
 
 /* w³ª´©±â. */

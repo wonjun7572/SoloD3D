@@ -35,6 +35,10 @@ public:
 
 	CModel* Get_ModelCom() { return m_pModelCom; }
 
+	HRESULT PartsRender(_uint iPassIndex);
+	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_SecondShaderResources(_float4x4 matrix);
+
 protected:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -48,7 +52,6 @@ public:
 
 protected:
 	virtual HRESULT SetUp_Components() = 0;
-	virtual HRESULT SetUp_ShaderResources() = 0;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

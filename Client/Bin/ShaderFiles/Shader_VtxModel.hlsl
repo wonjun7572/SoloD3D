@@ -25,9 +25,6 @@ texture2D		g_NormalTexture;
 vector			g_vMtrlAmbient = vector(0.4f, 0.4f, 0.4f, 1.f);
 vector			g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
-/* 높이 맵*/
-texture2D		g_HeightTexture;
-
 /* UV 애니메이션을 위한 */
 float			g_Time;
 float			g_WaveHeight;
@@ -55,7 +52,6 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-
 	matrix		matWV, matWVP;
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
@@ -72,12 +68,9 @@ VS_OUT VS_MAIN(VS_IN In)
 VS_OUT VS_MAIN_UVANIMATION(VS_IN In)
 {
 	VS_OUT      Out = (VS_OUT)0;
-
-	float2 vHeight = g_HeightTexture.SampleLevel(LinearSampler, In.vPosition.xz, 0);
-	In.vPosition.y = vHeight.x;
-
-	//float cosTime = g_WaveHeight * cos(g_Time * g_Speed + In.vTexUV.x * g_WaveFrequency);
-	//In.vPosition.y += cosTime;
+	
+	float cosTime = g_WaveHeight * cos(g_Time * g_Speed + In.vTexUV.x * g_WaveFrequency);
+	In.vPosition.y += cosTime;
 
 	matrix		matWV, matWVP;
 
@@ -161,6 +154,43 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_OUTLINE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	Out.vColor.a = Out.vColor.a * 0.5f;
+
+	float Lx = 0;
+	float Ly = 0;
+
+	for (int y = -1; y <= 1; ++y)
+	{
+		for (int x = -1; x <= 1; ++x)
+		{
+			float2 offset = float2(x, y) * float2(1 / 1280.f, 1 / 720.f);
+			float3 tex = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + offset).rgb;
+			float luminance = dot(tex, float3(0.3, 0.59, 0.11));
+
+			Lx += luminance * Kx[y + 1][x + 1];
+			Ly += luminance * Ky[y + 1][x + 1];
+		}
+	}
+	float L = sqrt((Lx*Lx) + (Ly*Ly));
+
+	if (L < 0.3) // 이 값에 따라서 두껍게 외곽선이 생기는가 
+	{
+		Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV) * 0.3f;
+	}
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -197,5 +227,29 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+
+	pass Socket_Outline
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
+	}
+
+	pass Outline
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
 	}
 }

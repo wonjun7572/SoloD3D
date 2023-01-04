@@ -199,6 +199,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
+    <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\Public\FSMComponent.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
     <ClInclude Include="..\public\Imgui_MapEditor.h" />
@@ -238,6 +239,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\Object_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
+    <ClInclude Include="..\public\QuadTree.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RigidBody.h" />
     <ClInclude Include="..\public\Shader.h" />
@@ -270,6 +272,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
+    <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\Private\FSMComponent.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\private\Imgui_MapEditor.cpp" />
@@ -292,6 +295,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
+    <ClCompile Include="..\private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />

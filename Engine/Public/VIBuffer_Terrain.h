@@ -12,7 +12,7 @@ protected:
 	virtual ~CVIBuffer_Terrain() = default;
 
 public:
-	const _float4*		Get_VtxPos() const { return m_pPos; }
+	const _float3*		Get_VtxPos() const { return m_pPos; }
 	_uint	Get_VtxCntX() const { return m_iNumVerticesX; }
 	_uint	Get_VtxCntZ() const { return m_iNumVerticesZ; }
 
@@ -26,6 +26,9 @@ public:
 		return m_pIndices;
 	}
 
+public:
+	void Culling(_fmatrix WorldMatrix);
+
 private:
 	_uint			m_iNumVerticesX = 0;
 	_uint			m_iNumVerticesZ = 0;
@@ -34,11 +37,14 @@ private:
 	FACEINDICES32*  m_pIndices= nullptr;
 	_ulong*			m_pHeightPixel = nullptr;
 	_double			m_height = 0.0;
-	_float4*		m_pPos;
+	_float3*		m_pPos;
 	wstring			m_strFilePath;
 
 	BITMAPFILEHEADER	m_fH;
 	BITMAPINFOHEADER	m_iH;
+
+private:
+	class CQuadTree*		m_pQuadTree = nullptr;
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);

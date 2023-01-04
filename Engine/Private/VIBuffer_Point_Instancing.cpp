@@ -135,7 +135,7 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_double TimeDelta)
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= m_pSpeeds[i] * TimeDelta;
+		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= static_cast<float>(m_pSpeeds[i] * TimeDelta);
 
 		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < -1.f)
 			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 1.f;

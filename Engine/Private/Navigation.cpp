@@ -173,7 +173,7 @@ _int CNavigation::isPicking_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey
 
 	_float  fDist = 0.f;
 
-	_uint iSize = m_Cells.size();
+	_uint iSize =	static_cast<_uint>(m_Cells.size());
 
 	for (_uint i = 0; i < iSize; ++i)
 	{
@@ -401,7 +401,7 @@ HRESULT CNavigation::Update(const wstring pNavigationDataFilePath)
 
 _bool CNavigation::Set_CurreuntIndex(_fvector TargetPos)
 {
-	_uint iSize = m_Cells.size();
+	_uint iSize = static_cast<_uint>( m_Cells.size());
 
 	for (_uint i = 0; i < iSize; ++i)
 	{

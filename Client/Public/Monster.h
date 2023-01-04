@@ -50,7 +50,7 @@ protected:
 	_bool					m_bBackDamaged	= false;
 	_bool					m_bGroggy		= false;
 	_bool					m_bHitDown		= false;
-	_bool					m_bDead			= false;
+	_bool					m_bDeadAnim		= false;
 
 	// 데미지를 입을 수 있는 상황인가?
 	_bool					m_bPossibleSkillDamaged		= false; 
@@ -80,6 +80,8 @@ protected:
 	_int					m_iHp = 0;
 	_int					m_iAttack = 0;
 	_int					m_iDefence = 0;
+
+	_double					m_dDeadTime = 0;
 
 	vector<CCollider*>		m_MonsterColliders;
 

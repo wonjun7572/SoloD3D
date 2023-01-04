@@ -258,7 +258,7 @@ void CModel::Imgui_RenderProperty()
 
 		if (ImGui::BeginCombo("ANIM", combo_preview_value))
 		{
-			_uint iAnimSize = m_Animations.size();
+			_uint iAnimSize = static_cast<_uint>(m_Animations.size());
 			for (_uint i = 0; i < iAnimSize; i++)
 			{
 				const bool is_selected = (m_iCurrentAnimIndex == i);

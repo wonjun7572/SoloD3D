@@ -34,12 +34,17 @@ private:
 	
 	bool m_bFix = true;
 
+	_float m_vLookImgui = 1.f;
+
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
 	_float4 m_vPlayerPos;
 
-	_float m_fDistanceToTarget = 5.f;
+	_float m_fDistanceToTarget = 7.f;
 	_float m_fCamY = 0.f;
 	_float m_fCamTime = 0.f;
+
+	_float m_fCamImguiY = 3.f;
+	_float m_fCamImguiLookY = 3.f;
 
 	_bool m_bChange = false;
 

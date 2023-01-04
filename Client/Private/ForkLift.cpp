@@ -30,7 +30,7 @@ HRESULT CForkLift::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;	
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(static_cast<float>(rand() % 10), 0.f, static_cast<float>(rand() % 10), 1.f));
 
 	return S_OK;
 }
