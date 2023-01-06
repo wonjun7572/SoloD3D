@@ -42,7 +42,18 @@ public:
 	void	AdjustSetDamage();
 	void	AdjustSetDamageToSkill();
 
+	/* 충돌 관련 */
+	void CollisionToMonster(_double TimeDelta);
+	
+	virtual	void CollisionToWeapon(_double TimeDelta);
+	virtual	void CollisionToWeaponSkill02(_double TimeDelta);
+	virtual void CollisionToWeaponSkill04(_double TimeDelta);
+
 	void    ClosestPtPointAABB(_float3 sphereCenter, CCollider* pAABB, _float3& p);
+
+	CCollider* Get_AABB() { return m_pColliderCom[COLLTYPE_AABB]; }
+
+	_bool		Get_DeadAnim() { return m_bDeadAnim; }
 
 protected:
 	/*피격을 위한 변수*/

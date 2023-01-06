@@ -2,6 +2,7 @@
 #include "..\Public\Parts.h"
 #include "GameInstance.h"
 #include "Bone.h"
+#include "Player.h"
 
 CParts::CParts(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice, pContext)
@@ -44,8 +45,8 @@ HRESULT CParts::Render()
 
 void CParts::Play_AdditiveAnim(_double TimeDelta, float fRatio)
 {
-	m_pModelCom->Set_AdditiveAnimIndex(m_iAdditiveAnimIndex);
-	m_pModelCom->Play_AddtivieAnim(TimeDelta, fRatio);
+	m_pModelCom[m_eModelState]->Set_AdditiveAnimIndex(m_iAdditiveAnimIndex);
+	m_pModelCom[m_eModelState]->Play_AddtivieAnim(TimeDelta, fRatio);
 }
 
 void CParts::LinkPlayer(CTransform * pTarget)
@@ -55,14 +56,14 @@ void CParts::LinkPlayer(CTransform * pTarget)
 
 HRESULT CParts::PartsRender(_uint iPassIndex)
 {
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
-		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, iPassIndex, "g_BoneMatrices");
+		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, iPassIndex, "g_BoneMatrices");
 	}
 	return S_OK;
 }
@@ -134,11 +135,37 @@ HRESULT CParts::SetUp_SecondShaderResources(_float4x4 matrix)
 	return S_OK;
 }
 
+void CParts::ChangeModel(MODEL iModelIndex)
+{
+	if (m_eModelState == iModelIndex)
+		return;
+
+	m_ePreModelState = m_eModelState;
+	m_eModelState = iModelIndex;
+
+	_uint AnimNum = m_pModelCom[m_ePreModelState]->Get_AnimationsNum();
+	_uint iCurrentIndex = m_pModelCom[m_ePreModelState]->Get_CurrentAnimIndex();
+	_uint iPreIndex = m_pModelCom[m_ePreModelState]->Get_PreAnimIndex();
+	_uint iAdditiveAnimNum = m_pModelCom[m_ePreModelState]->Get_AdditiveAnimIndex();
+
+	m_pModelCom[m_eModelState]->Model_IndexChange(iCurrentIndex, iPreIndex, iAdditiveAnimNum);
+	
+	for (_uint i = 0; i < AnimNum; ++i)
+	{
+		_double time = m_pModelCom[m_ePreModelState]->Get_AnimPlayTime(i);
+		m_pModelCom[m_eModelState]->Model_Change(i, time);
+	}
+
+
+}
+
 void CParts::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
+	for (_uint i = 0; i < MODEL_END; ++i)
+		Safe_Release(m_pModelCom[i]);
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 }

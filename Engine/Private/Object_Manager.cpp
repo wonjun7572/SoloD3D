@@ -154,12 +154,12 @@ CGameObject * CObject_Manager::Get_GameObject(_uint iLevelIndex, const wstring &
 
 	auto objlist = iter->second->GetGameObjects();
 
-	auto obj = find_if(objlist.begin(), objlist.end(), [&](CGameObject* pGameObject)-> bool
+	auto obj = find_if((*objlist).begin(), (*objlist).end(), [&](CGameObject* pGameObject)-> bool
 	{
 		return strObjName == pGameObject->Get_ObjectName();
 	});
 
-	if (obj == objlist.end())
+	if (obj == (*objlist).end())
 		return nullptr;
 
 	return *obj;
@@ -226,7 +226,7 @@ void CObject_Manager::Imgui_ObjectViewer(_uint iLevel, OUT CGameObject *& pSelec
 			{
 				if (ImGui::BeginListBox("##"))
 				{
-					for (auto& obj : Pair.second->GetGameObjects())
+					for (auto& obj : *Pair.second->GetGameObjects())
 					{
 						const bool bSelected = pSelectedObject == obj;
 
@@ -286,14 +286,14 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 	WriteFile(hFile, &layerSize, sizeof(_uint), &dwByte, nullptr);
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		_uint gameObjSize = static_cast<_uint>(Pair.second->GetGameObjects().size());
+		_uint gameObjSize = static_cast<_uint>((*(Pair.second->GetGameObjects())).size());
 		WriteFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
 		
 		_tchar szLayerName[256] = {};
 		wcscpy_s(szLayerName, 256, Pair.first.c_str());
 		WriteFile(hFile, &szLayerName, 256, &dwByte, nullptr);
 		
-		for (auto& obj : Pair.second->GetGameObjects())
+		for (auto& obj : *(Pair.second->GetGameObjects()))
 		{
 			char szName[256] = {};
 			strcpy_s(szName, 256, typeid(*obj).name());
@@ -303,7 +303,7 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		for (auto& obj : Pair.second->GetGameObjects())
+		for (auto& obj : *(Pair.second->GetGameObjects()))
 		{
 			auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
 
@@ -317,7 +317,7 @@ void CObject_Manager::SaveData(_uint iLevel, wstring strDirectory)
 	
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		for (auto& obj : Pair.second->GetGameObjects())
+		for (auto& obj : *(Pair.second->GetGameObjects()))
 		{
 			if (obj->Get_ModelTag() != nullptr)
 			{
@@ -378,7 +378,7 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		for (auto& obj : Pair.second->GetGameObjects())
+		for (auto& obj : *(Pair.second->GetGameObjects()))
 		{
 			auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
 
@@ -395,7 +395,7 @@ void CObject_Manager::LoadData(_uint iLevel, wstring strDirectory)
 
 	for (auto& Pair : targetLevel) // for layer loop
 	{
-		for (auto& obj : Pair.second->GetGameObjects())
+		for (auto& obj : *(Pair.second->GetGameObjects()))
 		{
 			if (obj->Get_ModelTag() != nullptr)
 			{
@@ -434,10 +434,10 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 	CLayer* pLayer = iter->second;
 	DWORD dwByte = 0;
 
-	_uint gameObjSize = static_cast<_uint>(pLayer->GetGameObjects().size());
+	_uint gameObjSize = static_cast<_uint>((*(pLayer->GetGameObjects())).size());
 	WriteFile(hFile, &gameObjSize, sizeof(_uint), &dwByte, nullptr);
 
-	for (auto& obj : pLayer->GetGameObjects())
+	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		char szName[256] = {};
 		strcpy_s(szName, 256, typeid(*obj).name());
@@ -445,7 +445,7 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 	}
 
 
-	for (auto& obj : pLayer->GetGameObjects())
+	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
 
@@ -457,7 +457,7 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 	}
 	
 
-	for (auto& obj : pLayer->GetGameObjects())
+	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		if (obj->Get_ModelTag() != nullptr)
 		{
@@ -514,7 +514,7 @@ void CObject_Manager::LoadMapObjectData(_uint iLevel, const wstring & pLayerTag,
 
 	CLayer* pLayer = iter->second;
 
-	for (auto& obj : pLayer->GetGameObjects())
+	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
 
@@ -528,7 +528,7 @@ void CObject_Manager::LoadMapObjectData(_uint iLevel, const wstring & pLayerTag,
 		dynamic_cast<CTransform*>(iter->second)->SetWorldMatrix(world4x4);
 	}
 
-	for (auto& obj : pLayer->GetGameObjects())
+	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		if (obj->Get_ModelTag() != nullptr)
 		{
@@ -561,9 +561,13 @@ CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const wstring& pLayerTag
 	return iter->second;
 }
 
-const list<class CGameObject*>& CObject_Manager::Get_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
+const list<class CGameObject*>* CObject_Manager::Get_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
 {
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+
+	if (pLayer == nullptr)
+		return nullptr;
+
 	return pLayer->GetGameObjects();
 }
 

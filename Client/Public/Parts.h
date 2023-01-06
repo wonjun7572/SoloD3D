@@ -15,6 +15,9 @@ BEGIN(Client)
 
 class CParts abstract : public CGameObject
 {
+public:
+	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_B, MODEL_END };
+
 protected:
 	CParts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CParts(const CParts& rhs);
@@ -33,17 +36,22 @@ public:
 
 	void LinkPlayer(CTransform* pTarget);
 
-	CModel* Get_ModelCom() { return m_pModelCom; }
+	CModel* Get_ModelCom() { return m_pModelCom[m_eModelState]; }
 
 	HRESULT PartsRender(_uint iPassIndex);
 	HRESULT SetUp_ShaderResources();
 	HRESULT SetUp_SecondShaderResources(_float4x4 matrix);
 
+	void	ChangeModel(MODEL iModelIndex);
+
 protected:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
-	CModel*					m_pModelCom = nullptr;
 	
+	CModel*					m_pModelCom[MODEL_END] = { nullptr };
+	MODEL					m_eModelState = MODEL_NOMAL;
+	MODEL					m_ePreModelState = MODEL_END;
+
 	_uint					m_iAnimIndex = 0;
 	_uint					m_iAdditiveAnimIndex = 0;
 

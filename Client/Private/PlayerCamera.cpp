@@ -57,7 +57,6 @@ HRESULT CPlayerCamera::Init(void * pArg)
 void CPlayerCamera::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
 	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -66,7 +65,7 @@ void CPlayerCamera::Tick(_double TimeDelta)
 
 	if(m_bFix)
 		Mouse_Fix();
-	
+
 	Safe_Release(pGameInstance);
 }
 
@@ -90,6 +89,25 @@ HRESULT CPlayerCamera::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CPlayerCamera::ShakeUpdate(_double TimeDelta)
+{
+	if (m_fShakeDuration > 0)
+	{
+		_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 1.f);
+		m_vPlayerPos = m_vPlayerPos + (Randompos * m_fShakeAmount);
+		m_fShakeDuration -= TimeDelta * m_fDecreaseFactor;
+	}
+	else
+		m_fShakeDuration = 0;
+}
+
+void CPlayerCamera::Shake(_float fShakeDuration, _float fShakeAmount, _float fDecreaseFactor)
+{
+	m_fShakeDuration = fShakeDuration;
+	m_fShakeAmount = fShakeAmount;
+	m_fDecreaseFactor = fDecreaseFactor;
 }
 
 void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn)
@@ -134,6 +152,7 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 
 		XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 		_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
+		ShakeUpdate(TimeDelta);
 		_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 5.f + m_fCamY, 0.f, 0.f));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
@@ -162,6 +181,7 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
 			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
+			ShakeUpdate(TimeDelta);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 5.f, 0.f, 0.f));
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
 			m_fCamY = 0.f;

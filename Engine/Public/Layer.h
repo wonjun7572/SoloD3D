@@ -20,7 +20,7 @@ public:
 	void Tick(_double TimeDelta);
 	void Late_Tick(_double TimeDelta);
 
-	const list<class CGameObject*>& GetGameObjects() { return m_GameObjects; }
+	const list<class CGameObject*>* GetGameObjects() { return &m_GameObjects; }
 
 private:
 	list<class CGameObject*>			m_GameObjects;

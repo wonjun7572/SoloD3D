@@ -275,11 +275,15 @@ CGameObject * CGameInstance::Find_GameObject(_uint iLevelIndex, const wstring & 
 {
 	if (nullptr == m_pObjectMgr)
 		return nullptr;
+	
 	return m_pObjectMgr->Get_GameObject(iLevelIndex, pLayerTag, strObjName);
 }
 
-const list<CGameObject*>& CGameInstance::Find_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
+const list<CGameObject*>* CGameInstance::Find_LayerList(_uint iLevelIndex, const wstring & pLayerTag)
 {
+	if (nullptr == m_pObjectMgr)
+		return nullptr;
+
 	return m_pObjectMgr->Get_LayerList(iLevelIndex, pLayerTag);
 }
 

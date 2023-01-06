@@ -168,6 +168,171 @@ void CMonster::AdjustSetDamageToSkill()
 	}
 }
 
+void CMonster::CollisionToMonster(_double TimeDelta)
+{
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		const list<CGameObject*>* monList = pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster"));
+
+		if (monList != nullptr)
+		{
+			for (auto& pMonster : *monList)
+			{
+				CCollider*	pTargetCollider = static_cast<CMonster*>(pMonster)->Get_AABB();
+
+				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
+				if (pTargetCollider == nullptr ||
+					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||
+					fabsf(fDistance) > 5.f ||
+					static_cast<CMonster*>(pMonster)->Get_DeadAnim())
+					continue;
+
+				Safe_AddRef(pTargetCollider);
+				m_MonsterColliders.push_back(pTargetCollider);
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		const list<CGameObject*>* monList = pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster"));
+
+		if (monList != nullptr)
+		{
+			for (auto& pMonster : *monList)
+			{
+				CCollider*	pTargetCollider = static_cast<CMonster*>(pMonster)->Get_AABB();
+
+				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
+				if (pTargetCollider == nullptr ||
+					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||
+					fabsf(fDistance) > 5.f ||
+					static_cast<CMonster*>(pMonster)->Get_DeadAnim())
+					continue;
+
+				Safe_AddRef(pTargetCollider);
+				m_MonsterColliders.push_back(pTargetCollider);
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		const list<CGameObject*>* monList = pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster"));
+
+		if (monList != nullptr)
+		{
+			for (auto& pMonster : *monList)
+			{
+				CCollider*	pTargetCollider = static_cast<CMonster*>(pMonster)->Get_AABB();
+
+				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
+				if (pTargetCollider == nullptr ||
+					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||
+					fabsf(fDistance) > 5.f ||
+					static_cast<CMonster*>(pMonster)->Get_DeadAnim())
+					continue;
+
+				Safe_AddRef(pTargetCollider);
+				m_MonsterColliders.push_back(pTargetCollider);
+			}
+		}
+	}
+
+	// 이 콜라이더는 sphere여야만함
+	_float3 sphereCenter = m_pColliderCom[COLLTYPE_SPHERE]->Get_CollisionCenter();
+	_float sphereRadius = m_pColliderCom[COLLTYPE_SPHERE]->Get_SphereRadius();
+
+	_uint iMonsterColliderSize = static_cast<_uint>(m_MonsterColliders.size());
+
+	for (_uint i = 0; i < iMonsterColliderSize; ++i)
+	{
+		// sphere -> AttackColCom
+		// AABB -> m_MonsterColliders
+		_float3	p;
+		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
+
+		_vector v = p - sphereCenter;
+
+		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+		if (fDistance_Squared <= sphereRadius * sphereRadius)
+		{
+			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+			{
+				v = XMVector3Normalize(v);
+			}
+			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+
+			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
+		}
+	}
+
+	for (auto pCollider : m_MonsterColliders)
+		Safe_Release(pCollider);
+
+	m_MonsterColliders.clear();
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CMonster::CollisionToWeapon(_double TimeDelta)
+{
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+
+	if (nullptr == pTargetCollider)
+		return;
+
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		_vector			vTargetLook = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
+		_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetLook);
+		_float			fDot = XMVectorGetX(vDot);
+
+		if (fDot < 0)
+			m_bFrontDamaged = true;
+		else
+			m_bBackDamaged = true;
+	}
+}
+
+void CMonster::CollisionToWeaponSkill02(_double TimeDelta)
+{
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+
+	if (nullptr == pTargetCollider)
+		return;
+
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		AdjustSetDamageToSkill();
+		m_bHitDown = true;
+	}
+}
+
+void CMonster::CollisionToWeaponSkill04(_double TimeDelta)
+{
+	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+
+	if (nullptr == pTargetCollider)
+		return;
+
+	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
+	{
+		AdjustSetDamageToSkill();
+		m_bGroggy = true;
+	}
+}
+
 void CMonster::ClosestPtPointAABB(_float3 sphereCenter, CCollider* pAABB, _float3 & p)
 {
 	_float x = sphereCenter.x;

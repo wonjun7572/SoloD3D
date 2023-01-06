@@ -52,7 +52,7 @@ public: /* For.Object_Manager */
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 	class	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	class	CGameObject* Find_GameObject(_uint iLevelIndex, const wstring & pLayerTag, const wstring & strObjName);
-	const class	list<CGameObject*>& Find_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
+	const class	list<CGameObject*>* Find_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
 	void	SaveData(_uint iLevel,const wstring& strDirectory);
 	void	LoadData(_uint iLevel, const wstring& strDirectory);
 	void	SaveMapObjectData(_uint iLevel, const wstring& pLayerTag, const wstring& strDirectory);

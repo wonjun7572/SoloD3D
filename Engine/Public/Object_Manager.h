@@ -35,7 +35,7 @@ public:
 	class CGameObject* Get_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& strObjName);
 	class CLayer* Find_Layer(_uint iLevelIndex, const wstring& pLayerTag);
 	
-	const list<class CGameObject*>& Get_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
+	const list<class CGameObject*>* Get_LayerList(_uint iLevelIndex, const wstring& pLayerTag);
 
 public: /* imgui */
 	// 모든 원본 Object를 Imgui로 출력한다.

@@ -18,8 +18,8 @@ public:
 	_uint			Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone*	Get_BonePtr(const char* pBoneName);
 
-	class CBone*		Get_SelectedBone() { return m_pSelectedBone; }
-	_float4x4			Get_PivotMatrix() { return m_PivotMatrix; }
+	class CBone*	Get_SelectedBone() { return m_pSelectedBone; }
+	_float4x4		Get_PivotMatrix() { return m_PivotMatrix; }
 
 public:
 	virtual HRESULT Init_Prototype(TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix);
@@ -54,6 +54,7 @@ public:
 
 	void	Set_BlendCurTime(_float BlendCurTime) { m_fBlendCurTime = BlendCurTime; }
 
+	void	Last_AnimLoop(_uint iIndex);
 	void    Reset_AnimPlayTime(_uint iIndex);
 
 	_bool	Check_AnimationSet(const _float& fTime);
@@ -61,6 +62,16 @@ public:
 	//_float4	Get_MovePos(void) { return m_vMovePos; }
 
 	void	Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
+
+	/* Model Change */
+	void	Model_Change(_uint iIndex, double playTime);
+	void	Model_IndexChange(_uint iCurrent, _uint iPre, _uint iAdditive);
+
+	_double	Get_AnimPlayTime(_uint iIndex);
+
+	_uint Get_CurrentAnimIndex() { return m_iCurrentAnimIndex; }
+	_uint Get_PreAnimIndex() { return m_iPreAnimIndex; }
+	_uint Get_AdditiveAnimIndex() { return m_iAdditiveAnimIndex; }
 
 private:
 	TYPE									m_eType = TYPE_END;
@@ -77,7 +88,6 @@ private:
 
 	_uint									m_iCurrentAnimIndex = 0;
 	_uint									m_iPreAnimIndex = 0;
-
 	_uint									m_iAdditiveAnimIndex = 0;
 
 	_uint									m_iNumAnimations = 0;

@@ -37,6 +37,8 @@ public:
 
 	CCollider*				Get_Collider() { return m_pColliderCom; }
 
+	void Set_TargetTrasform(const WEAPONDESC& WeaponDesc);
+
 private:
 	CShader*				m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;

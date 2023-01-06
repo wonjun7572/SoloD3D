@@ -74,7 +74,7 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 
-	++m_iNumCallDraw;
+	/*++m_iNumCallDraw;
 
 	if (m_TimeAcc >= 1.f)
 	{
@@ -85,7 +85,7 @@ HRESULT CMainApp::Render()
 		m_TimeAcc = 0.f;
 	}
 
-	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));
+	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));*/
 
 #endif
 

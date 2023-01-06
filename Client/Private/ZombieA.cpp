@@ -27,7 +27,7 @@ HRESULT CZombieA::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -63,7 +63,6 @@ void CZombieA::Late_Tick(_double TimeDelta)
 		return;
 
 	Adjust_Collision(TimeDelta);
-	CollisionToMonster(TimeDelta);
 }
 
 HRESULT CZombieA::Render()
@@ -98,13 +97,39 @@ void CZombieA::Imgui_RenderProperty()
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 
-	m_pSwordColCom->FixedSizeForImgui(1);
+	m_pFSM->Imgui_RenderProperty();
+
+	if (ImGui::Button("Spawn"))
+	{
+		m_bSpawn = true;
+	}
+
 }
 
 void CZombieA::SetUp_FSM()
 {
 	m_pFSM = CFSMComponentBuilder()
-		.InitState("Idle")
+		.InitState("Spawn")
+
+		.AddState("Spawn")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Spawn);
+		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Spawn);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		if(!m_bSpawn)
+			m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Spawn);
+		
+		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Spawn);
+	})
+		.AddTransition("Spawn to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(ZOMBIEA_Spawn, 0.9);
+	})
+
 		.AddState("Idle")
 		.Tick([this](_double TimeDelta)
 	{
@@ -210,13 +235,13 @@ void CZombieA::SetUp_FSM()
 		.AddState("HitDown")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Hit_Down);
-		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Hit_Down);
+		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Down);
+		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Down);
 	})
 		.AddTransition("HitDown to HitDownLoop", "HitDownLoop")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ZOMBIEA_Hit_Down);
+		return AnimFinishChecker(ZOMBIEA_Down, 0.85);
 	})
 		.AddTransition("HitDown to Dead", "Dead")
 		.Predicator([this]()
@@ -228,13 +253,13 @@ void CZombieA::SetUp_FSM()
 		.OnStart([this]()
 	{
 		m_HitDownDelayTime = 0.0;
-		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Hit_Loop);
-		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Hit_Loop);
+		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Down_Loop);
+		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Down_Loop);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		m_HitDownDelayTime += TimeDelta;
-		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Hit_Loop);
+		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Down_Loop);
 	})
 		.AddTransition("HitDownLoop to Getup", "Getup")
 		.Predicator([this]()
@@ -257,10 +282,10 @@ void CZombieA::SetUp_FSM()
 	{
 		m_bHitDown = false;
 	})
-		.AddTransition("Getup to Chase", "Chase")
+		.AddTransition("Getup to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return  AnimFinishChecker(ZOMBIEA_Get_Up);
+		return  AnimFinishChecker(ZOMBIEA_Get_Up, 0.87);
 	})
 		.AddTransition("Getup to Dead", "Dead")
 		.Predicator([this]()
@@ -273,14 +298,46 @@ void CZombieA::SetUp_FSM()
 		.AddState("Attack")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ATK_01);
-		m_pModelCom->Set_AnimationIndex(ZOMBIEA_ATK_01);
+		m_iRandAttack = rand() % 3;
+
+		if (m_iRandAttack == 0)
+		{
+			m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ATK_01);
+			m_pModelCom->Set_AnimationIndex(ZOMBIEA_ATK_01);
+		}
+		else if(m_iRandAttack == 1)
+		{
+			m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ATK_02);
+			m_pModelCom->Set_AnimationIndex(ZOMBIEA_ATK_02);
+		}
+		else if (m_iRandAttack == 2)
+		{
+			m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ATK_03);
+			m_pModelCom->Set_AnimationIndex(ZOMBIEA_ATK_03);
+		}
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		if (AnimIntervalChecker(ZOMBIEA_ATK_01, 0.5, 0.6))
+		if (m_iRandAttack == 0)
 		{
-			m_bRealAttack = true;
+			if (AnimIntervalChecker(ZOMBIEA_ATK_01, 0.5, 0.6))
+				m_bRealAttack = true;
+			else
+				m_bRealAttack = false;
+		}
+		else if (m_iRandAttack == 1)
+		{
+			if (AnimIntervalChecker(ZOMBIEA_ATK_02, 0.5, 0.6))
+				m_bRealAttack = true;
+			else
+				m_bRealAttack = false;
+		}
+		else if (m_iRandAttack == 2)
+		{
+			if (AnimIntervalChecker(ZOMBIEA_ATK_03, 0.5, 0.6))
+				m_bRealAttack = true;
+			else
+				m_bRealAttack = false;
 		}
 	})
 		.OnExit([this]()
@@ -291,7 +348,8 @@ void CZombieA::SetUp_FSM()
 		.AddTransition("Attack to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ZOMBIEA_ATK_01);
+		return AnimFinishChecker(ZOMBIEA_ATK_01) || AnimFinishChecker(ZOMBIEA_ATK_02)
+				|| AnimFinishChecker(ZOMBIEA_ATK_03);
 	})
 		.AddTransition("Attack to HitDown", "HitDown")
 		.Predicator([this]()
@@ -316,11 +374,14 @@ void CZombieA::SetUp_FSM()
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Die);
 		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Die);
 	})
+
 		.AddTransition("Dead to DeadBody", "DeadBody")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ZOMBIEA_Die);
+		return AnimFinishChecker(ZOMBIEA_Die, 0.7);
 	})
+
+
 		.AddState("DeadBody")
 		.Tick([this](_double TimeDelta)
 	{
@@ -343,7 +404,15 @@ void CZombieA::Adjust_Collision(_double TimeDelta)
 		m_pSwordColCom->Update(m_pTransformCom->Get_WorldMatrix());
 
 	CollisionToPlayer(TimeDelta);
-	CollisionToAttack(TimeDelta);
+
+	CollisionToMonster(TimeDelta);
+
+	// 플레이어와 어느 정도거리가 되었을 때
+	// 즉 chase 상태로 가는 것이 가능한 조건 일때임
+	if (m_bPlayerChase)
+		CollisionToAttack(TimeDelta);
+
+	// 밑은 플레이어의 데미지 입었을 때 이벤트
 
 	if (m_bPlayerAttackCommand)
 		CollisionToWeapon(TimeDelta);
@@ -360,26 +429,18 @@ void CZombieA::Adjust_Collision(_double TimeDelta)
 
 void CZombieA::CollisionToPlayer(_double TimeDelta)
 {
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	// 이 부분 충돌을 해야할 이유가 없는 것 같다
+	_float3 vPos =	m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float fDistance =	CMathUtils::Distance(vPos, vPlayerPos);
 
-	CCollider*		pTargetCollider = nullptr;
-
-	if (g_LEVEL == LEVEL_CHAP1)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-	else if (g_LEVEL == LEVEL_CHAP2)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-	else if (g_LEVEL == LEVEL_CHAP3)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
+	if (fabsf(fDistance) < 10.f)
+	{
+		m_bSpawn = true;
 		m_bPlayerChase = true;
+	}
 	else
 		m_bPlayerChase = false;
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CZombieA::CollisionToAttack(_double TimeDelta)
@@ -419,151 +480,6 @@ void CZombieA::CollisionToAttack(_double TimeDelta)
 				m_pPlayer->BackDamagedToMonster();
 		}
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
-}
-
-void CZombieA::CollisionToWeapon(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		_vector			vTargetLook = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-		_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetLook);
-		_float			fDot = XMVectorGetX(vDot);
-
-		if (fDot < 0)
-			m_bFrontDamaged = true;
-		else
-			m_bBackDamaged = true;
-	}
-}
-
-void CZombieA::CollisionToWeaponSkill02(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		AdjustSetDamageToSkill();
-		m_bHitDown = true;
-	}
-}
-
-void CZombieA::CollisionToWeaponSkill04(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		AdjustSetDamageToSkill();
-		m_bGroggy = true;
-	}
-}
-
-void CZombieA::CollisionToMonster(_double TimeDelta)
-{
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (g_LEVEL == LEVEL_CHAP1)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-	else if (g_LEVEL == LEVEL_CHAP2)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-	else if (g_LEVEL == LEVEL_CHAP3)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-
-
-	// 이 콜라이더는 sphere여야만함
-	_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-	_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
-
-	_uint iMonsterColliderSize = static_cast<_uint>(m_MonsterColliders.size());
-
-	for (_uint i = 0; i < iMonsterColliderSize; ++i)
-	{
-		// sphere -> AttackColCom
-		// AABB -> m_MonsterColliders
-		_float3	p;
-		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-		_vector v = p - sphereCenter;
-
-		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-		if (fDistance_Squared <= sphereRadius * sphereRadius)
-		{
-			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-			{
-				v = XMVector3Normalize(v);
-			}
-			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
-
-			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
-			{
-				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
-			}
-		}
-	}
-
-	for (auto pCollider : m_MonsterColliders)
-		Safe_Release(pCollider);
-
-	m_MonsterColliders.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -632,7 +548,7 @@ HRESULT CZombieA::SetUp_Components()
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(12.f, 12.f, 12.f);
+	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))

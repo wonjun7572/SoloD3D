@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "Animation.h"
 #include "FSMComponent.h"
+#include "MathUtils.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -54,6 +55,11 @@ void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
+
+	m_SkillDelayTime += TimeDelta;
+
+	if (m_SkillDelayTime > 10.0)
+		m_bSkill_1ToPlayer = true;
 }
 
 void CDemon::Late_Tick(_double TimeDelta)
@@ -64,7 +70,7 @@ void CDemon::Late_Tick(_double TimeDelta)
 		return;
 
 	Adjust_Collision(TimeDelta);
-	CollisionToMonster(TimeDelta);
+
 }
 
 HRESULT CDemon::Render()
@@ -99,7 +105,7 @@ void CDemon::Imgui_RenderProperty()
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 
-	m_pSwordColCom->FixedSizeForImgui(1);
+	m_pAttackColCom->FixedSizeForImgui(COLLTYPE_SPHERE);
 }
 
 void CDemon::Adjust_Collision(_double TimeDelta)
@@ -111,7 +117,15 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 		m_pSwordColCom->Update(m_pTransformCom->Get_WorldMatrix());
 
 	CollisionToPlayer(TimeDelta);
-	CollisionToAttack(TimeDelta);
+
+	CollisionToMonster(TimeDelta);
+	
+	// 플레이어와 어느 정도거리가 되었을 때
+	// 즉 chase 상태로 가는 것이 가능한 조건 일때임
+	if(m_bPlayerChase)
+		CollisionToAttack(TimeDelta);
+
+	// 밑은 플레이어의 데미지 입었을 때 이벤트
 
 	if (m_bPlayerAttackCommand)
 		CollisionToWeapon(TimeDelta);
@@ -128,26 +142,15 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
 {
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+	// 이 부분 충돌을 해야할 이유가 없는 것 같다
+	_float3 vPos =	m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float fDistance =	CMathUtils::Distance(vPos, vPlayerPos);
 
-	CCollider*		pTargetCollider = nullptr;
-
-	if (g_LEVEL == LEVEL_CHAP1)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-	else if (g_LEVEL == LEVEL_CHAP2)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-	else if (g_LEVEL == LEVEL_CHAP3)
-		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_SPHERE"));
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_SPHERE]->Collision(pTargetCollider) == true)
+	if (fabsf(fDistance) < 10.f)
 		m_bPlayerChase = true;
 	else
 		m_bPlayerChase = false;
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 void CDemon::CollisionToAttack(_double TimeDelta)
@@ -187,151 +190,6 @@ void CDemon::CollisionToAttack(_double TimeDelta)
 				m_pPlayer->BackDamagedToMonster();
 		}
 	}
-
-	RELEASE_INSTANCE(CGameInstance);
-}
-
-void CDemon::CollisionToWeapon(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		_vector			vTargetLook = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_LOOK);
-		_vector			vDot = XMVector3Dot(m_pTransformCom->Get_State(CTransform::STATE_LOOK), vTargetLook);
-		_float			fDot = XMVectorGetX(vDot);
-
-		if (fDot < 0)
-			m_bFrontDamaged = true;
-		else
-			m_bBackDamaged = true;
-	}
-}
-
-void CDemon::CollisionToWeaponSkill02(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		AdjustSetDamageToSkill();
-		m_bHitDown = true;
-	}
-}
-
-void CDemon::CollisionToWeaponSkill04(_double TimeDelta)
-{
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
-
-	if (nullptr == pTargetCollider)
-		return;
-
-	if (m_pColliderCom[COLLTYPE_AABB]->Collision(pTargetCollider) == true)
-	{
-		AdjustSetDamageToSkill();
-		m_bGroggy = true;
-	}
-}
-
-void CDemon::CollisionToMonster(_double TimeDelta)
-{
-	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (g_LEVEL == LEVEL_CHAP1)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP1, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-	else if (g_LEVEL == LEVEL_CHAP2)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP2, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-	else if (g_LEVEL == LEVEL_CHAP3)
-	{
-		_uint iLayerSize = static_cast<_uint>(pGameInstance->Find_LayerList(LEVEL_CHAP3, TEXT("Layer_Monster")).size());
-
-		for (_uint i = 0; i < iLayerSize; ++i)
-		{
-			CCollider*	pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Monster"), TEXT("Com_AABB"), i);
-			// 서로의 길이를 비교해서 어느 정도 근처에 있으면 이 콜리젼을 실행 할 수 있게하자.
-
-			if (pTargetCollider == nullptr || pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB])
-				continue;
-
-			Safe_AddRef(pTargetCollider);
-			m_MonsterColliders.push_back(pTargetCollider);
-		}
-	}
-
-
-	// 이 콜라이더는 sphere여야만함
-	_float3 sphereCenter = m_pAttackColCom->Get_CollisionCenter();
-	_float sphereRadius = m_pAttackColCom->Get_SphereRadius();
-
-	_uint iMonsterColliderSize = static_cast<_uint>(m_MonsterColliders.size());
-
-	for (_uint i = 0; i < iMonsterColliderSize; ++i)
-	{
-		// sphere -> AttackColCom
-		// AABB -> m_MonsterColliders
-		_float3	p;
-		ClosestPtPointAABB(sphereCenter, m_MonsterColliders[i], p);
-
-		_vector v = p - sphereCenter;
-
-		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
-
-		if (fDistance_Squared <= sphereRadius * sphereRadius)
-		{
-			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
-			{
-				v = XMVector3Normalize(v);
-			}
-			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
-			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
-
-			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
-			{
-				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
-			}
-		}
-	}
-
-	for (auto pCollider : m_MonsterColliders)
-		Safe_Release(pCollider);
-
-	m_MonsterColliders.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -428,7 +286,12 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Chase to Attack", "Attack")
 		.Predicator([this]()
 	{
-		return m_bPlayerChase && m_bPlayerAttack && m_AttackDelayTime > 3.0;
+		return m_bPlayerChase && m_bPlayerAttack && m_AttackDelayTime > 3.0 && !m_bSkill_1ToPlayer;
+	})
+		.AddTransition("Chase to Skill_1", "Skill_1")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_1ToPlayer;
 	})
 		.AddTransition("Chase to HitDown", "HitDown")
 		.Predicator([this]()
@@ -444,6 +307,23 @@ void CDemon::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bDeadAnim;
+	})
+
+		.AddState("Skill_1")
+		.OnStart([this]() 
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_01);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_01);
+	})
+		.OnExit([this]()
+	{
+		m_bSkill_1ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+	})
+		.AddTransition("Skill_1", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_01);
 	})
 
 		// Groggy
@@ -478,13 +358,13 @@ void CDemon::SetUp_FSM()
 		.AddState("HitDown")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(DEMON_Hit_Down);
-		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Down);
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Down);
+		m_pModelCom->Set_AnimationIndex(DEMON_Down);
 	})
 		.AddTransition("HitDown to HitDownLoop", "HitDownLoop")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(DEMON_Hit_Down);
+		return AnimFinishChecker(DEMON_Down , 0.83);
 	})
 		.AddTransition("HitDown to Dead", "Dead")
 		.Predicator([this]()
@@ -496,13 +376,13 @@ void CDemon::SetUp_FSM()
 		.OnStart([this]()
 	{
 		m_HitDownDelayTime = 0.0;
-		m_pModelCom->Reset_AnimPlayTime(DEMON_Hit_Loop);
-		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Loop);
+		m_pModelCom->Reset_AnimPlayTime(DEMON_Down_Loop);
+		m_pModelCom->Set_AnimationIndex(DEMON_Down_Loop);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		m_HitDownDelayTime += TimeDelta;
-		m_pModelCom->Set_AnimationIndex(DEMON_Hit_Loop);
+		m_pModelCom->Set_AnimationIndex(DEMON_Down_Loop);
 	})
 		.AddTransition("HitDownLoop to Getup", "Getup")
 		.Predicator([this]()
@@ -528,7 +408,7 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Getup to Chase", "Chase")
 		.Predicator([this]()
 	{
-		return  AnimFinishChecker(DEMON_Get_Up);
+		return  AnimFinishChecker(DEMON_Get_Up, 0.85);
 	})
 		.AddTransition("Getup to Dead", "Dead")
 		.Predicator([this]()
@@ -541,15 +421,35 @@ void CDemon::SetUp_FSM()
 		.AddState("Attack")
 		.OnStart([this]()
 	{
-		m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_01);
-		m_pModelCom->Set_AnimationIndex(DEMON_ATK_01);
+		m_iRandAttack = rand() % 2;
+
+		if (m_iRandAttack == 0)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_01);
+			m_pModelCom->Set_AnimationIndex(DEMON_ATK_01);
+		}
+		else if (m_iRandAttack == 1)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_02);
+			m_pModelCom->Set_AnimationIndex(DEMON_ATK_02);
+		}
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		if (AnimIntervalChecker(DEMON_ATK_01, 0.2, 0.3))
-			m_bRealAttack = true;
-		else
-			m_bRealAttack = false;
+		if (m_iRandAttack == 0)
+		{
+			if (AnimIntervalChecker(DEMON_ATK_01, 0.6, 0.7))
+				m_bRealAttack = true;
+			else
+				m_bRealAttack = false;
+		}
+		else if (m_iRandAttack == 1)
+		{
+			if (AnimIntervalChecker(DEMON_ATK_02, 0.6, 0.7))
+				m_bRealAttack = true;
+			else
+				m_bRealAttack = false;
+		}
 	})
 		.OnExit([this]()
 	{
@@ -559,7 +459,8 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Attack to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(DEMON_ATK_01);
+		return AnimFinishChecker(DEMON_ATK_01) || 
+			AnimFinishChecker(DEMON_ATK_02);
 	})
 		.AddTransition("Attack to HitDown", "HitDown")
 		.Predicator([this]()
@@ -587,7 +488,7 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Dead to DeadBody", "DeadBody")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(DEMON_Die);
+		return AnimFinishChecker(DEMON_Die, 0.85);
 	})
 		.AddState("DeadBody")
 		.Tick([this](_double TimeDelta)
@@ -623,8 +524,8 @@ HRESULT CDemon::SetUp_Components()
 
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
-	ColliderDesc.vSize = _float3(0.4f, 1.4f, 0.4f);
+	ColliderDesc.vCenter = _float3(0.f, 2.f, 0.f);
+	ColliderDesc.vSize = _float3(1.f, 2.f, 1.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
@@ -633,7 +534,7 @@ HRESULT CDemon::SetUp_Components()
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	ColliderDesc.vSize = _float3(12.f, 12.f, 12.f);
+	ColliderDesc.vSize = _float3(1.5f, 1.5f, 1.5f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
@@ -641,8 +542,8 @@ HRESULT CDemon::SetUp_Components()
 
 	/* For.Com_Attack */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 1.4f, 0.f);
-	ColliderDesc.vSize = _float3(1.4f, 1.4f, 1.4f);
+	ColliderDesc.vCenter = _float3(0.f, 2.f, 0.f);
+	ColliderDesc.vSize = _float3(2.5f, 2.5f, 2.5f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Attack"),
 		(CComponent**)&m_pAttackColCom, &ColliderDesc)))
@@ -650,8 +551,8 @@ HRESULT CDemon::SetUp_Components()
 
 	/* For.Com_Sword */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vCenter = _float3(0.f, 1.6f, 1.45f);
-	ColliderDesc.vSize = _float3(0.6f, 0.6f, 0.6f);
+	ColliderDesc.vCenter = _float3(0.f, 2.4f, 2.7f);
+	ColliderDesc.vSize = _float3(0.7f, 0.7f, 0.7f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Sword"),
 		(CComponent**)&m_pSwordColCom, &ColliderDesc)))

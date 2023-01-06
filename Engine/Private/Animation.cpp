@@ -38,6 +38,11 @@ void CAnimation::Reset()
 		pChannel->Reset_KeyFrameIndex();
 }
 
+void CAnimation::FinishAnimLoop()
+{
+	m_PlayTime = m_Duration - 0.001;
+}
+
 void CAnimation::Update_Bones(_double TimeDelta)
 {
 	if (true == m_isFinished &&
@@ -143,6 +148,9 @@ void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
 			continue;
 
 		if (!strcmp("Monster.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
+		if (!strcmp("Player.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 
 		m_Channels[i]->Additive_TransformMatrix(m_PlayTime, fAdditiveRatio);

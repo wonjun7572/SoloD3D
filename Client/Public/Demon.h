@@ -16,9 +16,9 @@ class CDemon final : public CMonster
 		, DEMON_Die
 		, DEMON_DMG_B
 		, DEMON_DMG_F
-		, DEMON_Down_Loop
-		, DEMON_down_deadbody
 		, DEMON_Down
+		, DEMON_down_deadbody
+		, DEMON_Down_Loop
 		, DEMON_Get_Up
 		, DEMON_Hit_bounce
 		, DEMON_Hit_Down
@@ -62,11 +62,6 @@ public:
 
 	void CollisionToPlayer(_double TimeDelta);
 	void CollisionToAttack(_double TimeDelta);
-	void CollisionToWeapon(_double TimeDelta);
-	void CollisionToWeaponSkill02(_double TimeDelta);
-	void CollisionToWeaponSkill04(_double TimeDelta);
-
-	void CollisionToMonster(_double TimeDelta);
 
 private:
 	void AdditiveAnim(_double TimeDelta);
@@ -83,13 +78,21 @@ private:
 	_bool	m_bPlayerAttack = true;
 	_bool	m_bRealAttack = false;
 
+	/* SKILL */
+	_bool  m_bSkill_1ToPlayer = false;
+
 	_double m_AttackDelayTime = 0.0;
 	_double m_HitDownDelayTime = 0.0;
 	_double m_GroggyDelayTime = 0.0;
 
+	_double	m_SkillDelayTime = 0.0;
+
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;
+
+private:
+	_uint m_iRandAttack = 0;
 
 public:
 	static CDemon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

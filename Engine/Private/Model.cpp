@@ -525,6 +525,11 @@ CAnimation * CModel::Get_CurAnim()
 	return m_Animations[m_iCurrentAnimIndex];
 }
 
+void CModel::Last_AnimLoop(_uint iIndex)
+{
+	m_Animations[iIndex]->FinishAnimLoop();
+}
+
 void CModel::Reset_AnimPlayTime(_uint iIndex)
 {
 	m_Animations[iIndex]->Reset();
@@ -533,6 +538,23 @@ void CModel::Reset_AnimPlayTime(_uint iIndex)
 _bool CModel::Check_AnimationSet(const _float & fTime)
 {
 	return m_Animations[m_iCurrentAnimIndex]->Check_AnimationSet(fTime);
+}
+
+void CModel::Model_Change(_uint iIndex, double playTime)
+{
+	m_Animations[iIndex]->Set_PlayTime(playTime);
+}
+
+void CModel::Model_IndexChange(_uint iCurrent, _uint iPre, _uint iAdditive)
+{
+	m_iCurrentAnimIndex = iCurrent;
+	m_iPreAnimIndex = iPre;
+	m_iAdditiveAnimIndex = iAdditive;
+}
+
+_double CModel::Get_AnimPlayTime(_uint iIndex)
+{
+	return m_Animations[iIndex]->Get_PlayTime();
 }
 
 CModel * CModel::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix)

@@ -491,6 +491,25 @@ float CMathUtils::GetHeightFromPoints(const XMFLOAT3& vPosition, const XMFLOAT3&
 	return -(a*x + c*z + d) / b;
 }
 
+float CMathUtils::GetRandomFloat(float lowBound, float highBound)
+{
+	if (lowBound >= highBound) // bad input
+		return lowBound;
+
+	// get random float in [0, 1] interval
+	float f = (rand() % 10000) * 0.0001f;
+
+	// return float in [lowBound, highBound] interval. 
+	return (f * (highBound - lowBound)) + lowBound;
+}
+
+void CMathUtils::GetRandomVector(OUT XMFLOAT3 * out, const XMFLOAT3 & min, const XMFLOAT3 & max)
+{
+	out->x = GetRandomFloat(min.x, max.x);
+	out->y = GetRandomFloat(min.y, max.y);
+	out->z = GetRandomFloat(min.z, max.z);
+}
+
 XMFLOAT4X4 CMathUtils::Add_Matrix(const XMFLOAT4X4 & M1, const XMFLOAT4X4 & M2)
 {
 	XMVECTOR x1 = XMLoadFloat4(reinterpret_cast<const XMFLOAT4*>(&M1._11));

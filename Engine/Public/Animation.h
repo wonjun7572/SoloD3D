@@ -34,10 +34,15 @@ public:
 	char*	Get_AnimationName() { return m_szName; }
 	ANIMATIONLOAD&	Get_ANIMATIONLOAD() { return m_ANIMATIONLOAD; }
 
+	void	Set_PlayTime(_double playTime) { m_PlayTime = playTime; }
+	
+	_double	 Get_PlayTime() { return m_PlayTime; }
+
 	_double  Get_PlayRate() {return m_PlayTime / m_Duration; }
 
 public:
 	void		Reset();
+	void		FinishAnimLoop();
 
 	//_float4		Get_MovePos(void) { return m_vMovePos; }
 	_double		Get_Duration() { return m_Duration; }

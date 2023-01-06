@@ -57,11 +57,6 @@ public:
 
 	void CollisionToPlayer(_double TimeDelta);
 	void CollisionToAttack(_double TimeDelta);
-	void CollisionToWeapon(_double TimeDelta);
-	void CollisionToWeaponSkill02(_double TimeDelta);
-	void CollisionToWeaponSkill04(_double TimeDelta);
-
-	void CollisionToMonster(_double TimeDelta);
 
 private:
 	void AdditiveAnim(_double TimeDelta);
@@ -85,6 +80,9 @@ private:
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;
+
+private:
+	_uint m_iRandAttack = 0;
 
 public:
 	static CTrollA* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

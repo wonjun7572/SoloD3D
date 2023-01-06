@@ -129,7 +129,7 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 	{
 		for (int x = -1; x <= 1; ++x)
 		{
-			float2 offset = float2(x, y) * float2(1 / 1920.f, 1 / 1200.f);
+			float2 offset = float2(x, y) * float2(1 / 1600.f, 1 / 900.f);
 			float3 tex = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + offset).rgb;
 			float luminance = dot(tex, float3(0.3, 0.59, 0.11));
 
@@ -173,8 +173,8 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			x = arr[i].x * blur / 1920.f;
-			y = arr[i].y * blur / 1200.f;
+			x = arr[i].x * blur / 1600.f;
+			y = arr[i].y * blur / 900.f;
 
 			uv = In.vTexUV + float2(x, y);
 

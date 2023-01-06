@@ -23,8 +23,14 @@ public:
 	virtual void Late_Tick(_double TimeDelta)override;
 	virtual HRESULT Render() override;
 
+	void ShakeUpdate(_double TimeDelta);
+
+	void Shake(_float fShakeDuration, _float fShakeAmount = 0.1f, _float fDecreaseFactor = 1.f);
+
 	void LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn);
 	void DynamicCamera(_double TimeDelta);
+
+
 
 private:
 	void	Imgui_RenderProperty() override;
@@ -48,6 +54,9 @@ private:
 
 	_bool m_bChange = false;
 
+	_float m_fShakeDuration = 0.f;
+	_float m_fShakeAmount = 0.f;
+	_float m_fDecreaseFactor = 0.f;
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

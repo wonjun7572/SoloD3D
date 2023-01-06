@@ -35,8 +35,8 @@ HRESULT CGlove::Init(void * pArg)
 void CGlove::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	m_pModelCom->Set_AnimationIndex(m_iAnimIndex);
-	m_pModelCom->Play_Animation(TimeDelta);
+	m_pModelCom[m_eModelState]->Set_AnimationIndex(m_iAnimIndex);
+	m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
 	//Imgui_RenderProperty();
 }
 
@@ -67,7 +67,17 @@ HRESULT CGlove::SetUp_Components()
 
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove"), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
+		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+		return E_FAIL;
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_A"), TEXT("Com_Model_A"),
+		(CComponent**)&m_pModelCom[MODEL_A])))
+		return E_FAIL;
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_B"), TEXT("Com_Model_B"),
+		(CComponent**)&m_pModelCom[MODEL_B])))
 		return E_FAIL;
 
 	return S_OK;

@@ -42,7 +42,7 @@ void CWeapon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	//Imgui_RenderProperty();
+
 }
 
 void CWeapon::Late_Tick(_double TimeDelta)
@@ -93,6 +93,15 @@ HRESULT CWeapon::Render()
 	return S_OK;
 }
 
+void CWeapon::Set_TargetTrasform(const WEAPONDESC& WeaponDesc)
+{
+	Safe_Release(m_WeaponDesc.pSocket);
+	Safe_Release(m_WeaponDesc.pTargetTransform);
+	m_WeaponDesc.PivotMatrix = WeaponDesc.PivotMatrix;
+	m_WeaponDesc.pSocket = WeaponDesc.pSocket;
+	m_WeaponDesc.pTargetTransform = WeaponDesc.pTargetTransform;
+}
+
 HRESULT CWeapon::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -114,8 +123,8 @@ HRESULT CWeapon::SetUp_Components()
 	CCollider::COLLIDERDESC			ColliderDesc;
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 
-	ColliderDesc.vCenter = _float3(1.2f, -0.02f, 0.25f);
-	ColliderDesc.vSize = _float3(0.5f, 0.5f, 0.5f);
+	ColliderDesc.vCenter = _float3(1.f, -0.15f, 0.1f);
+	ColliderDesc.vSize = _float3(0.65f, 0.65f, 0.65f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_Collider"),
 		(CComponent**)&m_pColliderCom, &ColliderDesc)))
@@ -155,94 +164,8 @@ HRESULT CWeapon::SetUp_ShaderResources()
 
 void CWeapon::Imgui_RenderProperty()
 {
-	ImGui::Begin("Weapon");
 
-	m_pColliderCom->FixedSizeForImgui(1);
 
-	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
-
-	if (ImGui::CollapsingHeader("Transform!"))
-	{
-		ImGuizmo::BeginFrame();
-		ImGui::InputFloat("SpeedPerSec", &m_pTransformCom->m_TransformDesc.fSpeedPerSec);
-		ImGui::InputFloat("RotationPerSec", &m_pTransformCom->m_TransformDesc.fRotationPerSec);
-
-		static float snap[3] = { 1.f, 1.f, 1.f };
-		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
-		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-		if (ImGui::IsKeyPressed(90))
-			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-		if (ImGui::IsKeyPressed(69))
-			mCurrentGizmoOperation = ImGuizmo::ROTATE;
-		if (ImGui::IsKeyPressed(82)) // r Key
-			mCurrentGizmoOperation = ImGuizmo::SCALE;
-		if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-			mCurrentGizmoOperation = ImGuizmo::ROTATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
-			mCurrentGizmoOperation = ImGuizmo::SCALE;
-
-		float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-
-		ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m_pTransformCom->m_WorldMatrix), matrixTranslation, matrixRotation, matrixScale);
-		ImGui::InputFloat3("Translate", matrixTranslation);
-		ImGui::InputFloat3("Rotate", matrixRotation);
-		ImGui::InputFloat3("Scale", matrixScale);
-		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, reinterpret_cast<float*>(&m_pTransformCom->m_WorldMatrix));
-
-		if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-		{
-			if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-				mCurrentGizmoMode = ImGuizmo::LOCAL;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-				mCurrentGizmoMode = ImGuizmo::WORLD;
-		}
-
-		static bool useSnap(false);
-		if (ImGui::IsKeyPressed(83))
-			useSnap = !useSnap;
-		ImGui::Checkbox("##something", &useSnap);
-		ImGui::SameLine();
-		switch (mCurrentGizmoOperation)
-		{
-		case ImGuizmo::TRANSLATE:
-			ImGui::InputFloat3("Snap", &snap[0]);
-			break;
-		case ImGuizmo::ROTATE:
-			ImGui::InputFloat("Angle Snap", &snap[0]);
-			break;
-		case ImGuizmo::SCALE:
-			ImGui::InputFloat("Scale Snap", &snap[0]);
-			break;
-		}
-
-		ImGuiIO& io = ImGui::GetIO();
-		RECT rt;
-		GetClientRect(CGameInstance::GetInstance()->GetHWND(), &rt);
-		POINT lt{ rt.left, rt.top };
-		ClientToScreen(CGameInstance::GetInstance()->GetHWND(), &lt);
-		ImGuizmo::SetRect((_float)lt.x, (_float)lt.y, io.DisplaySize.x, io.DisplaySize.y);
-
-		_float4x4 matView, matProj;
-		XMStoreFloat4x4(&matView, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_VIEW));
-		XMStoreFloat4x4(&matProj, CGameInstance::GetInstance()->Get_TransformMatrix(CPipeLine::D3DTS_PROJ));
-
-		ImGuizmo::Manipulate(
-			reinterpret_cast<float*>(&matView),
-			reinterpret_cast<float*>(&matProj),
-			mCurrentGizmoOperation,
-			mCurrentGizmoMode,
-			reinterpret_cast<float*>(&m_pTransformCom->m_WorldMatrix),
-			nullptr, useSnap ? &snap[0] : nullptr);
-	}
-
-	ImGui::End();
 }
 
 CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

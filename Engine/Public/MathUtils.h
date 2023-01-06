@@ -216,6 +216,8 @@ public:
 	static XMFLOAT3 MulNum_Float3(const float& f1, const XMFLOAT3& v1);
 
 	static float	GetHeightFromPoints(const XMFLOAT3& vPosition, const XMFLOAT3& vPointA, const XMFLOAT3& vPointB, const XMFLOAT3& vPointC);
+	static float	GetRandomFloat(float lowBound, float highBound);
+	static void		GetRandomVector(OUT	XMFLOAT3* out,const XMFLOAT3& min, const XMFLOAT3& max);
 #pragma endregion
 
 };
