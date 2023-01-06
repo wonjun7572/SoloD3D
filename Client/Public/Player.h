@@ -142,6 +142,7 @@ private:
 public:
 	void					BackDamagedToMonster();
 	void					FrontDamagedToMonster();
+	void					PassOutToMonster();
 
 	/* 타격을 위해서*/
 public:
@@ -173,6 +174,8 @@ private:
 	_bool					m_bAction = false;
 
 	_bool					m_bAttack = false;
+
+	_bool					m_bGroggy = false;
 
 	_bool					m_bNormalAttack_1 = false;
 	_bool					m_bNormalAttack_2 = false;

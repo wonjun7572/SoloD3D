@@ -288,6 +288,28 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bAction && !m_bMove && m_bSK06;
 	})
+		.AddTransition("Idle to Groggy" , "Groggy")
+		.Predicator([this]() 
+	{
+		return m_bGroggy;
+	})
+
+		.AddState("Groggy")
+		.OnStart([this]() 
+	{
+		Reset_Anim(PLAYER_PASSOUT);
+		Set_Anim(PLAYER_PASSOUT);
+	})
+		.OnExit([this]() 
+	{
+		m_bGroggy = false;
+	})
+		.AddTransition("Groggy to Idle" , "Idle")
+		.Predicator([this]() 
+	{	
+		return AnimFinishChecker(PLAYER_PASSOUT);
+	})
+
 		
 		/* 움직임을 위한 */
 		.AddState("Move")
@@ -305,6 +327,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return !m_bMove;
+	})
+		.AddTransition("Move to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
 	})
 
 		/* For. walk */
@@ -338,6 +365,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bAction && m_bV_DEF;
+	})
+		.AddTransition("Run to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
 	})
 
 		/* For. V_DEF */
@@ -387,7 +419,14 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bAction &&	m_bNormalAttack_2;
+	}).
+		AddTransition("Attack_1 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
 	})
+
+
 	
 			.AddState("Attack_2")
 		.OnStart([this]()
@@ -419,6 +458,12 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bAction &&	m_bNormalAttack_3;
 	})
+		.AddTransition("Attack_2 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+
 
 		.AddState("Attack_3")
 		.OnStart([this]()
@@ -450,6 +495,12 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bAction &&	m_bNormalAttack_1;
 	})
+		.AddTransition("Attack_3 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+
 
 		/*For. Skill*/
 
@@ -477,6 +528,13 @@ void CPlayer::SetUp_FSM()
 	{
 		return !m_bAction && !m_bSK01 && CheckFinish_Skill1();
 	})
+		.AddTransition("Skill_1 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+
+
 		// KEY Q
 		.AddState("Skill_2")
 		.OnStart([this]()
@@ -505,6 +563,11 @@ void CPlayer::SetUp_FSM()
 	{
 		return !m_bAction && !m_bSK02 && CheckFinish_Skill2();
 	})
+		.AddTransition("Skill_2 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
 
 		// MOUSE RB
 		.AddState("Skill_3")
@@ -525,6 +588,11 @@ void CPlayer::SetUp_FSM()
 	{
 		return !m_bAction &&  !m_bSK03 && CheckFinish_Skill3();
 	})
+		.AddTransition("Skill_3 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
 		
 		// KEY F
 		.AddState("Skill_4_Charging")
@@ -536,6 +604,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return !m_bSK04_Charging;
+	})
+		.AddTransition("Skill_4_Charging to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
 	})
 
 		.AddState("Skill_4_Attacking")
@@ -561,6 +634,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return CheckFinish_Skill4();
+	})
+		.AddTransition("Skill_4_Attacking to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
 	})
 
 		// Key_1
@@ -595,6 +673,7 @@ void CPlayer::SetUp_FSM()
 	{
 		return !m_bAction && !m_bSK05 && CheckFinish_Skill5();
 	})
+
 
 		// Key_2
 		.AddState("Skill_6")
@@ -1357,6 +1436,11 @@ void CPlayer::FrontDamagedToMonster()
 {
 	m_pCam->Shake(0.5f);
 	m_bFrontDamage = true;
+}
+
+void CPlayer::PassOutToMonster()
+{
+	m_bGroggy = true;
 }
 
 void CPlayer::MonsterNormalAttack(_bool bAttack)

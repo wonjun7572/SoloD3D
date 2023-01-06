@@ -55,11 +55,7 @@ void CDemon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
-
-	m_SkillDelayTime += TimeDelta;
-
-	if (m_SkillDelayTime > 10.0)
-		m_bSkill_1ToPlayer = true;
+	Play_Skill(TimeDelta);
 }
 
 void CDemon::Late_Tick(_double TimeDelta)
@@ -70,7 +66,6 @@ void CDemon::Late_Tick(_double TimeDelta)
 		return;
 
 	Adjust_Collision(TimeDelta);
-
 }
 
 HRESULT CDemon::Render()
@@ -124,6 +119,10 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 	// 즉 chase 상태로 가는 것이 가능한 조건 일때임
 	if(m_bPlayerChase)
 		CollisionToAttack(TimeDelta);
+
+	// 플레이어 상태 이상 스킬
+	if (m_bSkill_1ToPlayer)
+		CollisionToSkill(TimeDelta);
 
 	// 밑은 플레이어의 데미지 입었을 때 이벤트
 
@@ -192,6 +191,61 @@ void CDemon::CollisionToAttack(_double TimeDelta)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CDemon::CollisionToSkill(_double TimeDelta)
+{
+	// 스킬을 활용해서 콜리전을 어떻게 할 것인가에 대해서 고민해봐야할듯
+
+	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CCollider*		pTargetCollider = nullptr;
+
+	if (g_LEVEL == LEVEL_CHAP1)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP1, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP2, TEXT("Layer_Player"), TEXT("Com_AABB"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		pTargetCollider = (CCollider*)pGameInstance->Get_ComponentPtr(LEVEL_CHAP3, TEXT("Layer_Player"), TEXT("Com_AABB"));
+
+	if (nullptr == pTargetCollider)
+		return;
+
+	if (m_bRealSkill)
+	{
+		if (m_pSwordColCom->Collision(pTargetCollider) == true)
+		{
+			m_pPlayer->PassOutToMonster();
+		}
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
+void CDemon::Play_Skill(_double TimeDelta)
+{
+	m_SkillDelayTime += TimeDelta;
+
+	if (m_SkillDelayTime > 10.0 &&
+		!m_bSkill_1ToPlayer &&
+		!m_bSkill_2ToPlayer &&
+		!m_bSkill_3ToPlayer &&
+		!m_bSkill_4ToPlayer &&
+		!m_bSkill_5ToPlayer)
+	{
+		_uint iSkill = rand() % 5;
+
+		//if (iSkill == 0)
+			m_bSkill_1ToPlayer = true;
+		//if (iSkill == 1)
+		//	m_bSkill_2ToPlayer = true;
+		//if (iSkill == 2)
+		//	m_bSkill_3ToPlayer = true;
+		//if (iSkill == 3)
+		//	m_bSkill_4ToPlayer = true;
+		//if (iSkill == 4)
+		//	m_bSkill_5ToPlayer = true;
+	}
 }
 
 void CDemon::AdditiveAnim(_double TimeDelta)
@@ -286,12 +340,39 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Chase to Attack", "Attack")
 		.Predicator([this]()
 	{
-		return m_bPlayerChase && m_bPlayerAttack && m_AttackDelayTime > 3.0 && !m_bSkill_1ToPlayer;
+		return m_bPlayerChase 
+			&& m_bPlayerAttack 
+			&& m_AttackDelayTime > 3.0 
+			&& !m_bSkill_1ToPlayer
+			&& !m_bSkill_2ToPlayer
+			&& !m_bSkill_3ToPlayer
+			&& !m_bSkill_4ToPlayer
+			&& !m_bSkill_5ToPlayer;
 	})
 		.AddTransition("Chase to Skill_1", "Skill_1")
 		.Predicator([this]()
 	{
 		return m_bPlayerChase && m_bSkill_1ToPlayer;
+	})
+		.AddTransition("Chase to Skill_2", "Skill_2")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_2ToPlayer;
+	})
+		.AddTransition("Chase to Skill_3", "Skill_3")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_3ToPlayer;
+	})
+		.AddTransition("Chase to Skill_4", "Skill_4")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_4ToPlayer;
+	})
+		.AddTransition("Chase to Skill_5", "Skill_5")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_5ToPlayer;
 	})
 		.AddTransition("Chase to HitDown", "HitDown")
 		.Predicator([this]()
@@ -315,6 +396,13 @@ void CDemon::SetUp_FSM()
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_01);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_01);
 	})
+		.Tick([this](_double TImeDelta) 
+	{
+		if (AnimIntervalChecker(DEMON_SK_Firing_01, 0.4, 0.6))
+			m_bRealSkill = true;
+		else
+			m_bRealSkill = false;
+	})
 		.OnExit([this]()
 	{
 		m_bSkill_1ToPlayer = false;
@@ -324,6 +412,74 @@ void CDemon::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_01);
+	})
+
+		.AddState("Skill_2")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_02);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_02);
+	})
+		.OnExit([this]()
+	{
+		m_bSkill_2ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+	})
+		.AddTransition("Skill_2", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_02);
+	})
+
+		.AddState("Skill_3")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_03);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_03);
+	})
+		.OnExit([this]()
+	{
+		m_bSkill_3ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+	})
+		.AddTransition("Skill_3", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_03);
+	})
+
+		.AddState("Skill_4")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_04);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_04);
+	})
+		.OnExit([this]()
+	{
+		m_bSkill_4ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+	})
+		.AddTransition("Skill_1", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_04);
+	})
+
+		.AddState("Skill_5")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_05);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_05);
+	})
+		.OnExit([this]()
+	{
+		m_bSkill_5ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+	})
+		.AddTransition("Skill_5", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_05);
 	})
 
 		// Groggy

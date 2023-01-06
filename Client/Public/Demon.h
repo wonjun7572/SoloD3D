@@ -62,6 +62,9 @@ public:
 
 	void CollisionToPlayer(_double TimeDelta);
 	void CollisionToAttack(_double TimeDelta);
+	void CollisionToSkill(_double TimeDelta);
+
+	void Play_Skill(_double TimeDelta);
 
 private:
 	void AdditiveAnim(_double TimeDelta);
@@ -79,7 +82,14 @@ private:
 	_bool	m_bRealAttack = false;
 
 	/* SKILL */
+
+	_bool m_bRealSkill = false;
+
 	_bool  m_bSkill_1ToPlayer = false;
+	_bool  m_bSkill_2ToPlayer = false;
+	_bool  m_bSkill_3ToPlayer = false;
+	_bool  m_bSkill_4ToPlayer = false;
+	_bool  m_bSkill_5ToPlayer = false;
 
 	_double m_AttackDelayTime = 0.0;
 	_double m_HitDownDelayTime = 0.0;
