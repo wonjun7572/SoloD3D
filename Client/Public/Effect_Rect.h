@@ -25,7 +25,7 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void	LinkPlayer(_double TimeDelta, _fvector targetpos);
+	void	LinkObject(_double TimeDelta, _fvector targetpos);
 
 	void	Set_Tick(_bool isTick) { m_bTick = isTick; }
 

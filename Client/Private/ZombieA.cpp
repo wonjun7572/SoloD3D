@@ -424,7 +424,7 @@ void CZombieA::Adjust_Collision(_double TimeDelta)
 		CollisionToWeaponSkill04(TimeDelta);
 
 	if (!m_bPlayerSkill02Command && !m_bPlayerSkill04Command)
-		m_bPossibleSkillDamaged = false;
+		m_bImpossibleSkillDamaged = false;
 }
 
 void CZombieA::CollisionToPlayer(_double TimeDelta)
@@ -496,7 +496,7 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_F))
 	{
 		m_bFrontDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_F);
 	}
 
@@ -512,7 +512,7 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_B);
 	}
 }

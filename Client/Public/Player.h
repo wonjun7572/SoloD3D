@@ -18,7 +18,7 @@ BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 public:
-	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_OBB, COLLTYPE_SPHERE, COLLTYPE_END };
+	enum COLLIDERTYPE { COLLTYPE_AABB, /*COLLTYPE_OBB, COLLTYPE_SPHERE,*/ COLLTYPE_END };
 	
 	enum PLAYER_PARTS {PART_WEAPON,  
 		PART_UPPER, PART_LOWER,  
@@ -142,7 +142,8 @@ private:
 public:
 	void					BackDamagedToMonster();
 	void					FrontDamagedToMonster();
-	void					PassOutToMonster();
+	void					PassOutToMonster(_float fKnockBackPower = 0.f);
+	void					HitDownToMonster(_float fJumpPower = 1.5f, _float fKnockBackPower = 2.f, _float fDuration = 1.f);
 
 	/* 타격을 위해서*/
 public:
@@ -150,6 +151,9 @@ public:
 	
 	void					MonsterSkill02(_bool bAttack);
 	void					MonsterSkill04(_bool bAttack);
+
+public:
+	void					Reset_Action();
 
 private:
 	CFSMComponent*			m_pFSM = nullptr;
@@ -176,6 +180,8 @@ private:
 	_bool					m_bAttack = false;
 
 	_bool					m_bGroggy = false;
+	_bool					m_bHitDown = false;
+	_double					m_HitDownDelayTime = 0.0;
 
 	_bool					m_bNormalAttack_1 = false;
 	_bool					m_bNormalAttack_2 = false;
@@ -189,6 +195,11 @@ private:
 	_bool					m_bSK06 = false;
 
 	_bool					m_bV_DEF = false;
+	_bool					m_bJump = false;
+	_float					m_fJumpPower = 0.f;
+	_float					m_fKnockBackPower = 0.f;
+	_double					m_HitDownDurationTime = 0.f;
+
 	/*******************/
 
 	/*피격을 위한 변수*/

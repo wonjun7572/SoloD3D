@@ -97,7 +97,7 @@ void CPlayerCamera::ShakeUpdate(_double TimeDelta)
 	{
 		_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 1.f);
 		m_vPlayerPos = m_vPlayerPos + (Randompos * m_fShakeAmount);
-		m_fShakeDuration -= TimeDelta * m_fDecreaseFactor;
+		m_fShakeDuration -=	static_cast<_float>(TimeDelta) * m_fDecreaseFactor;
 	}
 	else
 		m_fShakeDuration = 0;

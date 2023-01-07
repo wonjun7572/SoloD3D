@@ -49,6 +49,9 @@ private:/* For. Imgui*/
 
 	void AdjustCellPoint();
 
+public:
+	void Set_Brush(const _float4& vPos, const _float& fRange);
+
 private:
 	_bool	m_bDeleteCell = false;
 	_uint	m_iDeleteCellNum = 0;
@@ -84,13 +87,13 @@ private: /* For. Imgui*/
 	_float4			m_vBrushPos = _float4(0.f, 0.f, 0.f, 1.f);
 	_float			m_fBrushRange = 5.f;
 
-	_uint			m_iFilterTexNum = 0;
+	_uint				m_iFilterTexNum = 0;
 
-	_ulong*			m_pPixel = nullptr;
+	_ulong*				m_pPixel = nullptr;
 
-	_bool			m_bNavi = false;
+	_bool				m_bNavi = false;
 
-	_bool			m_bRealNaviSetUp = false;
+	_bool				m_bRealNaviSetUp = false;
 
 	_uint				m_iNaviPointCount = 0;
 

@@ -168,6 +168,8 @@ HRESULT CVIBuffer_Terrain::Init_Prototype(const _tchar* pHeightMapFilePath)
 	m_pQuadTree = CQuadTree::Create(m_iNumVerticesX * m_iNumVerticesZ - m_iNumVerticesX,
 		m_iNumVerticesX * m_iNumVerticesZ - 1, m_iNumVerticesX - 1, 0);
 
+	m_pQuadTree->Make_Neighbor();
+
 	return S_OK;
 }
 

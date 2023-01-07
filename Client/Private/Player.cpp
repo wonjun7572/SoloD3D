@@ -293,23 +293,101 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bGroggy;
 	})
+		.AddTransition("Idle to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Idle to JumpUp", "JumpUp")
+		.Predicator([this]()
+	{
+		return m_bJump;
+	})
 
+		// Groggy
 		.AddState("Groggy")
 		.OnStart([this]() 
 	{
+		m_bCamTurn = true;
 		Reset_Anim(PLAYER_PASSOUT);
 		Set_Anim(PLAYER_PASSOUT);
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		if(AnimIntervalChecker(PLAYER_PASSOUT,0, 0.4))
+			m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
 	})
 		.OnExit([this]() 
 	{
 		m_bGroggy = false;
+		m_bCamTurn = false; 
+		Reset_Action();
 	})
 		.AddTransition("Groggy to Idle" , "Idle")
 		.Predicator([this]() 
 	{	
 		return AnimFinishChecker(PLAYER_PASSOUT);
 	})
+		
+		// HitDown
+		.AddState("HitDown")
+		.OnStart([this]()
+	{
+		m_bJump = true;
+		m_bCamTurn = true;
 
+		Reset_Anim(PLAYER_DOWN);
+		Set_Anim(PLAYER_DOWN);
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
+	})
+		.AddTransition("HitDown to HitDownLoop", "HitDownLoop")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_DOWN, 0.7);
+	})
+
+		.AddState("HitDownLoop")
+		.OnStart([this]()
+	{
+		m_HitDownDelayTime = 0.0;
+		Reset_Anim(PLAYER_DOWN_LOOP);
+		Set_Anim(PLAYER_DOWN_LOOP);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		m_HitDownDelayTime += TimeDelta;
+		
+		if(m_HitDownDelayTime <= m_HitDownDurationTime)
+			m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
+
+		Set_Anim(PLAYER_DOWN_LOOP);
+	})
+		.AddTransition("HitDownLoop to Getup", "Getup")
+		.Predicator([this]()
+	{
+		return m_HitDownDelayTime >= 3.0;
+	})
+
+		.AddState("Getup")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_GETUP);
+		Set_Anim(PLAYER_GETUP);
+	})
+		.OnExit([this]()
+	{
+		m_bCamTurn = false;
+		m_bHitDown = false;
+		Reset_Action();
+	})
+		.AddTransition("Getup to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return  AnimFinishChecker(PLAYER_GETUP, 0.85);
+	})
 		
 		/* 움직임을 위한 */
 		.AddState("Move")
@@ -332,6 +410,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Move to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 		/* For. walk */
@@ -371,6 +454,98 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bGroggy;
 	})
+		.AddTransition("Run to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Run to F_RunJumpUp", "F_RunJumpUp")
+		.Predicator([this]()
+	{
+		return m_bJump && m_eState == PLAYER_FM;
+	})
+		.AddTransition("Run to B_RunJumpUp", "B_RunJumpUp")
+		.Predicator([this]()
+	{
+		return m_bJump && m_eState == PLAYER_BM;
+	})
+		
+
+		/* For. Jump*/
+		.AddState("JumpUp")
+		.OnStart([this]()
+	{
+		m_fJumpPower = 0.5f;
+		Reset_Anim(PLAYER_JUMP_UP);
+		Set_Anim(PLAYER_JUMP_UP);
+	})
+		.AddTransition("JumpUp to JumpLand", "JumpLand")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_JUMP_UP, 0.2);
+	})
+
+		.AddState("JumpLand")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_JUMP_LAND);
+		Set_Anim(PLAYER_JUMP_LAND);
+	})
+		.AddTransition("JumpLand to Move", "Move")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_JUMP_LAND, 0.8);
+	})
+
+		.AddState("F_RunJumpUp")
+		.OnStart([this]() 
+	{
+		m_fJumpPower = 0.5f;
+		Reset_Anim(PLAYER_RUN_JUMP_UP_F);
+		Set_Anim(PLAYER_RUN_JUMP_UP_F);
+	})
+		.AddTransition("F_RunJumpUp to F_RunJumpLand" , "F_RunJumpLand")
+		.Predicator([this]() 
+	{
+		return AnimFinishChecker(PLAYER_RUN_JUMP_UP_F, 0.2);
+	})
+
+		.AddState("F_RunJumpLand")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_RUN_JUMP_LAND_F);
+		Set_Anim(PLAYER_RUN_JUMP_LAND_F);
+	})
+		.AddTransition("F_RunJumpLand to Move", "Move")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_RUN_JUMP_LAND_F, 0.8);
+	})
+
+		.AddState("B_RunJumpUp")
+		.OnStart([this]()
+	{
+		m_fJumpPower = 0.5f;
+		Reset_Anim(PLAYER_RUN_JUMP_UP_B);
+		Set_Anim(PLAYER_RUN_JUMP_UP_B);
+	})
+		.AddTransition("B_RunJumpUp to B_RunJumpLand", "B_RunJumpLand")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_RUN_JUMP_UP_B, 0.2);
+	})
+
+		.AddState("B_RunJumpLand")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_RUN_JUMP_LAND_B);
+		Set_Anim(PLAYER_RUN_JUMP_LAND_B);
+	})
+		.AddTransition("B_RunJumpLand to Move", "Move")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(PLAYER_RUN_JUMP_LAND_B, 0.8);
+	})
 
 		/* For. V_DEF */
 		.AddState("V_DEF")
@@ -388,7 +563,7 @@ void CPlayer::SetUp_FSM()
 	{
 		return !m_bAction && !m_bV_DEF;
 	})
-
+		
 		/* For. Attack */
 		.AddState("Attack_1")
 		.OnStart([this]()
@@ -408,6 +583,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		MonsterNormalAttack(false);
 		m_fNormalAtk1TrailMove = -1.001f;
 	})
 		.AddTransition("Attack_1 to Idle", "Idle")
@@ -425,10 +601,13 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bGroggy;
 	})
-
-
-	
-			.AddState("Attack_2")
+		.AddTransition("Attack_1 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		
+		.AddState("Attack_2")
 		.OnStart([this]()
 	{
 		Reset_Anim(PLAYER_ATK_02);
@@ -446,6 +625,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		MonsterNormalAttack(false);
 		m_fNormalAtk2TrailMove = -1.001f;
 	})
 		.AddTransition("Attack_2 to Idle", "Idle")
@@ -462,6 +642,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Attack_2 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 
@@ -483,6 +668,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		MonsterNormalAttack(false);
 		m_fNormalAtk3TrailMove = -1.001f;
 	})
 		.AddTransition("Attack_3 to Idle", "Idle")
@@ -499,6 +685,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Attack_3 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 
@@ -521,6 +712,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]() 
 	{
+		MonsterNormalAttack(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.65f);
 	})
 		.AddTransition("Skill_1 to Idle", "Idle")
@@ -532,6 +724,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Skill_1 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 
@@ -568,6 +765,11 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bGroggy;
 	})
+		.AddTransition("Skill_2 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
 
 		// MOUSE RB
 		.AddState("Skill_3")
@@ -583,6 +785,10 @@ void CPlayer::SetUp_FSM()
 		else
 			MonsterNormalAttack(false);
 	})
+		.OnExit([this]() 
+	{
+		MonsterNormalAttack(false);
+	})
 		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
 	{
@@ -592,6 +798,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Skill_3 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 		
 		// KEY F
@@ -609,6 +820,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Skill_4_Charging to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 		.AddState("Skill_4_Attacking")
@@ -639,6 +855,11 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bGroggy;
+	})
+		.AddTransition("Skill_4_Attacking to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 		// Key_1
@@ -750,7 +971,29 @@ void CPlayer::Movement(_double TimeDelta)
 	{
 		_float yPos = 0.f;
 		m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
-		m_pTransformCom->Set_Height(yPos);
+		
+		if (m_bJump)
+		{
+			static _float fGravity = 8.81f;
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float	fJumpPower = yPos + m_fJumpPower;
+			_float fVelocity = sqrtf(fabsf(fJumpPower * 2.f * fGravity));
+			
+			if (vPos.y >= fVelocity)
+				fGravity *= -1.f;
+			
+			_float y = max(vPos.y + fGravity * static_cast<_float>(TimeDelta), yPos);
+			
+			if (y - yPos <= 0.00001f)
+			{
+				fGravity *= -1.f;
+				m_bJump = false;
+			}
+
+			m_pTransformCom->Set_Height(y);
+		}
+		else
+			m_pTransformCom->Set_Height(yPos);
 	}
 
 	if (!pGameInstance->Key_Pressing(DIK_W) &&
@@ -765,7 +1008,7 @@ void CPlayer::Movement(_double TimeDelta)
 		m_bMove = true;
 	}
 
-	if (m_bMove && !m_bAction)
+	if (m_bMove && !m_bAction && !m_bGroggy && !m_bHitDown)
 	{
 		if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
 		{
@@ -924,6 +1167,7 @@ void CPlayer::Movement(_double TimeDelta)
 				m_fVelocity = 1.f;
 			}
 		}
+
 	}
 
 	if (pGameInstance->Mouse_Down(DIM_LB))
@@ -1075,15 +1319,7 @@ void CPlayer::Movement(_double TimeDelta)
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
-
-	if (pGameInstance->Key_Down(DIK_LSHIFT))
-	{
-		m_bAction = true;
-		m_bV_DEF = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
+	
 	/* SKILL5 !! 변신*/
 	if (pGameInstance->Key_Down(DIK_1))
 	{
@@ -1118,10 +1354,28 @@ void CPlayer::Movement(_double TimeDelta)
 		return;
 	}
 
+	if (pGameInstance->Key_Down(DIK_LSHIFT))
+	{
+		m_bAction = true;
+		m_bV_DEF = true;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
 	if (m_bV_DEF &&	CheckFinish_V_DEF())
 	{
 		m_bAction = false;
 		m_bV_DEF = false;
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	if (!m_bJump && pGameInstance->Key_Down(DIK_SPACE) &&
+		(!strcmp(m_pFSM->GetCurStateName(), "Idle") || 
+		 (!strcmp(m_pFSM->GetCurStateName(), "Run") && 
+			(m_eState == CPlayer::PLAYER_FM || m_eState == CPlayer::PLAYER_BM)))) // 점프를 할 수 있는 조건을 줘
+	{
+		m_bJump = true;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
@@ -1208,19 +1462,6 @@ void CPlayer::LinkObject(_double TimeDelta)
 		m_pCam->DynamicCamera(TimeDelta);
 
 	// 이펙트 연결인데 이거 수정해야겠다
-
-	if (g_LEVEL == LEVEL_CHAP1)
-	{
-		CEffect_Rect* pEffect = (CEffect_Rect*)pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Effect", L"Effect_Rect");
-		_vector vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		pEffect->LinkPlayer(TimeDelta, XMVectorSet(XMVectorGetX(vPos), XMVectorGetY(vPos) + 2.f, XMVectorGetZ(vPos), 1.f));
-
-		if (m_bSK01 && !CheckFinish_Skill1())
-			pEffect->Set_Tick(true);
-		else
-			pEffect->Set_Tick(false);
-	}
-
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -1438,9 +1679,18 @@ void CPlayer::FrontDamagedToMonster()
 	m_bFrontDamage = true;
 }
 
-void CPlayer::PassOutToMonster()
+void CPlayer::PassOutToMonster(_float fKnockBackPower)
 {
 	m_bGroggy = true;
+	m_fKnockBackPower = fKnockBackPower;
+}
+
+void CPlayer::HitDownToMonster(_float fJumpPower, _float fKnockBackPower, _float fDuration)
+{
+	m_bHitDown = true;
+	m_fJumpPower = fJumpPower;
+	m_fKnockBackPower = fKnockBackPower;
+	m_HitDownDurationTime = fDuration;
 }
 
 void CPlayer::MonsterNormalAttack(_bool bAttack)
@@ -1674,6 +1924,22 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 	RELEASE_INSTANCE(CGameInstance);
 }
 
+void CPlayer::Reset_Action()
+{
+
+	m_bAction = false;
+	m_bAttack = false;
+	m_bNormalAttack_1 = false;
+	m_bNormalAttack_2 = false;
+	m_bNormalAttack_3 = false;
+	m_bSK01 = false;
+	m_bSK02 = false;
+	m_bSK03 = false;
+	m_bSK04_Charging = false;
+	m_bSK05 = false;
+	m_bSK06 = false;
+}
+
 _bool CPlayer::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
 {
 	return m_pModelCom[m_eModelState]->Get_IndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
@@ -1866,23 +2132,23 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
 		return E_FAIL;
 
-	/* For.Com_OBB */
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(0.3f, 1.1f, 0.3f);
-	ColliderDesc.vCenter = _float3(0.f, 1.3f, 0.f);
+	///* For.Com_OBB */
+	//ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	//ColliderDesc.vSize = _float3(0.3f, 1.1f, 0.3f);
+	//ColliderDesc.vCenter = _float3(0.f, 1.3f, 0.f);
 
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
-		(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
+	//	(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
+	//	return E_FAIL;
 
-	/* For.Com_SPHERE */
-	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	ColliderDesc.vSize = _float3(15.f, 15.f, 15.f);
-	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	///* For.Com_SPHERE */
+	//ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	//ColliderDesc.vSize = _float3(15.f, 15.f, 15.f);
+	//ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
-		(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
+	//	(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
+	//	return E_FAIL;
 
 	if (g_LEVEL == LEVEL_CHAP1)
 	{

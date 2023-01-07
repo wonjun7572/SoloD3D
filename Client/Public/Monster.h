@@ -64,12 +64,11 @@ protected:
 	_bool					m_bDeadAnim		= false;
 
 	// 데미지를 입을 수 있는 상황인가?
-	_bool					m_bPossibleSkillDamaged		= false; 
-	_bool					m_bPossibleDamaged = false;
+	_bool					m_bImpossibleSkillDamaged		= false; 
+	_bool					m_bImpossibleDamaged			= false;
 	/****************/
 
 	_bool					m_bPlayerAttackCommand = false;
-
 	_bool					m_bPlayerSkill02Command = false;
 	_bool					m_bPlayerSkill04Command = false;
 

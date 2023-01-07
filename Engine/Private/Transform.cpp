@@ -170,7 +170,6 @@ void CTransform::Go_Backward(_double TimeDelta, CNavigation* pNaviCom)
 
 	if (nullptr == pNaviCom)
 		Set_State(CTransform::STATE_TRANSLATION, vPosition);
-
 	else
 	{
 		_float4 vOldPos = Get_State(CTransform::STATE_TRANSLATION);

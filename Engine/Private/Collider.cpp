@@ -303,6 +303,34 @@ void CCollider::FixedSphereSize(const _float& fX, const _float& fY, const _float
 	}
 }
 
+void CCollider::FixedAABBSize(const _float & fX, const _float & fY, const _float & fZ, const _float & fCX, const _float & fCY, const _float & fCZ)
+{
+	if (m_pAABB != nullptr)
+	{
+		m_pAABB_Original->Center.x = fX;
+		m_pAABB_Original->Center.y = fY;
+		m_pAABB_Original->Center.z = fZ;
+
+		m_pAABB_Original->Extents.x = fCX;
+		m_pAABB_Original->Extents.y = fCY;
+		m_pAABB_Original->Extents.z = fCZ;
+	}
+}
+
+void CCollider::FixedOBBSize(const _float & fX, const _float & fY, const _float & fZ, const _float & fCX, const _float & fCY, const _float & fCZ)
+{
+	if(m_pOBB != nullptr)
+	{
+		m_pOBB_Original->Center.x = fX;
+		m_pOBB_Original->Center.y = fY;
+		m_pOBB_Original->Center.z = fZ;
+		
+		m_pOBB_Original->Extents.x = fCX;
+		m_pOBB_Original->Extents.y = fCY;
+		m_pOBB_Original->Extents.z = fCZ;
+	}
+}
+
 void CCollider::FixedSizeForImgui(_uint iIndex)
 {
 	if (iIndex == 0)

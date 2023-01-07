@@ -2,6 +2,11 @@
 
 #include "Monster.h"
 
+BEGIN(Engine)
+class CShader;
+class CTexture;
+END
+
 BEGIN(Client)
 
 class CDemon final : public CMonster
@@ -90,6 +95,7 @@ private:
 	_bool  m_bSkill_3ToPlayer = false;
 	_bool  m_bSkill_4ToPlayer = false;
 	_bool  m_bSkill_5ToPlayer = false;
+	_bool  m_bSkill_6ToPlayer = false;
 
 	_double m_AttackDelayTime = 0.0;
 	_double m_HitDownDelayTime = 0.0;
@@ -100,7 +106,24 @@ private:
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;
+	CCollider* m_pSkillHitDownColCom = nullptr;
+	CCollider* m_pSkillKnockBackColCom = nullptr;
 
+	_float m_fOBBX = 0.f;
+	_float m_fOBBY = 0.f;
+	_float m_fOBBZ = 0.f;
+	_float m_fOBBCX = 1.f;
+	_float m_fOBBCY = 1.f;
+	_float m_fOBBCZ = 1.f;
+	_float m_fRotationX = 0.f;
+	_float m_fRotationY = 0.f;
+	_float m_fRotationZ = 0.f;
+
+
+	_float m_fSkillHitDownRange = 0.f;
+
+	_float4x4 m_Mat;
+	
 private:
 	_uint m_iRandAttack = 0;
 

@@ -132,7 +132,7 @@ void CMonster::Set_PlayerSkiil04Command(_bool bAttack, _int iAttack)
 
 void CMonster::AdjustSetDamage()
 {
-	if (!m_bPossibleDamaged)
+	if (!m_bImpossibleDamaged)
 	{
 		_int iRealDamage = m_iPlayerAttack - m_iDefence;
 
@@ -145,13 +145,13 @@ void CMonster::AdjustSetDamage()
 			m_iHp = 0;
 		// 0보다 아래면 죽음
 
-		m_bPossibleDamaged = true;
+		m_bImpossibleDamaged = true;
 	}
 }
 
 void CMonster::AdjustSetDamageToSkill()
 {
-	if (!m_bPossibleSkillDamaged)
+	if (!m_bImpossibleSkillDamaged)
 	{
 		_int iRealDamage = m_iPlayerAttack - m_iDefence;
 
@@ -164,7 +164,7 @@ void CMonster::AdjustSetDamageToSkill()
 			m_iHp = 0;
 		// 0보다 아래면 죽음
 
-		m_bPossibleSkillDamaged = true;
+		m_bImpossibleSkillDamaged = true;
 	}
 }
 

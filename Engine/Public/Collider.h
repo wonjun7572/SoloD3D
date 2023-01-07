@@ -51,7 +51,8 @@ public:
 
 public: /* For. Imgui*/
 	void	FixedSphereSize(const _float& fX, const _float& fY, const _float& fZ, const _float& fSize);
-
+	void	FixedAABBSize(const _float& fX, const _float& fY, const _float& fZ, const _float& fCX, const _float& fCY, const _float& fCZ);
+	void	FixedOBBSize(const _float& fX, const _float& fY, const _float& fZ, const _float& fCX, const _float& fCY, const _float& fCZ);
 	void	FixedSizeForImgui(_uint iIndex);
 
 private:

@@ -5,6 +5,8 @@
 #include "Animation.h"
 #include "FSMComponent.h"
 #include "MathUtils.h"
+#include "Terrain.h"
+#include "Bone.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -48,6 +50,8 @@ HRESULT CDemon::Init(void * pArg)
 	m_iAttack = 10;
 	m_iDefence = 5;
 
+	XMStoreFloat4x4(&m_Mat, m_pTransformCom->Get_WorldMatrix());
+
 	return S_OK;
 }
 
@@ -89,18 +93,24 @@ HRESULT CDemon::Render()
 #ifdef _DEBUG
 	m_pAttackColCom->Render();
 	m_pSwordColCom->Render();
+	m_pSkillHitDownColCom->Render();
+	m_pSkillKnockBackColCom->Render();
 #endif
 	return S_OK;
 }
 
 void CDemon::Imgui_RenderProperty()
 {
+	ImGui::Text("HP : %d", m_iHp);
+
 	if (ImGui::Button("Navi~"))
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
-
-	m_pAttackColCom->FixedSizeForImgui(COLLTYPE_SPHERE);
+	ImGui::DragFloat("RotationX", &m_fRotationX, 0.1f, -180.f, 180.f);
+	ImGui::DragFloat("RotationY", &m_fRotationY, 0.1f, -180.f, 180.f);
+	ImGui::DragFloat("RotationZ", &m_fRotationZ, 0.01f, -180.f, 180.f);
+	m_pSkillKnockBackColCom->FixedSizeForImgui(2);
 }
 
 void CDemon::Adjust_Collision(_double TimeDelta)
@@ -110,6 +120,30 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 
 	if (m_pSwordColCom)
 		m_pSwordColCom->Update(m_pTransformCom->Get_WorldMatrix());
+
+	if (m_pSkillHitDownColCom)
+	{
+		m_pSkillHitDownColCom->FixedSphereSize(0.f, 0.f, 0.f, m_fSkillHitDownRange);
+		m_pSkillHitDownColCom->Update(m_pTransformCom->Get_WorldMatrix());
+	}
+
+	if (m_pSkillKnockBackColCom)
+	{
+		m_pSkillKnockBackColCom->FixedOBBSize(m_fOBBX, m_fOBBY, m_fOBBZ, m_fOBBCX, m_fOBBCY, m_fOBBCZ);
+		
+		_matrix  mat = m_pTransformCom->Get_WorldMatrix();
+
+		_matrix originMat =	XMLoadFloat4x4(&m_Mat);
+		
+		_matrix		RotationYMatrix =
+			XMMatrixRotationX(m_fRotationX) *
+			XMMatrixRotationY(m_fRotationY) *
+			XMMatrixRotationZ(m_fRotationZ);
+
+		mat = RotationYMatrix * mat;
+
+		m_pSkillKnockBackColCom->Update(mat);
+	}
 
 	CollisionToPlayer(TimeDelta);
 
@@ -121,7 +155,12 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 		CollisionToAttack(TimeDelta);
 
 	// 플레이어 상태 이상 스킬
-	if (m_bSkill_1ToPlayer)
+	if (m_bSkill_1ToPlayer	
+		|| m_bSkill_2ToPlayer
+		|| m_bSkill_3ToPlayer
+		|| m_bSkill_4ToPlayer
+		|| m_bSkill_5ToPlayer
+		|| m_bSkill_6ToPlayer)
 		CollisionToSkill(TimeDelta);
 
 	// 밑은 플레이어의 데미지 입었을 때 이벤트
@@ -136,7 +175,7 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 		CollisionToWeaponSkill04(TimeDelta);
 
 	if (!m_bPlayerSkill02Command && !m_bPlayerSkill04Command)
-		m_bPossibleSkillDamaged = false;
+		m_bImpossibleSkillDamaged = false;
 }
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
@@ -196,7 +235,6 @@ void CDemon::CollisionToAttack(_double TimeDelta)
 void CDemon::CollisionToSkill(_double TimeDelta)
 {
 	// 스킬을 활용해서 콜리전을 어떻게 할 것인가에 대해서 고민해봐야할듯
-
 	CGameInstance*			pGameInstance = GET_INSTANCE(CGameInstance);
 
 	CCollider*		pTargetCollider = nullptr;
@@ -213,10 +251,23 @@ void CDemon::CollisionToSkill(_double TimeDelta)
 
 	if (m_bRealSkill)
 	{
-		if (m_pSwordColCom->Collision(pTargetCollider) == true)
-		{
+		if (m_bSkill_1ToPlayer && m_pSwordColCom->Collision(pTargetCollider) == true)
 			m_pPlayer->PassOutToMonster();
-		}
+
+		if (m_bSkill_2ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
+			m_pPlayer->PassOutToMonster(0.1f);
+
+		if(m_bSkill_3ToPlayer && m_pSkillKnockBackColCom->Collision(pTargetCollider) == true)
+			m_pPlayer->PassOutToMonster(0.1f);
+
+		if (m_bSkill_4ToPlayer && m_pSkillKnockBackColCom->Collision(pTargetCollider) == true)
+			m_pPlayer->PassOutToMonster(0.2f);
+
+		if (m_bSkill_5ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
+			m_pPlayer->HitDownToMonster(0.1f , 0.5f , 0.7f);
+
+		if (m_bSkill_6ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
+			m_pPlayer->HitDownToMonster();
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -231,20 +282,23 @@ void CDemon::Play_Skill(_double TimeDelta)
 		!m_bSkill_2ToPlayer &&
 		!m_bSkill_3ToPlayer &&
 		!m_bSkill_4ToPlayer &&
-		!m_bSkill_5ToPlayer)
+		!m_bSkill_5ToPlayer &&
+		!m_bSkill_6ToPlayer)
 	{
-		_uint iSkill = rand() % 5;
+		_uint iSkill = rand() % 6;
 
-		//if (iSkill == 0)
+		if (iSkill == 0)
 			m_bSkill_1ToPlayer = true;
-		//if (iSkill == 1)
-		//	m_bSkill_2ToPlayer = true;
-		//if (iSkill == 2)
-		//	m_bSkill_3ToPlayer = true;
-		//if (iSkill == 3)
-		//	m_bSkill_4ToPlayer = true;
-		//if (iSkill == 4)
-		//	m_bSkill_5ToPlayer = true;
+		if (iSkill == 1)
+			m_bSkill_2ToPlayer = true;
+		if (iSkill == 2)
+			m_bSkill_3ToPlayer = true;
+		if (iSkill == 3)
+			m_bSkill_4ToPlayer = true;
+		if (iSkill == 4)
+			m_bSkill_5ToPlayer = true;
+		if (iSkill == 5)
+			m_bSkill_6ToPlayer = true;
 	}
 }
 
@@ -260,7 +314,7 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(DEMON_ADD_DMG_F))
 	{
 		m_bFrontDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_F);
 	}
 
@@ -276,7 +330,7 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(DEMON_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_B);
 	}
 }
@@ -340,14 +394,15 @@ void CDemon::SetUp_FSM()
 		.AddTransition("Chase to Attack", "Attack")
 		.Predicator([this]()
 	{
-		return m_bPlayerChase 
-			&& m_bPlayerAttack 
-			&& m_AttackDelayTime > 3.0 
+		return m_bPlayerChase
+			&& m_bPlayerAttack
+			&& m_AttackDelayTime > 3.0
 			&& !m_bSkill_1ToPlayer
 			&& !m_bSkill_2ToPlayer
 			&& !m_bSkill_3ToPlayer
 			&& !m_bSkill_4ToPlayer
-			&& !m_bSkill_5ToPlayer;
+			&& !m_bSkill_5ToPlayer
+			&& !m_bSkill_6ToPlayer;
 	})
 		.AddTransition("Chase to Skill_1", "Skill_1")
 		.Predicator([this]()
@@ -373,6 +428,11 @@ void CDemon::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bPlayerChase && m_bSkill_5ToPlayer;
+	})
+		.AddTransition("Chase to Skill_6_Charging", "Skill_6_Charging")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase && m_bSkill_6ToPlayer;
 	})
 		.AddTransition("Chase to HitDown", "HitDown")
 		.Predicator([this]()
@@ -405,13 +465,29 @@ void CDemon::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		m_bRealSkill = false;
 		m_bSkill_1ToPlayer = false;
 		m_SkillDelayTime = 0.0;
 	})
-		.AddTransition("Skill_1", "Idle")
+		.AddTransition("Skill_1 to Idle", "Idle")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_01);
+	})
+		.AddTransition("Skill_1 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		.AddTransition("Skill_1 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Skill_1 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
 	})
 
 		.AddState("Skill_2")
@@ -419,16 +495,30 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_02);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_02);
+		m_fSkillHitDownRange = 4.f;
+	})
+		.Tick([this](_double TImeDelta)
+	{
+		if (AnimIntervalChecker(DEMON_SK_Firing_02, 0.6, 0.8))
+			m_bRealSkill = true;
+		else
+			m_bRealSkill = false;
 	})
 		.OnExit([this]()
 	{
 		m_bSkill_2ToPlayer = false;
+		m_fSkillHitDownRange = 0.f;
 		m_SkillDelayTime = 0.0;
 	})
-		.AddTransition("Skill_2", "Idle")
+		.AddTransition("Skill_2 to Idle", "Idle")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_02);
+	})
+		.AddTransition("Skill_2 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
 	})
 
 		.AddState("Skill_3")
@@ -436,33 +526,100 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_03);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_03);
+
+		m_fOBBX = 0.f;
+		m_fOBBY = 4.f;
+		m_fOBBZ = 2.5f;
+
+		m_fOBBCX = 0.5f;
+		m_fOBBCY = 1.f;
+		m_fOBBCZ = 4.f;
+
+		m_fRotationX = 0.5f;
+		m_fRotationY = -1.f;
+		m_fRotationZ = 0.f;
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		m_bRealSkill = true;
+		
+		if(AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
+			m_fRotationY += static_cast<_float>(TimeDelta);
+		
+		if (m_fRotationY >= 1.f)
+			m_fRotationY = 1.f;
 	})
 		.OnExit([this]()
 	{
+		m_fOBBX = 0.f;
+		m_fOBBY = 3.f;
+		m_fOBBZ = 0.f;
+
+		m_fOBBCX = 0.5f;
+		m_fOBBCY = 1.f;
+		m_fOBBCZ = 0.f;
+
+		m_fRotationX = 0.f;
+		m_fRotationY = 0.f;
+		m_fRotationZ = 0.f;
+		m_bRealSkill = false;
 		m_bSkill_3ToPlayer = false;
 		m_SkillDelayTime = 0.0;
 	})
-		.AddTransition("Skill_3", "Idle")
+		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_03);
+	})
+		.AddTransition("Skill_3 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
 	})
 
 		.AddState("Skill_4")
 		.OnStart([this]()
 	{
+		m_fOBBX = 0.f;
+		m_fOBBY = 3.f;
+		m_fOBBZ = 0.f;
+
+		m_fOBBCX = 0.5f;
+		m_fOBBCY = 1.f;
+		m_fOBBCZ = 0.f;
+
+		m_fRotationX = 0.f;
+		m_fRotationY = 0.f;
+		m_fRotationZ = 0.f;
+
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_04);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_04);
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		m_fOBBZ  += static_cast<_float>(TimeDelta) * 2.f;
+		m_fOBBCZ += static_cast<_float>(TimeDelta) * 2.f;
+		if (AnimIntervalChecker(DEMON_SK_Firing_04, 0.7, 0.9))
+			m_bRealSkill = true;
+		else
+			m_bRealSkill = false;
 	})
 		.OnExit([this]()
 	{
 		m_bSkill_4ToPlayer = false;
 		m_SkillDelayTime = 0.0;
+		m_fOBBZ = 0.f;
+		m_fOBBCZ = 0.f;
 	})
-		.AddTransition("Skill_1", "Idle")
+		.AddTransition("Skill_4 to Idle", "Idle")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_04);
+	})
+		.AddTransition("Skill_4 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
 	})
 
 		.AddState("Skill_5")
@@ -470,17 +627,85 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_05);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_05);
+		m_fSkillHitDownRange = 4.f;
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		if (AnimIntervalChecker(DEMON_SK_Firing_05, 0.6, 0.7))
+			m_bRealSkill = true;
+		else
+			m_bRealSkill = false;
 	})
 		.OnExit([this]()
 	{
+		m_bRealSkill = false;
 		m_bSkill_5ToPlayer = false;
 		m_SkillDelayTime = 0.0;
+		m_fSkillHitDownRange = 0.f;
 	})
 		.AddTransition("Skill_5", "Idle")
 		.Predicator([this]()
 	{
 		return AnimFinishChecker(DEMON_SK_Firing_05);
 	})
+		.AddTransition("Skill_5 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+		.AddState("Skill_6_Charging")
+		.OnStart([this]()
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_06);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06);
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		m_fSkillHitDownRange += static_cast<_float>(TimeDelta) * 2.5f;
+		m_bImpossibleDamaged = true;
+		m_bImpossibleSkillDamaged = true;
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06);
+	})
+		.AddTransition("Skill_6_Charging to Skill_6", "Skill_6")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_06);
+	})
+
+		.AddState("Skill_6")
+		.OnStart([this]() 
+	{
+		m_bImpossibleDamaged = false;
+		m_bImpossibleSkillDamaged = false;
+		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_06_END);
+		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06_END);
+	})
+		.Tick([this](_double TimeDelta) 
+	{
+		m_bRealSkill = true;
+	})
+		.OnExit([this]()
+	{
+		m_fSkillHitDownRange = 0.f;
+		m_bRealSkill = false;
+		m_bSkill_6ToPlayer = false;
+		m_SkillDelayTime = 0.0;
+		m_bGroggy = false;
+		m_bHitDown = false;
+	})
+		.AddTransition("Skill_6 to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DEMON_SK_Firing_06_END , 0.85);
+	})
+		.AddTransition("Skill_6 to Dead", "Dead")
+		.Predicator([this]()
+	{
+		return m_bDeadAnim;
+	})
+
+
 
 		// Groggy
 		.AddState("Groggy")
@@ -687,6 +912,16 @@ HRESULT CDemon::SetUp_Components()
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
 		return E_FAIL;
 
+	/* For.Com_OBB */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vCenter = _float3(0.f, 3.f, 0.f);
+	//ColliderDesc.vRotation = _float3(XMConvertToRadians(45.0f), 0.f, 0.f);
+	ColliderDesc.vSize = _float3(0.5f, 1.f, 0.f);
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB_KnockBack"),
+		(CComponent**)&m_pSkillKnockBackColCom, &ColliderDesc)))
+		return E_FAIL;
+
 	/* For.Com_SPHERE */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
@@ -712,6 +947,15 @@ HRESULT CDemon::SetUp_Components()
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Sword"),
 		(CComponent**)&m_pSwordColCom, &ColliderDesc)))
+		return E_FAIL;
+
+	/* For.Com_Skill6 */
+	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	ColliderDesc.vSize = _float3(0.f, 0.f, 0.f);
+
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE_Skil6"),
+		(CComponent**)&m_pSkillHitDownColCom, &ColliderDesc)))
 		return E_FAIL;
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -836,6 +1080,8 @@ void CDemon::Free()
 
 	Safe_Release(m_pAttackColCom);
 	Safe_Release(m_pSwordColCom);
+	Safe_Release(m_pSkillHitDownColCom);
+	Safe_Release(m_pSkillKnockBackColCom);
 
 	for (auto pCollider : m_MonsterColliders)
 		Safe_Release(pCollider);

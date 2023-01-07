@@ -395,7 +395,7 @@ void CTrollA::Adjust_Collision(_double TimeDelta)
 		CollisionToWeaponSkill04(TimeDelta);
 
 	if (!m_bPlayerSkill02Command && !m_bPlayerSkill04Command)
-		m_bPossibleSkillDamaged = false;
+		m_bImpossibleSkillDamaged = false;
 }
 
 void CTrollA::CollisionToPlayer(_double TimeDelta)
@@ -464,7 +464,7 @@ void CTrollA::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(TROLLA_ADD_DMG_F))
 	{
 		m_bFrontDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(TROLLA_ADD_DMG_F);
 	}
 
@@ -480,7 +480,7 @@ void CTrollA::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(TROLLA_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(TROLLA_ADD_DMG_B);
 	}
 }

@@ -375,7 +375,7 @@ void CSkeletonWarrior::Adjust_Collision(_double TimeDelta)
 		CollisionToWeaponSkill04(TimeDelta);
 
 	if (!m_bPlayerSkill02Command && !m_bPlayerSkill04Command)
-		m_bPossibleSkillDamaged = false;
+		m_bImpossibleSkillDamaged = false;
 }
 
 void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
@@ -444,7 +444,7 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_F))
 	{
 		m_bFrontDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_F);
 	}
 
@@ -460,7 +460,7 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
-		m_bPossibleDamaged = false;
+		m_bImpossibleDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_B);
 	}
 }

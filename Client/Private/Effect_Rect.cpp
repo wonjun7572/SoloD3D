@@ -43,23 +43,16 @@ HRESULT CEffect_Rect::Init(void * pArg)
 
 void CEffect_Rect::Tick(_double TimeDelta)
 {
-	if (m_bTick)
-	{
-		__super::Tick(TimeDelta);
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -TimeDelta * 3.f);
-		m_pVIBufferCom->Tick(TimeDelta);
-	}
+	__super::Tick(TimeDelta);
+	m_pVIBufferCom->Tick(TimeDelta);
 }
 
 void CEffect_Rect::Late_Tick(_double TimeDelta)
 {
-	if (m_bTick)
-	{
-		__super::Late_Tick(TimeDelta);
+	__super::Late_Tick(TimeDelta);
 
-		if (nullptr != m_pRendererCom)
-			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	}
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 }
 
 HRESULT CEffect_Rect::Render()
@@ -77,7 +70,7 @@ HRESULT CEffect_Rect::Render()
 	return S_OK;
 }
 
-void CEffect_Rect::LinkPlayer(_double TimeDelta, _fvector targetpos)
+void CEffect_Rect::LinkObject(_double TimeDelta, _fvector targetpos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, targetpos);
 }
@@ -111,8 +104,7 @@ HRESULT CEffect_Rect::SetUp_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	// m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_WorldMatrix);
+		
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);

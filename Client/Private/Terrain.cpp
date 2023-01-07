@@ -403,6 +403,12 @@ void CTerrain::AdjustCellPoint()
 	}
 }
 
+void CTerrain::Set_Brush(const _float4 & vPos, const _float & fRange)
+{
+	m_vBrushPos = vPos;
+	m_fBrushRange = fRange;
+}
+
 void CTerrain::Add_NaviCell(HWND hWnd, _uint iWinsizeX, _uint iWinsizey, const class CVIBuffer_Terrain* pTerrainBufferCom, const class CTransform* pTerrainTransformCom)
 {
 	POINT		ptMouse{};
@@ -565,6 +571,8 @@ HRESULT CTerrain::Init(void * pArg)
 	Ready_FilterBuffer();
 
 	m_iDiffuseTexCnt = m_pTextureCom[TYPE_DIFFUSE]->Get_CntTex();
+	
+	m_strObjName = L"Terrain";
 
 	return S_OK;
 }
