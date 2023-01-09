@@ -41,8 +41,6 @@ HRESULT CWeapon::Init(void * pArg)
 void CWeapon::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-
 }
 
 void CWeapon::Late_Tick(_double TimeDelta)

@@ -124,14 +124,26 @@
     <Filter Include="LevelDesign\Chapter\3">
       <UniqueIdentifier>{f8c1abab-becb-4ca8-a24b-9299b20e7149}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Player\Trail">
-      <UniqueIdentifier>{3838a956-5424-4b3a-b2d7-0207d332b86b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Monster\Troll">
       <UniqueIdentifier>{0efc6caa-4d21-4037-846f-d25251df73b7}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\Monster\Zombie">
       <UniqueIdentifier>{c753974f-aea1-48cd-b6b2-139515262361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Trail">
+      <UniqueIdentifier>{3838a956-5424-4b3a-b2d7-0207d332b86b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Wing">
+      <UniqueIdentifier>{a51de80e-472d-4375-8eee-9db252608367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Line_Aura">
+      <UniqueIdentifier>{70e5c15d-5a61-4f19-a37f-f120c6666b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\ThunderWave">
+      <UniqueIdentifier>{704c5359-344a-479f-b9fa-c836d086e3bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Demon_Fire">
+      <UniqueIdentifier>{d783f8e5-bab5-4d32-94a4-c70ee722cecc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -274,14 +286,38 @@
     <ClInclude Include="..\public\ZombieA.h">
       <Filter>GameObject\Monster\Zombie</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Trail.h">
-      <Filter>GameObject\Player\Trail</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\TrollA.h">
       <Filter>GameObject\Monster\Troll</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TrollQ.h">
       <Filter>GameObject\Monster\Troll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="NorAtk_Trail1.h">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NorAtk_Trail2.h">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NorAtk_Trail3.h">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Wing.h">
+      <Filter>GameObject\Effect\Wing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Mesh.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Line_Aura.h">
+      <Filter>GameObject\Effect\Line_Aura</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThunderWave.h">
+      <Filter>GameObject\Effect\ThunderWave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FireBallLine.h">
+      <Filter>GameObject\Effect\Demon_Fire</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -412,14 +448,38 @@
     <ClCompile Include="..\private\ZombieA.cpp">
       <Filter>GameObject\Monster\Zombie</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Trail.cpp">
-      <Filter>GameObject\Player\Trail</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\TrollA.cpp">
       <Filter>GameObject\Monster\Troll</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TrollQ.cpp">
       <Filter>GameObject\Monster\Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="NorAtk_Trail1.cpp">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NorAtk_Trail2.cpp">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NorAtk_Trail3.cpp">
+      <Filter>GameObject\Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Wing.cpp">
+      <Filter>GameObject\Effect\Wing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Mesh.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Line_Aura.cpp">
+      <Filter>GameObject\Effect\Line_Aura</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThunderWave.cpp">
+      <Filter>GameObject\Effect\ThunderWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireBallLine.cpp">
+      <Filter>GameObject\Effect\Demon_Fire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -471,7 +531,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstancing.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MeshEffect.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

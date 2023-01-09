@@ -160,6 +160,18 @@
     <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree">
       <UniqueIdentifier>{aeeee41c-7404-4d4a-a8b6-f1540e904d67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{cafd2e17-99fe-4978-88b3-1320ac0f5385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Canvas">
+      <UniqueIdentifier>{c8ace5ff-0f3c-4084-acb6-ca1c012b628a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Delegater">
+      <UniqueIdentifier>{c3cb85a3-df4e-48ee-8623-1874a90ec7ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{c96fada5-0870-4c25-bd76-2bca07b9defc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -388,6 +400,21 @@
     <ClInclude Include="..\public\QuadTree.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Canvas.h">
+      <Filter>UI\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseDelegater.h">
+      <Filter>UI\Delegater</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Manager.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -588,6 +615,18 @@
     </ClCompile>
     <ClCompile Include="..\private\QuadTree.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Terrain\QuadTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Canvas.cpp">
+      <Filter>UI\Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Manager.cpp">
+      <Filter>Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

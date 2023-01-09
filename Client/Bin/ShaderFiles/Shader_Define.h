@@ -24,7 +24,6 @@ sampler NormalSampler = sampler_state
 	AddressV = wrap;
 };
 
-
 RasterizerState RS_Default
 {
 	FillMode = Solid;
@@ -94,7 +93,6 @@ BlendState BS_Default
 BlendState BS_AlphaBlending
 {
 	BlendEnable[0] = true;
-
 	SrcBlend = src_alpha;
 	DestBlend = inv_Src_Alpha;
 	BlendOp = add;

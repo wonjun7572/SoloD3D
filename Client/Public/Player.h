@@ -32,6 +32,11 @@ public:
 		PLAYER_END
 	};
 
+	enum PLAYER_EFFECT
+	{
+		NORATK1, NORATK2, NORATK3, WING_SKILL2, LINE_AURA, THUNDERWAVE, EFFECT_END
+	};
+
 	enum ANIMATION
 	{
 		PLAYER_ADD_DMG_B, PLAYER_ADD_DMG_F,
@@ -119,6 +124,9 @@ private:
 
 private:
 	vector<CGameObject*>	m_PlayerParts;
+	
+	vector<CGameObject*>	m_PlayerEffects;
+
 	_uint					m_PartSize = 0;
 	_float					m_MouseSensity = 0.1f;
 	_bool					Get_CamTurn() { return m_bCamTurn; }
@@ -227,13 +235,6 @@ private:
 
 	_double					m_dModelATime = 0.0;
 
-	/* For. Trail */
-	CGameObject*			m_pNormalAtkTrail = nullptr;
-
-	_float					m_fNormalAtk1TrailMove = -1.001f;
-	_float					m_fNormalAtk2TrailMove = -1.001f;
-	_float					m_fNormalAtk3TrailMove = -1.001f;
-
 	/* for . Imgui*/
 	_float					m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;
 	_float					m_RX = 0.f, m_RY = 0.f, m_RZ = 0.f;
@@ -249,8 +250,18 @@ private:
 
 	/********************/
 
+	_double m_WingAlpha = 0.0;
+	_float  m_fWingY = 1.f;
+
+	//_float m_fTime = 0.2f;
+	//_float m_fFinishTime = 0.4f;
+
+	//_float m_fWingTestUPY = 1.f;
+	//_float m_fWingTestDOWNY = 1.f;
+
 private:
 	HRESULT SetUp_Parts();
+	HRESULT SetUp_Effects();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 

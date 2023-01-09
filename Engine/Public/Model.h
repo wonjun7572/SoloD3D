@@ -47,20 +47,16 @@ public:
 	HRESULT  Load_Animations(HANDLE hFile);
 
 	class CAnimation* FindAnim(const string& strAnim);
-
 	class CAnimation* Get_IndexAnim(_uint iIndex);
-
 	class CAnimation* Get_CurAnim();			
 
 	void	Set_BlendCurTime(_float BlendCurTime) { m_fBlendCurTime = BlendCurTime; }
-
+	void	Set_AnimPlaySpeed(_double fPlaySpeed);
 	void	Last_AnimLoop(_uint iIndex);
 	void    Reset_AnimPlayTime(_uint iIndex);
 
 	_bool	Check_AnimationSet(const _float& fTime);
-
 	//_float4	Get_MovePos(void) { return m_vMovePos; }
-
 	void	Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
 
 	/* Model Change */
@@ -103,7 +99,7 @@ private:
 	_float									m_fBlendCurTime = 0.2f;
 	_float									m_fBlendDuration = 0.2f;
 
-	//_float4									m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
+	//_float4								m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
 
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType, const _tchar* pModelFilePath, _fmatrix PivotMatrix);

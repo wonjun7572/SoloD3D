@@ -42,6 +42,8 @@ HRESULT CMainApp::Init()
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
+	m_pGameInstance->Play_Sound(L"240. L10 Hiercon Capital Palace.mp3", 1.f, true);
+
 	return S_OK;
 }
 
@@ -49,7 +51,7 @@ void CMainApp::Tick(_double deltaTime)
 {
 	if (m_pGameInstance == nullptr)
 		return;
-	
+
 #ifdef _DEBUG
 	m_TimeAcc += deltaTime;
 #endif 
@@ -74,7 +76,7 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 
-	/*++m_iNumCallDraw;
+	++m_iNumCallDraw;
 
 	if (m_TimeAcc >= 1.f)
 	{
@@ -85,8 +87,7 @@ HRESULT CMainApp::Render()
 		m_TimeAcc = 0.f;
 	}
 
-	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));*/
-
+	m_pGameInstance->Render_Font(TEXT("Font_Comic"), m_szFPS, _float2(100.f, 0.f), 0.f, _float2(1.f, 1.f), XMVectorSet(1.f, 0.f, 0.f, 1.f));
 #endif
 
 	m_pGameInstance->Present();
@@ -185,9 +186,9 @@ HRESULT CMainApp::Ready_Prototype_Component()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstancing.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_Trail */
-	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Trail"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Trail.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
+	/* For.Prototype_Component_Shader_MeshEffect */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_MeshEffect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_MeshEffect.hlsl"), VTXMODEL_DECLARATION::Elements, VTXMODEL_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	return S_OK;

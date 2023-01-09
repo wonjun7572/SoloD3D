@@ -182,9 +182,12 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\Demon.h" />
+    <ClInclude Include="..\public\Effect.h" />
+    <ClInclude Include="..\public\Effect_Mesh.h" />
     <ClInclude Include="..\public\Effect_Point.h" />
     <ClInclude Include="..\public\Effect_Rect.h" />
     <ClInclude Include="..\public\EmptyGameObject.h" />
+    <ClInclude Include="..\public\FireBallLine.h" />
     <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\public\Glove.h" />
     <ClInclude Include="..\public\Helmet.h" />
@@ -194,12 +197,15 @@
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\public\Level_Tool.h" />
+    <ClInclude Include="..\public\Line_Aura.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\LoadingBackGround.h" />
     <ClInclude Include="..\public\Lower.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Medieval_City.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\NorAtk_Trail2.h" />
+    <ClInclude Include="..\public\NorAtk_Trail3.h" />
     <ClInclude Include="..\public\Ocean.h" />
     <ClInclude Include="..\public\Parts.h" />
     <ClInclude Include="..\public\Player.h" />
@@ -213,13 +219,15 @@
     <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
     <ClInclude Include="..\public\TownA.h" />
-    <ClInclude Include="..\public\Trail.h" />
     <ClInclude Include="..\public\TrollA.h" />
     <ClInclude Include="..\public\TrollQ.h" />
+    <ClInclude Include="..\public\ThunderWave.h" />
     <ClInclude Include="..\public\Upper.h" />
     <ClInclude Include="..\public\Weapon.h" />
+    <ClInclude Include="..\public\Wing.h" />
     <ClInclude Include="..\public\ZombieA.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="NorAtk_Trail1.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -232,9 +240,12 @@
     <ClCompile Include="..\private\BridgeCastle.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
+    <ClCompile Include="..\private\Effect.cpp" />
+    <ClCompile Include="..\private\Effect_Mesh.cpp" />
     <ClCompile Include="..\private\Effect_Point.cpp" />
     <ClCompile Include="..\private\Effect_Rect.cpp" />
     <ClCompile Include="..\private\EmptyGameObject.cpp" />
+    <ClCompile Include="..\private\FireBallLine.cpp" />
     <ClCompile Include="..\Private\ForkLift.cpp" />
     <ClCompile Include="..\private\Glove.cpp" />
     <ClCompile Include="..\private\Helmet.cpp" />
@@ -244,12 +255,15 @@
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Level_Tool.cpp" />
+    <ClCompile Include="..\private\Line_Aura.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\LoadingBackGround.cpp" />
     <ClCompile Include="..\private\Lower.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Medieval_City.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\NorAtk_Trail2.cpp" />
+    <ClCompile Include="..\private\NorAtk_Trail3.cpp" />
     <ClCompile Include="..\private\Ocean.cpp" />
     <ClCompile Include="..\private\Parts.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
@@ -263,13 +277,15 @@
     <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
     <ClCompile Include="..\private\TownA.cpp" />
-    <ClCompile Include="..\private\Trail.cpp" />
     <ClCompile Include="..\private\TrollA.cpp" />
     <ClCompile Include="..\private\TrollQ.cpp" />
+    <ClCompile Include="..\private\ThunderWave.cpp" />
     <ClCompile Include="..\private\Upper.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
+    <ClCompile Include="..\private\Wing.cpp" />
     <ClCompile Include="..\private\ZombieA.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="NorAtk_Trail1.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -285,7 +301,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Trail.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MeshEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />

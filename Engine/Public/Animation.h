@@ -63,7 +63,7 @@ private:
 
 	_double								m_Duration = 0.0;
 	_double								m_TickPerSecond;
-	_double								m_MulSecond = 1.0;
+	_double								m_MulSecond = 1.3;
 	_double								m_PlayTime = 0.0;
 
 	_bool								m_isLooping = true;

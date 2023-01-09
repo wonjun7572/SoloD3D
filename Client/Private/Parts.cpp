@@ -143,6 +143,14 @@ void CParts::ChangeModel(MODEL iModelIndex)
 	m_ePreModelState = m_eModelState;
 	m_eModelState = iModelIndex;
 
+	if (m_eModelState == CPlayer::MODEL_A)
+	{
+		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(2.0);
+	}
+	else
+		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(1.3);
+
+
 	_uint AnimNum = m_pModelCom[m_ePreModelState]->Get_AnimationsNum();
 	_uint iCurrentIndex = m_pModelCom[m_ePreModelState]->Get_CurrentAnimIndex();
 	_uint iPreIndex = m_pModelCom[m_ePreModelState]->Get_PreAnimIndex();

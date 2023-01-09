@@ -45,6 +45,11 @@ class CDemon final : public CMonster
 		, DEMON_END
 	};
 
+	enum MONSTER_EFFECT
+	{
+		FIRE_SKILL3, SKILLEND
+	};
+
 private:
 	CDemon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDemon(const CDemon& rhs);
@@ -77,6 +82,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_Effects();
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
@@ -126,6 +132,13 @@ private:
 	
 private:
 	_uint m_iRandAttack = 0;
+
+	vector<CGameObject*>	m_Effects;
+
+	/* for . Imgui*/
+	_float					m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;
+	_float					m_RX = 0.f, m_RY = 0.f, m_RZ = 0.f;
+	_float					m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
 
 public:
 	static CDemon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

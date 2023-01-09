@@ -3,6 +3,7 @@
 #include "Base.h"
 #include "Component_Manager.h"
 #include "PipeLine.h"
+#include "Sound.h"
 
 BEGIN(Engine)
 
@@ -96,6 +97,13 @@ public: /* For.Frustum */
 	_bool isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
 
+public: /* For.Sound_Manager */
+	void Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool bIsBGM = false, _int iManualChannelIndex = -1);
+	void Stop_Sound(_uint iManualChannelIndex);
+	void Set_Volume(_uint iManualChannelIndex, _float fVolume);
+	void Set_MasterVolume(_float fVolume);
+	void Set_SoundDesc(const _tchar *pSoundKey, CSound::SOUND_DESC& SoundDesc);
+
 private:
 	static _uint					m_iStaticLevelIndex;
 
@@ -111,6 +119,7 @@ private:
 	class CFont_Manager*		m_pFontMgr = nullptr;
 	class CLight_Manager*		m_pLightMgr = nullptr;
 	class CFrustum*				m_pFrustum = nullptr;
+	class CSound_Manager*		m_pSoundMgr = nullptr;
 
 public: // Release_Engine
 	static void Release_Engine();

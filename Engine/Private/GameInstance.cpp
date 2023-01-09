@@ -9,6 +9,7 @@
 #include "Font_Manager.h"
 #include "Light_Manager.h"
 #include "Frustum.h"
+#include "Sound_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -26,7 +27,8 @@ CGameInstance::CGameInstance()
 	m_pTimerMgr(CTimer_Manager::GetInstance()),
 	m_pFontMgr(CFont_Manager::GetInstance()),
 	m_pLightMgr(CLight_Manager::GetInstance()),
-	m_pFrustum(CFrustum::GetInstance())
+	m_pFrustum(CFrustum::GetInstance()),
+	m_pSoundMgr(CSound_Manager::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pGraphicDev);
@@ -39,6 +41,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pTimerMgr);
 	Safe_AddRef(m_pFontMgr);
 	Safe_AddRef(m_pLightMgr);
+	Safe_AddRef(m_pSoundMgr);
 }
 
 HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & GraphicDesc, ID3D11Device ** ppDeviceOut, ID3D11DeviceContext ** ppContextOut)
@@ -66,6 +69,9 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
+	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 10)))
+		return E_FAIL;
+
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
 		return E_FAIL;
 
@@ -89,6 +95,8 @@ void CGameInstance::Tick_Engine(_double TimeDelta)
 	m_pObjectMgr->Tick(TimeDelta);
 	m_pLevelMgr->Tick(TimeDelta);
 	
+	m_pSoundMgr->Tick(TimeDelta);
+
 	m_pPipeLine->Tick();
 
 	m_pFrustum->Transform_ToWorldSpace();
@@ -507,6 +515,46 @@ _bool CGameInstance::isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange)
 	return m_pFrustum->isInFrustum_LocalSpace(vLocalPos, fRange);
 }
 
+void CGameInstance::Play_Sound(const _tchar * pSoundKey, _float fVolume, _bool bIsBGM, _int iManualChannelIndex)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Play_Sound(pSoundKey, fVolume, bIsBGM, iManualChannelIndex);
+}
+
+void CGameInstance::Stop_Sound(_uint iManualChannelIndex)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Stop_Sound(iManualChannelIndex);
+}
+
+void CGameInstance::Set_Volume(_uint iManualChannelIndex, _float fVolume)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Set_Volume(iManualChannelIndex, fVolume);
+}
+
+void CGameInstance::Set_MasterVolume(_float fVolume)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Set_MasterVolume(fVolume);
+}
+
+void CGameInstance::Set_SoundDesc(const _tchar * pSoundKey, CSound::SOUND_DESC & SoundDesc)
+{
+	if (nullptr == m_pSoundMgr)
+		return;
+
+	m_pSoundMgr->Set_SoundDesc(pSoundKey, SoundDesc);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -527,6 +575,8 @@ void CGameInstance::Release_Engine()
 
 	CFrustum::GetInstance()->DestroyInstance();
 
+	CSound_Manager::GetInstance()->DestroyInstance();
+
 	CGraphic_Device::GetInstance()->DestroyInstance();
 
 	CTimer_Manager::GetInstance()->DestroyInstance();
@@ -546,5 +596,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pInputDev);
 	Safe_Release(m_pLightMgr);
+	Safe_Release(m_pSoundMgr);
 	Safe_Release(m_pGraphicDev);
 }

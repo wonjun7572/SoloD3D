@@ -7,6 +7,7 @@
 #include "MathUtils.h"
 #include "Terrain.h"
 #include "Bone.h"
+#include "Effect_Mesh.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -42,11 +43,14 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	if (FAILED(SetUp_Effects()))
+		return E_FAIL;
+
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	m_strObjName = L"DEMON";
 
-	m_iHp = 100;
+	m_iHp = 1000;
 	m_iAttack = 10;
 	m_iDefence = 5;
 
@@ -60,7 +64,12 @@ void CDemon::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
 	Play_Skill(TimeDelta);
+	for (auto& pEffect : m_Effects)
+	{
+		pEffect->Tick(TimeDelta);
+	}
 }
+
 
 void CDemon::Late_Tick(_double TimeDelta)
 {
@@ -68,6 +77,9 @@ void CDemon::Late_Tick(_double TimeDelta)
 
 	if (m_bDeadAnim)
 		return;
+
+	for (auto& pEffect : m_Effects)
+		pEffect->Late_Tick(TimeDelta);
 
 	Adjust_Collision(TimeDelta);
 }
@@ -107,10 +119,18 @@ void CDemon::Imgui_RenderProperty()
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
-	ImGui::DragFloat("RotationX", &m_fRotationX, 0.1f, -180.f, 180.f);
-	ImGui::DragFloat("RotationY", &m_fRotationY, 0.1f, -180.f, 180.f);
-	ImGui::DragFloat("RotationZ", &m_fRotationZ, 0.01f, -180.f, 180.f);
-	m_pSkillKnockBackColCom->FixedSizeForImgui(2);
+	
+	ImGui::DragFloat("CX", &m_CX, 0.1f, -10.f, 10.f);
+	ImGui::DragFloat("CY", &m_CY, 0.1f, -10.f, 10.f);
+	ImGui::DragFloat("CZ", &m_CZ, 0.1f, -10.f, 10.f);
+	
+	ImGui::DragFloat("RX", &m_RX, 1.f, 0.f, 360.f);
+	ImGui::DragFloat("RY", &m_RY, 1.f, 0.f, 360.f);
+	ImGui::DragFloat("RZ", &m_RZ, 1.f, 0.f, 360.f);
+	
+	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
 }
 
 void CDemon::Adjust_Collision(_double TimeDelta)
@@ -543,9 +563,12 @@ void CDemon::SetUp_FSM()
 	{
 		m_bRealSkill = true;
 		
-		if(AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
+		if(AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.3))
+			static_cast<CEffect_Mesh*>(m_Effects[FIRE_SKILL3])->Set_EffectPlay(true);
+
+		if (AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
 			m_fRotationY += static_cast<_float>(TimeDelta);
-		
+
 		if (m_fRotationY >= 1.f)
 			m_fRotationY = 1.f;
 	})
@@ -1034,6 +1057,44 @@ HRESULT CDemon::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CDemon::SetUp_Effects()
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject*		 pEffect = nullptr;
+
+	CEffect_Mesh::EFFECTDESC effectDesc;
+	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
+
+	_matrix	pivotMat = XMMatrixScaling(3.f, 3.f, 6.f) *
+		XMMatrixRotationX(XMConvertToRadians(270.f)) *
+		XMMatrixRotationY(XMConvertToRadians(270.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 4.5f, 1.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 1.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 25;
+	effectDesc.iMaskTex = 27;
+	effectDesc.fAlpha = 1.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+
+
+	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_FireBallLine"), &effectDesc);
+
+	if (nullptr == pEffect)
+		return E_FAIL;
+
+	m_Effects.push_back(pEffect);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 _bool CDemon::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
 {
 	return m_pModelCom->Get_IndexAnim(eAnim)->Get_PlayRate() >= FinishRate;
@@ -1087,4 +1148,9 @@ void CDemon::Free()
 		Safe_Release(pCollider);
 
 	m_MonsterColliders.clear();
+
+	for (auto pEffect : m_Effects)
+		Safe_Release(pEffect);
+
+	m_Effects.clear();
 }

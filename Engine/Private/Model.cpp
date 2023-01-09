@@ -252,25 +252,27 @@ void CModel::Imgui_RenderProperty()
 		ImGui::EndTabBar();
 	}
 
-	if (ImGui::CollapsingHeader("For.Animation"))
+	if (m_Animations.size() > 0 && m_eType == CModel::TYPE_ANIM)
 	{
-		const char* combo_preview_value = Get_CurAnim()->Get_Name();
-
-		if (ImGui::BeginCombo("ANIM", combo_preview_value))
+		if (ImGui::CollapsingHeader("For.Animation"))
 		{
-			_uint iAnimSize = static_cast<_uint>(m_Animations.size());
-			for (_uint i = 0; i < iAnimSize; i++)
+			const char* combo_preview_value = Get_CurAnim()->Get_Name();
+
+			if (ImGui::BeginCombo("ANIM", combo_preview_value))
 			{
-				const bool is_selected = (m_iCurrentAnimIndex == i);
-				if (ImGui::Selectable(m_Animations[i]->Get_Name(), is_selected))
-					m_iCurrentAnimIndex = i;
+				_uint iAnimSize = static_cast<_uint>(m_Animations.size());
+				for (_uint i = 0; i < iAnimSize; i++)
+				{
+					const bool is_selected = (m_iCurrentAnimIndex == i);
+					if (ImGui::Selectable(m_Animations[i]->Get_Name(), is_selected))
+						m_iCurrentAnimIndex = i;
 
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
 			}
-			ImGui::EndCombo();
 		}
-
 		ImGui::Text("Current Anim Index"); ImGui::SameLine();
 		ImGui::Text(to_string(m_iCurrentAnimIndex).c_str());
 	}
@@ -522,7 +524,16 @@ CAnimation * CModel::Get_IndexAnim(_uint iIndex)
 
 CAnimation * CModel::Get_CurAnim()
 {
+	if (m_eType == CModel::TYPE_NONANIM)
+		return nullptr;
+
 	return m_Animations[m_iCurrentAnimIndex];
+}
+
+void CModel::Set_AnimPlaySpeed(_double fPlaySpeed)
+{
+	for (auto& pAnimation : m_Animations)
+		pAnimation->Set_MulSecond(fPlaySpeed);
 }
 
 void CModel::Last_AnimLoop(_uint iIndex)

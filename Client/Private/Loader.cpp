@@ -47,7 +47,14 @@
 #include "Medieval_City.h"
 #include "Anor.h"
 
-#include "Trail.h"
+#include "NorAtk_Trail1.h"
+#include "NorAtk_Trail2.h"
+#include "NorAtk_Trail3.h"
+
+#include "Wing.h"
+#include "Line_Aura.h"
+#include "ThunderWave.h"
+#include "FireBallLine.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -174,15 +181,13 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap1_Sky.png")))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Weapon_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_blizzardDecal_01_TEX_KJS.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Weapon_Skill1_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Skill1_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_AuraHole_001_TEX_HKB.png")))))
-		return E_FAIL;
+	// For. EffectTexture~
+	{
+		/* For.Texture_Trail*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Trail"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/%d.png"), 35))))
+			return E_FAIL;
+	}
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 	
@@ -464,7 +469,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 			return E_FAIL;
 	}
 
-	// For. Trail
+	// For.Effect
 	{
 		/* For.NormalAtk1_Trail */
 		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
@@ -482,6 +487,30 @@ HRESULT CLoader::Loading_ForChapter_1()
 		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("NormalAtk3_Trail"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/WeaponTrail/NormalAtk3/NormalAtk3_Trail.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Wing */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Wing"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/Wing.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Line_Aura */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Line_Aura"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/Line_Aura.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. ThunderWave */
+		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("ThunderWave"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/ThunderWave.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. FireBallLine */
+		PivotMatrix = XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("FireBallLine"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/FireBallLine.model"), PivotMatrix))))
 			return E_FAIL;
 	}
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
@@ -590,8 +619,32 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"), CStair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For. Prototype_GameObject_Trail*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Trail"), CTrail::Create(m_pDevice, m_pContext))))
+	/* For. Prototype_GameObject_NorAtk_Trail1*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail1"), CNorAtk_Trail1::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_NorAtk_Trail2*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail2"), CNorAtk_Trail2::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_NorAtk_Trail3*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail3"), CNorAtk_Trail3::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Wing*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wing"), CWing::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Line_Aura*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Line_Aura"), CLine_Aura::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_ThunderWave*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ThunderWave"), CThunderWave::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_FireBallLine*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBallLine"), CFireBallLine::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
@@ -627,16 +680,6 @@ HRESULT CLoader::Loading_ForChapter_2()
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap2_Sky.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Weapon_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Weapon_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_blizzardDecal_01_TEX_KJS.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Weapon_Skill1_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Weapon_Skill1_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_AuraHole_001_TEX_HKB.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Ocean_Height*/
