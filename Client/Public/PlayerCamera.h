@@ -30,8 +30,6 @@ public:
 	void LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn);
 	void DynamicCamera(_double TimeDelta);
 
-
-
 private:
 	void	Imgui_RenderProperty() override;
 

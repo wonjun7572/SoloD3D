@@ -172,6 +172,12 @@
     <Filter Include="Sound">
       <UniqueIdentifier>{c96fada5-0870-4c25-bd76-2bca07b9defc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderTarget">
+      <UniqueIdentifier>{e627a87a-e5c1-4aed-a516-f74eb3b6d6bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderTarget\Manager">
+      <UniqueIdentifier>{e67a2d35-3fe0-47ca-aa20-8f8626889130}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -415,6 +421,12 @@
     <ClInclude Include="..\Public\Sound_Manager.h">
       <Filter>Sound</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RenderTarget.h">
+      <Filter>RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Target_Manager.h">
+      <Filter>RenderTarget\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -628,6 +640,12 @@
     <ClCompile Include="..\Private\Sound_Manager.cpp">
       <Filter>Sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RenderTarget.cpp">
+      <Filter>RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Target_Manager.cpp">
+      <Filter>RenderTarget\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Public\DirectXTK\SimpleMath.inl">
@@ -637,6 +655,9 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Navigation.hlsl">
       <Filter>Singleton\ComponentManager\Component\Navigation</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
+      <Filter>RenderTarget</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -9,8 +9,6 @@ matrix			g_BoneMatrices[256];
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
-matrix			g_SocketMatrix;
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -58,36 +56,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
-VS_OUT VS_MAIN_SOCKET(VS_IN In)
-{
-	VS_OUT		Out = (VS_OUT)0;
-
-	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
-
-	float			fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
-
-	matrix			BoneMatrix = g_BoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-		g_BoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-		g_BoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-		g_BoneMatrices[In.vBlendIndex.w] * fWeightW;
-
-	vector		vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
-	vector		vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
-
-	vPosition = mul(vPosition, g_WorldMatrix);
-	vPosition = mul(vPosition, g_SocketMatrix);
-
-	vNormal = mul(vNormal, g_WorldMatrix);
-	vNormal = mul(vNormal, g_SocketMatrix);
-
-	Out.vPosition = mul(vPosition, matVP);
-	Out.vNormal = normalize(vNormal);
-	Out.vTexUV = In.vTexUV;
-	Out.vTangent = (vector)0.f;
-
-	return Out;
-}
-
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -99,18 +67,20 @@ struct PS_IN
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vColor : SV_TARGET0;
+	float4		vDiffuse : SV_TARGET0;
+	float4		vNormal : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	
-	if (0.1f > Out.vColor.a)
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	if (0.1f > vDiffuse.a)
 		discard;
 
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	return Out;
 }
 
@@ -118,9 +88,9 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 {
 	PS_OUT         Out = (PS_OUT)0;
 
-	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor.a = Out.vColor.a * 0.5f;
+	Out.vDiffuse.a = Out.vDiffuse.a * 0.5f;
 
 	float Lx = 0;
 	float Ly = 0;
@@ -141,13 +111,13 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 
 	if (L < 0.3) // 이 값에 따라서 두껍게 외곽선이 생기는가 
 	{
-		Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+		Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	}
 	else
 	{
-		Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV) * 0.3f;
+		Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV) * 0.3f;
 	}
-
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	return Out;
 }
 
@@ -155,7 +125,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 {
 	PS_OUT         Out = (PS_OUT)0;
 
-	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
 	float2 arr[8] = 
 	{
@@ -178,17 +148,16 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 
 			uv = In.vTexUV + float2(x, y);
 
-			Out.vColor = Out.vColor + g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+			Out.vDiffuse = Out.vDiffuse + g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
 			colorWeight++;
 		}
 	}
 
-	Out.vColor /= colorWeight;
-
+	Out.vDiffuse /= colorWeight;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	return Out;
 }
-
 
 technique11 DefaultTechnique
 {
@@ -198,18 +167,6 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Socket
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;

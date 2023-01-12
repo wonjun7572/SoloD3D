@@ -63,7 +63,12 @@ void CWeapon::Late_Tick(_double TimeDelta)
 	m_pColliderCom->Update(m_pTransformCom->Get_WorldMatrix() * SocketMatrix);
 
 	if (nullptr != m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+#ifdef _DEBUG 
+		m_pRendererCom->Add_DebugRenderGroup(m_pColliderCom);
+#endif
+	}
 }
 
 HRESULT CWeapon::Render()
@@ -81,12 +86,8 @@ HRESULT CWeapon::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
-		m_pModelCom->Render(m_pShaderCom, i, 3);
+		m_pModelCom->Render(m_pShaderCom, i, 1);
 	}
-
-#ifdef _DEBUG
-	m_pColliderCom->Render();
-#endif 
 
 	return S_OK;
 }
@@ -148,11 +149,6 @@ HRESULT CWeapon::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
-		return E_FAIL;
-
-	/* For.Lights */
-	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -32,13 +32,6 @@ private:
 	ID3D11Device*			m_pDevice = nullptr;
 	ID3D11DeviceContext*	m_pContext = nullptr;
 
-#ifdef _DEBUG
-private:
-	_tchar					m_szFPS[MAX_PATH] = TEXT("");
-	_uint					m_iNumCallDraw = 0;
-	_double					m_TimeAcc = 0.f;
-#endif
-
 public:
 	HRESULT Start_Level(LEVEL eLevelID);
 	HRESULT Ready_Prototype_Component();

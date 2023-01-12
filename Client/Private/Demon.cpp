@@ -50,11 +50,15 @@ HRESULT CDemon::Init(void * pArg)
 
 	m_strObjName = L"DEMON";
 
-	m_iHp = 1000;
-	m_iAttack = 10;
-	m_iDefence = 5;
+	m_fHp = 500.f;
+	m_fMaxHp = 500.f;
+	m_fAttack = 10;
+	m_fDefence = 5;
 
 	XMStoreFloat4x4(&m_Mat, m_pTransformCom->Get_WorldMatrix());
+
+	m_vMonsterNamePos = _float2(720.f, 40.f);
+	m_vMonsterNameScale = _float2(1.f, 1.f);
 
 	return S_OK;
 }
@@ -70,7 +74,6 @@ void CDemon::Tick(_double TimeDelta)
 	}
 }
 
-
 void CDemon::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
@@ -80,6 +83,21 @@ void CDemon::Late_Tick(_double TimeDelta)
 
 	for (auto& pEffect : m_Effects)
 		pEffect->Late_Tick(TimeDelta);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (nullptr != m_pRendererCom &&
+		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
+	{
+#ifdef _DEBUG
+		m_pRendererCom->Add_DebugRenderGroup(m_pAttackColCom);
+		m_pRendererCom->Add_DebugRenderGroup(m_pSwordColCom);
+		m_pRendererCom->Add_DebugRenderGroup(m_pSkillHitDownColCom);
+		m_pRendererCom->Add_DebugRenderGroup(m_pSkillKnockBackColCom);
+#endif
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	Adjust_Collision(TimeDelta);
 }
@@ -102,35 +120,29 @@ HRESULT CDemon::Render()
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}	
 
-#ifdef _DEBUG
-	m_pAttackColCom->Render();
-	m_pSwordColCom->Render();
-	m_pSkillHitDownColCom->Render();
-	m_pSkillKnockBackColCom->Render();
-#endif
 	return S_OK;
 }
 
 void CDemon::Imgui_RenderProperty()
 {
-	ImGui::Text("HP : %d", m_iHp);
+	__super::Imgui_RenderProperty();
 
 	if (ImGui::Button("Navi~"))
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 	
-	ImGui::DragFloat("CX", &m_CX, 0.1f, -10.f, 10.f);
-	ImGui::DragFloat("CY", &m_CY, 0.1f, -10.f, 10.f);
-	ImGui::DragFloat("CZ", &m_CZ, 0.1f, -10.f, 10.f);
-	
-	ImGui::DragFloat("RX", &m_RX, 1.f, 0.f, 360.f);
-	ImGui::DragFloat("RY", &m_RY, 1.f, 0.f, 360.f);
-	ImGui::DragFloat("RZ", &m_RZ, 1.f, 0.f, 360.f);
-	
-	ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
+	//ImGui::DragFloat("CX", &m_CX, 0.1f, -10.f, 10.f);
+	//ImGui::DragFloat("CY", &m_CY, 0.1f, -10.f, 10.f);
+	//ImGui::DragFloat("CZ", &m_CZ, 0.1f, -10.f, 10.f);
+	//
+	//ImGui::DragFloat("RX", &m_RX, 1.f, 0.f, 360.f);
+	//ImGui::DragFloat("RY", &m_RY, 1.f, 0.f, 360.f);
+	//ImGui::DragFloat("RZ", &m_RZ, 1.f, 0.f, 360.f);
+	//
+	//ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
+	//ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
+	//ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
 }
 
 void CDemon::Adjust_Collision(_double TimeDelta)
@@ -243,9 +255,9 @@ void CDemon::CollisionToAttack(_double TimeDelta)
 
 			// 0보다 작으면 내 앞에 있다.
 			if (fDot < 0)
-				m_pPlayer->FrontDamagedToMonster();
+				m_pPlayer->FrontDamagedToMonster(m_fAttack);
 			else
-				m_pPlayer->BackDamagedToMonster();
+				m_pPlayer->BackDamagedToMonster(m_fAttack);
 		}
 	}
 
@@ -272,22 +284,22 @@ void CDemon::CollisionToSkill(_double TimeDelta)
 	if (m_bRealSkill)
 	{
 		if (m_bSkill_1ToPlayer && m_pSwordColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->PassOutToMonster();
+			m_pPlayer->PassOutToMonster(m_fAttack);
 
 		if (m_bSkill_2ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->PassOutToMonster(0.1f);
+			m_pPlayer->PassOutToMonster(m_fAttack, 0.1f);
 
 		if(m_bSkill_3ToPlayer && m_pSkillKnockBackColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->PassOutToMonster(0.1f);
+			m_pPlayer->PassOutToMonster(m_fAttack, 0.1f);
 
 		if (m_bSkill_4ToPlayer && m_pSkillKnockBackColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->PassOutToMonster(0.2f);
+			m_pPlayer->PassOutToMonster(m_fAttack, 0.2f);
 
 		if (m_bSkill_5ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->HitDownToMonster(0.1f , 0.5f , 0.7f);
+			m_pPlayer->HitDownToMonster(m_fAttack, 0.1f , 0.5f , 0.7f);
 
 		if (m_bSkill_6ToPlayer && m_pSkillHitDownColCom->Collision(pTargetCollider) == true)
-			m_pPlayer->HitDownToMonster();
+			m_pPlayer->HitDownToMonster(m_fAttack);
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -1034,23 +1046,6 @@ HRESULT CDemon::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
-	/* For.Lights */
-	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
-		return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

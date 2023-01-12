@@ -28,9 +28,9 @@ HRESULT CLevel_Logo::Init()
 	CGameInstance::GetInstance()->Add_ImguiObject(CImGui_ProtoEditor::Create(m_pDevice, m_pContext));
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 
-	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	pGameInstance->LoadData(LEVEL_LOGO, TEXT("../Bin/MapData/LOGO_TRANSFORM.dat"));
-	Safe_Release(pGameInstance);
+	//CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	//pGameInstance->LoadData(LEVEL_LOGO, TEXT("../Bin/MapData/LOGO_TRANSFORM.dat"));
+	//Safe_Release(pGameInstance);
 
 	return S_OK;
 }
@@ -68,7 +68,7 @@ HRESULT CLevel_Logo::Render()
 
 void CLevel_Logo::ImguiRenderTab()
 {
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	/*ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	if (ImGui::Button("Transform_Save"))
 	{
@@ -81,7 +81,7 @@ void CLevel_Logo::ImguiRenderTab()
 		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 		pGameInstance->Clone_GameObject(LEVEL_LOGO, TEXT("Layer_UI"), TEXT("Prototype_GameObject_EnterKeyUI"));
 		Safe_Release(pGameInstance);
-	}
+	}*/
 }
 
 HRESULT CLevel_Logo::Ready_Layer_UI(const wstring& pLayerTag)
@@ -89,17 +89,17 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const wstring& pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_EnterKeyUI"))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
-	//
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_BackGround"))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//}
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_LogoUI"))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_BackGround"))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 
@@ -110,8 +110,8 @@ HRESULT CLevel_Logo::Ready_Layer_Camera(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOGO, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

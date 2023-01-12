@@ -6,7 +6,7 @@ class CShader;
 class CTexture;
 class CRenderer;
 class CTransform;
-class CVIBuffer_Rect_Instancing;
+class CVIBuffer_Rect;
 END
 
 BEGIN(Client)
@@ -25,18 +25,19 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void	LinkObject(_double TimeDelta, _fvector targetpos);
+	void	Imgui_RenderProperty() override;
 
-	void	Set_Tick(_bool isTick) { m_bTick = isTick; }
+	void	LinkObject(_double TimeDelta, _fvector targetpos);
 
 private:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
-	CVIBuffer_Rect_Instancing*	m_pVIBufferCom = nullptr;
+	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
 
-private:
-	_bool						m_bTick = false;
+
+	_float						m_fAlpha = 0.f;
+	_float2						m_UVMoveFactor;
 
 private:
 	HRESULT SetUp_Components();

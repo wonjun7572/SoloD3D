@@ -125,7 +125,6 @@ private:
 	_float m_fRotationY = 0.f;
 	_float m_fRotationZ = 0.f;
 
-
 	_float m_fSkillHitDownRange = 0.f;
 
 	_float4x4 m_Mat;

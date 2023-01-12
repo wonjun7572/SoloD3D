@@ -39,10 +39,10 @@ void CQuadTree::Culling(CFrustum* pFrustum, const _float3 * pVerticesPos, FACEIN
 		true == LevelofDetail(pVerticesPos))
 	{
 		_bool			isIn[CORNER_END] = {
-			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_LT]])),
-			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_RT]])),
-			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_RB]])),
-			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_LB]])),
+			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_LT]]),1.f),
+			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_RT]]),1.f),
+			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_RB]]),1.f),
+			pFrustum->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCorner[CORNER_LB]]),1.f),
 		};
 
 		_bool			isDraw[NEIGHBOR_END] = { true, true, true, true };

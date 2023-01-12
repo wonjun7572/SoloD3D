@@ -37,6 +37,11 @@ public:
 	virtual HRESULT Initialize_Prototype(TYPE eType);
 	virtual HRESULT Initialize(void* pArg);
 
+#ifdef _DEBUG
+public:
+	virtual HRESULT Render();
+#endif // 
+
 public:
 	_float3 Get_CollisionCenter();
 	_float Get_SphereRadius();
@@ -46,6 +51,7 @@ public:
 
 public:
 	_bool Collision(class CCollider* pTargetCollider);
+	_bool Collision(const _float3& vOrigin, const _float3& vDir, OUT _float& fDistance);
 	_bool Collision_AABB(class CCollider* pTargetCollider);
 	_bool Collision_OBB(class CCollider* pTargetCollider);
 
@@ -64,11 +70,6 @@ private:
 
 	_float	m_SphereX = 0.f, m_SphereY = 0.f, m_SphereZ = 0.f;
 	_float  m_fRadius = 1.f;
-
-#ifdef _DEBUG
-public:
-	HRESULT Render();
-#endif // _DEBUG
 
 private:
 	TYPE						m_eType = TYPE_END;

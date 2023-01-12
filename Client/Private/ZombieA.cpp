@@ -42,9 +42,12 @@ HRESULT CZombieA::Init(void * pArg)
 
 	m_strObjName = L"ZombieA";
 
-	m_iHp = 100;
-	m_iAttack = 10;
-	m_iDefence = 5;
+	m_fHp = 100;
+	m_fMaxHp = 100.f;
+	m_fAttack = 10;
+	m_fDefence = 5;
+	m_vMonsterNamePos = _float2(720.f, 40.f);
+	m_vMonsterNameScale = _float2(1.f, 1.f);
 
 	return S_OK;
 }
@@ -61,6 +64,19 @@ void CZombieA::Late_Tick(_double TimeDelta)
 
 	if (m_bDeadAnim)
 		return;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (nullptr != m_pRendererCom &&
+		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
+	{
+#ifdef _DEBUG
+		m_pRendererCom->Add_DebugRenderGroup(m_pAttackColCom);
+		m_pRendererCom->Add_DebugRenderGroup(m_pSwordColCom);
+#endif
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	Adjust_Collision(TimeDelta);
 }
@@ -83,10 +99,6 @@ HRESULT CZombieA::Render()
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
-#ifdef _DEBUG
-	m_pAttackColCom->Render();
-	m_pSwordColCom->Render();
-#endif
 	return S_OK;
 }
 
@@ -475,9 +487,9 @@ void CZombieA::CollisionToAttack(_double TimeDelta)
 
 			// 0보다 작으면 내 앞에 있다.
 			if (fDot < 0)
-				m_pPlayer->FrontDamagedToMonster();
+				m_pPlayer->FrontDamagedToMonster(m_fAttack);
 			else
-				m_pPlayer->BackDamagedToMonster();
+				m_pPlayer->BackDamagedToMonster(m_fAttack);
 		}
 	}
 
@@ -625,23 +637,6 @@ HRESULT CZombieA::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
-	/* For.Lights */
-	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
-		return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

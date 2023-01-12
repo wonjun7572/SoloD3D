@@ -18,6 +18,7 @@ class CMonster abstract : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_SPHERE, COLLTYPE_END };
+	enum UI { HP, TARGET_AIM, UI_END };
 
 protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -32,15 +33,20 @@ public:
 	virtual HRESULT Render() override;
 
 	virtual	void    SetUp_FSM() = 0;
+	HRESULT SetUP_UI();
+	void	UI_Tick(_double TimeDelta);
+	void	UI_Switch(_double TimeDelta);
 	CModel* Get_ModelCom() { return m_pModelCom; }
 
 	/* 피격을 위해서 */
-	void	Set_PlayerAttackCommand(_bool bAttack, _int iAttack);
-	void	Set_PlayerSkill02Command(_bool bAttack, _int iAttack);
-	void    Set_PlayerSkiil04Command(_bool bAttack, _int iAttack);
+	void	Set_PlayerAttackCommand(_bool bAttack, _float fAttack);
+	void	Set_PlayerSkill02Command(_bool bAttack, _float fAttack);
+	void    Set_PlayerSkiil04Command(_bool bAttack, _float fAttack);
 
 	void	AdjustSetDamage();
 	void	AdjustSetDamageToSkill();
+
+	void	Imgui_RenderProperty() override;
 
 	/* 충돌 관련 */
 	void CollisionToMonster(_double TimeDelta);
@@ -54,6 +60,7 @@ public:
 	CCollider* Get_AABB() { return m_pColliderCom[COLLTYPE_AABB]; }
 
 	_bool		Get_DeadAnim() { return m_bDeadAnim; }
+	_bool		Get_UIOn() { return m_bUIOn; }
 
 protected:
 	/*피격을 위한 변수*/
@@ -83,17 +90,29 @@ protected:
 	/* 플레이어를 찾기위한 멤버 변수 */
 protected:
 	CPlayer*				m_pPlayer = nullptr;
-	_int					m_iPlayerAttack = 0;
+	_float					m_fPlayerAttack = 0;
 	/*****************************/
 
 	/* 체력 및 공격력 세팅! */
-	_int					m_iHp = 0;
-	_int					m_iAttack = 0;
-	_int					m_iDefence = 0;
+	_float					m_fHp = 0;
+	_float					m_fMaxHp = 0.f;
+	_float					m_fAttack = 0;
+	_float					m_fDefence = 0;
 
 	_double					m_dDeadTime = 0;
 
 	vector<CCollider*>		m_MonsterColliders;
+	
+	vector<CGameObject*>	m_MonsterUI;
+
+	_float2					m_vMonsterNamePos;
+	_float2					m_vMonsterNameScale;
+
+	_bool					m_bUIOn = false;
+
+	vector<CMonster*>		m_Monsters;
+
+	wstring					m_strDamage;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

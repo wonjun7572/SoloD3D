@@ -171,6 +171,24 @@ _bool CCollider::Collision(CCollider * pTargetCollider)
 	return m_isColl;
 }
 
+_bool CCollider::Collision(const _float3 & vOrigin, const _float3 & vDir, OUT _float & fDistance)
+{
+	m_isColl = false;
+	switch (m_eType)
+	{
+	case CCollider::TYPE_AABB:
+		m_isColl = m_pAABB->Intersects(vOrigin, vDir, fDistance);
+		break;
+	case CCollider::TYPE_OBB:
+		m_isColl = m_pOBB->Intersects(vOrigin, vDir, fDistance);
+		break;
+	case CCollider::TYPE_SPHERE:
+		m_isColl = m_pSphere->Intersects(vOrigin, vDir, fDistance);
+		break;
+	}
+	return m_isColl;
+}
+
 _bool CCollider::Collision_AABB(CCollider * pTargetCollider)
 {
 	if (TYPE_AABB != m_eType ||

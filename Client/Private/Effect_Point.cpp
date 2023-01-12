@@ -31,6 +31,9 @@ HRESULT Effect_Point::Init(void * pArg)
 	if (FAILED(CGameObject::Init(&GameObjectDesc)))
 		return E_FAIL;
 
+	if (pArg != nullptr)
+		memcpy(&m_iNumber, pArg,sizeof(int));
+
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
@@ -51,7 +54,7 @@ void Effect_Point::Late_Tick(_double TimeDelta)
 	__super::Late_Tick(TimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 
 HRESULT Effect_Point::Render()
@@ -67,11 +70,6 @@ HRESULT Effect_Point::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
-}
-
-void Effect_Point::LinkWeapon(_double TimeDelta, _fvector pTargetPos, _float fLimit)
-{
-	m_pTransformCom->Chase(pTargetPos ,TimeDelta, fLimit);
 }
 
 HRESULT Effect_Point::SetUp_Components()
@@ -92,7 +90,7 @@ HRESULT Effect_Point::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Weapon_Effect"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_DamageFont"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -104,7 +102,9 @@ HRESULT Effect_Point::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	// 0~9
 	// m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_WorldMatrix);
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
@@ -121,7 +121,7 @@ HRESULT Effect_Point::SetUp_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

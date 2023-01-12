@@ -26,13 +26,14 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
-	void	LinkWeapon(_double TimeDelta, _fvector pTargetPos, _float fLimit);
 
 private:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Point_Instancing*	m_pVIBufferCom = nullptr;
+
+	_int						m_iNumber = 0;
 
 private:
 	HRESULT SetUp_Components();

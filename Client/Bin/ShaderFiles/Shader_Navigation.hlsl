@@ -17,7 +17,6 @@ sampler PointSampler = sampler_state
 	AddressV = wrap;
 };
 
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;	
@@ -53,7 +52,6 @@ struct PS_IN
 
 struct PS_OUT
 {
-
 	float4		vColor : SV_TARGET0;
 };
 

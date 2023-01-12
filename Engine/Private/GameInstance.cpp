@@ -10,6 +10,7 @@
 #include "Light_Manager.h"
 #include "Frustum.h"
 #include "Sound_Manager.h"
+#include "Target_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -28,7 +29,8 @@ CGameInstance::CGameInstance()
 	m_pFontMgr(CFont_Manager::GetInstance()),
 	m_pLightMgr(CLight_Manager::GetInstance()),
 	m_pFrustum(CFrustum::GetInstance()),
-	m_pSoundMgr(CSound_Manager::GetInstance())
+	m_pSoundMgr(CSound_Manager::GetInstance()),
+	m_pTargetMgr(CTarget_Manager::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pGraphicDev);
@@ -42,6 +44,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pFontMgr);
 	Safe_AddRef(m_pLightMgr);
 	Safe_AddRef(m_pSoundMgr);
+	Safe_AddRef(m_pTargetMgr);
 }
 
 HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & GraphicDesc, ID3D11Device ** ppDeviceOut, ID3D11DeviceContext ** ppContextOut)
@@ -73,6 +76,9 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 		return E_FAIL;
 
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
+		return E_FAIL;
+
+	if (FAILED(m_pTargetMgr->Initialize(*ppDeviceOut, *ppContextOut)))
 		return E_FAIL;
 
 	if (FAILED(m_pFrustum->Initialize()))
@@ -575,6 +581,8 @@ void CGameInstance::Release_Engine()
 
 	CFrustum::GetInstance()->DestroyInstance();
 
+	CTarget_Manager::GetInstance()->DestroyInstance();
+
 	CSound_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
@@ -586,6 +594,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pTargetMgr);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pComponetMgr);

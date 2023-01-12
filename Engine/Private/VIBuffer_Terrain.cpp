@@ -304,54 +304,7 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrix)
 
 	_uint			iNumFaces = 0;
 
-//#ifdef USE_QUADTREE
 	m_pQuadTree->Culling(pFrustum, m_pPos, m_pIndices, &iNumFaces);
-
-//#else
-//	for (_uint i = 0; i < m_iNumVerticesZ - 1; ++i)
-//	{
-//		for (_uint j = 0; j < m_iNumVerticesX - 1; ++j)
-//		{
-//			_uint iIndex = i * m_iNumVerticesX + j;
-//
-//			_uint			iIndices[4] = {
-//				iIndex + m_iNumVerticesX,
-//				iIndex + m_iNumVerticesX + 1,
-//				iIndex + 1,
-//				iIndex
-//			};
-//
-//			_bool			isIn[4] = {
-//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[0]])),
-//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[1]])),
-//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[2]])),
-//				pFrustum->isInFrustum_LocalSpace(XMLoadFloat4(&m_pPos[iIndices[3]]))
-//			};
-//
-//			/* 우상단 삼각형이 그려져야하니? */
-//			if (true == isIn[0] &&
-//				true == isIn[1] &&
-//				true == isIn[2])
-//			{
-//				m_pIndices[iNumFaces]._0 = iIndices[0];
-//				m_pIndices[iNumFaces]._1 = iIndices[1];
-//				m_pIndices[iNumFaces]._2 = iIndices[2];
-//				++iNumFaces;
-//			}
-//
-//			/* 좌하단 삼각형이 그려져야하니? */
-//			if (true == isIn[0] &&
-//				true == isIn[2] &&
-//				true == isIn[3])
-//			{
-//				m_pIndices[iNumFaces]._0 = iIndices[0];
-//				m_pIndices[iNumFaces]._1 = iIndices[2];
-//				m_pIndices[iNumFaces]._2 = iIndices[3];
-//				++iNumFaces;
-//			}
-//		}
-//	}
-//#endif
 
 	D3D11_MAPPED_SUBRESOURCE		SubResources;
 	ZeroMemory(&SubResources, sizeof(D3D11_MAPPED_SUBRESOURCE));

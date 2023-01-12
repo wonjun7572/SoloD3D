@@ -32,7 +32,7 @@ HRESULT CCamera::Init(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMLoadFloat4(&m_CameraDesc.vEye));
-	m_pTransformCom->LookAt(XMLoadFloat4(&m_CameraDesc.vAt));
+	m_pTransformCom->LookAt(XMLoadFloat4(&m_CameraDesc.vAt), true);
 
 	return S_OK;
 }

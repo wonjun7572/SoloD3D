@@ -84,6 +84,10 @@ public:
 
 	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_B , MODEL_END };
 
+	enum UI	{ SKILL_ICON_1, SKILL_ICON_2, SKILL_ICON_3, 
+		SKILL_ICON_4, SKILL_ICON_5, SKILL_ICON_6, SKILL_MODELATIME, V_DEF,
+		HP , MP, UI_END };
+
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& rhs);
@@ -95,6 +99,9 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
+
+	void Effect_Tick(_double TimeDelta);
+	void UI_Tick(_double TimeDelta);
 
 	CModel*					Get_ModelCom() { return m_pModelCom[m_eModelState]; }
 	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
@@ -127,6 +134,8 @@ private:
 	
 	vector<CGameObject*>	m_PlayerEffects;
 
+	vector<CGameObject*>	m_PlayerUI;
+
 	_uint					m_PartSize = 0;
 	_float					m_MouseSensity = 0.1f;
 	_bool					Get_CamTurn() { return m_bCamTurn; }
@@ -148,10 +157,10 @@ private:
 
 	/* 피격을 위해서 */
 public:
-	void					BackDamagedToMonster();
-	void					FrontDamagedToMonster();
-	void					PassOutToMonster(_float fKnockBackPower = 0.f);
-	void					HitDownToMonster(_float fJumpPower = 1.5f, _float fKnockBackPower = 2.f, _float fDuration = 1.f);
+	void					BackDamagedToMonster(_float fDamage);
+	void					FrontDamagedToMonster(_float fDamage);
+	void					PassOutToMonster(_float fDamage, _float fKnockBackPower = 0.f);
+	void					HitDownToMonster(_float fDamage, _float fJumpPower = 1.5f, _float fKnockBackPower = 2.f, _float fDuration = 1.f);
 
 	/* 타격을 위해서*/
 public:
@@ -162,7 +171,8 @@ public:
 
 public:
 	void					Reset_Action();
-
+	class CPlayerCamera*	Get_PlayerCam() { return m_pCam; }
+	void					CamLockOn(CGameObject* pGameObject, OUT _bool& bLock);
 private:
 	CFSMComponent*			m_pFSM = nullptr;
 
@@ -244,9 +254,10 @@ private:
 
 	/* 체력 및 공격력 세팅 값*/
 
-	_int	m_iHp = 0;
-	_int	m_iAttack = 0;
-	_int	m_iDefence = 0;
+	_float	m_fHp = 0.f;
+	_float  m_fMp = 0.f;
+	_float	m_fAttack = 0.f;
+	_float	m_fDefence = 0.f;
 
 	/********************/
 
@@ -259,9 +270,30 @@ private:
 	//_float m_fWingTestUPY = 1.f;
 	//_float m_fWingTestDOWNY = 1.f;
 
+
+	/* 스킬 쿨타임~! */
+	_double m_Skill_1IconCollTime = 15.0;
+	_double m_Skill_2IconCoolTime = 20.0;
+	_double m_Skill_3IconCoolTime = 10.0;
+	_double m_Skill_4IconCollTime = 20.0;
+	_double m_Skill_5IconCoolTime = 30.0;
+	_double m_Skill_6IconCoolTime = 30.0;
+
+	_double m_Skill_VDefCoolTime = 7.0;
+
+	// 데미지를 입을 수 있는 상황인가?
+	_bool					m_bImpossibleSkillDamaged = false;
+	_bool					m_bImpossibleDamaged = false;
+	/****************/
+	void	AdjustDamage(_float fDamage);
+	void	AdjustSkillDamage(_float fDamage);
+
+	_bool					m_bCamLock = false;
+
 private:
 	HRESULT SetUp_Parts();
 	HRESULT SetUp_Effects();
+	HRESULT SetUp_UI();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 

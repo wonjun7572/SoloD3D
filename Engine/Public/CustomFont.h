@@ -21,7 +21,7 @@ private:
 private:
 	SpriteFont*				m_pFont = nullptr;
 	SpriteBatch*			m_pSprite = nullptr;
-
+	
 public:
 	static CCustomFont* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontFilePath);
 	virtual void Free() override;

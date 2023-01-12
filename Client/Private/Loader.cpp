@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 
 #include "BackGround.h"
+#include "LogoUI.h"
 
 #include "Sky.h"
 
@@ -11,7 +12,6 @@
 #include "TestSphere.h"
 #include "TestCube.h"
 #include "Terrain.h"
-#include "Ocean.h"
 
 #include "EmptyGameObject.h"
 
@@ -55,6 +55,9 @@
 #include "Line_Aura.h"
 #include "ThunderWave.h"
 #include "FireBallLine.h"
+
+#include "SkillChargingUI.h"
+#include "ProgressBarUI.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -124,7 +127,12 @@ HRESULT CLoader::Loading_ForLogo()
 
 	/*For.Prototype_Component_Texture_Logo*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/HUD_BMI_LOGO_US.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/Bless/Bless_%d.png"),89))))
+		return E_FAIL;
+
+	/*For.Prototype_Component_Texture_Logo*/
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Back"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/Back.png")))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
@@ -136,6 +144,9 @@ HRESULT CLoader::Loading_ForLogo()
 	m_strLoadingText = TEXT("객체원형을 생성중입니다. ");
 
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"), CBackGround::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LogoUI"), CLogoUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_Empty*/
@@ -186,6 +197,29 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For.Texture_Trail*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Trail"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/%d.png"), 35))))
+			return E_FAIL;
+
+		/* For. Texture_DamageFont */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_DamageFont"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Damage/Damage_%d.png"), 12))))
+			return E_FAIL;
+	}
+
+	// For. UI
+	{
+		/* For.Texture_SkillChargeGuage*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_SkillIcon"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/SkillIcon/Lups_%d.png"), 12))))
+			return E_FAIL;
+
+		/* For.Texture_ProgressBar*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_ProgressBar"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/HPGauge/HPGauge_%d.png"), 6))))
+			return E_FAIL;
+
+		/* For. Texture_MonsterAimUI*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_MonsterAimUI"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Aim/Aim_%d.png"),2))))
 			return E_FAIL;
 	}
 
@@ -646,6 +680,23 @@ HRESULT CLoader::Loading_ForChapter_1()
 	/* For. Prototype_GameObject_FireBallLine*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBallLine"), CFireBallLine::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	{
+		/* For. Prototype_GameObject_SkillChargingUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkillChargingUI"), CSkillChargingUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_ProgressBarUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ProgressBarUI"), CProgressBarUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_AimUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AimUI"), CEffect_Rect::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
+
+	/* For. Prototype_GameObject_DamageFont*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DamageFont"), Effect_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 
@@ -782,11 +833,6 @@ HRESULT CLoader::Loading_ForChapter_3()
 	/* For.Prototype_Component_Texture_Weapon_Effect*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Weapon_Effect"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_blizzardDecal_01_TEX_KJS.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Weapon_Skill1_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Weapon_Skill1_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_AuraHole_001_TEX_HKB.png")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Ocean_Height*/

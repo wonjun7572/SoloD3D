@@ -34,10 +34,10 @@ HRESULT CBackGround::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_fSizeX = static_cast<_float>(g_iWinSizeX) * 0.6f;
-	m_fSizeY = static_cast<_float>(g_iWinSizeY) * 0.6f;
-	m_fX = m_fSizeX * 0.8f;
-	m_fY = m_fSizeY * 0.8f;
+	m_fSizeX = static_cast<_float>(g_iWinSizeX);
+	m_fSizeY = static_cast<_float>(g_iWinSizeY);
+	m_fX = m_fSizeX * 0.5f;
+	m_fY = m_fSizeY * 0.5f;
 	
 	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(m_fX - g_iWinSizeX * 0.5f, -m_fY + g_iWinSizeY * 0.5f , 0.f, 1.f));
@@ -51,13 +51,20 @@ HRESULT CBackGround::Init(void * pArg)
 void CBackGround::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	m_TimeDelta += TimeDelta;
+
+	if (m_TimeDelta > 0.05 && m_iTexNum < 88)
+	{
+		m_iTexNum++;
+		m_TimeDelta = 0.0;
+	}
 }
 
 void CBackGround::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	// UI로 사용할 것이면 RenderGroup을 UI로 바꿔줘야함
 	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
@@ -119,7 +126,7 @@ HRESULT CBackGround::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTexNum)))
 		return E_FAIL;
 
 	return S_OK;

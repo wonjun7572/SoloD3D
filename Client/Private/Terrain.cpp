@@ -626,7 +626,10 @@ void CTerrain::Late_Tick(_double TimeDelta)
 	m_pVIBufferCom->Culling(m_pTransformCom->Get_WorldMatrix());
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
+	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+	}
 }
 
 HRESULT CTerrain::Render()
@@ -649,8 +652,6 @@ HRESULT CTerrain::Render()
 	{
 		if (m_iDeleteCellNum != -1)
 			m_pNavigationCom->Render_pickingCell(m_iDeleteCellNum);
-
-		m_pNavigationCom->Render();
 	}
 #endif
 
@@ -1182,117 +1183,36 @@ HRESULT CTerrain::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	//if (g_LEVEL == LEVEL_CHAP3)
-	//{
-	//	if (nullptr == m_pShaderCom)
-	//		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_pTransformCom->Get_World4x4())))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_Time", &m_fTimeDelta, sizeof _float)))
-	//		return E_FAIL;
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_WaveHeight", &m_fWaveHeight, sizeof _float)))
-	//		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_Speed", &m_fSpeed, sizeof _float)))
-	//		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_WaveFrequency", &m_fWaveFrequency, sizeof _float)))
-	//		return E_FAIL;
+	RELEASE_INSTANCE(CGameInstance);
 
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_UVSpeed", &m_fUVSpeed, sizeof _float)))
-	//		return E_FAIL;
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureA", m_iDiffuseATexNum)))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_pTransformCom->Get_World4x4())))
-	//		return E_FAIL;
+	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureB", m_iDiffuseBTexNum)))
+		return E_FAIL;
 
-	//	// ºÒ ÁÖ¸éµÊ
-	//	if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_iDiffuseATexNum)))
-	//		return E_FAIL;
+	if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", m_iBrushTexNum)))
+		return E_FAIL;
 
-	//	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResource(m_pShaderCom, "g_FilterTexture", m_iFilterTexNum)))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-	//		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
+		return E_FAIL;
 
-	//	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewInverseMatrix", &pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjInverseMatrix", &pGameInstance->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof _float4)))
-	//		return E_FAIL;
-
-	//	/* For.Lights */
-	//	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	//	if (nullptr == pLightDesc)
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-	//		return E_FAIL;
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-	//		return E_FAIL;
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-	//		return E_FAIL;
-	//	if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-	//		return E_FAIL;
-
-	//	RELEASE_INSTANCE(CGameInstance);
-
-	//	return S_OK;
-	//}
-	//else
-	
-		if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_pTransformCom->Get_World4x4())))
-			return E_FAIL;
-
-		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-		if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof _float4)))
-			return E_FAIL;
-
-		/* For.Lights */
-		const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-		if (nullptr == pLightDesc)
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-			return E_FAIL;
-
-		RELEASE_INSTANCE(CGameInstance);
-
-		if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureA", m_iDiffuseATexNum)))
-			return E_FAIL;
-
-		if (FAILED(m_pTextureCom[TYPE_DIFFUSE]->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTextureB", m_iDiffuseBTexNum)))
-			return E_FAIL;
-
-		if (FAILED(m_pTextureCom[TYPE_BRUSH]->Bind_ShaderResource(m_pShaderCom, "g_BrushTexture", m_iBrushTexNum)))
-			return E_FAIL;
-
-		if (FAILED(m_pTextureCom[TYPE_FILTER]->Bind_ShaderResource(m_pShaderCom, "g_FilterTexture", m_iFilterTexNum)))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_fBrushRange", &m_fBrushRange, sizeof(_float))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
-			return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vBrushPos", &m_vBrushPos, sizeof(_float4))))
+		return E_FAIL;
 	
 
 	return S_OK;

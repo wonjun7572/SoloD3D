@@ -46,26 +46,17 @@
     <Filter Include="GameObject\Terrain">
       <UniqueIdentifier>{0fb4cd8b-cccf-4f72-813a-3a9a35fdc179}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Ocean">
-      <UniqueIdentifier>{7b35a4c7-8787-4734-b6ff-db672eac71eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Logo">
       <UniqueIdentifier>{96c148c2-dac5-42f3-837f-10a42938b44e}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\Logo\BackGround">
       <UniqueIdentifier>{54c18a98-7a08-4db7-b510-3e03a0b6fd2b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Logo\UI">
-      <UniqueIdentifier>{7f40a0df-666f-40f7-8596-f7e2d97fea0a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Player">
       <UniqueIdentifier>{580ff846-3bbe-4588-85fc-b8794049ae36}</UniqueIdentifier>
     </Filter>
     <Filter Include="LevelDesign\Tool">
       <UniqueIdentifier>{14b5ae69-1ee8-4fc5-a490-585f1be62ebb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LevelDesign\Loading\UI">
-      <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\Env">
       <UniqueIdentifier>{8ef51747-abb6-4e3c-a06b-7456d4a9005c}</UniqueIdentifier>
@@ -78,9 +69,6 @@
     </Filter>
     <Filter Include="GameObject\Sky">
       <UniqueIdentifier>{6804ed23-76de-47f8-8f9e-a7e473777f6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Effect">
-      <UniqueIdentifier>{d3fe6a3a-b62a-47a3-a1b2-7fb7ffa0f876}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject\Monster\Demon">
       <UniqueIdentifier>{3d011677-53a1-473d-85cf-be6b88c4ca17}</UniqueIdentifier>
@@ -130,20 +118,14 @@
     <Filter Include="GameObject\Monster\Zombie">
       <UniqueIdentifier>{c753974f-aea1-48cd-b6b2-139515262361}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Effect\Trail">
-      <UniqueIdentifier>{3838a956-5424-4b3a-b2d7-0207d332b86b}</UniqueIdentifier>
+    <Filter Include="GameObject\UI">
+      <UniqueIdentifier>{dffb60f8-b772-48a6-9674-bd34daf09acd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Effect\Wing">
-      <UniqueIdentifier>{a51de80e-472d-4375-8eee-9db252608367}</UniqueIdentifier>
+    <Filter Include="GameObject\UI\UI">
+      <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Effect\Line_Aura">
-      <UniqueIdentifier>{70e5c15d-5a61-4f19-a37f-f120c6666b06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Effect\ThunderWave">
-      <UniqueIdentifier>{704c5359-344a-479f-b9fa-c836d086e3bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Effect\Demon_Fire">
-      <UniqueIdentifier>{d783f8e5-bab5-4d32-94a4-c70ee722cecc}</UniqueIdentifier>
+    <Filter Include="GameObject\Effect">
+      <UniqueIdentifier>{cc92dde6-9a10-4f9f-8e44-4b21fad3200c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +137,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Level_Logo.h">
       <Filter>LevelDesign\Logo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Level_Loading.h">
-      <Filter>LevelDesign\Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Loader.h">
       <Filter>LevelDesign\Loading\Loader</Filter>
@@ -192,9 +171,6 @@
     <ClInclude Include="..\public\Terrain.h">
       <Filter>GameObject\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Ocean.h">
-      <Filter>GameObject\Ocean</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\TestCylinder.h">
       <Filter>GameObject\Figure</Filter>
     </ClInclude>
@@ -214,9 +190,6 @@
     <ClInclude Include="..\public\Monster.h">
       <Filter>GameObject\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LoadingBackGround.h">
-      <Filter>LevelDesign\Loading\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>GameObject\Camera</Filter>
     </ClInclude>
@@ -228,12 +201,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Sky.h">
       <Filter>GameObject\Sky</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Rect.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Point.h">
-      <Filter>GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Glove.h">
       <Filter>GameObject\Player\Parts\Glove</Filter>
@@ -292,32 +259,53 @@
     <ClInclude Include="..\public\TrollQ.h">
       <Filter>GameObject\Monster\Troll</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Effect.h">
+    <ClInclude Include="..\public\LoadingUI.h">
+      <Filter>GameObject\UI\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LogoUI.h">
+      <Filter>GameObject\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ProgressBarUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>LevelDesign\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SkillChargingUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Rect.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Mesh.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Point.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireBallLine.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NorAtk_Trail2.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NorAtk_Trail3.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ThunderWave.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wing.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Line_Aura.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="NorAtk_Trail1.h">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\NorAtk_Trail2.h">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\NorAtk_Trail3.h">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Wing.h">
-      <Filter>GameObject\Effect\Wing</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Effect_Mesh.h">
       <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Line_Aura.h">
-      <Filter>GameObject\Effect\Line_Aura</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ThunderWave.h">
-      <Filter>GameObject\Effect\ThunderWave</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FireBallLine.h">
-      <Filter>GameObject\Effect\Demon_Fire</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +314,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Logo.cpp">
       <Filter>LevelDesign\Logo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Level_Loading.cpp">
-      <Filter>LevelDesign\Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Loader.cpp">
       <Filter>LevelDesign\Loading\Loader</Filter>
@@ -354,9 +339,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Default</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Ocean.cpp">
-      <Filter>GameObject\Ocean</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\TestCylinder.cpp">
       <Filter>GameObject\Figure</Filter>
     </ClCompile>
@@ -379,9 +361,6 @@
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>GameObject\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LoadingBackGround.cpp">
-      <Filter>LevelDesign\Loading\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>GameObject\Camera</Filter>
     </ClCompile>
@@ -390,12 +369,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Sky.cpp">
       <Filter>GameObject\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Rect.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Point.cpp">
-      <Filter>GameObject\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Glove.cpp">
       <Filter>GameObject\Player\Parts\Glove</Filter>
@@ -454,32 +427,53 @@
     <ClCompile Include="..\private\TrollQ.cpp">
       <Filter>GameObject\Monster\Troll</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Effect.cpp">
+    <ClCompile Include="..\private\LoadingUI.cpp">
+      <Filter>GameObject\UI\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LogoUI.cpp">
+      <Filter>GameObject\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ProgressBarUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>LevelDesign\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SkillChargingUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect_Point.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect_Rect.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect_Mesh.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NorAtk_Trail2.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NorAtk_Trail3.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ThunderWave.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wing.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Line_Aura.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireBallLine.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
     <ClCompile Include="NorAtk_Trail1.cpp">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\NorAtk_Trail2.cpp">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\NorAtk_Trail3.cpp">
-      <Filter>GameObject\Effect\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Wing.cpp">
-      <Filter>GameObject\Effect\Wing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Effect_Mesh.cpp">
       <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Line_Aura.cpp">
-      <Filter>GameObject\Effect\Line_Aura</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ThunderWave.cpp">
-      <Filter>GameObject\Effect\ThunderWave</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FireBallLine.cpp">
-      <Filter>GameObject\Effect\Demon_Fire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +526,15 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MeshEffect.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_TextureEffect.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_SkillProgressUI.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ProgressBar.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

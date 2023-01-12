@@ -5,26 +5,12 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 matrix			g_ViewInverseMatrix, g_ProjInverseMatrix;
 
-vector          g_vCamPosition;
-
-/* 빛 정보 */
-vector			g_vLightDir;
-vector			g_vLightDiffuse;
-vector			g_vLightAmbient;
-vector			g_vLightSpecular;
-
-/* 포인트 라이트를 위한 */
-vector			g_vLightPos;
-float			g_fRange;
-
 /* 재질 정보 */
 texture2D		g_DiffuseTexture;
 texture2D		g_DiffuseTextureA;
 texture2D		g_DiffuseTextureB;
 
 texture2D		g_NormalTexture;
-vector			g_vMtrlAmbient  = vector(0.4f, 0.4f, 0.4f, 1.f);
-vector			g_vMtrlSpecular = vector(1.f, 1.f, 1.f, 1.f);
 
 /* 지형 쉐이딩을 위한 */
 texture2D		g_BrushTexture;
@@ -69,7 +55,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
-	Out.vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 
 	return Out;
 }
@@ -87,7 +73,7 @@ VS_OUT VS_MAIN_UVANIMATION(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	Out.vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV + float2(g_Time * g_UVSpeed, 0);
 
 	return Out;
@@ -104,7 +90,8 @@ struct PS_IN
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vColor : SV_TARGET0;
+	float4		vDiffuse : SV_TARGET0;
+	float4		vNormal : SV_TARGET1;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -127,21 +114,11 @@ PS_OUT PS_MAIN(PS_IN In)
 		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
 	}
 
-	vector		vMtrlDiffuse = vSourDiffuse * vFilter.r +
+	Out.vDiffuse = vSourDiffuse * vFilter.r +
 		vDestDiffuse * (1.f - vFilter.r) + vBrush;
 
-	vector		vDiffuse = (g_vLightDiffuse * vMtrlDiffuse) + vBrush;
-
-	float		fShade = saturate(dot(normalize(g_vLightDir) * -1.f, 	normalize(In.vNormal)));
-
-	vector		vReflect = reflect(normalize(g_vLightDir), normalize(In.vNormal));
-	vector		vLook = In.vWorldPos - g_vCamPosition;
-
-	/* 두 벡터 : 빛의 반사벡터, 정점을 바라보는 시선벡터 */
-	float		fSpecular = pow(saturate(dot(normalize(vReflect) * -1.f,	normalize(vLook))), 30.f);
-
-	Out.vColor = vDiffuse * saturate(fShade + (g_vLightAmbient * g_vMtrlAmbient))
-		+ fSpecular * (g_vLightSpecular * g_vMtrlSpecular);
+	/* -1 ~ 1 => 0 ~ 1 */
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	return Out;
 }
@@ -152,31 +129,41 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 
 	vector		vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
-	vector		vDiffuse = (g_vLightDiffuse * vMtrlDiffuse);
+	//vector		vDiffuse = (g_vLightDiffuse * vMtrlDiffuse);
 
-	float		fShade = saturate(dot(normalize(g_vLightDir) * -1.f, normalize(In.vNormal)));
+	//float		fShade = saturate(dot(normalize(g_vLightDir) * -1.f, normalize(In.vNormal)));
 
-	vector		vReflect = reflect(normalize(g_vLightDir), normalize(In.vNormal));
+	//vector		vReflect = reflect(normalize(g_vLightDir), normalize(In.vNormal));
 
-	vector		vPos = mul(In.vPosition, g_ProjInverseMatrix);
-	vPos = mul(vPos, g_ViewInverseMatrix);
+	//vector		vPos = mul(In.vPosition, g_ProjInverseMatrix);
+	//vPos = mul(vPos, g_ViewInverseMatrix);
 
-	vector		vLook = vPos - g_vCamPosition;
+	//vector		vLook = vPos - g_vCamPosition;
 
-	/* 두 벡터 : 빛의 반사벡터, 정점을 바라보는 시선벡터 */
-	float		fSpecular = pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30.f);
+	///* 두 벡터 : 빛의 반사벡터, 정점을 바라보는 시선벡터 */
+	//float		fSpecular = pow(saturate(dot(normalize(vReflect) * -1.f, normalize(vLook))), 30.f);
 
-	Out.vColor = vDiffuse * saturate(fShade + (g_vLightAmbient * g_vMtrlAmbient))
-		+ fSpecular * (g_vLightSpecular * g_vMtrlSpecular);
+	//Out.vColor = vDiffuse * saturate(fShade + (g_vLightAmbient * g_vMtrlAmbient))
+	//	+ fSpecular * (g_vLightSpecular * g_vMtrlSpecular);
+
+	Out.vDiffuse = vMtrlDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	return Out;
 }
 
-PS_OUT PS_MAIN_SPHERE(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+struct PS_SKYOUT
+{
+	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
+	float4		vDiffuse : SV_TARGET0;
+};
+
+PS_SKYOUT PS_MAIN_SPHERE(PS_IN In)
+{
+	PS_SKYOUT			Out = (PS_SKYOUT)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
 	return Out;
 }

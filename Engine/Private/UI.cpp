@@ -51,4 +51,8 @@ void CUI::Set_parentName(_uint iCulLevel, const _tchar * pParentTag)
 void CUI::Free()
 {
 	__super::Free();
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pVIBufferCom);
 }

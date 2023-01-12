@@ -38,6 +38,10 @@ private:
 	_float4x4				m_ViewMatrix;
 	_float4x4				m_ProjMatrix;
 
+	_uint					m_iTexNum = 0;
+
+	_double					m_TimeDelta = 0.0;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT	SetUp_ShaderResources();

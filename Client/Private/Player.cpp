@@ -13,6 +13,8 @@
 #include "Monster.h"
 #include "FSMComponent.h"
 #include "Effect_Mesh.h"
+#include "SkillChargingUI.h"
+#include "ProgressBarUI.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -54,6 +56,9 @@ HRESULT CPlayer::Init(void * pArg)
 	if (FAILED(SetUp_Effects()))
 		return E_FAIL;
 
+	if (FAILED(SetUp_UI()))
+		return E_FAIL;
+
 	m_strObjName = L"Player";
 
 	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
@@ -68,9 +73,10 @@ HRESULT CPlayer::Init(void * pArg)
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
-	m_iHp = 100;
-	m_iAttack = 20;
-	m_iDefence = 100;
+	m_fHp = 100;
+	m_fMp = 100;
+	m_fAttack = 20;
+	m_fDefence = 5;
 
 	SetUp_FSM();
 	
@@ -91,17 +97,16 @@ void CPlayer::Tick(_double TimeDelta)
 	}
 
 	for (auto& pEffect : m_PlayerEffects)
-	{
 		pEffect->Tick(TimeDelta);
-	}
 
-	static_cast<CEffect_Mesh*>(m_PlayerEffects[LINE_AURA])->Set_EffectPlay(true);
-	static_cast<CEffect_Mesh*>(m_PlayerEffects[THUNDERWAVE])->Set_EffectPlay(true);
+	Effect_Tick(TimeDelta);
 
+	for (auto& pUI : m_PlayerUI)
+		pUI->Tick(TimeDelta);
 
+	UI_Tick(TimeDelta);
 
 	m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
-
 
 	AdditiveAnim(TimeDelta);
 
@@ -120,11 +125,23 @@ void CPlayer::Late_Tick(_double TimeDelta)
 	for (auto& pEffect : m_PlayerEffects)
 		pEffect->Late_Tick(TimeDelta);
 
+	for (auto& pUI : m_PlayerUI)
+		pUI->Late_Tick(TimeDelta);
+
 	for (_uint i = 0; i < COLLTYPE_END; ++i)
 		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
 
 	if (nullptr != m_pRendererCom)
+	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		
+#ifdef _DEBUG
+		for (auto& pCollider : m_pColliderCom)
+			m_pRendererCom->Add_DebugRenderGroup(pCollider);
+
+		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+#endif
+	}
 
 	// 모델 원래 상태로 돌아가기
 
@@ -169,8 +186,7 @@ HRESULT CPlayer::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-
-		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 2, "g_BoneMatrices");
+		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
 	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
@@ -178,21 +194,41 @@ HRESULT CPlayer::Render()
 		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->SetUp_ShaderResources()))
 			return E_FAIL;
 
-		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsRender(2)))
+		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsRender(0)))
 			return E_FAIL;
 	}
 
-#ifdef _DEBUG
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-	{
-		if (nullptr != m_pColliderCom[i])
-			m_pColliderCom[i]->Render();
-	}
-	if(m_pNavigationCom)
-		m_pNavigationCom->Render();
-#endif
-
 	return S_OK;
+}
+
+void CPlayer::Effect_Tick(_double TimeDelta)
+{
+	static_cast<CEffect_Mesh*>(m_PlayerEffects[LINE_AURA])->Set_EffectPlay(true);
+	static_cast<CEffect_Mesh*>(m_PlayerEffects[THUNDERWAVE])->Set_EffectPlay(true);
+}
+
+void CPlayer::UI_Tick(_double TimeDelta)
+{
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_1])->Set_Amount(static_cast<_float>(m_Skill_1IconCollTime / 15.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_2])->Set_Amount(static_cast<_float>(m_Skill_2IconCoolTime / 20.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_3])->Set_Amount(static_cast<_float>(m_Skill_3IconCoolTime / 10.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Amount(static_cast<_float>(m_Skill_4IconCollTime / 20.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_5])->Set_Amount(static_cast<_float>(m_Skill_5IconCoolTime / 30.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_6])->Set_Amount(static_cast<_float>(m_Skill_6IconCoolTime / 30.0));
+
+	if(m_dModelATime >= 0.001)
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_MODELATIME])->Set_Amount(static_cast<_float>(1.0 - (m_dModelATime / 20.0)));
+
+	static_cast<CSkillChargingUI*>(m_PlayerUI[V_DEF])->Set_Amount(static_cast<_float>(m_Skill_VDefCoolTime / 3.0));
+	
+	static_cast<CProgressBarUI*>(m_PlayerUI[HP])->Set_Amount((1.f + m_fHp / 100.f) - 1.f);
+
+	if (m_fMp >= 100.f)
+		m_fMp = 100.f;
+	else
+ 		m_fMp += static_cast<_float>(TimeDelta) * 5.f;
+	
+	static_cast<CProgressBarUI*>(m_PlayerUI[MP])->Set_Amount((1.f + m_fMp / 100.f) - 1.f);
 }
 
 void CPlayer::SetUp_FSM()
@@ -283,6 +319,7 @@ void CPlayer::SetUp_FSM()
 	{
 		m_bGroggy = false;
 		m_bCamTurn = false; 
+		m_bImpossibleSkillDamaged = false;
 		Reset_Action();
 	})
 		.AddTransition("Groggy to Idle" , "Idle")
@@ -343,12 +380,13 @@ void CPlayer::SetUp_FSM()
 	{
 		m_bCamTurn = false;
 		m_bHitDown = false;
+		m_bImpossibleSkillDamaged = false;
 		Reset_Action();
 	})
 		.AddTransition("Getup to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return  AnimFinishChecker(PLAYER_GETUP, 0.85);
+		return  AnimFinishChecker(PLAYER_GETUP, 0.85) && !m_bJump;
 	})
 		
 		/* 움직임을 위한 */
@@ -431,7 +469,6 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bJump && m_eState == PLAYER_BM;
 	})
-		
 
 		/* For. Jump*/
 		.AddState("JumpUp")
@@ -520,10 +557,15 @@ void CPlayer::SetUp_FSM()
 	{
 		m_pTransformCom->Go_Straight(TimeDelta, m_pNavigationCom);
 	})
+		.OnExit([this]() 
+	{
+		m_bAction = false;
+		m_bV_DEF = false;
+	})
 		.AddTransition("V_DEF to Run", "Run")
 		.Predicator([this]()
 	{
-		return !m_bAction && !m_bV_DEF;
+		return CheckFinish_V_DEF();
 	})
 		
 		/* For. Attack */
@@ -673,11 +715,13 @@ void CPlayer::SetUp_FSM()
 	{
 		MonsterNormalAttack(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.65f);
+		m_bAction = false;
+		m_bSK01 = false;
 	})
 		.AddTransition("Skill_1 to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bAction && !m_bSK01 && CheckFinish_Skill1();
+		return CheckFinish_Skill1();
 	})
 		.AddTransition("Skill_1 to Groggy", "Groggy")
 		.Predicator([this]()
@@ -760,7 +804,6 @@ void CPlayer::SetUp_FSM()
 			MonsterSkill02(false);
 
 		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_Alpha(static_cast<_float>(m_WingAlpha));
-		
 	})
 		.OnExit([this]()
 	{
@@ -769,11 +812,13 @@ void CPlayer::SetUp_FSM()
 		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_EffectPlay(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.5f);
 		MonsterSkill02(false);
+		m_bAction = false;
+		m_bSK02 = false;
 	})
 		.AddTransition("Skill_2 to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bAction && !m_bSK02 && CheckFinish_Skill2();
+		return CheckFinish_Skill2();
 	})
 		.AddTransition("Skill_2 to Groggy", "Groggy")
 		.Predicator([this]()
@@ -802,12 +847,14 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]() 
 	{
+		m_bAction = false;
+		m_bSK03 = false;
 		MonsterNormalAttack(false);
 	})
 		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bAction &&  !m_bSK03 && CheckFinish_Skill3();
+		return CheckFinish_Skill3();
 	})
 		.AddTransition("Skill_3 to Groggy", "Groggy")
 		.Predicator([this]()
@@ -904,12 +951,16 @@ void CPlayer::SetUp_FSM()
 		if (AnimIntervalChecker(PLAYER_SK11, 0.88, 1.0))
 			static_cast<CParts*>(m_PlayerParts[PART_HELMET])->ChangeModel(CParts::MODEL_A);
 	})
+		.OnExit([this]()
+	{
+		m_bAction = false;
+		m_bSK05 = false;
+	})
 		.AddTransition("Skill_5 to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bAction && !m_bSK05 && CheckFinish_Skill5();
+		return CheckFinish_Skill5();
 	})
-
 
 		// Key_2
 		.AddState("Skill_6")
@@ -938,10 +989,15 @@ void CPlayer::SetUp_FSM()
 		if (AnimIntervalChecker(PLAYER_SK11_1, 0.88, 1.0))
 			static_cast<CParts*>(m_PlayerParts[PART_HELMET])->ChangeModel(CParts::MODEL_B);
 	})
+		.OnExit([this]()
+	{
+		m_bAction = false;
+		m_bSK06 = false;
+	})
 		.AddTransition("Skill_6 to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bAction && !m_bSK05 && CheckFinish_Skill6();
+		return CheckFinish_Skill6();
 	})
 
 		.Build();
@@ -1010,6 +1066,9 @@ void CPlayer::Movement(_double TimeDelta)
 		else
 			m_pTransformCom->Set_Height(yPos);
 	}
+
+	if (pGameInstance->Mouse_Down(DIM_RB))
+		m_bCamLock = !m_bCamLock;
 
 	if (!pGameInstance->Key_Pressing(DIK_W) &&
 		!pGameInstance->Key_Pressing(DIK_A) &&
@@ -1271,116 +1330,118 @@ void CPlayer::Movement(_double TimeDelta)
 	}
 	
 	/* SKILL1 !!*/
-	if (pGameInstance->Key_Down(DIK_E))
+	m_Skill_1IconCollTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_E) && m_Skill_1IconCollTime > 15.0 && m_fMp >= 15.f
+		&& !m_bSK02
+		&& !m_bSK03
+		&& !m_bSK04_Charging
+		&& !m_bSK05
+		&& !m_bSK06)
 	{
 		m_bAction = true;
 		m_bSK01 = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (!strcmp(m_pFSM->GetCurStateName(), "Skill_1") && CheckFinish_Skill1())
-	{
-		m_bAction = false;
-		m_bSK01 = false;
+		m_Skill_1IconCollTime = 0.0;
+		m_fMp -= 15.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 
 	/* SKILL2 !!*/
-	if (pGameInstance->Key_Down(DIK_Q))
+	m_Skill_2IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_Q) && m_Skill_2IconCoolTime > 20.0 && m_fMp >= 30.f
+		&& !m_bSK01
+		&& !m_bSK03
+		&& !m_bSK04_Charging
+		&& !m_bSK05
+		&& !m_bSK06)
 	{
 		m_bAction = true;
 		m_bSK02 = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (!strcmp(m_pFSM->GetCurStateName(), "Skill_2") && CheckFinish_Skill2())
-	{
-		m_bAction = false;
-		m_bSK02 = false;
+		m_Skill_2IconCoolTime = 0.0;
+		m_fMp -= 30.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 
 	/* SKILL3 !!*/
-	if (pGameInstance->Mouse_Down(DIM_RB))
+	m_Skill_3IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_R) && m_Skill_3IconCoolTime > 10.0 && m_fMp >= 20.f
+		&& !m_bSK01
+		&& !m_bSK02
+		&& !m_bSK04_Charging
+		&& !m_bSK05
+		&& !m_bSK06)
 	{
 		m_bAction = true;
 		m_bSK03 = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (!strcmp(m_pFSM->GetCurStateName(), "Skill_3") && CheckFinish_Skill3())
-	{
-		m_bAction = false;
-		m_bSK03 = false;
+		m_Skill_3IconCoolTime = 0.0;
+		m_fMp -= 20.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 
 	/* SKILL4 !!*/
-	if (pGameInstance->Key_Pressing(DIK_F))
+	m_Skill_4IconCollTime += TimeDelta;
+	if (pGameInstance->Key_Pressing(DIK_F) && m_Skill_4IconCollTime > 20.0 && m_fMp >= 40.f
+		&& !m_bSK01
+		&& !m_bSK02
+		&& !m_bSK03
+		&& !m_bSK05
+		&& !m_bSK06)
 	{
 		m_bAction = true;
 		m_bSK04_Charging = true;
+		m_fMp -= 40.f;
 	}
 
 	if (pGameInstance->Key_Up(DIK_F))
 	{
 		m_bSK04_Charging = false;
+		m_Skill_4IconCollTime = 0.0;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 	
 	/* SKILL5 !! 변신*/
-	if (pGameInstance->Key_Down(DIK_1))
+	m_Skill_5IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_1) && m_Skill_5IconCoolTime > 30.0 && m_fMp >= 50.f
+		&& !m_bSK01
+		&& !m_bSK02
+		&& !m_bSK03
+		&& !m_bSK04_Charging
+		&& !m_bSK06)
 	{
 		m_bAction = true;
 		m_bSK05 = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (!strcmp(m_pFSM->GetCurStateName(), "Skill_5") && CheckFinish_Skill5())
-	{
-		m_bAction = false;
-		m_bSK05 = false;
+		m_Skill_5IconCoolTime = 0.0;
+		m_fMp -= 50.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 
 	/* SKILL6 !! 변신*/
-	if (pGameInstance->Key_Down(DIK_2))
+	m_Skill_6IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_2) && m_Skill_6IconCoolTime > 30.0 && m_fMp >= 50.f
+		&& !m_bSK01
+		&& !m_bSK02
+		&& !m_bSK03
+		&& !m_bSK04_Charging
+		&& !m_bSK05)
 	{
 		m_bAction = true;
 		m_bSK06 = true;
+		m_Skill_6IconCoolTime = 0.0;
+		m_fMp -= 50.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
 
-	if (!strcmp(m_pFSM->GetCurStateName(), "Skill_6") && CheckFinish_Skill6())
-	{
-		m_bAction = false;
-		m_bSK06 = false;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (pGameInstance->Key_Down(DIK_LSHIFT))
+	m_Skill_VDefCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_LSHIFT) && m_Skill_VDefCoolTime > 3.0)
 	{
 		m_bAction = true;
 		m_bV_DEF = true;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	if (m_bV_DEF &&	CheckFinish_V_DEF())
-	{
-		m_bAction = false;
-		m_bV_DEF = false;
+		m_Skill_VDefCoolTime = 0.0;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
@@ -1433,6 +1494,7 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 	{
 		m_bFrontDamage = false;
 		m_bFrontDamagedToMonster = false;
+		m_bImpossibleDamaged = false;
 	}
 
 	///////////////////////////////////////
@@ -1459,6 +1521,7 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 	{
 		m_bBackDamaged = false;
 		m_bBackDamagedToMonster = false;
+		m_bImpossibleDamaged = false;
 	}
 }
 
@@ -1554,6 +1617,8 @@ void CPlayer::Imgui_RenderProperty()
 	//ImGui::DragFloat("finishtime", &m_fFinishTime, 0.01f, 0.f, 1.f);
 	//ImGui::DragFloat("upy", &m_fWingTestUPY, 0.01f, 0.f, 50.f);
 	//ImGui::DragFloat("downy", &m_fWingTestDOWNY, 0.01f, 0.f, 50.f);
+
+	m_PlayerUI[MP]->Imgui_RenderProperty();
 }
 
 void CPlayer::Idle_Tick(_double TimeDelta)
@@ -1691,30 +1756,34 @@ CCollider* CPlayer::Get_WeaponCollider()
 	return static_cast<CWeapon*>(m_PlayerParts[PART_WEAPON])->Get_Collider();
 }
 
-void CPlayer::BackDamagedToMonster()
+void CPlayer::BackDamagedToMonster(_float fDamage)
 {
 	m_pCam->Shake(0.5f);
 	m_bBackDamaged = true;
+	AdjustDamage(fDamage);
 }
 
-void CPlayer::FrontDamagedToMonster()
+void CPlayer::FrontDamagedToMonster(_float fDamage)
 {
 	m_pCam->Shake(0.5f);
 	m_bFrontDamage = true;
+	AdjustDamage(fDamage);
 }
 
-void CPlayer::PassOutToMonster(_float fKnockBackPower)
+void CPlayer::PassOutToMonster(_float fDamage,_float fKnockBackPower)
 {
 	m_bGroggy = true;
 	m_fKnockBackPower = fKnockBackPower;
+	AdjustSkillDamage(fDamage);
 }
 
-void CPlayer::HitDownToMonster(_float fJumpPower, _float fKnockBackPower, _float fDuration)
+void CPlayer::HitDownToMonster(_float fDamage, _float fJumpPower, _float fKnockBackPower, _float fDuration)
 {
 	m_bHitDown = true;
 	m_fJumpPower = fJumpPower;
 	m_fKnockBackPower = fKnockBackPower;
 	m_HitDownDurationTime = fDuration;
+	AdjustSkillDamage(fDamage);
 }
 
 void CPlayer::MonsterNormalAttack(_bool bAttack)
@@ -1950,7 +2019,6 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 
 void CPlayer::Reset_Action()
 {
-
 	m_bAction = false;
 	m_bAttack = false;
 	m_bNormalAttack_1 = false;
@@ -1962,6 +2030,22 @@ void CPlayer::Reset_Action()
 	m_bSK04_Charging = false;
 	m_bSK05 = false;
 	m_bSK06 = false;
+}
+
+void CPlayer::CamLockOn(CGameObject * pGameObject , OUT _bool& bLock)
+{
+	if (pGameObject == nullptr)
+		return;
+
+	if (m_bCamLock)
+		bLock = true;
+	else
+		bLock = false;
+
+	_float fDistance =	_float3::Distance(pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+
+	if (m_bCamLock && fabsf(fDistance) > 2.f)
+		m_pTransformCom->LookAt(pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 }
 
 _bool CPlayer::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
@@ -2038,6 +2122,44 @@ _bool CPlayer::CheckFinish_Skill6()
 _bool CPlayer::CheckFinish_V_DEF()
 {
 	return AnimFinishChecker(PLAYER_V_DEF, 0.8);
+}
+
+void CPlayer::AdjustDamage(_float fDamage)
+{
+	if (!m_bImpossibleDamaged)
+	{
+		_float fRealDamage = fDamage - m_fDefence;
+
+		if (fRealDamage < 0)
+			fRealDamage = 0;
+
+		m_fHp -= fRealDamage;
+
+		if (m_fHp < 0)
+			m_fHp = 0;
+		// 0보다 아래면 죽음
+
+		m_bImpossibleDamaged = true;
+	}
+}
+
+void CPlayer::AdjustSkillDamage(_float fDamage)
+{
+	if (!m_bImpossibleSkillDamaged)
+	{
+		_float fRealDamage = fDamage - m_fDefence;
+
+		if (fRealDamage < 0)
+			fRealDamage = 0;
+
+		m_fHp -= fRealDamage;
+
+		if (m_fHp < 0)
+			m_fHp = 0;
+		// 0보다 아래면 죽음
+
+		m_bImpossibleSkillDamaged = true;
+	}
 }
 
 HRESULT CPlayer::SetUp_Parts()
@@ -2263,6 +2385,185 @@ HRESULT CPlayer::SetUp_Effects()
 	return S_OK;
 }
 
+HRESULT CPlayer::SetUp_UI()
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pUI = nullptr;
+
+	CSkillChargingUI::SKILLICONDESC SkillIconDesc;
+	ZeroMemory(&SkillIconDesc, sizeof(CSkillChargingUI::SKILLICONDESC));
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = -300.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 7;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = -200.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 1;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = -100.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 5;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = 100.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 2;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = 200.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 3;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = 300.f;
+	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.iTexNum = 8;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.7f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = -300.f;
+	SkillIconDesc.fY = -150.f;
+	SkillIconDesc.iTexNum = 11;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 75.f;
+	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fX = 300.f;
+	SkillIconDesc.fY = -150.f;
+	SkillIconDesc.iTexNum = 9;
+	SkillIconDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	CProgressBarUI::PROGRESSBARDESC progressBarDesc;
+	ZeroMemory(&progressBarDesc, sizeof(CProgressBarUI::PROGRESSBARDESC));
+
+	progressBarDesc.fAmount = 1.f;
+	progressBarDesc.fSizeX = 500.f;
+	progressBarDesc.fSizeY = 40.f;
+	progressBarDesc.fX = -300.f;
+	progressBarDesc.fY = -250.f;
+	progressBarDesc.iAlbedoTexNum = 3;
+	progressBarDesc.iFillTexNum = 3;
+	progressBarDesc.iBackTexNum = 4;
+	progressBarDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ProgressBarUI"), &progressBarDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	progressBarDesc.fAmount = 1.f;
+	progressBarDesc.fSizeX = 500.f;
+	progressBarDesc.fSizeY = 40.f;
+	progressBarDesc.fX = 300.f;
+	progressBarDesc.fY = -250.f;
+	progressBarDesc.iAlbedoTexNum = 2;
+	progressBarDesc.iFillTexNum = 2;
+	progressBarDesc.iBackTexNum = 4;
+	progressBarDesc.iPassIndex = 1;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ProgressBarUI"), &progressBarDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 HRESULT CPlayer::SetUp_Components()
 {
 	/* For.Com_Renderer */
@@ -2374,23 +2675,6 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	/* For.Lights */
-	const LIGHTDESC* pLightDesc = pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
-		return E_FAIL;
-	//
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -2436,6 +2720,11 @@ void CPlayer::Free()
 		Safe_Release(pEffect);
 
 	m_PlayerEffects.clear();
+
+	for (auto& pUI : m_PlayerUI)
+		Safe_Release(pUI);
+
+	m_PlayerUI.clear();
 
 	for (_uint i = 0; i < MODEL_END; ++i)
 		Safe_Release(m_pModelCom[i]);

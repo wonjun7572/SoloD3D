@@ -46,13 +46,17 @@ sampler AlphaMaskWrapSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
+	float3		vTangent : TANGENT;
 };
 
 struct VS_OUT
 {
 	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
+	float4		vTangent : TANGENT;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -65,15 +69,18 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
-
+	Out.vTangent = (vector)0.f;
 	return Out;
 }
 
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
+	float4		vTangent : TANGENT;
 };
 
 struct PS_OUT
@@ -149,7 +156,6 @@ PS_OUT MeshEffectWithAlphaMaskWrapPS(PS_IN In)
 
 	return Out;
 }
-
 
 technique11 DefaultTechnique
 {

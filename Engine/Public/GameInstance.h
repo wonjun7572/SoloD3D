@@ -120,6 +120,7 @@ private:
 	class CLight_Manager*		m_pLightMgr = nullptr;
 	class CFrustum*				m_pFrustum = nullptr;
 	class CSound_Manager*		m_pSoundMgr = nullptr;
+	class CTarget_Manager*		m_pTargetMgr = nullptr;
 
 public: // Release_Engine
 	static void Release_Engine();

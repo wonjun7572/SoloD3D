@@ -18,11 +18,6 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 	if (FAILED(__super::Init_Prototype()))
 		return E_FAIL;
 
-	m_pSpeeds = new _double[iNumInstance];
-
-	for (_uint i = 0; i < iNumInstance; ++i)
-		m_pSpeeds[i] = (rand() % 5 + 1.0) * 0.1f;
-
 	m_iNumInstance = iNumInstance;
 	m_iIndexCountPerInstance = 1;
 	m_iNumVertexBuffers = 2;
@@ -107,7 +102,7 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);
 		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
 		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		pInstanceVertices[i].vPosition = _float4((rand() % 5 * 0.1f), 0.f, (rand() % 5 * 0.1f), 1.f);
+		pInstanceVertices[i].vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -132,14 +127,6 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_double TimeDelta)
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
-
-	for (_uint i = 0; i < m_iNumInstance; ++i)
-	{
-		((VTXMATRIX*)SubResource.pData)[i].vPosition.y -= static_cast<float>(m_pSpeeds[i] * TimeDelta);
-
-		if (((VTXMATRIX*)SubResource.pData)[i].vPosition.y < -1.f)
-			((VTXMATRIX*)SubResource.pData)[i].vPosition.y = 1.f;
-	}
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 
