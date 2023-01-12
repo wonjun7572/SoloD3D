@@ -5,6 +5,8 @@
 #include "ProgressBarUI.h"
 #include "PlayerCamera.h"
 #include "Effect_Rect.h"
+#include "DamageFontUI.h"
+#include "MonsterNameUI.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -57,9 +59,6 @@ HRESULT CMonster::Init(void * pArg)
 
 	SetUp_FSM();
 
-	if (FAILED(SetUP_UI()))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -81,6 +80,9 @@ void CMonster::Tick(_double TimeDelta)
 
 	for (auto& pUI : m_MonsterUI)
 		pUI->Tick(TimeDelta);
+	
+	for (auto& pDamageFont : m_MonsterDamageFontUI)
+		pDamageFont->Tick(TimeDelta);
 
 	UI_Tick(TimeDelta);
 }
@@ -123,6 +125,27 @@ void CMonster::Late_Tick(_double TimeDelta)
 			pUI->Late_Tick(TimeDelta);
 	}
 
+	for (auto iter = m_MonsterDamageFontUI.begin(); iter != m_MonsterDamageFontUI.end();)
+	{
+		if ((*iter) != nullptr)
+		{
+			if ((*iter)->Get_Dead() == true)
+			{
+				Safe_Release(*iter);
+				iter = m_MonsterDamageFontUI.erase(iter);
+			}
+			else
+			{
+				(*iter)->Late_Tick(TimeDelta);
+				iter++;
+			}
+		}
+		else
+		{
+			iter++;
+		}
+	}
+
 	m_Monsters.clear();
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -132,17 +155,6 @@ HRESULT CMonster::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
-
-	if (m_bUIOn)
-	{
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		
-		pGameInstance->Render_Font(TEXT("Font_Comic"), m_strObjName.c_str(), m_vMonsterNamePos, 0.f, m_vMonsterNameScale, XMVectorSet(1.f, 1.f, 0.f, 1.f));
-		
-		pGameInstance->Render_Font(TEXT("Font_Comic"), m_strDamage.c_str(), _float2(m_vMonsterNamePos.x - 100.f, m_vMonsterNamePos.y + 200.f), 0.f, m_vMonsterNameScale, XMVectorSet(1.f, 0.f, 0.f, 1.f));
-
-		RELEASE_INSTANCE(CGameInstance);
-	}
 	
 	return S_OK;
 }
@@ -174,6 +186,24 @@ HRESULT CMonster::SetUP_UI()
 	m_MonsterUI.push_back(pUI);
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_AimUI"), &progressBarDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_MonsterUI.push_back(pUI);
+
+	CMonsterNameUI::NAMEFONT NameFontDesc;
+
+	wcscpy_s(NameFontDesc.szName, MAX_PATH, m_strObjName.c_str());
+	wcscpy_s(NameFontDesc.szFontName, MAX_PATH, L"");
+	NameFontDesc.vColor = _float4(1.f, 1.f, 0.f, 1.f);
+
+	NameFontDesc.fX = m_vMonsterNamePos.x;
+	NameFontDesc.fY = m_vMonsterNamePos.y;
+	NameFontDesc.fSizeX = m_vMonsterNameScale.x;
+	NameFontDesc.fSizeY = m_vMonsterNameScale.y;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_MonsterNameFontUI"), &NameFontDesc);
 
 	if (nullptr == pUI)
 		return E_FAIL;
@@ -251,13 +281,34 @@ void CMonster::AdjustSetDamage()
 {
 	if (!m_bImpossibleDamaged)
 	{
+
 		_float fRealDamage = m_fPlayerAttack - m_fDefence;
 
 		if (fRealDamage < 0.f)
 			fRealDamage = 0.f;
 
-		m_strDamage = to_wstring((int)fRealDamage);
-		
+		CDamageFontUI::DAMAGEFONT damageFontDesc;
+
+		wcscpy_s(damageFontDesc.szDamage, MAX_PATH, to_wstring((_int)(fRealDamage)).c_str());
+		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
+		damageFontDesc.vColor = _float4(0.3f, 1.f, 0.f, 1.f);
+
+		damageFontDesc.fX = 650.f + CMathUtils::GetRandomFloat(0.f, 200.f);
+		damageFontDesc.fY = 350.f + CMathUtils::GetRandomFloat(0.f, 200.f);
+		damageFontDesc.fSizeX = 50.f;
+		damageFontDesc.fSizeY = 50.f;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
+		CGameObject* pUI = nullptr;
+
+		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DamageFontUI"), &damageFontDesc);
+
+		if (nullptr != pUI)
+			m_MonsterDamageFontUI.push_back(pUI);
+
+		RELEASE_INSTANCE(CGameInstance);
+
 		m_fHp -= fRealDamage;
 
 		if (m_fHp < 0.f)
@@ -277,8 +328,31 @@ void CMonster::AdjustSetDamageToSkill()
 		if (fRealDamage < 0.f)
 			fRealDamage = 0.f;
 
-		m_strDamage = to_wstring((int)fRealDamage);
+		CDamageFontUI::DAMAGEFONT damageFontDesc;
+
+		wcscpy_s(damageFontDesc.szDamage, MAX_PATH, to_wstring((_int)(fRealDamage)).c_str());
+		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
+
+		damageFontDesc.vColor = _float4(1.f, 0.f, 0.17f, 1.f);
+
+		// 어떤 식으로 위치를 잡아 줄지
+		damageFontDesc.fX = 650.f + CMathUtils::GetRandomFloat(0.f, 200.f);
+		damageFontDesc.fY = 350.f + CMathUtils::GetRandomFloat(0.f, 200.f);
+		damageFontDesc.fSizeX = 50.f;
+		damageFontDesc.fSizeY = 50.f;
 		
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
+
+		CGameObject* pUI = nullptr;
+
+		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DamageFontUI"), &damageFontDesc);
+
+		if (nullptr != pUI)
+			m_MonsterDamageFontUI.push_back(pUI);
+
+		RELEASE_INSTANCE(CGameInstance);
+
 		m_fHp -= fRealDamage;
 
 		if (m_fHp < 0.f)
@@ -517,6 +591,11 @@ void CMonster::Free()
 
 	m_MonsterUI.clear();
 	m_Monsters.clear();
+
+	for (auto& pUI : m_MonsterDamageFontUI)
+		Safe_Release(pUI);
+
+	m_MonsterDamageFontUI.clear();
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

@@ -105,14 +105,14 @@ protected:
 	
 	vector<CGameObject*>	m_MonsterUI;
 
+	vector<CGameObject*>	m_MonsterDamageFontUI;
+
 	_float2					m_vMonsterNamePos;
 	_float2					m_vMonsterNameScale;
 
 	_bool					m_bUIOn = false;
 
 	vector<CMonster*>		m_Monsters;
-
-	wstring					m_strDamage;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

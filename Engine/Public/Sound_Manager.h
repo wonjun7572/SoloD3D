@@ -30,6 +30,7 @@ private:
 
 public:
 	virtual void Free() override;
+	
 	/* 자동 채널 사운드 종료 시 채널 제거, 3D 사운드일 경우 거리 계산하여 음량 조절 업데이트 함수 */
 	void Tick(double TimeDelta);
 

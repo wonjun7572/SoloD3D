@@ -29,6 +29,19 @@ HRESULT CCustomFont::Render(const _tchar* pText, const _float2& vPosition, _floa
 	return S_OK;
 }
 
+HRESULT CCustomFont::Render(const _tchar * pText, _fvector vPosition, _fvector vColor, _float fRadian, _fvector vScale)
+{
+	m_pContext->GSSetShader(nullptr, nullptr, 0);
+
+	m_pSprite->Begin();
+
+	m_pFont->DrawString(m_pSprite, pText, vPosition, vColor, fRadian, _float2(0.f, 0.f), vScale);
+
+	m_pSprite->End();
+
+	return S_OK;
+}
+
 CCustomFont * CCustomFont::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & pFontFilePath)
 {
 	CCustomFont*	pInstance = new CCustomFont(pDevice, pContext);

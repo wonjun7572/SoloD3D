@@ -28,6 +28,8 @@ HRESULT CNorAtk_Trail2::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(35.f, 0.f, 80.f, 1.f));
+
 	return S_OK;
 }
 

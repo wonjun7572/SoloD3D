@@ -307,6 +307,10 @@
     <ClInclude Include="NorAtk_Trail1.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DamageFontUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterNameUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -475,6 +479,10 @@
     <ClCompile Include="NorAtk_Trail1.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DamageFontUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterNameUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

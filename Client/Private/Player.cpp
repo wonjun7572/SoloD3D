@@ -87,7 +87,9 @@ void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	Movement(TimeDelta);
+	if(!m_bCamChange)
+		Movement(TimeDelta);
+	
 	m_pFSM->Tick(TimeDelta);
 	
 	for (_uint i = PART_UPPER; i < PART_END; ++i)
@@ -433,7 +435,19 @@ void CPlayer::SetUp_FSM()
 
 		/* For. run */
 		.AddState("Run")
+		.OnStart([this]() 
+	{
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"WalkSound.ogg", 0.5f, true, SOUND_PLAYER);
+		RELEASE_INSTANCE(CGameInstance);
+	})
 		.Tick(this, &CPlayer::Run_Tick)
+		.OnExit([this]() 
+	{
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Stop_Sound(SOUND_PLAYER);
+		RELEASE_INSTANCE(CGameInstance);
+	})
 		.AddTransition("Run to Move", "Move")
 		.Predicator([this]()
 	{
@@ -574,6 +588,9 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_ATK_01);
 		Set_Anim(PLAYER_ATK_01);
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"common_swing_lv2.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -615,6 +632,9 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_ATK_02);
 		Set_Anim(PLAYER_ATK_02);
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"common_swing_lv3.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -657,6 +677,9 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_ATK_03);
 		Set_Anim(PLAYER_ATK_03);
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"common_swing_lv4.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{

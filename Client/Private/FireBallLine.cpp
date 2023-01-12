@@ -28,6 +28,8 @@ HRESULT CFireBallLine::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(40.f, 0.f, 83.f, 1.f));
+
 	return S_OK;
 }
 

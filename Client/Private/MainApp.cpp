@@ -36,13 +36,11 @@ HRESULT CMainApp::Init()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/131.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/CormorantGaramond.spritefont"))))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
-
-	m_pGameInstance->Play_Sound(L"240. L10 Hiercon Capital Palace.mp3", 1.f, true);
 
 	return S_OK;
 }

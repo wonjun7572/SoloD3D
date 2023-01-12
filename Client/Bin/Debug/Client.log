@@ -1,3 +1,102 @@
-﻿  Monster.cpp
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_MeshEffect.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_ProgressBar.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_SkillProgressUI.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_TextureEffect.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxAnimModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxCubeTex.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxNorTex.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxPointInstancing.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxRectInstancing.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\Shader_VtxTex.cso
+  stdafx.cpp
+  NorAtk_Trail1.cpp
+  Client.cpp
+  ZombieA.cpp
+  Wing.cpp
+  Weapon.cpp
+  Upper.cpp
+  TrollQ.cpp
+  TrollA.cpp
+  TownA.cpp
+  ThunderWave.cpp
+  TestSphere.cpp
+  TestCylinder.cpp
+  TestCube.cpp
+  Terrain.cpp
+  Stair.cpp
+  Sky.cpp
+  SkillChargingUI.cpp
+  SkeletonWarrior.cpp
+  Shoulder.cpp
+  ProgressBarUI.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  PlayerCamera.cpp
+  Player.cpp
+  Parts.cpp
+  NorAtk_Trail3.cpp
+  NorAtk_Trail2.cpp
+  MonsterNameUI.cpp
+  Monster.cpp
+  Medieval_City.cpp
+  MainApp.cpp
+  Lower.cpp
+  LogoUI.cpp
+  LoadingUI.cpp
+  Loader.cpp
+  Line_Aura.cpp
+  Level_Tool.cpp
+  Level_Logo.cpp
+  Level_Loading.cpp
+  Level_ChapTwo.cpp
+  Level_ChapThree.cpp
+  Level_ChapOne.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Helmet.cpp
+  Glove.cpp
+  ForkLift.cpp
+  FireBallLine.cpp
+  EmptyGameObject.cpp
+  Effect_Rect.cpp
+  Effect_Point.cpp
+  Effect_Mesh.cpp
+  Effect.cpp
+  Demon.cpp
+  DamageFontUI.cpp
+  Camera_Dynamic.cpp
+  BridgeCastle.cpp
+  Boots.cpp
+  Belt.cpp
+  BackGround.cpp
+  Anor.cpp
+  코드를 생성하고 있습니다...
+DirectXTKd.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(ScreenGrab.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(ScreenGrab.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(SimpleMath.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SimpleMath.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

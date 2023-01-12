@@ -28,9 +28,10 @@ HRESULT CLevel_Logo::Init()
 	CGameInstance::GetInstance()->Add_ImguiObject(CImGui_ProtoEditor::Create(m_pDevice, m_pContext));
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
 
-	//CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	//pGameInstance->LoadData(LEVEL_LOGO, TEXT("../Bin/MapData/LOGO_TRANSFORM.dat"));
-	//Safe_Release(pGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Stop_Sound(SOUND_BGM);
+	pGameInstance->Play_Sound(L"Logo_BGM_00.mp3", 0.3f, true, SOUND_BGM);
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

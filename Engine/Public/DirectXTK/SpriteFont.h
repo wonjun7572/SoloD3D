@@ -76,8 +76,7 @@ namespace DirectX
             float YOffset;
             float XAdvance;
         };
-
-
+		
     private:
         // Private implementation.
         class Impl;

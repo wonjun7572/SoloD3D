@@ -116,6 +116,7 @@ void CSound_Manager::Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool b
 	CSound* pUseSound = Pair->second;
 		
 	FMOD_System_PlaySound(m_pSystem, pUseSound->GetSoundPtr(), nullptr, FALSE, &pUseChannel);
+	
 	if(bIsBGM)
 		FMOD_Channel_SetMode(pUseChannel, FMOD_LOOP_NORMAL);
 	

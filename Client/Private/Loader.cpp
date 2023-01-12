@@ -58,6 +58,8 @@
 
 #include "SkillChargingUI.h"
 #include "ProgressBarUI.h"
+#include "DamageFontUI.h"
+#include "MonsterNameUI.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -680,6 +682,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	/* For. Prototype_GameObject_FireBallLine*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBallLine"), CFireBallLine::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
 	{
 		/* For. Prototype_GameObject_SkillChargingUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkillChargingUI"), CSkillChargingUI::Create(m_pDevice, m_pContext))))
@@ -692,11 +695,15 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Prototype_GameObject_AimUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AimUI"), CEffect_Rect::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
-	}
+		
+		/* For. Prototype_GameObject_DamageFontUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DamageFontUI"), CDamageFontUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_DamageFont*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DamageFont"), Effect_Point::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_MonsterNameFontUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterNameFontUI"), CMonsterNameUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
 
 	m_strLoadingText = TEXT("·Îµù³¡. ");
 

@@ -21,7 +21,7 @@ HRESULT CLevel_Loading::Init(LEVEL eNextLevelID)
 		return E_FAIL;
 
 	m_eNextLevelID = eNextLevelID;
-	
+
 	/* eNextLevelID를 위한 자원을 쓰레드에게 준비해라. */
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, eNextLevelID);
 	if (nullptr == m_pLoader)
@@ -31,6 +31,11 @@ HRESULT CLevel_Loading::Init(LEVEL eNextLevelID)
 	/* 로딩바. 배경. 등등등. */
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Stop_Sound(SOUND_BGM);
+	pGameInstance->Play_Sound(L"Warploading.mp3", 0.3f, true, SOUND_BGM);
+	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
 }

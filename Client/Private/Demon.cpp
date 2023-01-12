@@ -38,7 +38,7 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 20 + 95.f, 0.f, 100.f, 1.f));
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
@@ -59,6 +59,9 @@ HRESULT CDemon::Init(void * pArg)
 
 	m_vMonsterNamePos = _float2(720.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
+
+	if (FAILED(SetUP_UI()))
+		return E_FAIL;
 
 	return S_OK;
 }

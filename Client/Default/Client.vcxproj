@@ -181,6 +181,7 @@
     <ClInclude Include="..\public\BridgeCastle.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
+    <ClInclude Include="..\public\DamageFontUI.h" />
     <ClInclude Include="..\public\Demon.h" />
     <ClInclude Include="..\Public\Effect.h" />
     <ClInclude Include="..\Public\Effect_Mesh.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Medieval_City.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\MonsterNameUI.h" />
     <ClInclude Include="..\Public\NorAtk_Trail2.h" />
     <ClInclude Include="..\Public\NorAtk_Trail3.h" />
     <ClInclude Include="..\public\Parts.h" />
@@ -241,6 +243,7 @@
     <ClCompile Include="..\private\Boots.cpp" />
     <ClCompile Include="..\private\BridgeCastle.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\DamageFontUI.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
     <ClCompile Include="..\Private\Effect.cpp" />
     <ClCompile Include="..\Private\Effect_Mesh.cpp" />
@@ -265,6 +268,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Medieval_City.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\MonsterNameUI.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail2.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail3.cpp" />
     <ClCompile Include="..\private\Parts.cpp" />

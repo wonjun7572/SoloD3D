@@ -49,6 +49,9 @@ HRESULT CZombieA::Init(void * pArg)
 	m_vMonsterNamePos = _float2(720.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
+	if (FAILED(SetUP_UI()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
