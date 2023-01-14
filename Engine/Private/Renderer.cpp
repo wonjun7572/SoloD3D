@@ -95,6 +95,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGame
 	return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CRenderer::Add_DebugRenderGroup(CComponent * pComponent)
 {
 	if (nullptr == pComponent)
@@ -106,6 +107,7 @@ HRESULT CRenderer::Add_DebugRenderGroup(CComponent * pComponent)
 
 	return S_OK;
 }
+#endif
 
 HRESULT CRenderer::Draw_RenderGroup()
 {
@@ -277,6 +279,7 @@ HRESULT CRenderer::Render_UI()
 	return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CRenderer::Render_DebugObject()
 {
 	for (auto& pComponent : m_DebugObject)
@@ -291,6 +294,7 @@ HRESULT CRenderer::Render_DebugObject()
 
 	return S_OK;
 }
+#endif
 
 CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

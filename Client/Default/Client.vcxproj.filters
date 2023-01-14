@@ -127,6 +127,24 @@
     <Filter Include="GameObject\Effect">
       <UniqueIdentifier>{cc92dde6-9a10-4f9f-8e44-4b21fad3200c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Ally">
+      <UniqueIdentifier>{5a311c6e-6473-42d4-b319-3e46eae94fe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\Abelardo">
+      <UniqueIdentifier>{e02b9779-cf64-4f63-b919-68dfb207f79f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\BalianBollwerk">
+      <UniqueIdentifier>{249597b9-d32b-4c80-a7a4-cf2c4aea6bf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\Chinuwa">
+      <UniqueIdentifier>{6332daf9-7f5e-4944-9013-3f18e41d26ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\Chitata">
+      <UniqueIdentifier>{f7058fee-efcf-42f5-a6d0-5ddb653a6d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\Delilah">
+      <UniqueIdentifier>{4145cac5-e92c-46ad-b39a-fb65d5ce5878}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -310,7 +328,27 @@
     <ClInclude Include="..\public\DamageFontUI.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MonsterNameUI.h" />
+    <ClInclude Include="..\public\Ally.h">
+      <Filter>GameObject\Ally</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterNameUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Abelardo.h">
+      <Filter>GameObject\Ally\Abelardo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BalianBollwerk.h">
+      <Filter>GameObject\Ally\BalianBollwerk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Chinuwa.h">
+      <Filter>GameObject\Ally\Chinuwa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Chitata.h">
+      <Filter>GameObject\Ally\Chitata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Delilah.h">
+      <Filter>GameObject\Ally\Delilah</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -482,7 +520,27 @@
     <ClCompile Include="..\private\DamageFontUI.cpp">
       <Filter>GameObject\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MonsterNameUI.cpp" />
+    <ClCompile Include="..\private\Ally.cpp">
+      <Filter>GameObject\Ally</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterNameUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Abelardo.cpp">
+      <Filter>GameObject\Ally\Abelardo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BalianBollwerk.cpp">
+      <Filter>GameObject\Ally\BalianBollwerk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chinuwa.cpp">
+      <Filter>GameObject\Ally\Chinuwa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Chitata.cpp">
+      <Filter>GameObject\Ally\Chitata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Delilah.cpp">
+      <Filter>GameObject\Ally\Delilah</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

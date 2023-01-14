@@ -63,6 +63,10 @@ public:
 	_bool		Get_UIOn() { return m_bUIOn; }
 
 protected:
+	virtual	HRESULT SetUp_Components() = 0;
+	virtual HRESULT SetUp_ShaderResources() = 0;
+
+protected:
 	/*피격을 위한 변수*/
 	_bool					m_bFrontDamaged	= false;
 	_bool					m_bBackDamaged	= false;

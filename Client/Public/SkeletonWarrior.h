@@ -64,8 +64,8 @@ private:
 	void AdditiveAnim(_double TimeDelta);
 
 private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_Components() override;
+	HRESULT SetUp_ShaderResources() override;
 	
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);

@@ -174,14 +174,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Define.h" />
+    <ClInclude Include="..\public\Abelardo.h" />
+    <ClInclude Include="..\public\Ally.h" />
     <ClInclude Include="..\public\Anor.h" />
     <ClInclude Include="..\Public\BackGround.h" />
+    <ClInclude Include="..\public\BalianBollwerk.h" />
     <ClInclude Include="..\public\Belt.h" />
     <ClInclude Include="..\public\Boots.h" />
     <ClInclude Include="..\public\BridgeCastle.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
+    <ClInclude Include="..\public\Chinuwa.h" />
+    <ClInclude Include="..\public\Chitata.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
     <ClInclude Include="..\public\DamageFontUI.h" />
+    <ClInclude Include="..\public\Delilah.h" />
     <ClInclude Include="..\public\Demon.h" />
     <ClInclude Include="..\Public\Effect.h" />
     <ClInclude Include="..\Public\Effect_Mesh.h" />
@@ -237,13 +243,19 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Abelardo.cpp" />
+    <ClCompile Include="..\private\Ally.cpp" />
     <ClCompile Include="..\private\Anor.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
+    <ClCompile Include="..\private\BalianBollwerk.cpp" />
     <ClCompile Include="..\private\Belt.cpp" />
     <ClCompile Include="..\private\Boots.cpp" />
     <ClCompile Include="..\private\BridgeCastle.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\private\Chinuwa.cpp" />
+    <ClCompile Include="..\private\Chitata.cpp" />
     <ClCompile Include="..\private\DamageFontUI.cpp" />
+    <ClCompile Include="..\private\Delilah.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
     <ClCompile Include="..\Private\Effect.cpp" />
     <ClCompile Include="..\Private\Effect_Mesh.cpp" />

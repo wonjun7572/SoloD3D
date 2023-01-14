@@ -19,7 +19,9 @@ public:
 
 public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
+#ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
+#endif
 	HRESULT Draw_RenderGroup();
 
 private:
@@ -45,8 +47,10 @@ private:
 	HRESULT Render_AlphaBlend();
 	HRESULT Render_UI();
 
+#ifdef _DEBUG
 private:
 	HRESULT Render_DebugObject();
+#endif
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
