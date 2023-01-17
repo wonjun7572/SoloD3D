@@ -69,6 +69,8 @@ private:
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
 
+	_double m_AttackDelayTime = 0.0;
+	_int	m_iRandAttack = 0;
 public:
 	static CDelilah* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

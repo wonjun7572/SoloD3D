@@ -57,8 +57,6 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 void Client::CLevel_ChapTwo::Late_Tick(_double TimeDelta)
 {
 	CLevel::Late_Tick(TimeDelta);
-
-	// 챕터3로 넘어가야함 보스맵
 }
 
 HRESULT Client::CLevel_ChapTwo::Render()
@@ -127,7 +125,7 @@ HRESULT CLevel_ChapTwo::Ready_Ligths()
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -161,9 +159,6 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_GameObject(CGameInstance::Get_StaticLevelIndex(), pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-	//	return E_FAIL;
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -193,12 +188,6 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Effect_Rect"))))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Effect_Point"))))
-	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

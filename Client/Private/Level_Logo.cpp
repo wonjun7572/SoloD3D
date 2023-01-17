@@ -69,20 +69,6 @@ HRESULT CLevel_Logo::Render()
 
 void CLevel_Logo::ImguiRenderTab()
 {
-	/*ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-	if (ImGui::Button("Transform_Save"))
-	{
-		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-		pGameInstance->SaveData(LEVEL_LOGO, TEXT("../Bin/MapData/LOGO_TRANSFORM.dat"));
-		Safe_Release(pGameInstance);
-	}
-	if (ImGui::Button("go"))
-	{
-		CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-		pGameInstance->Clone_GameObject(LEVEL_LOGO, TEXT("Layer_UI"), TEXT("Prototype_GameObject_EnterKeyUI"));
-		Safe_Release(pGameInstance);
-	}*/
 }
 
 HRESULT CLevel_Logo::Ready_Layer_UI(const wstring& pLayerTag)

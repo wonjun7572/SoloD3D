@@ -85,6 +85,14 @@ HRESULT CWeapon::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+	
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
 		m_pModelCom->Render(m_pShaderCom, i, 1);
 	}
@@ -112,11 +120,27 @@ HRESULT CWeapon::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom)))
-		return E_FAIL;
+	//if (g_LEVEL == LEVEL_CHAP1)
+	//{
+	//	/* For.Com_Model */
+	//	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"), TEXT("Com_Model"),
+	//		(CComponent**)&m_pModelCom)))
+	//		return E_FAIL;
+	//}
+	if (g_LEVEL == LEVEL_CHAP1 || g_LEVEL == LEVEL_CHAP2)
+	{
+		/* For.Com_Model */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword_A"), TEXT("Com_Model"),
+			(CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		/* For.Com_Model */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword_B"), TEXT("Com_Model"),
+			(CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
 
 	/* For.Com_Collider */
 	CCollider::COLLIDERDESC			ColliderDesc;

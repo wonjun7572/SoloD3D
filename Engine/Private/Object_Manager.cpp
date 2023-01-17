@@ -429,8 +429,7 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 
 	if (iter == m_pLayers[iLevel].end())
 		return;
-
-
+	
 	CLayer* pLayer = iter->second;
 	DWORD dwByte = 0;
 
@@ -443,8 +442,7 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 		strcpy_s(szName, 256, typeid(*obj).name());
 		WriteFile(hFile, &szName, 256, &dwByte, nullptr);
 	}
-
-
+	
 	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		auto iter = obj->GetComponents().find(TEXT("Com_Transform"));
@@ -456,7 +454,6 @@ void CObject_Manager::SaveMapObjectData(_uint iLevel, const wstring & pLayerTag,
 		WriteFile(hFile, &worldMatrix, sizeof(_matrix), &dwByte, nullptr);
 	}
 	
-
 	for (auto& obj : *(pLayer->GetGameObjects()))
 	{
 		if (obj->Get_ModelTag() != nullptr)

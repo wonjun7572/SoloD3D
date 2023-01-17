@@ -49,6 +49,12 @@ HRESULT CDelilah::Init(void * pArg)
 void CDelilah::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(TimeDelta);
+
+	m_pModelCom->Play_Animation(TimeDelta);
+
 	AdditiveAnim(TimeDelta);
 }
 
@@ -71,6 +77,14 @@ HRESULT CDelilah::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+	
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
@@ -104,22 +118,98 @@ void CDelilah::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(DELILAH_Idle_C);
 	})
-		.AddTransition("Idle to Chase", "Chase")
+		.AddTransition("Idle to Player_Chase", "Player_Chase")
 		.Predicator([this]()
 	{
-		return m_bChase;
+		return m_bChase && !m_bMonsterChase;
+	})
+		.AddTransition("Idel to Monster_Chase", "Monster_Chase")
+		.Predicator([this]()
+	{
+		return m_bMonsterChase;
 	})
 
-		.AddState("Chase")
+		.AddState("Player_Chase")
 		.Tick([this](_double TimeDelta)
 	{
 		m_pModelCom->Set_AnimationIndex(DELILAH_Run_F);
 		m_pTransformCom->ChaseAndLookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
+
+		if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 15.f)
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+			m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		}
 	})
-		.AddTransition("Chase to Idle", "Idle")
+		.AddTransition("Player_Chase to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bChase;
+		return !m_bChase && !m_bMonsterChase;
+	})
+		.AddTransition("Player_Chase to Monster_Chase", "Monster_Chase")
+		.Predicator([this]()
+	{
+		return m_bMonsterChase;
+	})
+
+		.AddState("Monster_Chase")
+		.Tick([this](_double TimeDelta)
+	{
+	})
+		.AddTransition("Monster_Chase to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return !m_bMonsterChase;
+	})
+		.AddTransition("Monster_Chase to Attack", "Attack")
+		.Predicator([this]()
+	{
+		return m_AttackDelayTime > 0.1;
+	})
+
+		.AddState("Attack")
+		.OnStart([this]()
+	{
+		m_iRandAttack = rand() % 5;
+		
+		if (m_iRandAttack == 0)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DELILAH_ATK_01);
+			m_pModelCom->Set_AnimationIndex(DELILAH_ATK_01);
+		}
+		else if (m_iRandAttack == 1)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DELILAH_ATK_02);
+			m_pModelCom->Set_AnimationIndex(DELILAH_ATK_02);
+		}
+		else if (m_iRandAttack == 2)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DELILAH_SK_Firing_01);
+			m_pModelCom->Set_AnimationIndex(DELILAH_SK_Firing_01);
+		}
+		else if (m_iRandAttack == 3)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DELILAH_SK_Firing_02);
+			m_pModelCom->Set_AnimationIndex(DELILAH_SK_Firing_02);
+		}
+		else if (m_iRandAttack == 4)
+		{
+			m_pModelCom->Reset_AnimPlayTime(DELILAH_SK_Firing_03);
+			m_pModelCom->Set_AnimationIndex(DELILAH_SK_Firing_03);
+		}
+	})
+		.OnExit([this]()
+	{
+		m_AttackDelayTime = 0.0;
+	})
+		.AddTransition("Attack to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(DELILAH_SK_Firing_01) ||
+			AnimFinishChecker(DELILAH_SK_Firing_02) || 
+			AnimFinishChecker(DELILAH_SK_Firing_03) || 
+			AnimFinishChecker(DELILAH_ATK_01) ||
+			AnimFinishChecker(DELILAH_ATK_02);
 	})
 
 		.Build();

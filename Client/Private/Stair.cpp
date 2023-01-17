@@ -64,6 +64,14 @@ HRESULT CStair::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+	
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
 		m_pModelCom->Render(m_pShaderCom, i);
 	}

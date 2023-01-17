@@ -106,10 +106,8 @@ protected:
 	_double					m_dDeadTime = 0;
 
 	vector<CCollider*>		m_MonsterColliders;
-	
 	vector<CGameObject*>	m_MonsterUI;
-
-	vector<CGameObject*>	m_MonsterDamageFontUI;
+	vector<CGameObject*>	m_MonsterDamageFontUI;                            
 
 	_float2					m_vMonsterNamePos;
 	_float2					m_vMonsterNameScale;

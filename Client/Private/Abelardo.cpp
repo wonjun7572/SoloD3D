@@ -49,6 +49,12 @@ HRESULT CAbelardo::Init(void * pArg)
 void CAbelardo::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(TimeDelta);
+
+	m_pModelCom->Play_Animation(TimeDelta);
+
 	AdditiveAnim(TimeDelta);
 }
 
@@ -71,6 +77,14 @@ HRESULT CAbelardo::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
@@ -104,24 +118,71 @@ void CAbelardo::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(ABELARDO_Idle_C);
 	})
-		.AddTransition("Idle to Chase" , "Chase")
+		.AddTransition("Idle to Player_Chase" , "Player_Chase")
 		.Predicator([this]()
 	{
-		return m_bChase;
+		return m_bChase && !m_bMonsterChase;
+	})
+		.AddTransition("Idel to Monster_Chase" ,  "Monster_Chase")
+		.Predicator([this]() 
+	{
+		return m_bMonsterChase;
 	})
 		
-		.AddState("Chase")
+		.AddState("Player_Chase")
 		.Tick([this](_double TimeDelta) 
 	{
 		m_pModelCom->Set_AnimationIndex(ABELARDO_Run_F);
 		m_pTransformCom->ChaseAndLookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
+	
+		if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 15.f)
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+			m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		}
 	})
-		.AddTransition("Chase to Idle", "Idle")
+		.AddTransition("Player_Chase to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bChase;
+		return !m_bChase && !m_bMonsterChase;
+	})
+		.AddTransition("Player_Chase to Monster_Chase", "Monster_Chase")
+		.Predicator([this]() 
+	{
+		return m_bMonsterChase;
 	})
 	
+		.AddState("Monster_Chase")
+		.Tick([this](_double TimeDelta) 
+	{
+	})
+		.AddTransition("Monster_Chase to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return !m_bMonsterChase;
+	})
+		.AddTransition("Monster_Chase to Attack", "Attack")
+		.Predicator([this]() 
+	{
+		return m_AttackDelayTime > 3.0;
+	})
+
+		.AddState("Attack")
+		.OnStart([this]() 
+	{
+		m_pModelCom->Reset_AnimPlayTime(ABELARDO_SK_Firing_01);
+		m_pModelCom->Set_AnimationIndex(ABELARDO_SK_Firing_01);
+	})
+		.OnExit([this]() 
+	{
+		m_AttackDelayTime = 0.0;
+	})
+		.AddTransition("Attack to Idle", "Idle")
+		.Predicator([this]() 
+	{
+		return AnimFinishChecker(ABELARDO_SK_Firing_01);
+	})
+
 		.Build();
 }
 

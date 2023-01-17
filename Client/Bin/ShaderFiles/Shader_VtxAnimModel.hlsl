@@ -8,6 +8,11 @@ matrix			g_BoneMatrices[256];
 
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
+texture2D		g_SpecularTexture;
+
+bool			g_HasSpecular;
+vector			g_vCamPosition;
+vector			g_vRimColor;
 
 struct VS_IN
 {
@@ -25,8 +30,10 @@ struct VS_OUT
 {
 	float4		vPosition : SV_POSITION;
 	float4		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
 	float4		vTangent : TANGENT;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -37,6 +44,9 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
+
+	float4 worldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	Out.vViewDir = normalize(worldPosition.xyz - g_vCamPosition.xyz);
 
 	float			fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
@@ -52,6 +62,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vTangent = (vector)0.f;
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
@@ -60,8 +71,10 @@ struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
 	float4		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
 	float4		vTangent : TANGENT;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
 };
 
 struct PS_OUT
@@ -69,6 +82,9 @@ struct PS_OUT
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
+	float4		vDepth : SV_TARGET2;
+	float4		vSpecular : SV_TARGET3;
+	float4		vRimColor : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -76,11 +92,30 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	
 	if (0.1f > vDiffuse.a)
 		discard;
 
+	vector		vSpecular = (vector)0.2f;
+	if (g_HasSpecular == true)
+	{
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		vSpecular = (vector)0.2f;
+	}
+
+	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 5.0f);
+	vector rimColor = g_vRimColor;
+	rimColor = rim * rimColor;
+
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
+	Out.vRimColor = rimColor;
+
 	return Out;
 }
 
@@ -89,11 +124,21 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 	PS_OUT         Out = (PS_OUT)0;
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-
 	Out.vDiffuse.a = Out.vDiffuse.a * 0.5f;
+	
+	vector		vSpecular = (vector)0.2f;
 
-	float Lx = 0;
-	float Ly = 0;
+	if (g_HasSpecular == true)
+	{
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		vSpecular = (vector)0.2f;
+	}
+
+	float		 Lx = 0;
+	float		 Ly = 0;
 
 	for (int y = -1; y <= 1; ++y)
 	{
@@ -118,12 +163,28 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 		Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV) * 0.3f;
 	}
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
+	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vRimColor = rimColor;
+
 	return Out;
 }
 
 PS_OUT PS_MAIN_BLOOM(PS_IN In)
 {
 	PS_OUT         Out = (PS_OUT)0;
+
+	vector		vSpecular = (vector)0.f;
+
+	if (g_HasSpecular == true)
+	{
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		vSpecular = (vector)0.f;
+	}
 
 	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 
@@ -156,6 +217,11 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 
 	Out.vDiffuse /= colorWeight;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
+	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vRimColor = rimColor;
+
 	return Out;
 }
 

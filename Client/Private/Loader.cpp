@@ -67,6 +67,8 @@
 #include "Chitata.h"
 #include "Delilah.h"
 
+#include "ConversationUI.h"
+
 unsigned int	g_LEVEL = 0;
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -461,32 +463,32 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 		}
 
 
-		///* For.Prototype_Component_Model_Sword*/
-		//PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
-		//	* XMMatrixRotationX(XMConvertToRadians(97.5f))
-		//	* XMMatrixRotationY(XMConvertToRadians(78.7f))
-		//	* XMMatrixRotationZ(XMConvertToRadians(1.f));
-		//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/TAX/TAX.model"), PivotMatrix))))
-		//	return E_FAIL;
-
 		/* For.Prototype_Component_Model_Sword*/
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
 			* XMMatrixRotationX(XMConvertToRadians(97.5f))
 			* XMMatrixRotationY(XMConvertToRadians(78.7f))
 			* XMMatrixRotationZ(XMConvertToRadians(1.f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/TAX/TAX.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For.Prototype_Component_Model_Sword_A*/
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
+			* XMMatrixRotationX(XMConvertToRadians(97.5f))
+			* XMMatrixRotationY(XMConvertToRadians(78.7f))
+			* XMMatrixRotationZ(XMConvertToRadians(1.f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword_A"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Weapon/A/TAX1007.model"), PivotMatrix))))
 			return E_FAIL;
 
-		///* For.Prototype_Component_Model_Sword*/
-		//PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
-		//	* XMMatrixRotationX(XMConvertToRadians(97.5f))
-		//	* XMMatrixRotationY(XMConvertToRadians(78.7f))
-		//	* XMMatrixRotationZ(XMConvertToRadians(1.f));
-		//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"),
-		//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Weapon/B/TAX0015.model"), PivotMatrix))))
-		//	return E_FAIL;
+		/* For.Prototype_Component_Model_Sword_B*/
+		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
+			* XMMatrixRotationX(XMConvertToRadians(97.5f))
+			* XMMatrixRotationY(XMConvertToRadians(78.7f))
+			* XMMatrixRotationZ(XMConvertToRadians(1.f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword_B"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Weapon/B/TAX0015.model"), PivotMatrix))))
+			return E_FAIL;
 
 	}
 
@@ -765,6 +767,10 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DamageFontUI"), CDamageFontUI::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 
+		/* For. Prototype_GameObject_ConversationUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ConversationUI"), CConversationUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
 		/* For. Prototype_GameObject_MonsterNameFontUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterNameFontUI"), CMonsterNameUI::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
@@ -805,11 +811,6 @@ HRESULT CLoader::Loading_ForChapter_2()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap2_Sky.png")))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Ocean_Height*/
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Ocean_Height"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
-	//	return E_FAIL;
-
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
@@ -836,36 +837,9 @@ HRESULT CLoader::Loading_ForChapter_2()
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Navigation_CHAP2.dat")))))
 		return E_FAIL;
 
-	// 스카이박스 수정해야하고 터레인 수정해야함 스테이지2 넘어가서는 터레인과 스카이박스 바꿔줄 예정
-
-	///* For.Prototype_GameObject_Sky*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky_Chap2"), CSky::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For. Prototype_GameObject_Terrain*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain_Chap2"), CTerrain::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For. Prototype_GameObject_PlayerCamera*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PlayerCamera_Chap2"), CPlayerCamera::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For. Prototype_GameObject_Effect_Rect*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect_Chap2"), CEffect_Rect::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For. Prototype_GameObject_Effect_Point*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point_Chap2"), Effect_Point::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For. Prototype_GameObject_Cube*/
-	//if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Cube_Chap2"), CTestCube::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
 	/* For. Prototype_GameObject_Medieval_City*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medieval_City"), CMedieval_City::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 
 	m_strLoadingText = TEXT("로딩끝. ");
 
@@ -880,44 +854,14 @@ HRESULT CLoader::Loading_ForChapter_3()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-		m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
-
-	/* For.Prototype_Component_Texture_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BMI_Terrain/Level1/Diffuse/TextureD_%d.dds"), 7))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Brush*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Brush"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Filter*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Filter"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap3_Change.dds"), 1))))
-		return E_FAIL;
+	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
 
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap3_Sky.png")))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Weapon_Effect*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Weapon_Effect"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/FX_blizzardDecal_01_TEX_KJS.png")))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Ocean_Height*/
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Ocean_Height"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Meshes/Ocean/T_LargeWaves_H.png"), 1))))
-	//	return E_FAIL;
-
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
-
-	/* For.Prototype_Component_VIBuffer_Terrain */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
-		return E_FAIL;
 
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 

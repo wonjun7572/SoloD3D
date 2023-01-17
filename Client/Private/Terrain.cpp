@@ -53,19 +53,6 @@ HRESULT	CTerrain::Ready_FilterBuffer()
 			}
 		}
 	}
-	else if (g_LEVEL == LEVEL_CHAP3)
-	{
-		m_pPixel = new _ulong[256 * 256];
-
-		for (_uint i = 0; i < 256; ++i)
-		{
-			for (_uint j = 0; j < 256; ++j)
-			{
-				_uint iIndex = i * 256 + j;
-				m_pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
-			}
-		}
-	}
 
 	return S_OK;
 }
@@ -645,7 +632,7 @@ HRESULT CTerrain::Render()
 		return E_FAIL;
 
 	m_pShaderCom->Begin(0);
-
+	
 	m_pVIBufferCom->Render();
 
 #ifdef _DEBUG
@@ -1148,33 +1135,6 @@ HRESULT CTerrain::SetUp_Components()
 
 		/* For.Com_Navigation */
 		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
-			(CComponent**)&m_pNavigationCom)))
-			return E_FAIL;
-	}
-	else if (g_LEVEL == LEVEL_CHAP3)
-	{
-		/* For.Com_VIBuffer */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_VIBuffer_Terrain"), TEXT("Com_VIBuffer"),
-			(CComponent**)&m_pVIBufferCom)))
-			return E_FAIL;
-
-		/* For.Com_Texture */ 
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Terrain"), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom[TYPE_DIFFUSE])))
-			return E_FAIL;
-
-		/* For.Com_Brush*/
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Brush"), TEXT("Com_Brush"),
-			(CComponent**)&m_pTextureCom[TYPE_BRUSH])))
-			return E_FAIL;
-
-		/* For.Com_Filter*/
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Filter"), TEXT("Com_Filter"),
-			(CComponent**)&m_pTextureCom[TYPE_FILTER])))
-			return E_FAIL;
-
-		/* For.Com_Navigation */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Navigation"), TEXT("Com_Navigation"),
 			(CComponent**)&m_pNavigationCom)))
 			return E_FAIL;
 	}

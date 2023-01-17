@@ -40,7 +40,7 @@ HRESULT CPlayerCamera::Init(void * pArg)
 		CameraDesc.fAspect = static_cast<_float>(g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
 
 		CameraDesc.fNear = 0.02f;
-		CameraDesc.fFar = 500.f;
+		CameraDesc.fFar = 300.f;
 
 		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);

@@ -349,6 +349,8 @@
     <ClInclude Include="..\public\Delilah.h">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ConversationCamera.h" />
+    <ClInclude Include="..\public\ConversationUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -541,6 +543,8 @@
     <ClCompile Include="..\private\Delilah.cpp">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ConversationCamera.cpp" />
+    <ClCompile Include="..\private\ConversationUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

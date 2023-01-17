@@ -49,6 +49,12 @@ HRESULT CChinuwa::Init(void * pArg)
 void CChinuwa::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_pFSM)
+		m_pFSM->Tick(TimeDelta);
+
+	m_pModelCom->Play_Animation(TimeDelta);
+
 	AdditiveAnim(TimeDelta);
 }
 

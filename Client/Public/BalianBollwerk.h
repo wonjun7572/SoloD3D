@@ -5,6 +5,8 @@ BEGIN(Client)
 
 class CBalianBollwerk final : public CAlly
 {
+	enum UI{ UI_CONVERSATION, UI_END };
+
 	enum ANIMATION
 	{
 		BALIANBOLLWERK_ADD_DMG_B
@@ -49,10 +51,17 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	Level_Chap1Tick(_double TimeDelta);
+
 	void	Imgui_RenderProperty() override;
+
+	void	Conversation(_double TimeDelta);
+
+	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
 
 private:
 	void	SetUp_FSM() override;
+	void	SetUp_UI();
 
 private:
 	void	AdditiveAnim(_double TimeDelta);
@@ -63,6 +72,18 @@ private:
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
+
+	_bool	m_bConversation = true;
+
+	vector<CGameObject*> m_UI;
+	_double TimeConversation = 0.0;
+
+	_float m_fX = 0.f;
+	_float m_fY = 0.f;
+	_float m_fSizeX = 0.f;
+	_float m_fSizeY = 0.f;
+
+	vector<_float4> m_CheckPoints;
 
 public:
 	static CBalianBollwerk* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

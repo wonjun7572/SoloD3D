@@ -41,6 +41,7 @@ struct VS_OUT
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vWorldPos : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -56,6 +57,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
@@ -75,6 +77,7 @@ VS_OUT VS_MAIN_UVANIMATION(VS_IN In)
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV + float2(g_Time * g_UVSpeed, 0);
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
@@ -85,6 +88,7 @@ struct PS_IN
 	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vWorldPos : TEXCOORD1;
+	float4		vProjPos : TEXCOORD2;
 };
 
 struct PS_OUT
@@ -92,6 +96,9 @@ struct PS_OUT
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
 	float4		vDiffuse : SV_TARGET0;
 	float4		vNormal : SV_TARGET1;
+	float4		vDepth : SV_TARGET2;
+	float4		vSpecular : SV_TARGET3;
+	float4		vRimColor : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -114,12 +121,17 @@ PS_OUT PS_MAIN(PS_IN In)
 		vBrush = g_BrushTexture.Sample(LinearSampler, vUV);
 	}
 
+	vector specular = (vector) 0.2f;
+
 	Out.vDiffuse = vSourDiffuse * vFilter.r +
 		vDestDiffuse * (1.f - vFilter.r) + vBrush;
 
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = specular;
+	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vRimColor = rimColor;
 	return Out;
 }
 
@@ -145,13 +157,16 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 
 	//Out.vColor = vDiffuse * saturate(fShade + (g_vLightAmbient * g_vMtrlAmbient))
 	//	+ fSpecular * (g_vLightSpecular * g_vMtrlSpecular);
+	vector specular = (vector) 0.2f;
 
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = specular;
+	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vRimColor = rimColor;
 	return Out;
 }
-
 
 struct PS_SKYOUT
 {

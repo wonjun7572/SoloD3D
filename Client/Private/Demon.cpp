@@ -120,6 +120,14 @@ HRESULT CDemon::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}	
 
@@ -181,7 +189,6 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 	}
 
 	CollisionToPlayer(TimeDelta);
-
 	CollisionToMonster(TimeDelta);
 	
 	// 플레이어와 어느 정도거리가 되었을 때
@@ -199,7 +206,6 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 		CollisionToSkill(TimeDelta);
 
 	// 밑은 플레이어의 데미지 입었을 때 이벤트
-
 	if (m_bPlayerAttackCommand)
 		CollisionToWeapon(TimeDelta);
 

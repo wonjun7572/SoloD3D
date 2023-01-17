@@ -68,19 +68,24 @@ HRESULT CShoulder::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
-		return E_FAIL;
+	//if (g_LEVEL == LEVEL_CHAP1)
+	//{
+	//	/* For.Com_Model */
+	//	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"), TEXT("Com_Model"),
+	//		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+	//		return E_FAIL;
+	//}
+	//else
+	{
+		/* For.Com_Model */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_B"), TEXT("Com_Model_B"),
+			(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+			return E_FAIL;
+	}
 
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_A"), TEXT("Com_Model_A"),
 		(CComponent**)&m_pModelCom[MODEL_A])))
-		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_B"), TEXT("Com_Model_B"),
-		(CComponent**)&m_pModelCom[MODEL_B])))
 		return E_FAIL;
 
 	return S_OK;

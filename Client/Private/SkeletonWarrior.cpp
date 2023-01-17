@@ -27,17 +27,24 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
+	_float4 vPos;
+
+	if (pArg != nullptr)
+	{
+		memcpy(&vPos, pArg, sizeof(_float4));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	m_strObjName = L"SkeletonWarrior";
@@ -47,7 +54,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	m_fAttack = 10;
 	m_fDefence = 5;
 
-	m_vMonsterNamePos = _float2(720.f, 40.f);
+	m_vMonsterNamePos = _float2(680.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
 	if (FAILED(SetUP_UI()))
@@ -99,6 +106,19 @@ HRESULT CSkeletonWarrior::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+		m_pShaderCom->Set_RawValue("g_vRimColor", &_float4(1.f, 0.1f, 0.1f, 1.f), sizeof(_float4));
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4));
+		RELEASE_INSTANCE(CGameInstance);
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
@@ -401,7 +421,7 @@ void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);
 
-	if (fabsf(fDistance) < 10.f)
+	if (fabsf(fDistance) < 20.f)
 		m_bPlayerChase = true;
 	else
 		m_bPlayerChase = false;

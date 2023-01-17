@@ -65,10 +65,10 @@ HRESULT CPlayer::Init(void * pArg)
 
 	if(g_LEVEL == LEVEL_CHAP1)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
-	//else if(g_LEVEL == LEVEL_CHAP2)
-	//	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(320.f, 0.f, 30.f, 1.f));
-	//else if (g_LEVEL == LEVEL_CHAP3)
-	//	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(65.f, 0.f, 10.f, 1.f));
+	else if(g_LEVEL == LEVEL_CHAP2)
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(320.f, 0.f, 30.f, 1.f));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(65.f, 0.f, 10.f, 1.f));
 		
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	
@@ -146,7 +146,6 @@ void CPlayer::Late_Tick(_double TimeDelta)
 	}
 
 	// 모델 원래 상태로 돌아가기
-
 	if (m_eModelState == MODEL_A)
 		m_dModelATime += TimeDelta;
 
@@ -188,6 +187,20 @@ HRESULT CPlayer::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+		
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+		m_pShaderCom->Set_RawValue("g_vRimColor", &_float4(0.1f, 0.1f, 1.f, 1.f), sizeof(_float4));
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4));
+		RELEASE_INSTANCE(CGameInstance);
+
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -216,7 +229,6 @@ void CPlayer::UI_Tick(_double TimeDelta)
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_3])->Set_Amount(static_cast<_float>(m_Skill_3IconCoolTime / 10.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Amount(static_cast<_float>(m_Skill_4IconCollTime / 20.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_5])->Set_Amount(static_cast<_float>(m_Skill_5IconCoolTime / 30.0));
-	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_6])->Set_Amount(static_cast<_float>(m_Skill_6IconCoolTime / 30.0));
 
 	if(m_dModelATime >= 0.001)
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_MODELATIME])->Set_Amount(static_cast<_float>(1.0 - (m_dModelATime / 20.0)));
@@ -282,11 +294,6 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return m_bAction && !m_bMove && m_bSK05;
-	})
-		.AddTransition("Idle to Skill_6", "Skill_6")
-		.Predicator([this]()
-	{
-		return m_bAction && !m_bMove && m_bSK06;
 	})
 		.AddTransition("Idle to Groggy" , "Groggy")
 		.Predicator([this]() 
@@ -985,44 +992,6 @@ void CPlayer::SetUp_FSM()
 		return CheckFinish_Skill5();
 	})
 
-		// Key_2
-		.AddState("Skill_6")
-		.OnStart([this]()
-	{
-		Reset_Anim(PLAYER_SK11_1);
-		Set_Anim(PLAYER_SK11_1);
-		ChangeModel(CPlayer::MODEL_B);
-	})
-		.Tick([this](_double TimeDelta)
-	{
-		m_bCamTurn = false;
-
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0, 0.14))
-			static_cast<CParts*>(m_PlayerParts[PART_BOOTS])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.14, 0.28))
-			static_cast<CParts*>(m_PlayerParts[PART_BELT])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.28, 0.42))
-			static_cast<CParts*>(m_PlayerParts[PART_LOWER])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.42, 0.64))
-			static_cast<CParts*>(m_PlayerParts[PART_GLOVE])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.64, 0.76))
-			static_cast<CParts*>(m_PlayerParts[PART_UPPER])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.76, 0.88))
-			static_cast<CParts*>(m_PlayerParts[PART_SHOULDER])->ChangeModel(CParts::MODEL_B);
-		if (AnimIntervalChecker(PLAYER_SK11_1, 0.88, 1.0))
-			static_cast<CParts*>(m_PlayerParts[PART_HELMET])->ChangeModel(CParts::MODEL_B);
-	})
-		.OnExit([this]()
-	{
-		m_bAction = false;
-		m_bSK06 = false;
-	})
-		.AddTransition("Skill_6 to Idle", "Idle")
-		.Predicator([this]()
-	{
-		return CheckFinish_Skill6();
-	})
-
 		.Build();
 }
 
@@ -1358,8 +1327,7 @@ void CPlayer::Movement(_double TimeDelta)
 		&& !m_bSK02
 		&& !m_bSK03
 		&& !m_bSK04_Charging
-		&& !m_bSK05
-		&& !m_bSK06)
+		&& !m_bSK05)
 	{
 		m_bAction = true;
 		m_bSK01 = true;
@@ -1375,8 +1343,7 @@ void CPlayer::Movement(_double TimeDelta)
 		&& !m_bSK01
 		&& !m_bSK03
 		&& !m_bSK04_Charging
-		&& !m_bSK05
-		&& !m_bSK06)
+		&& !m_bSK05)
 	{
 		m_bAction = true;
 		m_bSK02 = true;
@@ -1392,8 +1359,7 @@ void CPlayer::Movement(_double TimeDelta)
 		&& !m_bSK01
 		&& !m_bSK02
 		&& !m_bSK04_Charging
-		&& !m_bSK05
-		&& !m_bSK06)
+		&& !m_bSK05)
 	{
 		m_bAction = true;
 		m_bSK03 = true;
@@ -1409,8 +1375,7 @@ void CPlayer::Movement(_double TimeDelta)
 		&& !m_bSK01
 		&& !m_bSK02
 		&& !m_bSK03
-		&& !m_bSK05
-		&& !m_bSK06)
+		&& !m_bSK05)
 	{
 		m_bAction = true;
 		m_bSK04_Charging = true;
@@ -1431,29 +1396,11 @@ void CPlayer::Movement(_double TimeDelta)
 		&& !m_bSK01
 		&& !m_bSK02
 		&& !m_bSK03
-		&& !m_bSK04_Charging
-		&& !m_bSK06)
+		&& !m_bSK04_Charging)
 	{
 		m_bAction = true;
 		m_bSK05 = true;
 		m_Skill_5IconCoolTime = 0.0;
-		m_fMp -= 50.f;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
-	}
-
-	/* SKILL6 !! 변신*/
-	m_Skill_6IconCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_2) && m_Skill_6IconCoolTime > 30.0 && m_fMp >= 50.f
-		&& !m_bSK01
-		&& !m_bSK02
-		&& !m_bSK03
-		&& !m_bSK04_Charging
-		&& !m_bSK05)
-	{
-		m_bAction = true;
-		m_bSK06 = true;
-		m_Skill_6IconCoolTime = 0.0;
 		m_fMp -= 50.f;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
@@ -1587,13 +1534,6 @@ void CPlayer::ChangeModel(MODEL eModelIndex)
 
 	m_ePreModelState = m_eModelState;
 	m_eModelState = eModelIndex;
-
-	if (m_eModelState == CPlayer::MODEL_A)
-	{
-		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(2.0);
-	}
-	else
-		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(1.3);
 
 	_uint AnimNum = m_pModelCom[m_ePreModelState]->Get_AnimationsNum();
 	_uint iCurrentIndex = m_pModelCom[m_ePreModelState]->Get_CurrentAnimIndex();
@@ -2052,7 +1992,6 @@ void CPlayer::Reset_Action()
 	m_bSK03 = false;
 	m_bSK04_Charging = false;
 	m_bSK05 = false;
-	m_bSK06 = false;
 }
 
 void CPlayer::CamLockOn(CGameObject * pGameObject , OUT _bool& bLock)
@@ -2135,11 +2074,6 @@ _bool CPlayer::CheckFinish_Skill4()
 _bool CPlayer::CheckFinish_Skill5()
 {
 	return AnimFinishChecker(PLAYER_SK11, 0.9);
-}
-
-_bool CPlayer::CheckFinish_Skill6()
-{
-	return AnimFinishChecker(PLAYER_SK11_1, 0.9);
 }
 
 _bool CPlayer::CheckFinish_V_DEF()
@@ -2497,21 +2431,21 @@ HRESULT CPlayer::SetUp_UI()
 
 	m_PlayerUI.push_back(pUI);
 
-	SkillIconDesc.fAlpha = 0.9f;
-	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
-	SkillIconDesc.fX = 300.f;
-	SkillIconDesc.fY = -300.f;
-	SkillIconDesc.iTexNum = 8;
-	SkillIconDesc.iPassIndex = 1;
+	//SkillIconDesc.fAlpha = 0.9f;
+	//SkillIconDesc.fAmount = 0.f;
+	//SkillIconDesc.fSizeX = 75.f;
+	//SkillIconDesc.fSizeY = 75.f;
+	//SkillIconDesc.fX = 300.f;
+	//SkillIconDesc.fY = -300.f;
+	//SkillIconDesc.iTexNum = 8;
+	//SkillIconDesc.iPassIndex = 1;
 
-	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+	//pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
-	if (nullptr == pUI)
-		return E_FAIL;
+	//if (nullptr == pUI)
+	//	return E_FAIL;
 
-	m_PlayerUI.push_back(pUI);
+	//m_PlayerUI.push_back(pUI);
 
 	SkillIconDesc.fAlpha = 0.7f;
 	SkillIconDesc.fAmount = 0.f;
@@ -2599,19 +2533,24 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"), TEXT("Com_Model"),
-		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
-		return E_FAIL;
-
+	//if (g_LEVEL == LEVEL_CHAP1)
+	//{
+	//	/* For.Com_Model */
+	//	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"), TEXT("Com_Model"),
+	//		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+	//		return E_FAIL;
+	//}
+	//else
+	//{
+		/* For.Com_Model */
+		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
+			(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+			return E_FAIL;
+	//}
+	
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_A"), TEXT("Com_Model_A"),
 		(CComponent**)&m_pModelCom[MODEL_A])))
-		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
-		(CComponent**)&m_pModelCom[MODEL_B])))
 		return E_FAIL;
 
 	CCollider::COLLIDERDESC			ColliderDesc;
@@ -2624,24 +2563,6 @@ HRESULT CPlayer::SetUp_Components()
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
 		return E_FAIL;
-
-	///* For.Com_OBB */
-	//ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	//ColliderDesc.vSize = _float3(0.3f, 1.1f, 0.3f);
-	//ColliderDesc.vCenter = _float3(0.f, 1.3f, 0.f);
-
-	//if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"), TEXT("Com_OBB"),
-	//	(CComponent**)&m_pColliderCom[COLLTYPE_OBB], &ColliderDesc)))
-	//	return E_FAIL;
-
-	///* For.Com_SPHERE */
-	//ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
-	//ColliderDesc.vSize = _float3(15.f, 15.f, 15.f);
-	//ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
-
-	//if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"), TEXT("Com_SPHERE"),
-	//	(CComponent**)&m_pColliderCom[COLLTYPE_SPHERE], &ColliderDesc)))
-	//	return E_FAIL;
 
 	if (g_LEVEL == LEVEL_CHAP1)
 	{

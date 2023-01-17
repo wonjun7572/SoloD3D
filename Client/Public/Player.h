@@ -82,10 +82,10 @@ public:
 		PLAYER_WEAPON, PLAYER_WEAPON_READY, PLAYER_WEAPON_RUN, PLAYER_STATE_END
 	};
 
-	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_B , MODEL_END };
+	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_END };
 
 	enum UI	{ SKILL_ICON_1, SKILL_ICON_2, SKILL_ICON_3, 
-		SKILL_ICON_4, SKILL_ICON_5, SKILL_ICON_6, SKILL_MODELATIME, V_DEF,
+		SKILL_ICON_4, SKILL_ICON_5, SKILL_MODELATIME, V_DEF,
 		HP , MP, UI_END };
 
 private:
@@ -173,6 +173,9 @@ public:
 	void					Reset_Action();
 	class CPlayerCamera*	Get_PlayerCam() { return m_pCam; }
 	void					CamLockOn(CGameObject* pGameObject, OUT _bool& bLock);
+	
+	_bool					Get_Conversation() { return m_bConversation; }
+
 private:
 	CFSMComponent*			m_pFSM = nullptr;
 
@@ -210,7 +213,6 @@ private:
 	_bool					m_bSK03 = false;
 	_bool					m_bSK04_Charging = false;
 	_bool					m_bSK05 = false;
-	_bool					m_bSK06 = false;
 
 	_bool					m_bV_DEF = false;
 	_bool					m_bJump = false;
@@ -237,7 +239,6 @@ private:
 	_bool					CheckFinish_Skill3();
 	_bool					CheckFinish_Skill4();
 	_bool					CheckFinish_Skill5();
-	_bool					CheckFinish_Skill6();
 
 	_bool					CheckFinish_V_DEF();
 	
@@ -270,14 +271,12 @@ private:
 	//_float m_fWingTestUPY = 1.f;
 	//_float m_fWingTestDOWNY = 1.f;
 
-
 	/* ½ºÅ³ ÄðÅ¸ÀÓ~! */
 	_double m_Skill_1IconCollTime = 15.0;
 	_double m_Skill_2IconCoolTime = 20.0;
 	_double m_Skill_3IconCoolTime = 10.0;
 	_double m_Skill_4IconCollTime = 20.0;
 	_double m_Skill_5IconCoolTime = 30.0;
-	_double m_Skill_6IconCoolTime = 30.0;
 
 	_double m_Skill_VDefCoolTime = 7.0;
 
@@ -289,6 +288,8 @@ private:
 	void	AdjustSkillDamage(_float fDamage);
 
 	_bool					m_bCamLock = false;
+
+	_bool					m_bConversation = false;
 
 private:
 	HRESULT SetUp_Parts();

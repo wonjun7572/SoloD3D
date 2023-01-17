@@ -16,7 +16,7 @@ BEGIN(Client)
 class CParts abstract : public CGameObject
 {
 public:
-	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_B, MODEL_END };
+	enum MODEL { MODEL_NOMAL, MODEL_A, MODEL_END };
 
 protected:
 	CParts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

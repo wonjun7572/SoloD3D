@@ -54,6 +54,7 @@ protected:
 	_bool					m_bDeadAnim = false;
 
 	_bool					m_bChase = false;
+	_bool					m_bMonsterChase = false;
 
 	// 데미지를 입을 수 있는 상황인가?
 	_bool					m_bImpossibleSkillDamaged = false;
@@ -73,7 +74,7 @@ protected:
 
 protected:
 	vector<CCollider*>		m_AllyColliders;
-
+	
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;

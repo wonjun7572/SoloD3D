@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "FSMComponent.h"
 #include "Player.h"
+#include "Monster.h"
 
 CAlly::CAlly(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -61,19 +62,6 @@ void CAlly::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if (m_pFSM)
-		m_pFSM->Tick(TimeDelta);
-
-	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-	
-	if (_float3::Distance(vPos, vPlayerPos) > 6.f)
-		m_bChase = true;
-	else
-		m_bChase = false;
-	
-	m_pModelCom->Play_Animation(TimeDelta);
-
 	if (m_pNavigationCom)
 	{
 		_float yPos = 0.f;
@@ -106,7 +94,6 @@ void CAlly::Late_Tick(_double TimeDelta)
 	}
 
 	CollisionToAlly(TimeDelta);
-
 	RELEASE_INSTANCE(CGameInstance);
 }
 

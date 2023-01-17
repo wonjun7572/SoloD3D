@@ -64,6 +64,16 @@ HRESULT CParts::PartsRender(_uint iPassIndex)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+		
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+		
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4));
+		RELEASE_INSTANCE(CGameInstance);
 
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, iPassIndex, "g_BoneMatrices");
 	}
@@ -123,14 +133,6 @@ void CParts::ChangeModel(MODEL iModelIndex)
 	m_ePreModelState = m_eModelState;
 	m_eModelState = iModelIndex;
 
-	if (m_eModelState == CPlayer::MODEL_A)
-	{
-		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(2.0);
-	}
-	else
-		m_pModelCom[m_eModelState]->Set_AnimPlaySpeed(1.3);
-
-
 	_uint AnimNum = m_pModelCom[m_ePreModelState]->Get_AnimationsNum();
 	_uint iCurrentIndex = m_pModelCom[m_ePreModelState]->Get_CurrentAnimIndex();
 	_uint iPreIndex = m_pModelCom[m_ePreModelState]->Get_PreAnimIndex();
@@ -143,8 +145,6 @@ void CParts::ChangeModel(MODEL iModelIndex)
 		_double time = m_pModelCom[m_ePreModelState]->Get_AnimPlayTime(i);
 		m_pModelCom[m_eModelState]->Model_Change(i, time);
 	}
-
-
 }
 
 void CParts::Free()

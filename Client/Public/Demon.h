@@ -73,7 +73,6 @@ public:
 	void CollisionToPlayer(_double TimeDelta);
 	void CollisionToAttack(_double TimeDelta);
 	void CollisionToSkill(_double TimeDelta);
-
 	void Play_Skill(_double TimeDelta);
 
 private:
@@ -93,7 +92,6 @@ private:
 	_bool	m_bRealAttack = false;
 
 	/* SKILL */
-
 	_bool m_bRealSkill = false;
 
 	_bool  m_bSkill_1ToPlayer = false;
@@ -106,7 +104,6 @@ private:
 	_double m_AttackDelayTime = 0.0;
 	_double m_HitDownDelayTime = 0.0;
 	_double m_GroggyDelayTime = 0.0;
-
 	_double	m_SkillDelayTime = 0.0;
 
 private:
@@ -126,7 +123,6 @@ private:
 	_float m_fRotationZ = 0.f;
 
 	_float m_fSkillHitDownRange = 0.f;
-
 	_float4x4 m_Mat;
 	
 private:

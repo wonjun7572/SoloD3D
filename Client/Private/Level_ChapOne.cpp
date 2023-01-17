@@ -94,7 +94,7 @@ void CLevel_ChapOne::ImguiRenderTab()
 			//string to wstring
 			m_pSaveMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
 
-			pGameInstance->SaveMapObjectData(LEVEL_CHAP1, TEXT("Layer_MapObject"), m_pSaveMapObjectFilePath);
+			pGameInstance->SaveMapObjectData(LEVEL_CHAP1, TEXT("Layer_Monster"), m_pSaveMapObjectFilePath);
 			
 		}
 		// close
@@ -112,7 +112,7 @@ void CLevel_ChapOne::ImguiRenderTab()
 
 			m_pLoadMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
 
-			pGameInstance->LoadMapObjectData(LEVEL_CHAP1, TEXT("Layer_MapObject"), m_pLoadMapObjectFilePath);
+			pGameInstance->LoadMapObjectData(LEVEL_CHAP1, TEXT("Layer_Monster"), m_pLoadMapObjectFilePath);
 		}
 
 		// close
@@ -130,10 +130,38 @@ HRESULT CLevel_ChapOne::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	LightDesc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+
+	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
+
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	/*LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);*/
+	LightDesc.vPosition = _float4(5.f, 3.f, 5.f, 1.f);
+	LightDesc.fRange = 10.0f;
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+
+	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
+
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	/*LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);*/
+	LightDesc.vPosition = _float4(10.f, 3.f, 5.f, 1.f);
+	LightDesc.fRange = 10.0f;
+	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 0.2f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -187,23 +215,30 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ZombieA"))))
-	//	return E_FAIL;
+	_float4 vPos = _float4(95.f, 0.f, 95.f, 1.f);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TrollA"))))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TrollQ"))))
-	//	return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"))))
-	//	return E_FAIL;
-
-	/*if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"))))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"))))
-		return E_FAIL;*/
+	vPos = _float4(100.f, 0.f, 100.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(110.f, 0.f, 100.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(115.f, 0.f, 95.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(105.f, 0.f, 95.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -214,19 +249,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_Ally(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Abelardo"))))
-		return E_FAIL;
-
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BalianBollwerk"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Chinuwa"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Chitata"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Delilah"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
