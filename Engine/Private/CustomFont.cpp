@@ -29,7 +29,7 @@ HRESULT CCustomFont::Render(const _tchar* pText, const _float2& vPosition, _floa
 	return S_OK;
 }
 
-HRESULT CCustomFont::Render(const _tchar * pText, _fvector vPosition, _fvector vColor, _float fRadian, _fvector vScale)
+HRESULT CCustomFont::DrawTextInWorld(const _tchar * pText, _fvector vPosition, _fvector vColor, _float fRadian, _fvector vScale)
 {
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
 

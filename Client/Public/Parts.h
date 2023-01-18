@@ -40,7 +40,6 @@ public:
 
 	HRESULT PartsRender(_uint iPassIndex);
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_SecondShaderResources(_float4x4 matrix);
 
 	void	ChangeModel(MODEL iModelIndex);
 

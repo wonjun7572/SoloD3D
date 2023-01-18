@@ -28,14 +28,15 @@ HRESULT CThunderWave::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(35.f, 0.f, 85.f, 1.f));
-
 	return S_OK;
 }
 
 void CThunderWave::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
+		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
 
 void CThunderWave::Late_Tick(_double TimeDelta)

@@ -52,6 +52,8 @@ HRESULT CTrollA::Init(void * pArg)
 	if (FAILED(SetUP_UI()))
 		return E_FAIL;
 
+	m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
+
 	return S_OK;
 }
 
@@ -98,6 +100,14 @@ HRESULT CTrollA::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
+
+		bool HasSpecular = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
+			HasSpecular = false;
+		else
+			HasSpecular = true;
+
+		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
@@ -607,6 +617,15 @@ HRESULT CTrollA::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
+	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
+	else
+		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

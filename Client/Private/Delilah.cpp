@@ -43,6 +43,8 @@ HRESULT CDelilah::Init(void * pArg)
 
 	m_strObjName = L"Delilah";
 
+	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+
 	return S_OK;
 }
 
@@ -85,7 +87,6 @@ HRESULT CDelilah::Render()
 			HasSpecular = true;
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
-
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -338,6 +339,15 @@ HRESULT CDelilah::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
+	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
+	else
+		m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

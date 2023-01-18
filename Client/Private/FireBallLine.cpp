@@ -28,14 +28,15 @@ HRESULT CFireBallLine::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(40.f, 0.f, 83.f, 1.f));
-
 	return S_OK;
 }
 
 void CFireBallLine::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
+		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
 
 void CFireBallLine::Late_Tick(_double TimeDelta)

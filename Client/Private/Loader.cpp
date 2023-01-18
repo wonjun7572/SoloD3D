@@ -18,7 +18,6 @@
 #include "Navigation.h"
 
 #include "Player.h"
-#include "ForkLift.h"
 
 #include "Weapon.h"
 #include "Upper.h"
@@ -37,7 +36,7 @@
 
 #include "PlayerCamera.h"
 
-#include "Effect_Rect.h"
+#include "TargetAimEffect.h"
 #include "Effect_Point.h"
 
 #include "TownA.h"
@@ -55,6 +54,10 @@
 #include "Line_Aura.h"
 #include "ThunderWave.h"
 #include "FireBallLine.h"
+#include "ExplosionE.h"
+#include "ArcaneE.h"
+#include "FireE_0.h"
+#include "FlameE.h"
 
 #include "SkillChargingUI.h"
 #include "ProgressBarUI.h"
@@ -66,6 +69,9 @@
 #include "Chinuwa.h"
 #include "Chitata.h"
 #include "Delilah.h"
+#include "HitE.h"
+#include "SparkE.h"
+#include "QskillCrackE.h"
 
 #include "ConversationUI.h"
 
@@ -213,6 +219,51 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_DamageFont"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Damage/Damage_%d.png"), 12))))
 			return E_FAIL;
+
+		/* For. Texture_Explosion */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Explosion"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Explosion/%d.png"), 58))))
+			return E_FAIL;
+
+		/* For. Texture_Arcane */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Arcane"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Arcane/Arcane_%d.png"), 42))))
+			return E_FAIL;
+
+		/* For. Texture_Fire */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Fire"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Fire/%d.png"), 32))))
+			return E_FAIL;
+
+		/* For. Texture_FireTile */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_FireTile"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/FireTile/%d.png"), 19))))
+			return E_FAIL;
+
+		/* For. Texture_Flame */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Flame"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Flame/%d.png"), 32))))
+			return E_FAIL;
+
+		/* For. Texture_Flame_Filter */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Flame_Filter"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Flame/Filter0.png")))))
+			return E_FAIL;
+
+		/* For. Texture_Hit */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Hit"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit/%d.png"), 16))))
+			return E_FAIL;
+
+		/* For. Texture_Spark */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Spark"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Spark/Spark%d.png"), 4))))
+			return E_FAIL;
+
+		/* For. Texture_QSkillCrack */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_QSkillCrack"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/QskillCrack.png")))))
+			return E_FAIL;
 	}
 
 	// For. UI
@@ -229,12 +280,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 		/* For. Texture_MonsterAimUI*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_MonsterAimUI"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Aim/Aim_%d.png"),2))))
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Aim/Aim_%d.png"), 2))))
 			return E_FAIL;
 	}
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
-	
+
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height_Chap1.bmp")))))
@@ -314,152 +365,152 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	// For. PLAYER
 	{
-			/* For.Prototype_Component_Model_HumanF */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Glove/Glove.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Upper */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Upper/Upper.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Lower */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Lower/Lower.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Glove */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Shoulder */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Shoulder/Shoulder.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Boots */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Boots/Boots.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Belt */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Belt/Belt.model"), PivotMatrix))))
-				return E_FAIL;
-
-			/* For.Prototype_Component_Model_Helmet */
-			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet"),
-				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Helmet/Helmet.model"), PivotMatrix))))
-				return E_FAIL;
-
-			{
-				/* For.Prototype_Component_Model_HumanF */
-				PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Glove.model"), PivotMatrix))))
-					return E_FAIL;
-
-				/* For.Prototype_Component_Model_Upper */
-				PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper_B"),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Upper.model"), PivotMatrix))))
-					return E_FAIL;
-
-				/* For.Prototype_Component_Model_Lower */
-				PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower_B"),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Lower.model"), PivotMatrix))))
-					return E_FAIL;
-
-				/* For.Prototype_Component_Model_Glove */
-				PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_B"),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
-					return E_FAIL;
-
-				/* For.Prototype_Component_Model_Shoulder */
-				PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-				if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_B"),
-					CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Shoulder.model"), PivotMatrix))))
-					return E_FAIL;
-
-/* For.Prototype_Component_Model_Boots */
-PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots_B"),
-	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Boots.model"), PivotMatrix))))
-	return E_FAIL;
-
-/* For.Prototype_Component_Model_Belt */
-PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt_B"),
-	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Belt.model"), PivotMatrix))))
-	return E_FAIL;
-
-/* For.Prototype_Component_Model_Helmet */
-PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet_B"),
-	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Helmet.model"), PivotMatrix))))
-	return E_FAIL;
-			}
-
-		{
 		/* For.Prototype_Component_Model_HumanF */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Glove.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Glove/Glove.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Upper */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Upper.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Upper/Upper.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Lower */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Lower.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Lower/Lower.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Glove */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_A"),
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Shoulder */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Shoulder.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Shoulder/Shoulder.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Boots */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Boots.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Boots/Boots.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Belt */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Belt.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Belt/Belt.model"), PivotMatrix))))
 			return E_FAIL;
 
 		/* For.Prototype_Component_Model_Helmet */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet_A"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Helmet.model"), PivotMatrix))))
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Helmet/Helmet.model"), PivotMatrix))))
 			return E_FAIL;
+
+		{
+			/* For.Prototype_Component_Model_HumanF */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Glove.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Upper */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Upper.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Lower */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Lower.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Glove */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Shoulder */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Shoulder.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Boots */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Boots.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Belt */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Belt.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Helmet */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet_B"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Helmet.model"), PivotMatrix))))
+				return E_FAIL;
+		}
+
+		{
+			/* For.Prototype_Component_Model_HumanF */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Glove.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Upper */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Upper_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Upper.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Lower */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Lower_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Lower.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Glove */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Face/Face.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Shoulder */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Shoulder_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Shoulder.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Boots */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Boots_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Boots.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Belt */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Belt_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Belt.model"), PivotMatrix))))
+				return E_FAIL;
+
+			/* For.Prototype_Component_Model_Helmet */
+			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+			if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet_A"),
+				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Helmet.model"), PivotMatrix))))
+				return E_FAIL;
 		}
 
 
@@ -524,7 +575,6 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Delilah/Delilah.model"), PivotMatrix))))
 			return E_FAIL;
 	}
-
 
 	// For. Maps
 	{
@@ -591,8 +641,9 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/FireBallLine.model"), PivotMatrix))))
 			return E_FAIL;
 	}
+
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
-		
+
 	m_strLoadingText = TEXT("네비게이션 정보 로딩중입니다. ");
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Navigation"),
@@ -649,7 +700,7 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 		/* For.Prototype_GameObject_Demon*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Demon"), CDemon::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
-		
+
 		/* For.Prototype_GameObject_SkeletonWarrior*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkeletonWarrior"), CSkeletonWarrior::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
@@ -689,17 +740,13 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Delilah"), CDelilah::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
-	
+
 	/* For. Prototype_GameObject_Terrain*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"), CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_PlayerCamera*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PlayerCamera"), CPlayerCamera::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For. Prototype_GameObject_Effect_Rect*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Rect"), CEffect_Rect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_Effect_Point*/
@@ -721,35 +768,67 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 	/* For. Prototype_GameObject_Stair*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"), CStair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	// Effect
+	{
+		/* For. Prototype_GameObject_NorAtk_Trail1*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail1"), CNorAtk_Trail1::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_NorAtk_Trail1*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail1"), CNorAtk_Trail1::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_NorAtk_Trail2*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail2"), CNorAtk_Trail2::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_NorAtk_Trail2*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail2"), CNorAtk_Trail2::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_NorAtk_Trail3*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail3"), CNorAtk_Trail3::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_NorAtk_Trail3*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NorAtk_Trail3"), CNorAtk_Trail3::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_Wing*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wing"), CWing::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_Wing*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Wing"), CWing::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_Line_Aura*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Line_Aura"), CLine_Aura::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_Line_Aura*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Line_Aura"), CLine_Aura::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_ThunderWave*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ThunderWave"), CThunderWave::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_ThunderWave*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ThunderWave"), CThunderWave::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_FireBallLine*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBallLine"), CFireBallLine::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
-	/* For. Prototype_GameObject_FireBallLine*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireBallLine"), CFireBallLine::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+		/* For. Prototype_GameObject_ExplosionE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ExplosionE"), CExplosionE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+		
+		/* For. Prototype_GameObject_ArcaneE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ArcaneE"), CArcaneE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 
+		/* For. Prototype_GameObject_FireE_0*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FireE_0"), CFireE_0::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_FlameE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FlameE"), CFlameE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+		
+		/* For. Prototype_GameObject_HitE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HitE"), CHitE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_SparkE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SparkE"), CSparkE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_QskillCrackE*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_QskillCrackE"), CQskillCrackE::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+	}
+
+	// UI
 	{
 		/* For. Prototype_GameObject_SkillChargingUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkillChargingUI"), CSkillChargingUI::Create(m_pDevice, m_pContext))))
@@ -760,7 +839,7 @@ if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_M
 			return E_FAIL;
 
 		/* For. Prototype_GameObject_AimUI*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AimUI"), CEffect_Rect::Create(m_pDevice, m_pContext))))
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AimUI"), CTargetAimEffect::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 		
 		/* For. Prototype_GameObject_DamageFontUI*/

@@ -202,9 +202,6 @@
     <ClInclude Include="..\public\Weapon.h">
       <Filter>GameObject\Player\Parts\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ForkLift.h">
-      <Filter>GameObject\Env</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Monster.h">
       <Filter>GameObject\Monster</Filter>
     </ClInclude>
@@ -350,7 +347,23 @@
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ConversationCamera.h" />
-    <ClInclude Include="..\public\ConversationUI.h" />
+    <ClInclude Include="..\public\ExplosionE.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TargetAimEffect.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ConversationUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ArcaneE.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FireE_0.h" />
+    <ClInclude Include="..\public\FlameE.h" />
+    <ClInclude Include="..\public\HitE.h" />
+    <ClInclude Include="..\public\SparkE.h" />
+    <ClInclude Include="..\public\QskillCrackE.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -398,9 +411,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Weapon.cpp">
       <Filter>GameObject\Player\Parts\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ForkLift.cpp">
-      <Filter>GameObject\Env</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>GameObject\Monster</Filter>
@@ -544,7 +554,23 @@
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ConversationCamera.cpp" />
-    <ClCompile Include="..\private\ConversationUI.cpp" />
+    <ClCompile Include="..\private\ExplosionE.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TargetAimEffect.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ConversationUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ArcaneE.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireE_0.cpp" />
+    <ClCompile Include="..\private\FlameE.cpp" />
+    <ClCompile Include="..\private\HitE.cpp" />
+    <ClCompile Include="..\private\SparkE.cpp" />
+    <ClCompile Include="..\private\QskillCrackE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

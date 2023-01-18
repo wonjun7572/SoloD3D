@@ -36,7 +36,7 @@ HRESULT CMainApp::Init()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/CormorantGaramond.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/Noto_Sans_KR.spritefont"))))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL_LOGO)))

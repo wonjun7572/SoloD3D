@@ -84,6 +84,7 @@ private:
 	_float m_fSizeY = 0.f;
 
 	vector<_float4> m_CheckPoints;
+	wstring	m_strConversation;
 
 public:
 	static CBalianBollwerk* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

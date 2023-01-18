@@ -66,9 +66,6 @@ void CEffect_Mesh::Tick(_double TimeDelta)
 void CEffect_Mesh::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-
-	if(m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
-		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
 
 HRESULT CEffect_Mesh::Render()

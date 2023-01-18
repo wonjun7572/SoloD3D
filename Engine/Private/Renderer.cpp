@@ -34,7 +34,7 @@ HRESULT CRenderer::Init_Prototype()
 		return E_FAIL;
 
 	/* For.Target_Depth */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Depth"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Depth"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	/* For.Target_Specular */
@@ -171,7 +171,14 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_DebugObject()))
 		return E_FAIL;
 
-	if (nullptr != m_pTarget_Manager)
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	if (pGameInstance->Key_Down(DIK_F8))
+	{
+		m_bDebugRender = !m_bDebugRender;
+	}
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (nullptr != m_pTarget_Manager && m_bDebugRender)
 	{
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
@@ -311,6 +318,11 @@ HRESULT CRenderer::Render_NonLight()
 
 HRESULT CRenderer::Render_AlphaBlend()
 {
+	m_RenderObjects[RENDER_ALPHABLEND].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
+	{
+		return pSour->Get_CamDistance() > pDest->Get_CamDistance();
+	});
+
 	for (auto& pGameObject : m_RenderObjects[RENDER_ALPHABLEND])
 	{
 		if (nullptr != pGameObject)

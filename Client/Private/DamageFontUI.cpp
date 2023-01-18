@@ -25,7 +25,7 @@ HRESULT CDamageFontUI::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 1.f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(CGameObject::Init(&GameObjectDesc)))
@@ -34,13 +34,15 @@ HRESULT CDamageFontUI::Init(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&m_tagDamageFont, pArg, sizeof(DAMAGEFONT));
 
-	m_fX = m_tagDamageFont.fX;
-	m_fY = m_tagDamageFont.fY;
-	m_fSizeX = m_tagDamageFont.fSizeX;
-	m_fSizeY = m_tagDamageFont.fSizeY;
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+
+	_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 0.f , 0.f);
+	m_tagDamageFont.vPos += Randompos;
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_tagDamageFont.vPos);
+
+	m_fSize = 2.f;
+	m_pTransformCom->Set_Scaled(_float3(m_fSize,m_fSize,m_fSize));
 
 	return S_OK;
 }
@@ -48,20 +50,14 @@ HRESULT CDamageFontUI::Init(void * pArg)
 void CDamageFontUI::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
 	m_TimeDelta += TimeDelta;
+	
+	if(m_fSize >= 1.f)
+		m_fSize -= static_cast<_float>(TimeDelta);
+	
+	m_pTransformCom->Set_Scaled(_float3(m_fSize, m_fSize, m_fSize));
 
-	if (m_fSizeX >= 2.f && m_fSizeY >= 2.f)
-	{
-		m_fSizeX -= 75.f *  static_cast<_float>(TimeDelta);
-		m_fSizeY -= 75.f *  static_cast<_float>(TimeDelta);
-	}
-	else
-	{
-		m_fY -= static_cast<_float>(TimeDelta) * 10.f;
-	}
-
-	if (m_TimeDelta > 3.0)
+	if (m_TimeDelta > 2.0)
 		m_bDead = true;
 }
 
@@ -76,9 +72,19 @@ void CDamageFontUI::Late_Tick(_double TimeDelta)
 HRESULT CDamageFontUI::Render()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
-	pGameInstance->Render_Font(TEXT("Font_Comic"), m_tagDamageFont.szDamage, _float2(m_fX, m_fY), 0.f, _float2(m_fSizeX, m_fSizeY), m_tagDamageFont.vColor);
 
+	if (m_tagDamageFont.iVersion == 0)
+	{
+		pGameInstance->DrawTextInWorld(TEXT("Font_Comic"), m_tagDamageFont.szDamage, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_Scaled(), m_tagDamageFont.vColor);
+	}
+	else if(m_tagDamageFont.iVersion == 1)
+	{
+		wstring strText, strDamage;
+		strText = L"Ä¡¸íÅ¸ ";
+		strDamage = m_tagDamageFont.szDamage;
+		strText += strDamage;
+		pGameInstance->DrawTextInWorld(TEXT("Font_Comic"), strText.c_str(), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_Scaled(), m_tagDamageFont.vColor);
+	}
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

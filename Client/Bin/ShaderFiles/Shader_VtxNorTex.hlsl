@@ -98,7 +98,6 @@ struct PS_OUT
 	float4		vNormal : SV_TARGET1;
 	float4		vDepth : SV_TARGET2;
 	float4		vSpecular : SV_TARGET3;
-	float4		vRimColor : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -130,8 +129,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 	Out.vSpecular = specular;
-	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
-	Out.vRimColor = rimColor;
 	return Out;
 }
 
@@ -163,8 +160,6 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 	Out.vSpecular = specular;
-	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
-	Out.vRimColor = rimColor;
 	return Out;
 }
 
@@ -231,6 +226,5 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
-
 	}
 }

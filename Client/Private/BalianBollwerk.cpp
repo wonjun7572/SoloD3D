@@ -5,6 +5,7 @@
 #include "FSMComponent.h"
 #include "Player.h"
 #include "ConversationUI.h"
+#include "GameUtils.h"
 
 CBalianBollwerk::CBalianBollwerk(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CAlly(pDevice, pContext)
@@ -46,7 +47,7 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 	m_strObjName = L"BalianBollwerk";
 
 	SetUp_UI();
-
+	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
 		m_CheckPoints.push_back(_float4(105.f, 7.f, 76.f , 1.f));
@@ -115,11 +116,6 @@ HRESULT CBalianBollwerk::Render()
 			HasSpecular = true;
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
-		m_pShaderCom->Set_RawValue("g_vRimColor", &_float4(0.1f, 0.1f, 1.f, 1.f), sizeof(_float4));
-
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4));
-		RELEASE_INSTANCE(CGameInstance);
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -178,64 +174,21 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 	m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
 	TimeConversation += TimeDelta;
-	if(TimeConversation > 6.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBollwerk");
-	else if(TimeConversation > 6.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBollwer");
-	else if (TimeConversation > 6.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBollwe");
-	else if (TimeConversation > 6.0f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBollw");
-	else if (TimeConversation > 5.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBoll");
-	else if (TimeConversation > 5.6f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBol");
-	else if (TimeConversation > 5.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanBo");
-	else if (TimeConversation > 5.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is BallanB");
-	else if (TimeConversation > 5.0f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is Ballan");
-	else if (TimeConversation > 4.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is Balla");
-	else if (TimeConversation > 4.6f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is Ball");
-	else if (TimeConversation > 4.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is Bal");
-	else if (TimeConversation > 4.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is Ba");
-	else if (TimeConversation > 4.0f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is B");
-	else if (TimeConversation > 3.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name is ");
-	else if (TimeConversation > 3.6f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name i");
-	else if (TimeConversation > 3.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Name");
-	else if (TimeConversation > 3.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Nam");
-	else if (TimeConversation > 3.0f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My Na");
-	else if (TimeConversation > 2.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My N");
-	else if (TimeConversation > 2.6f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! My");
-	else if (TimeConversation > 2.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello! M");
-	else if (TimeConversation > 2.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello!");
-	else if (TimeConversation > 2.0f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hello");
-	else if (TimeConversation > 1.8f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hell");
-	else if (TimeConversation > 1.6f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"Hel");
-	else if (TimeConversation > 1.4f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"He");
-	else if (TimeConversation > 1.2f)
-		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(L"H");
 
-	if (TimeConversation > 8.f)
+	if (TimeConversation > 2.0f)
+		m_strConversation = L"Hello";
+	else if (TimeConversation > 1.8f)
+		m_strConversation = L"Hell";
+	else if (TimeConversation > 1.6f)
+		m_strConversation = L"Hel";
+	else if (TimeConversation > 1.4f)
+		m_strConversation = L"He";
+	else if (TimeConversation > 1.2f)
+		m_strConversation = L"H";
+
+	static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+
+	if (TimeConversation > 2.f)
 		m_bConversation = false;
 }
 
@@ -283,7 +236,7 @@ void CBalianBollwerk::SetUp_UI()
 
 	wcscpy_s(conversationDesc.szConversation, MAX_PATH, L"");
 	wcscpy_s(conversationDesc.szFontName, MAX_PATH, L"");
-	conversationDesc.vColor = _float4(0.3f, 1.f, 0.f, 1.f);
+	conversationDesc.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
 	conversationDesc.fX = 475.f;
 	conversationDesc.fY = 610.f;
@@ -422,6 +375,19 @@ HRESULT CBalianBollwerk::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
+
+	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION),vCamPos) > 30.f)
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
+	else
+		m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

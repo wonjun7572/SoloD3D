@@ -101,6 +101,22 @@ HRESULT CGraphic_Device::Present()
 	return hr;
 }
 
+ID3D11Device * CGraphic_Device::Get_Device()
+{
+	if (m_pDevice == nullptr)
+		return nullptr;
+
+	return m_pDevice;
+}
+
+ID3D11DeviceContext * CGraphic_Device::Get_Context()
+{
+	if (m_pDeviceContext == nullptr)
+		return nullptr;
+
+	return m_pDeviceContext;
+}
+
 
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMode, _uint iWinCX, _uint iWinCY)
 {

@@ -11,6 +11,7 @@ texture2D		g_NormalTexture;
 texture2D		g_SpecularTexture;
 
 bool			g_HasSpecular;
+
 vector			g_vCamPosition;
 vector			g_vRimColor;
 
@@ -80,9 +81,9 @@ struct PS_IN
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vDiffuse : SV_TARGET0;
-	float4		vNormal : SV_TARGET1;
-	float4		vDepth : SV_TARGET2;
+	float4		vDiffuse  : SV_TARGET0;
+	float4		vNormal	  : SV_TARGET1;
+	float4		vDepth	  : SV_TARGET2;
 	float4		vSpecular : SV_TARGET3;
 	float4		vRimColor : SV_TARGET4;
 };
@@ -237,29 +238,5 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	pass Outline
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
-	}
-
-	pass Bloom
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_BLOOM();
 	}
 }

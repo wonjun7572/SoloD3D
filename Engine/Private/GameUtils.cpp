@@ -16,3 +16,4 @@ void CGameUtils::c2wc(const char * szChar, wchar_t * szWchar)
 	len = ::MultiByteToWideChar(CP_ACP, 0, szChar, -1, 0, 0);
 	::MultiByteToWideChar(CP_ACP, 0, szChar,static_cast<int>(slength), szWchar, len);
 }
+

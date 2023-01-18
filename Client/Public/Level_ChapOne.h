@@ -28,6 +28,7 @@ private:
 	HRESULT Ready_Layer_Ally(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Effect(const wstring& pLayerTag);
 	HRESULT Ready_Layer_MapObject(const wstring& pLayerTag);
+	HRESULT	Ready_Layer_UI(const wstring& pLayerTag);
 
 	wstring m_pSaveMapObjectFilePath;
 	wstring m_pLoadMapObjectFilePath;

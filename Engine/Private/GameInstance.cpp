@@ -151,6 +151,22 @@ HRESULT CGameInstance::Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _
 	return m_pGraphicDev->Update_SwapChain(hWnd, iWinCX, iWinCY, bIsFullScreen, bNeedUpdate);
 }
 
+ID3D11Device * CGameInstance::Get_Device()
+{
+	if (m_pGraphicDev == nullptr)
+		return nullptr;
+
+	return m_pGraphicDev->Get_Device();
+}
+
+ID3D11DeviceContext * CGameInstance::Get_Context()
+{
+	if (m_pGraphicDev == nullptr)
+		return nullptr;
+
+	return m_pGraphicDev->Get_Context();
+}
+
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
 {
 	if (m_pInputDev == nullptr)
@@ -441,6 +457,14 @@ _float4 CGameInstance::Get_CamPosition()
 	return m_pPipeLine->Get_CamPosition();
 }
 
+_float3 CGameInstance::Get_CamUp()
+{
+	if (nullptr == m_pPipeLine)
+		return _float3();
+
+	return m_pPipeLine->Get_CamUp();
+}
+
 _double CGameInstance::Get_TimeDelta(const wstring & pTimerTag)
 {
 	if (m_pTimerMgr == nullptr)
@@ -487,6 +511,14 @@ HRESULT CGameInstance::Render_Font(const _tchar* pFontTag, const _tchar* pText, 
 		return E_FAIL;
 
 	return m_pFontMgr->Render_Font(pFontTag, pText, vPos, fRadian, vScale, vColor);
+}
+
+void CGameInstance::DrawTextInWorld(const _tchar * pFontTag, const _tchar * text, _float4 vPos, _float3 vScale, _float4 vColor)
+{
+	if (nullptr == m_pFontMgr)
+		return;
+
+	return m_pFontMgr->DrawTextInWorld(pFontTag, text, vPos, vScale, vColor);
 }
 
 const LIGHTDESC * CGameInstance::Get_LightDesc(_uint iIndex)
@@ -559,6 +591,14 @@ void CGameInstance::Set_SoundDesc(const _tchar * pSoundKey, CSound::SOUND_DESC &
 		return;
 
 	m_pSoundMgr->Set_SoundDesc(pSoundKey, SoundDesc);
+}
+
+ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
+{
+	if (nullptr == m_pTargetMgr)
+		return nullptr;
+
+	return m_pTargetMgr->Get_SRV(TEXT("Target_Depth"));
 }
 
 void CGameInstance::Release_Engine()

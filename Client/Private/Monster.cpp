@@ -281,8 +281,8 @@ void CMonster::AdjustSetDamage()
 {
 	if (!m_bImpossibleDamaged)
 	{
-
 		_float fRealDamage = m_fPlayerAttack - m_fDefence;
+		fRealDamage += CMathUtils::GetRandomFloat(0.f, 20.f);
 
 		if (fRealDamage < 0.f)
 			fRealDamage = 0.f;
@@ -291,12 +291,14 @@ void CMonster::AdjustSetDamage()
 
 		wcscpy_s(damageFontDesc.szDamage, MAX_PATH, to_wstring((_int)(fRealDamage)).c_str());
 		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
-		damageFontDesc.vColor = _float4(0.3f, 1.f, 0.f, 1.f);
-
-		damageFontDesc.fX = 650.f + CMathUtils::GetRandomFloat(0.f, 200.f);
-		damageFontDesc.fY = 350.f + CMathUtils::GetRandomFloat(0.f, 200.f);
-		damageFontDesc.fSizeX = 50.f;
-		damageFontDesc.fSizeY = 50.f;
+		damageFontDesc.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		damageFontDesc.vPos.y += 3.f;
+		
+		if(fRealDamage < 20.f)
+			damageFontDesc.iVersion = 0;
+		else
+			damageFontDesc.iVersion = 1;
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
@@ -324,7 +326,9 @@ void CMonster::AdjustSetDamageToSkill()
 	if (!m_bImpossibleSkillDamaged)
 	{
 		_float fRealDamage = m_fPlayerAttack - m_fDefence;
-
+		
+		fRealDamage += CMathUtils::GetRandomFloat(0.f, 20.f);
+	
 		if (fRealDamage < 0.f)
 			fRealDamage = 0.f;
 
@@ -334,13 +338,10 @@ void CMonster::AdjustSetDamageToSkill()
 		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
 
 		damageFontDesc.vColor = _float4(1.f, 0.f, 0.17f, 1.f);
+		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		damageFontDesc.vPos.y += 3.f;
+		damageFontDesc.iVersion = 1;
 
-		// 어떤 식으로 위치를 잡아 줄지
-		damageFontDesc.fX = 650.f + CMathUtils::GetRandomFloat(0.f, 200.f);
-		damageFontDesc.fY = 350.f + CMathUtils::GetRandomFloat(0.f, 200.f);
-		damageFontDesc.fSizeX = 50.f;
-		damageFontDesc.fSizeY = 50.f;
-		
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
 

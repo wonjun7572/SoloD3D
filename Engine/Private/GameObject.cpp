@@ -103,6 +103,19 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& pPrototypeT
 	return S_OK;
 }
 
+void CGameObject::Compute_CamDistance()
+{
+	_vector		vWorldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	CPipeLine*		pPipeLine = GET_INSTANCE(CPipeLine);
+
+	_vector		vCamPos = XMLoadFloat4(&pPipeLine->Get_CamPosition());
+
+	m_fCamDistance = XMVectorGetX(XMVector3Length(vWorldPos - vCamPos));
+
+	RELEASE_INSTANCE(CPipeLine);
+}
+
 CComponent * CGameObject::Find_Component(const wstring& pComponentTag)
 {
 	auto iter = m_Components.find(pComponentTag);

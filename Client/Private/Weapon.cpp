@@ -34,7 +34,7 @@ HRESULT CWeapon::Init(void * pArg)
 		return E_FAIL;
 	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.113f,-0.637f, -1.511f, 1.f));
-	
+	m_vRimColor = _float4(0.01f, 0.01f, 0.1f, 0.1f);
 	return S_OK;
 }
 
@@ -94,7 +94,7 @@ HRESULT CWeapon::Render()
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
-		m_pModelCom->Render(m_pShaderCom, i, 1);
+		m_pModelCom->Render(m_pShaderCom, i, 4);
 	}
 
 	return S_OK;
@@ -174,6 +174,10 @@ HRESULT CWeapon::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_SocketMatrix", &m_SocketMatrix)))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -182,8 +186,6 @@ HRESULT CWeapon::SetUp_ShaderResources()
 
 void CWeapon::Imgui_RenderProperty()
 {
-
-
 }
 
 CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

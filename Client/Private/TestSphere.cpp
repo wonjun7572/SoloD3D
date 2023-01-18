@@ -43,29 +43,6 @@ HRESULT CTestSphere::Init(void * pArg)
 void CTestSphere::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-
-	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-	/*if (pGameInstance->Get_DIKeyState(DIK_UPARROW))
-		m_pTransformCom->Go_Straight(TimeDelta);
-
-	if (pGameInstance->Get_DIKeyState(DIK_DOWNARROW))
-		m_pTransformCom->Go_Backward(TimeDelta);
-
-	if (pGameInstance->Get_DIKeyState(DIK_LEFTARROW))
-		m_pTransformCom->Go_Left(TimeDelta);
-
-	if (pGameInstance->Get_DIKeyState(DIK_RIGHTARROW))
-		m_pTransformCom->Go_Right(TimeDelta);
-	
-	if (pGameInstance->Get_DIKeyState(DIK_SPACE))
-		m_pTransformCom->Go_Up(TimeDelta);
-
-	if (pGameInstance->Get_DIKeyState(DIK_C))
-		m_pTransformCom->Go_Down(TimeDelta);*/
-
-	Safe_Release(pGameInstance);
 }
 
 void CTestSphere::Late_Tick(_double TimeDelta)
@@ -73,7 +50,7 @@ void CTestSphere::Late_Tick(_double TimeDelta)
 	__super::Late_Tick(TimeDelta);
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CTestSphere::Render()

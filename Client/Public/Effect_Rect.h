@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Client_Define.h"
 #include "GameObject.h"
 
@@ -11,9 +13,9 @@ END
 
 BEGIN(Client)
 
-class CEffect_Rect final : public CGameObject
+class CEffect_Rect : public CGameObject
 {
-private:
+protected:
 	CEffect_Rect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect_Rect(const CEffect_Rect& rhs);
 	virtual ~CEffect_Rect() = default;
@@ -25,27 +27,24 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	Set_Play(_bool bPlay) { m_bPlay = bPlay; }
+	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
+
 	void	Imgui_RenderProperty() override;
-
 	void	LinkObject(_double TimeDelta, _fvector targetpos);
+	void	Compute_BillBoard();
 
-private:
+protected:
 	CShader*					m_pShaderCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
-
-
 	_float						m_fAlpha = 0.f;
+	_bool						m_bPlay = false;
 	_float2						m_UVMoveFactor;
 
-private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
-
 public:
-	static CEffect_Rect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 };
 

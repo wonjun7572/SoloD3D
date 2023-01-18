@@ -21,6 +21,7 @@ public:
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pGameObject);
 #ifdef _DEBUG
 	HRESULT Add_DebugRenderGroup(class CComponent* pComponent);
+	_bool								m_bDebugRender = false;
 #endif
 	HRESULT Draw_RenderGroup();
 
@@ -37,6 +38,7 @@ private:
 	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
 	class CShader*						m_pShader = nullptr;
 	_float4x4							m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
+
 
 private:
 	HRESULT Render_Priority();

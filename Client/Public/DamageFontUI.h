@@ -13,11 +13,8 @@ public:
 		_tchar szDamage[MAX_PATH];
 		_tchar szFontName[MAX_PATH];
 		_float4 vColor;
-
-		_float	fX;
-		_float	fY;
-		_float	fSizeX;
-		_float	fSizeY;
+		_float4 vPos;
+		_uint	iVersion;
 	}DAMAGEFONT;
 
 private:
@@ -38,6 +35,7 @@ private:
 	HRESULT SetUp_Components();
 
 	_double m_TimeDelta = 0.0;
+	_float	m_fSize = 0.f;
 
 public:
 	static CDamageFontUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -59,12 +59,16 @@ protected:
 
 	_bool									m_bClone;
 	_bool									m_bDead;
+	_float									m_fCamDistance = { 0.f };
+	_float4									m_vRimColor = { _float4(0.f,0.f,0.f,0.f) };
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& pPrototypeTag, const wstring& pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
+	void	Compute_CamDistance();
 
 public:                                                             
 	class CComponent* Find_Component(const wstring& pComponentTag);
+	_float Get_CamDistance() const { return m_fCamDistance; }
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

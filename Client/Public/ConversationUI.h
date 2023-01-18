@@ -33,7 +33,7 @@ public:
 	virtual HRESULT Render() override;
 
 	void	SetTransform(const CONVERSATIONFONT& tagFont);
-	void	SetConversation(const _tchar* szConversation);
+	void	SetConversation(const wstring& strConversation);
 
 	CONVERSATIONFONT m_tagConversationFont;
 

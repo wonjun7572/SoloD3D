@@ -61,7 +61,9 @@ void CConversationUI::Late_Tick(_double TimeDelta)
 HRESULT CConversationUI::Render()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
 	pGameInstance->Render_Font(TEXT("Font_Comic"), m_tagConversationFont.szConversation, _float2(m_fX, m_fY), 0.f, _float2(m_fSizeX, m_fSizeY), m_tagConversationFont.vColor);
+
 	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
@@ -77,9 +79,9 @@ void CConversationUI::SetTransform(const CONVERSATIONFONT & tagFont)
 	m_fSizeY = tagFont.fSizeY;
 }
 
-void CConversationUI::SetConversation(const _tchar * szConversation)
+void CConversationUI::SetConversation(const wstring& strConversation)
 {
-	lstrcpy(m_tagConversationFont.szConversation, szConversation);
+	lstrcpy(m_tagConversationFont.szConversation, strConversation.c_str());
 }
 
 HRESULT CConversationUI::SetUp_Components()

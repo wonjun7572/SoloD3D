@@ -29,6 +29,8 @@ public: // Graphic_Device
 	HRESULT				 Clear_Graphic_Device(const _float4* pColor);
 	HRESULT				 Present();
 	HRESULT				 Update_SwapChain(HWND hWnd, _uint iWinCX, _uint iWinCY, _bool bIsFullScreen, _bool bNeedUpdate);
+	ID3D11Device*		 Get_Device();
+	ID3D11DeviceContext* Get_Context();
 
 public:		/* For InputDevice */
 	_byte		Get_DIKeyState(_ubyte byKeyID);
@@ -78,6 +80,7 @@ public: /* For.PipeLine */
 	_float4x4	Get_TransformMatrix_Inverse(CPipeLine::TRANSFORMSTATE eState);
 	void		Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 	_float4		Get_CamPosition();
+	_float3		Get_CamUp();
 
 public: /* For.Timer_Manager */
 	_double		Get_TimeDelta(const wstring& pTimerTag);
@@ -88,6 +91,7 @@ public: /* For.Timer_Manager */
 public: /* For.Font_Manager */
 	HRESULT Add_Fonts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& pFontTag, const wstring& pFontFilePath);
 	HRESULT Render_Font(const _tchar* pFontTag, const _tchar* pText, const _float2& vPos, _float fRadian, _float2 vScale, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f));
+	void	DrawTextInWorld(const _tchar* pFontTag, const _tchar* text, _float4 vPos, _float3 vScale, _float4 vColor);
 
 public: /* For. Light_Manager*/
 	const LIGHTDESC* Get_LightDesc(_uint iIndex);
@@ -103,6 +107,9 @@ public: /* For.Sound_Manager */
 	void Set_Volume(_uint iManualChannelIndex, _float fVolume);
 	void Set_MasterVolume(_float fVolume);
 	void Set_SoundDesc(const _tchar *pSoundKey, CSound::SOUND_DESC& SoundDesc);
+
+public: /* For. Target_Manager */
+	ID3D11ShaderResourceView* Get_DepthTargetSRV();
 
 private:
 	static _uint					m_iStaticLevelIndex;

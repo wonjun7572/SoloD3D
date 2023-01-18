@@ -13,7 +13,7 @@ private:
 public:
 	HRESULT Init(const wstring& pFontFilePath);
 	HRESULT Render(const _tchar* pText, const _float2& vPosition, _float fRadian, _float2 vScale, _fvector vColor);
-	HRESULT Render(const _tchar* pText, _fvector vPosition, _fvector vColor, _float fRadian, _fvector vScale);
+	HRESULT DrawTextInWorld(const _tchar* pText, _fvector vPosition, _fvector vColor, _float fRadian, _fvector vScale);
 
 private:
 	ID3D11Device*			m_pDevice = nullptr;

@@ -19,6 +19,7 @@ public:
 	virtual HRESULT Render()override;
 	virtual void	Set_parentName(_uint iCulLevel, const _tchar* pParentTag);
 
+	
 protected:
 	class	CShader*   m_pShaderCom = nullptr;
 	class	CRenderer* m_pRendererCom = nullptr;

@@ -5,6 +5,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_AlbedoTexture;
 texture2D		g_MaskTexture;
+texture2D		g_DepthTexture;
 
 float			g_fAlpha;
 float2			g_UVMoveFactor;
@@ -34,6 +35,7 @@ struct VS_OUT
 	/* 정점에 필요한 변환을 모두 거쳤다. (월드, 뷰, 투영) */
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
 };
 
 /* 내가 그리는데 사용하는 정점의 갯수만큼. (인덱스의 갯수만큼) */
@@ -50,6 +52,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
 	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
@@ -62,6 +65,7 @@ struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -75,10 +79,19 @@ PS_OUT Texture_EFFECT(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	In.vTexUV += g_UVMoveFactor;
-	
 	float4 albedo = g_AlbedoTexture.Sample(AlbedoSampler, In.vTexUV);
 
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+
+	float		fOldViewZ = vDepthDesc.y * 300.f; // 카메라의 far
+	float		fViewZ = In.vProjPos.w;
+
 	Out.vColor = albedo * g_fAlpha;
+	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
 	
 	return Out;
 }
@@ -93,6 +106,19 @@ PS_OUT Texture_EFFECTwithAlphaMask(PS_IN In)
 	float4 alphaMask = g_MaskTexture.Sample(AlphaMaskSampler, In.vTexUV);
 
 	Out.vColor = albedo * alphaMask.r * g_fAlpha;
+
+	return Out;
+}
+
+PS_OUT Texture_EFFECTSimple(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV += g_UVMoveFactor;
+
+	float4 albedo = g_AlbedoTexture.Sample(AlbedoSampler, In.vTexUV);
+
+	Out.vColor = albedo * g_fAlpha;
 
 	return Out;
 }
@@ -122,5 +148,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 Texture_EFFECTwithAlphaMask();
+	}
+
+	pass Tex_EffectSimple
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Test, 0);
+		SetBlendState(BS_Trail, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
 	}
 }

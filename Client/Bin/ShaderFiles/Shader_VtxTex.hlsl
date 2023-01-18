@@ -41,8 +41,6 @@ VS_OUT VS_MAIN(VS_IN In)
 /* TriangleList : 정점세개를 모두 vs를 통과시킨 후, 세 정점의 위치를 각 위치벡터의 w값으로 나눈다. (투영)  */
 /* 뷰포트 변환. */
 /* 래스터 라이즈를 수행한다.(정점정보를 기반으로 하여 픽셀의 정보를 생성한다. )*/
-
-
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;

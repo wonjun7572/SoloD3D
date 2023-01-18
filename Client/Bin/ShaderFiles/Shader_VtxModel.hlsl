@@ -14,6 +14,9 @@ texture2D		g_SpecularTexture;
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 
+vector			g_vCamPosition;
+vector			g_vRimColor;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -29,6 +32,16 @@ struct VS_OUT
 	float4		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+};
+
+struct WEAPON_VS_OUT
+{
+	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float4		vTangent : TANGENT;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -70,6 +83,30 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	return Out;
 }
 
+WEAPON_VS_OUT VS_MAIN_WEAPON(VS_IN In)
+{
+	WEAPON_VS_OUT		Out = (WEAPON_VS_OUT)0;
+
+	matrix		matVP = mul(g_ViewMatrix, g_ProjMatrix);
+
+	vector		vPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	vPosition = mul(vPosition, g_SocketMatrix);
+
+	float4	worldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
+	Out.vViewDir = normalize(worldPosition.xyz - g_vCamPosition.xyz);
+
+	vector		vNormal = mul(float4(In.vNormal, 0.f), g_WorldMatrix);
+	vNormal = mul(vNormal, g_SocketMatrix);
+
+	Out.vPosition = mul(vPosition, matVP);
+	Out.vNormal = normalize(vNormal);
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
+	Out.vTangent = (vector)0.f;
+
+	return Out;
+}
+
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
@@ -79,12 +116,31 @@ struct PS_IN
 	float4		vProjPos : TEXCOORD1;
 };
 
+struct PS_WEAPON_IN
+{
+	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float4		vTangent : TANGENT;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float3		vViewDir : TEXCOORD2;
+};
+
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vDiffuse : SV_TARGET0;
-	float4		vNormal : SV_TARGET1;
-	float4		vDepth : SV_TARGET2;
+	float4		vDiffuse  : SV_TARGET0;
+	float4		vNormal   : SV_TARGET1;
+	float4		vDepth	  : SV_TARGET2;
+	float4		vSpecular : SV_TARGET3;
+};
+
+struct PS_OUT_WEAPON
+{
+	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
+	float4		vDiffuse  : SV_TARGET0;
+	float4		vNormal   : SV_TARGET1;
+	float4		vDepth	  : SV_TARGET2;
 	float4		vSpecular : SV_TARGET3;
 	float4		vRimColor : SV_TARGET4;
 };
@@ -111,9 +167,39 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
-	Out.vSpecular = vSpecular * 0.2f;
-	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vSpecular = vSpecular;
+	return Out;
+}
+
+PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
+{
+	PS_OUT_WEAPON			Out = (PS_OUT_WEAPON)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	vector		vSpecular = (vector)0.2f;
+	if (g_HasSpecular == true)
+	{
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		vSpecular = (vector)0.2f;
+	}
+
+	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 5.0f);
+	vector rimColor = g_vRimColor;
+	rimColor = rim * rimColor;
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
 	Out.vRimColor = rimColor;
+
 	return Out;
 }
 
@@ -165,15 +251,13 @@ PS_OUT PS_MAIN_OUTLINE(PS_IN In)
 	/* -1 ~ 1 => 0 ~ 1 */
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
-	Out.vSpecular = vSpecular * 0.2f;
-	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
-	Out.vRimColor = rimColor;
+	Out.vSpecular = vSpecular;
 	return Out;
 }
 
 technique11 DefaultTechnique
 {
-	pass Default
+	pass Default//0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -185,7 +269,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket
+	pass Socket//1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -197,7 +281,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket_Outline
+	pass Socket_Outline//2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -209,7 +293,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
 	}
 
-	pass Outline
+	pass Outline//3
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);
@@ -219,5 +303,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
+	}
+
+	pass Weapon //4
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN_WEAPON();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_WEAPON();
 	}
 }

@@ -80,6 +80,8 @@ HRESULT CPlayer::Init(void * pArg)
 
 	SetUp_FSM();
 	
+	m_vRimColor = _float4(0.1f , 0.1f , 1.f ,1.f);
+
 	return S_OK;
 }
 
@@ -195,12 +197,6 @@ HRESULT CPlayer::Render()
 			HasSpecular = true;
 		
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
-		m_pShaderCom->Set_RawValue("g_vRimColor", &_float4(0.1f, 0.1f, 1.f, 1.f), sizeof(_float4));
-
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4));
-		RELEASE_INSTANCE(CGameInstance);
-
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -219,7 +215,6 @@ HRESULT CPlayer::Render()
 void CPlayer::Effect_Tick(_double TimeDelta)
 {
 	static_cast<CEffect_Mesh*>(m_PlayerEffects[LINE_AURA])->Set_EffectPlay(true);
-	static_cast<CEffect_Mesh*>(m_PlayerEffects[THUNDERWAVE])->Set_EffectPlay(true);
 }
 
 void CPlayer::UI_Tick(_double TimeDelta)
@@ -834,6 +829,12 @@ void CPlayer::SetUp_FSM()
 			MonsterSkill02(false);
 
 		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_Alpha(static_cast<_float>(m_WingAlpha));
+
+		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 0.4))
+		{
+			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->LinkObject(TimeDelta, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->Set_Play(true);
+		}
 	})
 		.OnExit([this]()
 	{
@@ -2315,27 +2316,13 @@ HRESULT CPlayer::SetUp_Effects()
 
 	m_PlayerEffects.push_back(pEffect);
 
-	pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(270.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 2.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 0.1f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 34;
-	effectDesc.iMaskTex = 34;
-	effectDesc.fAlpha = 2.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ThunderWave"), &effectDesc);
+	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_QskillCrackE"));
 
 	if (nullptr == pEffect)
 		return E_FAIL;
 
 	m_PlayerEffects.push_back(pEffect);
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -2617,6 +2604,15 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
+	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
+	else
+		m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
