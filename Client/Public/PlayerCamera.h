@@ -30,8 +30,7 @@ public:
 	void LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn);
 	void DynamicCamera(_double TimeDelta);
 
-private:
-	void	Imgui_RenderProperty() override;
+	void Set_CinematicCam(_bool bCinematic) { m_bCinematic = bCinematic; }
 
 private:
 	void Mouse_Fix();
@@ -43,7 +42,7 @@ private:
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
 	_float4 m_vPlayerPos;
 
-	_float m_fDistanceToTarget = 7.f;
+	_float m_fDistanceToTarget = 5.f;
 	_float m_fCamY = 0.f;
 	_float m_fCamTime = 0.f;
 
@@ -55,6 +54,10 @@ private:
 	_float m_fShakeDuration = 0.f;
 	_float m_fShakeAmount = 0.f;
 	_float m_fDecreaseFactor = 0.f;
+
+
+	// 시네마틱 카메라가 없다면 true해줘야함
+	_bool  m_bCinematic = false;
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

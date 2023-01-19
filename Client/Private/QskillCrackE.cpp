@@ -50,7 +50,7 @@ void CQskillCrackE::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 
 	if (m_bPlay)
-		m_fAlpha -= TimeDelta * 0.3f;
+		m_fAlpha -= static_cast<float>(TimeDelta) * 0.3f;
 	else
 		m_fAlpha = 1.f;
 

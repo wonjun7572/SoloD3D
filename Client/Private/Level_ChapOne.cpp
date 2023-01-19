@@ -197,6 +197,9 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
 
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -241,10 +244,6 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 	vPos = _float4(105.f, 0.f, 95.f, 1.f);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
-		return E_FAIL;
-
-	vPos = _float4(105.f, 0.f, 100.f, 1.f);
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"), &vPos)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -296,9 +295,6 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_HitE"))))
 		return E_FAIL;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SparkE"))))

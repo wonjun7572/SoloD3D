@@ -102,7 +102,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-
 	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
 	Out.vShade.a = 1.f;
 
@@ -190,7 +189,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSpecularBlend = g_SpecularBlendTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRimColor = g_RimTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor = (vDiffuse * vShade) + ((vSpecular * 50.f) * vSpecularBlend) + vRimColor;
+	Out.vColor = (vDiffuse * vShade) + ((vSpecular * 30.f) * vSpecularBlend) + (vRimColor * 0.5f);
 
 	if (0.0f == Out.vColor.a)
 		discard;

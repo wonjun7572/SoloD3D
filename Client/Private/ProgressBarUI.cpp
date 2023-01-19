@@ -41,19 +41,15 @@ HRESULT CProgressBarUI::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_fSizeX = m_ProgressBarDesc.fSizeX;//(_float)g_iWinSizeX / 22.f;
-	m_fSizeY = m_ProgressBarDesc.fSizeY;//(_float)g_iWinSizeY / 12.f; //75
-
+	m_fSizeX = m_ProgressBarDesc.fSizeX;
+	m_fSizeY = m_ProgressBarDesc.fSizeY;
 	m_fX = m_ProgressBarDesc.fX; // -300
 	m_fY = m_ProgressBarDesc.fY;
-
 	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
 		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
-
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
-
 	return S_OK;
 }
 

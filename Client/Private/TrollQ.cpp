@@ -33,19 +33,26 @@ HRESULT CTrollQ::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	TROLLQDESC TrollQDesc;
+	ZeroMemory(&TrollQDesc, sizeof TrollQDesc);
+
+	if (pArg != nullptr && g_LEVEL == LEVEL_CHAP2)
+	{
+		memcpy(&TrollQDesc, pArg, sizeof TrollQDesc);
+		m_iGroup = TrollQDesc.iGroup;
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(TrollQDesc.fRadian));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, TrollQDesc.vPos);
+	}
+	
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-
 	m_strObjName = L"TrollQ";
-
-	m_fHp = 100;
-	m_fMaxHp = 100.f;
-	m_fAttack = 10;
-	m_fDefence = 5;
+	m_fHp = 500.f;
+	m_fMaxHp = 500.f;
+	m_fAttack = 30.f;
+	m_fDefence = 15.f;
 	m_vMonsterNamePos = _float2(720.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
@@ -54,6 +61,13 @@ HRESULT CTrollQ::Init(void * pArg)
 
 	m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
 
+	if (m_iGroup == 1)
+		m_vSecondCheckPoint = _float3(240.f, 0.f, 245.f);
+	else if (m_iGroup == 2)
+		m_vSecondCheckPoint = _float3(250.f, 0.f, 280.f);
+	else if (m_iGroup == 3)
+		m_vSecondCheckPoint = _float3(295.f, 0.f, 260.f);
+
 	return S_OK;
 }
 
@@ -61,6 +75,16 @@ void CTrollQ::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
+
+	if (!m_bSecondCheckPoint )
+	{
+		if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 250.f)
+		{
+			m_bSecondCheckPoint = true;
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_vSecondCheckPoint);
+			m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+		}
+	}
 }
 
 void CTrollQ::Late_Tick(_double TimeDelta)
@@ -101,6 +125,14 @@ HRESULT CTrollQ::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -117,12 +149,6 @@ HRESULT CTrollQ::Render()
 
 void CTrollQ::Imgui_RenderProperty()
 {
-	if (ImGui::Button("Navi~"))
-	{
-		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	}
-
-	m_pAttackColCom->FixedSizeForImgui(COLLTYPE_SPHERE);
 }
 
 void CTrollQ::SetUp_FSM()
@@ -474,12 +500,15 @@ void CTrollQ::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(TROLLQ_ADD_DMG_F);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bFrontDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(TROLLQ_ADD_DMG_F);
+	}
 
-	if (AnimFinishChecker(TROLLQ_ADD_DMG_F))
+	if (AnimFinishChecker(TROLLQ_ADD_DMG_F, 0.3))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(TROLLQ_ADD_DMG_F);
 	}
 
 	///////////////////////////////////////
@@ -490,12 +519,15 @@ void CTrollQ::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(TROLLQ_ADD_DMG_B);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bBackDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(TROLLQ_ADD_DMG_B);
+	}
 
-	if (AnimFinishChecker(TROLLQ_ADD_DMG_B))
+	if (AnimFinishChecker(TROLLQ_ADD_DMG_B, 0.3))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(TROLLQ_ADD_DMG_B);
 	}
 }
 
@@ -512,7 +544,7 @@ HRESULT CTrollQ::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TrollQ"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Model_TrollQ"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

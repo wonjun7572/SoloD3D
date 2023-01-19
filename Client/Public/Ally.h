@@ -16,7 +16,14 @@ BEGIN(Client)
 class CAlly abstract : public CGameObject
 {
 public:
+	enum UI { UI_CONVERSATION, UI_END };
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_SPHERE, COLLTYPE_END };
+
+	typedef struct tagInitDesc
+	{
+		_float4 vPos;
+		_float	fRadian;
+	}ALLYDESC;
 
 protected:
 	CAlly(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -32,7 +39,6 @@ public:
 
 	/* 충돌 관련 */
 	void CollisionToAlly(_double TimeDelta);
-
 	void ClosestPtPointAABB(_float3 sphereCenter, CCollider* pAABB, _float3& p);
 
 	void	AdjustSetDamage();

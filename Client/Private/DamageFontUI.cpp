@@ -36,13 +36,11 @@ HRESULT CDamageFontUI::Init(void * pArg)
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
-
-	_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 0.f , 0.f);
-	m_tagDamageFont.vPos += Randompos;
+	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_tagDamageFont.vPos);
 
-	m_fSize = 2.f;
-	m_pTransformCom->Set_Scaled(_float3(m_fSize,m_fSize,m_fSize));
+	m_fSize = 1.5f;
+	m_pTransformCom->Set_Scaled(_float3(m_fSize, m_fSize, m_fSize));
 
 	return S_OK;
 }

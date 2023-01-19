@@ -346,7 +346,6 @@
     <ClInclude Include="..\public\Delilah.h">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ConversationCamera.h" />
     <ClInclude Include="..\public\ExplosionE.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
@@ -359,11 +358,18 @@
     <ClInclude Include="..\public\ArcaneE.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\FireE_0.h" />
-    <ClInclude Include="..\public\FlameE.h" />
-    <ClInclude Include="..\public\HitE.h" />
     <ClInclude Include="..\public\SparkE.h" />
     <ClInclude Include="..\public\QskillCrackE.h" />
+    <ClInclude Include="..\public\MonsterHpUI.h" />
+    <ClInclude Include="..\public\FireE_0.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FlameE.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HitE.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -553,7 +559,6 @@
     <ClCompile Include="..\private\Delilah.cpp">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ConversationCamera.cpp" />
     <ClCompile Include="..\private\ExplosionE.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
@@ -566,11 +571,18 @@
     <ClCompile Include="..\private\ArcaneE.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\FireE_0.cpp" />
-    <ClCompile Include="..\private\FlameE.cpp" />
-    <ClCompile Include="..\private\HitE.cpp" />
     <ClCompile Include="..\private\SparkE.cpp" />
     <ClCompile Include="..\private\QskillCrackE.cpp" />
+    <ClCompile Include="..\private\MonsterHpUI.cpp" />
+    <ClCompile Include="..\private\FireE_0.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FlameE.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HitE.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

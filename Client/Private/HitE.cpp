@@ -34,7 +34,16 @@ HRESULT CHitE::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
+	_float4 vPos;
+
+	if (pArg != nullptr)
+	{
+		memcpy(&vPos, pArg, sizeof(_float4));
+	}
+
+	vPos.y -= 1.5f;
+
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 	m_strObjName = L"Effect_Rect_HitE";
 
 	m_fAlpha = 1.f;
@@ -48,10 +57,12 @@ void CHitE::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 
 	Compute_BillBoard();
+	m_pTransformCom->Set_Scaled(_float3(3.f, 3.f, 1.f));
 
-	m_fFrame += 16.0f * TimeDelta;
+	m_fFrame += 16.0f * static_cast<float>(TimeDelta);
+
 	if (m_fFrame >= 16.0f)
-		m_fFrame = 0.f;
+		m_bDead = true;
 }
 
 void CHitE::Late_Tick(_double TimeDelta)
@@ -61,7 +72,7 @@ void CHitE::Late_Tick(_double TimeDelta)
 	__super::Compute_CamDistance();
 
 	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CHitE::Render()

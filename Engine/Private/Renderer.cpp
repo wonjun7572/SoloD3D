@@ -42,7 +42,7 @@ HRESULT CRenderer::Init_Prototype()
 		return E_FAIL;
 
 	/* For.Target_Diffuse */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), static_cast<_uint>(ViewportDesc.Width),static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), static_cast<_uint>(ViewportDesc.Width),static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_RimColor */

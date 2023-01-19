@@ -48,6 +48,7 @@ public:
 
 public:
 	void Update(_fmatrix TransformMatrix);
+	_float Get_AABBYSize();
 
 public:
 	_bool Collision(class CCollider* pTargetCollider);

@@ -5,6 +5,8 @@ BEGIN(Client)
 
 class CChitata final : public CAlly
 {
+	enum UI { UI_CONVERSATION, UI_END };
+
 	enum ANIMATION
 	{
 		CHITATA_ADD_DMG_B
@@ -53,8 +55,13 @@ public:
 
 	void	Imgui_RenderProperty() override;
 
+	void	Level_Chap2Tick(_double TimeDelta);
+	void	Conversation(_double TimeDelta);
+	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
+
 private:
 	void	SetUp_FSM() override;
+	void	SetUp_UI();
 
 private:
 	void	AdditiveAnim(_double TimeDelta);
@@ -65,6 +72,14 @@ private:
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
+
+	vector<CGameObject*> m_UI;
+
+	_double TimeConversation = 0.0;
+	_bool	m_bConversation = true;
+	_bool	m_bSecondStageCheck = false;
+	vector<_float4> m_CheckPoints;
+	wstring	m_strConversation;
 
 public:
 	static CChitata* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

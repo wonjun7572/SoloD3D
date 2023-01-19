@@ -86,6 +86,14 @@ HRESULT CWeapon::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 	
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -94,7 +102,7 @@ HRESULT CWeapon::Render()
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
-		m_pModelCom->Render(m_pShaderCom, i, 4);
+		m_pModelCom->Render(m_pShaderCom, i, 2);
 	}
 
 	return S_OK;

@@ -38,6 +38,14 @@ class CTrollQ final : public CMonster
 		, TROLLQ_END
 	};
 
+public:
+	typedef struct tagTrollQDesc
+	{
+		_uint	iGroup;
+		_float4 vPos;
+		_float	fRadian;
+	}TROLLQDESC;
+
 private:
 	CTrollQ(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTrollQ(const CTrollQ& rhs);
@@ -86,6 +94,8 @@ private:
 
 private:
 	_uint		m_iRandAttack = 0;
+	_float3		m_vSecondCheckPoint;
+	_bool		m_bSecondCheckPoint = false;
 
 public:
 	static CTrollQ* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

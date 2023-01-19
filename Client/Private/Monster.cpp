@@ -7,6 +7,7 @@
 #include "Effect_Rect.h"
 #include "DamageFontUI.h"
 #include "MonsterNameUI.h"
+#include "MonsterHpUI.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -84,6 +85,9 @@ void CMonster::Tick(_double TimeDelta)
 	for (auto& pDamageFont : m_MonsterDamageFontUI)
 		pDamageFont->Tick(TimeDelta);
 
+	for (auto& pDamageEffect : m_MonsterDamageEffect)
+		pDamageEffect->Tick(TimeDelta);
+
 	UI_Tick(TimeDelta);
 }
 
@@ -121,9 +125,10 @@ void CMonster::Late_Tick(_double TimeDelta)
 
 	if (m_bUIOn && !m_bDeadAnim)
 	{
-		for (auto& pUI : m_MonsterUI)
-			pUI->Late_Tick(TimeDelta);
+		m_MonsterUI[HP]->Late_Tick(TimeDelta);
+		m_MonsterUI[TARGET_AIM]->Late_Tick(TimeDelta);
 	}
+	m_MonsterUI[BILLBOARD_HP]->Late_Tick(TimeDelta);
 
 	for (auto iter = m_MonsterDamageFontUI.begin(); iter != m_MonsterDamageFontUI.end();)
 	{
@@ -133,6 +138,27 @@ void CMonster::Late_Tick(_double TimeDelta)
 			{
 				Safe_Release(*iter);
 				iter = m_MonsterDamageFontUI.erase(iter);
+			}
+			else
+			{
+				(*iter)->Late_Tick(TimeDelta);
+				iter++;
+			}
+		}
+		else
+		{
+			iter++;
+		}
+	}
+
+	for (auto iter = m_MonsterDamageEffect.begin(); iter != m_MonsterDamageEffect.end();)
+	{
+		if ((*iter) != nullptr)
+		{
+			if ((*iter)->Get_Dead() == true)
+			{
+				Safe_Release(*iter);
+				iter = m_MonsterDamageEffect.erase(iter);
 			}
 			else
 			{
@@ -192,6 +218,13 @@ HRESULT CMonster::SetUP_UI()
 
 	m_MonsterUI.push_back(pUI);
 
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_MonsterHPUI"), &progressBarDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_MonsterUI.push_back(pUI);
+
 	CMonsterNameUI::NAMEFONT NameFontDesc;
 
 	wcscpy_s(NameFontDesc.szName, MAX_PATH, m_strObjName.c_str());
@@ -210,6 +243,9 @@ HRESULT CMonster::SetUP_UI()
 
 	m_MonsterUI.push_back(pUI);
 
+	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->Set_Play(true);
+	static_cast<CEffect_Rect*>(m_MonsterUI[BILLBOARD_HP])->Set_Play(true);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -218,7 +254,13 @@ HRESULT CMonster::SetUP_UI()
 void CMonster::UI_Tick(_double TimeDelta)
 {
 	static_cast<CProgressBarUI*>(m_MonsterUI[HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
-	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->LinkObject(TimeDelta,m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	static_cast<CMonsterHpUI*>(m_MonsterUI[BILLBOARD_HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
+	
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
+
+	_float fY = m_pColliderCom[COLLTYPE_AABB]->Get_AABBYSize() + 0.1f;
+	static_cast<CEffect_Rect*>(m_MonsterUI[BILLBOARD_HP])->LinkObject(TimeDelta, _float4(vPos.x, fY, vPos.z, 1.f));
 }
 
 void CMonster::UI_Switch(_double TimeDelta)
@@ -292,10 +334,10 @@ void CMonster::AdjustSetDamage()
 		wcscpy_s(damageFontDesc.szDamage, MAX_PATH, to_wstring((_int)(fRealDamage)).c_str());
 		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
 		damageFontDesc.vColor = _float4(1.f, 1.f, 1.f, 1.f);
-		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		damageFontDesc.vPos.y += 3.f;
+		_vector Randompos = _float4(CMathUtils::GetRandomFloat(-0.5f, 0.5f), CMathUtils::GetRandomFloat(-1.f, 1.f) + 3.f, 0.f, 0.f);
+		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + Randompos;
 		
-		if(fRealDamage < 20.f)
+		if(fRealDamage < 30.f)
 			damageFontDesc.iVersion = 0;
 		else
 			damageFontDesc.iVersion = 1;
@@ -308,6 +350,11 @@ void CMonster::AdjustSetDamage()
 
 		if (nullptr != pUI)
 			m_MonsterDamageFontUI.push_back(pUI);
+
+		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_HitE"), &damageFontDesc.vPos);
+			
+		if (nullptr != pUI)
+			m_MonsterDamageEffect.push_back(pUI);
 
 		RELEASE_INSTANCE(CGameInstance);
 
@@ -338,9 +385,8 @@ void CMonster::AdjustSetDamageToSkill()
 		wcscpy_s(damageFontDesc.szFontName, MAX_PATH, L"");
 
 		damageFontDesc.vColor = _float4(1.f, 0.f, 0.17f, 1.f);
-		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		damageFontDesc.vPos.y += 3.f;
-		damageFontDesc.iVersion = 1;
+		_vector Randompos = _float4(CMathUtils::GetRandomFloat(-2.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f) + 3.f, 0.f, 0.f);
+		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + Randompos;
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
@@ -351,6 +397,11 @@ void CMonster::AdjustSetDamageToSkill()
 
 		if (nullptr != pUI)
 			m_MonsterDamageFontUI.push_back(pUI);
+
+		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_HitE"), &damageFontDesc.vPos);
+
+		if (nullptr != pUI)
+			m_MonsterDamageEffect.push_back(pUI);
 
 		RELEASE_INSTANCE(CGameInstance);
 
@@ -597,6 +648,12 @@ void CMonster::Free()
 		Safe_Release(pUI);
 
 	m_MonsterDamageFontUI.clear();
+
+	for (auto& pUI : m_MonsterDamageEffect)
+		Safe_Release(pUI);
+
+	m_MonsterDamageEffect.clear();
+
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

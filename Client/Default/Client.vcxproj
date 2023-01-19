@@ -187,7 +187,6 @@
     <ClInclude Include="..\public\Chinuwa.h" />
     <ClInclude Include="..\public\Chitata.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
-    <ClInclude Include="..\public\ConversationCamera.h" />
     <ClInclude Include="..\public\ConversationUI.h" />
     <ClInclude Include="..\public\DamageFontUI.h" />
     <ClInclude Include="..\public\Delilah.h" />
@@ -218,6 +217,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Medieval_City.h" />
     <ClInclude Include="..\public\Monster.h" />
+    <ClInclude Include="..\public\MonsterHpUI.h" />
     <ClInclude Include="..\public\MonsterNameUI.h" />
     <ClInclude Include="..\Public\NorAtk_Trail2.h" />
     <ClInclude Include="..\Public\NorAtk_Trail3.h" />
@@ -264,7 +264,6 @@
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\private\Chinuwa.cpp" />
     <ClCompile Include="..\private\Chitata.cpp" />
-    <ClCompile Include="..\private\ConversationCamera.cpp" />
     <ClCompile Include="..\private\ConversationUI.cpp" />
     <ClCompile Include="..\private\DamageFontUI.cpp" />
     <ClCompile Include="..\private\Delilah.cpp" />
@@ -295,6 +294,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Medieval_City.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\private\MonsterHpUI.cpp" />
     <ClCompile Include="..\private\MonsterNameUI.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail2.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail3.cpp" />

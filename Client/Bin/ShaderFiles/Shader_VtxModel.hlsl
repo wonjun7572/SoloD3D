@@ -8,6 +8,7 @@ matrix			g_ViewInverseMatrix, g_ProjInverseMatrix;
 matrix			g_SocketMatrix;
 
 bool			g_HasSpecular;
+bool			g_HasNormal;
 
 /* ¿Á¡˙ ¡§∫∏ */
 texture2D		g_SpecularTexture;
@@ -32,6 +33,7 @@ struct VS_OUT
 	float4		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float3		vBinormal : BINORMAL;
 };
 
 struct WEAPON_VS_OUT
@@ -42,6 +44,7 @@ struct WEAPON_VS_OUT
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	float3		vViewDir : TEXCOORD2;
+	float3		vBinormal : BINORMAL;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -57,7 +60,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), g_WorldMatrix));
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
 	return Out;
 }
@@ -78,7 +82,8 @@ VS_OUT VS_MAIN_SOCKET(VS_IN In)
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 
 	return Out;
 }
@@ -102,8 +107,8 @@ WEAPON_VS_OUT VS_MAIN_WEAPON(VS_IN In)
 	Out.vNormal = normalize(vNormal);
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-	Out.vTangent = (vector)0.f;
-
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix));
+	Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
 	return Out;
 }
 
@@ -114,6 +119,7 @@ struct PS_IN
 	float4		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float3		vBinormal : BINORMAL;
 };
 
 struct PS_WEAPON_IN
@@ -124,6 +130,7 @@ struct PS_WEAPON_IN
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	float3		vViewDir : TEXCOORD2;
+	float3		vBinormal : BINORMAL;
 };
 
 struct PS_OUT
@@ -153,21 +160,29 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
+	// Ω∫∆Â≈ß∑Ø ø¨ªÍ
 	vector		vSpecular = (vector)0.2f;
 
 	if (g_HasSpecular == true)
-	{
 		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-	}
 	else
-	{
 		vSpecular = (vector)0.2f;
+
+	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3	vNormal = In.vNormal.xyz;
+	if (g_HasNormal == true)
+	{
+		vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+		float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+		vNormal = normalize(mul(vNormal, WorldMatrix));
 	}
 
 	Out.vDiffuse = vDiffuse;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
+
 	return Out;
 }
 
@@ -180,14 +195,22 @@ PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 	if (0.1f > vDiffuse.a)
 		discard;
 
+	// Ω∫∆Â≈ß∑Ø
 	vector		vSpecular = (vector)0.2f;
 	if (g_HasSpecular == true)
-	{
 		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-	}
 	else
+		vSpecular = (vector)1.f;
+
+	
+	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3	vNormal = In.vNormal.xyz;
+	if (g_HasNormal == true)
 	{
-		vSpecular = (vector)0.2f;
+		vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+		float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+		vNormal = normalize(mul(vNormal, WorldMatrix));
 	}
 
 	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 5.0f);
@@ -195,63 +218,11 @@ PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 	rimColor = rim * rimColor;
 
 	Out.vDiffuse = vDiffuse;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
 	Out.vRimColor = rimColor;
 
-	return Out;
-}
-
-PS_OUT PS_MAIN_OUTLINE(PS_IN In)
-{
-	PS_OUT         Out = (PS_OUT)0;
-
-	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-
-	Out.vDiffuse.a = Out.vDiffuse.a * 0.5f;
-
-	vector		vSpecular = (vector)0.2f;
-
-	if (g_HasSpecular == true)
-	{
-		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-	}
-	else
-	{
-		vSpecular = (vector)0.2f;
-	}
-
-	float Lx = 0;
-	float Ly = 0;
-
-	for (int y = -1; y <= 1; ++y)
-	{
-		for (int x = -1; x <= 1; ++x)
-		{
-			float2 offset = float2(x, y) * float2(1 / 1280.f, 1 / 720.f);
-			float3 tex = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + offset).rgb;
-			float luminance = dot(tex, float3(0.3, 0.59, 0.11));
-
-			Lx += luminance * Kx[y + 1][x + 1];
-			Ly += luminance * Ky[y + 1][x + 1];
-		}
-	}
-	float L = sqrt((Lx*Lx) + (Ly*Ly));
-
-	if (L < 0.3) // ¿Ã ∞™ø° µ˚∂Ûº≠ µŒ≤Æ∞‘ ø‹∞˚º±¿Ã ª˝±‚¥¬∞° 
-	{
-		Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
-	}
-	else
-	{
-		Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV) * 0.3f;
-	}
-
-	/* -1 ~ 1 => 0 ~ 1 */
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
-	Out.vSpecular = vSpecular;
 	return Out;
 }
 
@@ -281,31 +252,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Socket_Outline//2
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN_SOCKET();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
-	}
-
-	pass Outline//3
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
-	}
-
-	pass Weapon //4
+	pass Weapon //2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Default, 0);

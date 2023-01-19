@@ -175,6 +175,7 @@ public:
 	void					CamLockOn(CGameObject* pGameObject, OUT _bool& bLock);
 	
 	_bool					Get_Conversation() { return m_bConversation; }
+	void					Set_PlayerUI(_bool bTurnOn) { m_bUI = bTurnOn; }
 
 private:
 	CFSMComponent*			m_pFSM = nullptr;
@@ -265,11 +266,7 @@ private:
 	_double m_WingAlpha = 0.0;
 	_float  m_fWingY = 1.f;
 
-	//_float m_fTime = 0.2f;
-	//_float m_fFinishTime = 0.4f;
-
-	//_float m_fWingTestUPY = 1.f;
-	//_float m_fWingTestDOWNY = 1.f;
+	_bool	m_bUI = true;
 
 	/* ½ºÅ³ ÄðÅ¸ÀÓ~! */
 	_double m_Skill_1IconCollTime = 15.0;

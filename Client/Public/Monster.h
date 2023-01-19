@@ -18,7 +18,7 @@ class CMonster abstract : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_SPHERE, COLLTYPE_END };
-	enum UI { HP, TARGET_AIM, UI_END };
+	enum UI { HP, TARGET_AIM, BILLBOARD_HP, UI_END };
 
 protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -107,7 +107,8 @@ protected:
 
 	vector<CCollider*>		m_MonsterColliders;
 	vector<CGameObject*>	m_MonsterUI;
-	vector<CGameObject*>	m_MonsterDamageFontUI;                            
+	vector<CGameObject*>	m_MonsterDamageFontUI;          
+	vector<CGameObject*>	m_MonsterDamageEffect;
 
 	_float2					m_vMonsterNamePos;
 	_float2					m_vMonsterNameScale;
@@ -115,6 +116,8 @@ protected:
 	_bool					m_bUIOn = false;
 
 	vector<CMonster*>		m_Monsters;
+
+	_uint					m_iGroup = 0;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

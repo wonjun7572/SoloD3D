@@ -74,6 +74,7 @@
 #include "QskillCrackE.h"
 
 #include "ConversationUI.h"
+#include "MonsterHpUI.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -332,34 +333,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	// For. MONSTER
 	{
-		/* For.Prototype_Component_Model_Demon */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Demon"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Demon/Demon.model"), PivotMatrix))))
-			return E_FAIL;
-
 		/* For.Prototype_Component_Model_SkeletonWarrior */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_SkeletonWarrior"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/SkeletonWarrior/SkeletonWarrior.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_ZombieA */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ZombieA"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Zombie/ZombieA.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_TrollA */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TrollA"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollA.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_TrollQ */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_TrollQ"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollQ.model"), PivotMatrix))))
 			return E_FAIL;
 	}
 
@@ -545,34 +522,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	// For. Ally
 	{
-		/* For.Prototype_Component_Model_Abelardo */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Abelardo"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Abelardo/Abelardo.model"), PivotMatrix))))
-			return E_FAIL;
-
 		/* For.Prototype_Component_Model_BalianBollwerk */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_BalianBollwerk"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/BalianBollwerk/BalianBollwerk.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_Chinuwa */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Chinuwa"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Chinuwa/Chinuwa.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_Chitata */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Chitata"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Chitata/Chitata.model"), PivotMatrix))))
-			return E_FAIL;
-
-		/* For.Prototype_Component_Model_Delilah */
-		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
-		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Delilah"),
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Delilah/Delilah.model"), PivotMatrix))))
 			return E_FAIL;
 	}
 
@@ -697,47 +650,16 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	// MONSTER
 	{
-		/* For.Prototype_GameObject_Demon*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Demon"), CDemon::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
 		/* For.Prototype_GameObject_SkeletonWarrior*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkeletonWarrior"), CSkeletonWarrior::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_ZombieA*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ZombieA"), CZombieA::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_TrollA*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollA"), CTrollA::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_TrollQ*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollQ"), CTrollQ::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 
 	/* For. Ally*/
 	{
-		/* For.Prototype_GameObject_Abelardo*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Abelardo"), CAbelardo::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
 
 		/* For.Prototype_GameObject_BalianBollwerk*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BalianBollwerk"), CBalianBollwerk::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_Chinuwa*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Chinuwa"), CChinuwa::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_Chitata*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Chitata"), CChitata::Create(m_pDevice, m_pContext))))
-			return E_FAIL;
-
-		/* For.Prototype_GameObject_Delilah*/
-		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Delilah"), CDelilah::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 
@@ -853,6 +775,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Prototype_GameObject_MonsterNameFontUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterNameFontUI"), CMonsterNameUI::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
+
+		/* For. Prototype_GameObject_MonsterHPUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterHPUI"), CMonsterHpUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 
 	m_strLoadingText = TEXT("로딩끝. ");
@@ -907,7 +833,91 @@ HRESULT CLoader::Loading_ForChapter_2()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Medieval_City/Medieval_City.model"), PivotMatrix))))
 		return E_FAIL;
 
-	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
+	/* For.Prototype_Component_Model_ZombieA */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_ZombieA"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Zombie/ZombieA.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_TrollA */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_TrollA"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollA.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_TrollQ */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_TrollQ"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Troll/TrollQ.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Demon */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Demon"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Demon/Demon.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Abelardo */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Abelardo"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Abelardo/Abelardo.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Chinuwa */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Chinuwa"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Chinuwa/Chinuwa.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Chitata */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Chitata"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Chitata/Chitata.model"), PivotMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Delilah */
+	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Delilah"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Delilah/Delilah.model"), PivotMatrix))))
+		return E_FAIL;
+
+	m_strLoadingText = TEXT("객체원형을 로딩중입니다. ");
+
+	/* For. Prototype_GameObject_Medieval_City*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medieval_City"), CMedieval_City::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ZombieA*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ZombieA"), CZombieA::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TrollA*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollA"), CTrollA::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_TrollQ*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_TrollQ"), CTrollQ::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Demon*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Demon"), CDemon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Abelardo*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Abelardo"), CAbelardo::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Chinuwa*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Chinuwa"), CChinuwa::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Chitata*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Chitata"), CChitata::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Delilah*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Delilah"), CDelilah::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("네비게이션 정보 로딩중입니다. ");
 	
@@ -916,9 +926,6 @@ HRESULT CLoader::Loading_ForChapter_2()
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Data/Navigation_CHAP2.dat")))))
 		return E_FAIL;
 
-	/* For. Prototype_GameObject_Medieval_City*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medieval_City"), CMedieval_City::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
 
 	m_strLoadingText = TEXT("로딩끝. ");
 

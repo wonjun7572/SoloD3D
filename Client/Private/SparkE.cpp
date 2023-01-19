@@ -49,7 +49,7 @@ void CSparkE::Tick(_double TimeDelta)
 
 	Compute_BillBoard();
 
-	m_fFrame += 4.0f * TimeDelta;
+	m_fFrame += 4.0f * static_cast<float>(TimeDelta);
 	if (m_fFrame >= 4.0f)
 		m_fFrame = 0.f;
 }

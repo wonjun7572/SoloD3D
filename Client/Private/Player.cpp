@@ -129,8 +129,11 @@ void CPlayer::Late_Tick(_double TimeDelta)
 	for (auto& pEffect : m_PlayerEffects)
 		pEffect->Late_Tick(TimeDelta);
 
-	for (auto& pUI : m_PlayerUI)
-		pUI->Late_Tick(TimeDelta);
+	if (m_bUI)
+	{
+		for (auto& pUI : m_PlayerUI)
+			pUI->Late_Tick(TimeDelta);
+	}
 
 	for (_uint i = 0; i < COLLTYPE_END; ++i)
 		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
@@ -190,13 +193,22 @@ HRESULT CPlayer::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
 		else
 			HasSpecular = true;
-		
+
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -597,10 +609,10 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.1, 0.3))
-		{
-			MonsterNormalAttack(true);
 			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK1])->Set_EffectPlay(true);
-		}
+
+		if (AnimIntervalChecker(PLAYER_ATK_01, 0.0, 0.6))
+			MonsterNormalAttack(true);
 		else
 			MonsterNormalAttack(false);
 	})
@@ -641,12 +653,9 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_02, 0.1, 0.3))
-		{
-			MonsterNormalAttack(true);
 			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK2])->Set_EffectPlay(true);
-		}
-		else
-			MonsterNormalAttack(false);
+
+		MonsterNormalAttack(true);
 	})
 		.OnExit([this]()
 	{
@@ -686,10 +695,10 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_03, 0.1, 0.3))
-		{
-			MonsterNormalAttack(true);
 			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK3])->Set_EffectPlay(true);
-		}
+
+		if(AnimIntervalChecker(PLAYER_ATK_03, 0.0, 0.6))
+			MonsterNormalAttack(true);
 		else
 			MonsterNormalAttack(false);
 	})
@@ -731,10 +740,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		if (AnimIntervalChecker(PLAYER_SK24, 0.1, 0.9))
-			MonsterNormalAttack(true);
-		else
-			MonsterNormalAttack(false);
+		MonsterNormalAttack(true);
 	})
 		.OnExit([this]() 
 	{
@@ -832,7 +838,8 @@ void CPlayer::SetUp_FSM()
 
 		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 0.4))
 		{
-			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->LinkObject(TimeDelta, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+			_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
 			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->Set_Play(true);
 		}
 	})
@@ -862,7 +869,7 @@ void CPlayer::SetUp_FSM()
 		return m_bHitDown;
 	})
 
-		// MOUSE RB
+		// Key R
 		.AddState("Skill_3")
 		.OnStart([this]()
 	{
@@ -871,10 +878,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		if (AnimIntervalChecker(PLAYER_SK35, 0, 0.3) || AnimIntervalChecker(PLAYER_SK35, 0.7, 0.9))
-			MonsterNormalAttack(true);
-		else
-			MonsterNormalAttack(false);
+		MonsterNormalAttack(true);
 	})
 		.OnExit([this]() 
 	{
@@ -1510,7 +1514,6 @@ void CPlayer::LinkObject(_double TimeDelta)
 	else if (m_pCam != nullptr && m_bCamChange)
 		m_pCam->DynamicCamera(TimeDelta);
 
-	// 이펙트 연결인데 이거 수정해야겠다
 	RELEASE_INSTANCE(CGameInstance);
 }
 
@@ -1564,25 +1567,6 @@ void CPlayer::ChangeModel(MODEL eModelIndex)
 void CPlayer::Imgui_RenderProperty()
 {
 	m_pFSM->Imgui_RenderProperty();
-
-	//ImGui::DragFloat("CX", &m_CX, 0.1f, -10.f, 10.f);
-	//ImGui::DragFloat("CY", &m_CY, 0.1f, -10.f, 10.f);
-	//ImGui::DragFloat("CZ", &m_CZ, 0.1f, -10.f, 10.f);
-	//
-	//ImGui::DragFloat("RX", &m_RX, 1.f, 0.f, 360.f);
-	//ImGui::DragFloat("RY", &m_RY, 1.f, 0.f, 360.f);
-	//ImGui::DragFloat("RZ", &m_RZ, 1.f, 0.f, 360.f);
-	//
-	//ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
-	//ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
-	//ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
-
-	//ImGui::DragFloat("time", &m_fTime, 0.01f, 0.f, 1.f);
-	//ImGui::DragFloat("finishtime", &m_fFinishTime, 0.01f, 0.f, 1.f);
-	//ImGui::DragFloat("upy", &m_fWingTestUPY, 0.01f, 0.f, 50.f);
-	//ImGui::DragFloat("downy", &m_fWingTestDOWNY, 0.01f, 0.f, 50.f);
-
-	m_PlayerUI[MP]->Imgui_RenderProperty();
 }
 
 void CPlayer::Idle_Tick(_double TimeDelta)
@@ -1773,7 +1757,7 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 				_float fDistance =	CMathUtils::Distance(vMonsterPos, vPos);
 
 				if(fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
 	}
@@ -1796,7 +1780,7 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
 	}
@@ -1819,7 +1803,7 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20);
+					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
 	}	
@@ -1850,7 +1834,7 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 80.f);
 			}
 		}
 	}
@@ -1873,7 +1857,7 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 80.f);
 			}
 		}
 	}
@@ -1896,7 +1880,7 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkill02Command(bAttack, 80.f);
 			}
 		}
 	}
@@ -1927,7 +1911,7 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 60.f);
 			}
 		}
 	}
@@ -1950,7 +1934,7 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 60.f);
 			}
 		}
 	}
@@ -1973,7 +1957,7 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
 				if (fabsf(fDistance) < 10.f)
-					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 35);
+					static_cast<CMonster*>(pMonster)->Set_PlayerSkiil04Command(bAttack, 60.f);
 			}
 		}
 	}

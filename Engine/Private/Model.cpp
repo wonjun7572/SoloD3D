@@ -311,7 +311,12 @@ HRESULT CModel::Load_MesheContainers(HANDLE hFile, TYPE eType, _fmatrix PivotMat
 			ZeroMemory(meshLoad.pVertices, sizeof(VTXANIMMODEL) * meshLoad.iNumVertices);
 
 			for (_uint i = 0; i < meshLoad.iNumVertices; ++i)
+			{
 				ReadFile(hFile, &meshLoad.pVertices[i], sizeof(VTXANIMMODEL), &dwByte, nullptr);
+				//XMStoreFloat3(&meshLoad.pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&meshLoad.pVertices[i].vPosition), PivotMatrix));
+				//XMStoreFloat3(&meshLoad.pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&meshLoad.pVertices[i].vNormal), PivotMatrix));
+				//XMStoreFloat3(&meshLoad.pVertices[i].vTangent, XMVector3TransformNormal(XMLoadFloat3(&meshLoad.pVertices[i].vTangent), PivotMatrix));
+			}
 
 			//Load Indices
 			meshLoad.pIndices = new FACEINDICES32[meshLoad.iNumPrimitive];
@@ -361,6 +366,7 @@ HRESULT CModel::Load_MesheContainers(HANDLE hFile, TYPE eType, _fmatrix PivotMat
 				ReadFile(hFile, &meshLoad.pModelVertices[i], sizeof(VTXMODEL), &dwByte, nullptr);
 				XMStoreFloat3(&meshLoad.pModelVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&meshLoad.pModelVertices[i].vPosition), PivotMatrix));
 				XMStoreFloat3(&meshLoad.pModelVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&meshLoad.pModelVertices[i].vNormal), PivotMatrix));
+				XMStoreFloat3(&meshLoad.pModelVertices[i].vTangent, XMVector3TransformNormal(XMLoadFloat3(&meshLoad.pModelVertices[i].vTangent), PivotMatrix));
 			}
 
 			//Load Indices

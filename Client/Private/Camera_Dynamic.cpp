@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Camera_Dynamic.h"
 #include "GameInstance.h"
-#include "Bone.h"
+#include "PlayerCamera.h"
 
 CCamera_Dynamic::CCamera_Dynamic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCamera(pDevice, pContext)
@@ -39,7 +39,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		CameraDesc.fAspect = static_cast<_float>( g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
 
 		CameraDesc.fNear = 0.02f;
-		CameraDesc.fFar = 500.f;
+		CameraDesc.fFar = 300.f;
 
 		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
@@ -48,68 +48,59 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 	if (FAILED(__super::Init(&CameraDesc)))
 		return E_FAIL;
 
-	m_fSensitivity = 0.1f;
+	m_strObjName = TEXT("DynamicCamera");
 
-	m_strObjName = TEXT("Camera");
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		m_CheckPoints.push_back(_float4(37.f, 2.5f, 67.f, 1.f));
+		m_CheckPoints.push_back(_float4(31.f, 1.7f, 25.f, 1.f));
+		m_CheckPoints.push_back(_float4(10.f, 2.f, 8.f, 1.f));
+		m_CheckPoints.push_back(_float4(0.2f, 5.f, -1.5f, 1.f));
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_CheckPoints.push_back(_float4(278.f, 39.f, 300.f, 1.f));
+		m_CheckPoints.push_back(_float4(314.f, 6.3f, 400.f, 1.f));
+		m_CheckPoints.push_back(_float4(310.5f, 9.f, 390.f, 1.f));
+
+		m_CheckPoints.push_back(_float4(150.f, 30.f, 320.f, 1.f));
+		m_CheckPoints.push_back(_float4(110.f, 6.f, 367.f, 1.f));
+		m_CheckPoints.push_back(_float4(116.f, 12.f, 355.f, 1.f));
+		m_CheckPoints.push_back(_float4(128.f, 2.7f, 270.f, 1.f));
+
+		m_CheckPoints.push_back(_float4(56.f, 6.f, 193.f, 1.f));
+		m_CheckPoints.push_back(_float4(65.f, 11.f, 200.f, 1.f));
+		m_CheckPoints.push_back(_float4(265.f, 50.f, 250.f, 1.f));
+		m_CheckPoints.push_back(_float4(316.f, 2.f, 25.f, 1.f));
+	}
 
 	return S_OK;
 }
 
 void CCamera_Dynamic::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
-
-	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (pGameInstance->Get_DIKeyState(DIK_W))
+	if (!m_bSwitchCam)
 	{
-		m_pTransformCom->Go_Straight(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_S))
-	{
-		m_pTransformCom->Go_Backward(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_A))
-	{
-		m_pTransformCom->Go_Left(TimeDelta);
-	}
-
-	if (pGameInstance->Get_DIKeyState(DIK_D))
-	{
-		m_pTransformCom->Go_Right(TimeDelta);
-	}
-
-	if (pGameInstance->Key_Down(DIK_T))
-	{
-		m_bFix = !m_bFix;
-	}
-
-	if (!m_bFix)
-	{
-		Mouse_Fix();
-
-		_long			MouseMove = 0;
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_X))
+		__super::Tick(TimeDelta);
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pPlayerCam = static_cast<CPlayerCamera*>(pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Camera", L"PlayerCamera"));
+		RELEASE_INSTANCE(CGameInstance);
+		if(g_LEVEL == LEVEL_CHAP1)
+			Level_Chap1Tick(TimeDelta);
+		else if(g_LEVEL == LEVEL_CHAP2)
+			Level_Chap2Tick(TimeDelta);
+		else if (g_LEVEL == LEVEL_CHAP3)
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * MouseMove * m_fSensitivity);
-		}
-
-		if (MouseMove = pGameInstance->Get_DIMouseMove(DIMS_Y))
-		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta * MouseMove * m_fSensitivity);
+			m_bSwitchCam = true;
+			static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(true);
 		}
 	}
-
-	Safe_Release(pGameInstance);
 }
 
 void CCamera_Dynamic::Late_Tick(_double TimeDelta)
 {
-	__super::Late_Tick(TimeDelta);
+	if (!m_bSwitchCam)
+		__super::Late_Tick(TimeDelta);
 }
 
 HRESULT CCamera_Dynamic::Render()
@@ -120,22 +111,94 @@ HRESULT CCamera_Dynamic::Render()
 	return S_OK;
 }
 
-void CCamera_Dynamic::Imgui_RenderProperty()
+void CCamera_Dynamic::Level_Chap1Tick(_double TimeDelta)
 {
-	ImGui::InputFloat("X", &m_X);
-	ImGui::InputFloat("Y", &m_Y);
-	ImGui::InputFloat("Z", &m_Z);
-	ImGui::InputFloat("RX", &m_RX);
-	ImGui::InputFloat("RY", &m_RY);
-	ImGui::InputFloat("RZ", &m_RZ);
+	_float4 vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+	if (m_bCheckPointFinish)
+	{
+		_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), m_pPlayerCam->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), static_cast<float>(TimeDelta) * 1.2f);
+		m_pTransformCom->LookAt(_float4(vPos.x, vPos.y, vPos.z, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+
+		if (DistancePointCheck(vPosition, m_pPlayerCam->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)))
+		{
+			m_bSwitchCam = true;
+			static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(true);
+		}
+		return;
+	}
+
+	if (m_CheckPoints.size() <= 1)
+	{
+		if (DistancePointCheck(vPosition, m_CheckPoints[0]))
+		{
+			m_bCheckPointFinish = true;
+		}
+		else
+		{
+			_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), _float3(m_CheckPoints[0].x, m_CheckPoints[0].y, m_CheckPoints[0].z), static_cast<float>(TimeDelta) * 1.2f);
+			m_pTransformCom->LookAt(_float4(m_CheckPoints[0].x, m_CheckPoints[0].y, m_CheckPoints[0].z, 1.f));
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+		}
+	}
+	else if (DistancePointCheck(vPosition, m_CheckPoints.back()))
+		m_CheckPoints.pop_back();
+	else
+	{
+		_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), _float3(m_CheckPoints.back().x, m_CheckPoints.back().y, m_CheckPoints.back().z), static_cast<float>(TimeDelta) * 1.2f);
+		m_pTransformCom->LookAt(_float4(m_CheckPoints.back().x, m_CheckPoints.back().y, m_CheckPoints.back().z, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+	}
 }
 
-void CCamera_Dynamic::Mouse_Fix()
+void CCamera_Dynamic::Level_Chap2Tick(_double TimeDelta)
 {
-	POINT pt{ static_cast<LONG>(g_iWinSizeX >> 1), static_cast<LONG>(g_iWinSizeY >> 1) };
+	_float4 vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
-	ClientToScreen(g_hWnd, &pt);
-	SetCursorPos(pt.x, pt.y);
+	if (m_bCheckPointFinish)
+	{
+		_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), m_pPlayerCam->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), static_cast<float>(TimeDelta) * 1.2f);
+		m_pTransformCom->LookAt(_float4(vPos.x, vPos.y, vPos.z, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+
+		if (DistancePointCheck(vPosition, m_pPlayerCam->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)))
+		{
+			m_bSwitchCam = true;
+			static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(true);
+		}
+		return;
+	}
+
+	if (m_CheckPoints.size() <= 1)
+	{
+		if (DistancePointCheck(vPosition, m_CheckPoints[0]))
+		{
+			m_bCheckPointFinish = true;
+		}
+		else
+		{
+			_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), _float3(m_CheckPoints[0].x, m_CheckPoints[0].y, m_CheckPoints[0].z), static_cast<float>(TimeDelta) * 1.2f);
+			m_pTransformCom->LookAt(_float4(m_CheckPoints[0].x, m_CheckPoints[0].y, m_CheckPoints[0].z, 1.f));
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+		}
+	}
+	else if (DistancePointCheck(vPosition, m_CheckPoints.back()))
+		m_CheckPoints.pop_back();
+	else
+	{
+		_float3 vPos = _float3::Lerp(_float3(vPosition.x, vPosition.y, vPosition.z), _float3(m_CheckPoints.back().x, m_CheckPoints.back().y, m_CheckPoints.back().z), static_cast<float>(TimeDelta) * 1.2f);
+		m_pTransformCom->LookAt(_float4(m_CheckPoints.back().x, m_CheckPoints.back().y, m_CheckPoints.back().z, 1.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+	}
+}
+
+_bool CCamera_Dynamic::DistancePointCheck(_float4 vTargetPos, _float4 vPos)
+{
+	if (_float4::Distance(vPos, vTargetPos) < 5.f)
+		return true;
+
+	return false;
 }
 
 CCamera_Dynamic * CCamera_Dynamic::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

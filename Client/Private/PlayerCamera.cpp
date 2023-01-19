@@ -56,31 +56,26 @@ HRESULT CPlayerCamera::Init(void * pArg)
 
 void CPlayerCamera::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
-	CGameInstance*			pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
+	if (m_bCinematic)
+	{
+		__super::Tick(TimeDelta);
+		CGameInstance*			pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Key_Down(DIK_F1))
-		m_bFix = !m_bFix;
+		if (pGameInstance->Key_Down(DIK_F1))
+			m_bFix = !m_bFix;
 
-	if(m_bFix)
-		Mouse_Fix();
+		if (m_bFix)
+			Mouse_Fix();
 
-	Safe_Release(pGameInstance);
-}
-
-void CPlayerCamera::Imgui_RenderProperty()
-{
-	ImGui::Text("%f", &m_fDistanceToTarget);
-
-	ImGui::DragFloat("DistanceToTarget", &m_fDistanceToTarget, 0.01f, 0.f, 20.f);
-	ImGui::DragFloat("CamY", &m_fCamImguiY, 0.01f, 0.f, 20.f);
-	ImGui::DragFloat("CamLookY", &m_fCamImguiLookY, 0.01f, 0.f, 20.f);
+		Safe_Release(pGameInstance);
+	}
 }
 
 void CPlayerCamera::Late_Tick(_double TimeDelta)
 {
-	__super::Late_Tick(TimeDelta);
+	if (m_bCinematic)
+		__super::Late_Tick(TimeDelta);
 }
 
 HRESULT CPlayerCamera::Render()
@@ -154,7 +149,8 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 		_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 		ShakeUpdate(TimeDelta);
 		_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f + m_fCamY, 0.f, 0.f));
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
+		_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 2.5f, 0.f, 0.f), true);
 		m_bChange = false;
 	}
@@ -172,7 +168,10 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			_float fDistance = XMVectorGetX(V);
 			
 			if (fabs(fDistance) > 0.1f)
-				m_pTransformCom->Chase(vCamPos, static_cast<float>(TimeDelta) * 1.2f);
+			{
+				_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+			}
 			else
 				m_bChange = true;
 		}
@@ -183,7 +182,8 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			ShakeUpdate(TimeDelta);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vCamPos);
+			_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 			m_fCamY = 0.f;
 		}
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 2.5f, 0.f, 0.f), true);

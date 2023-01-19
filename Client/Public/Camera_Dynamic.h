@@ -19,20 +19,18 @@ public:
 	virtual void Late_Tick(_double TimeDelta)override;
 	virtual HRESULT Render() override;
 	
-private:
-	void	Imgui_RenderProperty() override;
+	void	Level_Chap1Tick(_double TimeDelta);
+	void	Level_Chap2Tick(_double TimeDelta);
+	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
 
 private:
-	void Mouse_Fix();
-	bool m_bFix = false;
+	CGameObject* m_pPlayerCam = nullptr;
 
-	_float m_fSensitivity = 0.f;
+	_bool		 m_bSwitchCam = false;
+	_bool		 m_bCheckPointFinish = false;
 
-	_bool m_bFound = false;
-	_bool m_bStatic = false;
-
-	_float m_X = 0, m_Y = 0, m_Z = 0;
-	_float m_RX = 0, m_RY = 0, m_RZ = 0;
+	_double		m_TimeDelta = 0.0;
+	vector<_float4> m_CheckPoints;
 
 public:
 	static CCamera_Dynamic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -122,6 +122,14 @@ HRESULT CDemon::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -353,12 +361,15 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(DEMON_ADD_DMG_F);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bFrontDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_F);
+	}
 
-	if (AnimFinishChecker(DEMON_ADD_DMG_F))
+	if (AnimFinishChecker(DEMON_ADD_DMG_F, 0.3))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_F);
 	}
 
 	///////////////////////////////////////
@@ -369,12 +380,15 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(DEMON_ADD_DMG_B);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bBackDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_B);
+	}
 
-	if (AnimFinishChecker(DEMON_ADD_DMG_B))
+	if (AnimFinishChecker(DEMON_ADD_DMG_B, 0.3))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_B);
 	}
 }
 
@@ -943,7 +957,7 @@ HRESULT CDemon::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Demon"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Demon"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

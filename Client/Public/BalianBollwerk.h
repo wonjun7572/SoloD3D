@@ -52,6 +52,7 @@ public:
 	virtual HRESULT Render() override;
 
 	void	Level_Chap1Tick(_double TimeDelta);
+	void	Level_Chap2Tick(_double TimeDelta);
 
 	void	Imgui_RenderProperty() override;
 
@@ -74,6 +75,7 @@ private:
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
 
 	_bool	m_bConversation = true;
+	_bool	m_bSecondStageCheck = false;
 
 	vector<CGameObject*> m_UI;
 	_double TimeConversation = 0.0;

@@ -35,6 +35,14 @@ class CTrollA final : public CMonster
 		, TROLLA_END
 	};
 
+public:
+	typedef struct tagTrollADesc
+	{
+		_uint	iGroup;
+		_float4 vPos;
+		_float	fRadian;
+	}TROLLADESC;
+
 private:
 	CTrollA(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTrollA(const CTrollA& rhs);
@@ -83,6 +91,8 @@ private:
 
 private:
 	_uint m_iRandAttack = 0;
+	_float3		m_vSecondCheckPoint;
+	_bool		m_bSecondCheckPoint = false;
 
 public:
 	static CTrollA* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

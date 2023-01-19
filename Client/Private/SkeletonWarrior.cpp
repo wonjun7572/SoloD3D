@@ -106,7 +106,15 @@ HRESULT CSkeletonWarrior::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		
+
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -470,12 +478,15 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(SKELETON_WARRIOR_ADD_DMG_F);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bFrontDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_F);
+	}
 
-	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_F))
+	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_F, 0.3))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_F);
 	}
 
 	///////////////////////////////////////
@@ -486,12 +497,15 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(SKELETON_WARRIOR_ADD_DMG_B);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bBackDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_B);
+	}
 
-	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_B))
+	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_B, 0.3))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_B);
 	}
 }
 

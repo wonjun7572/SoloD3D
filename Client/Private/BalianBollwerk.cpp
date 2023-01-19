@@ -36,8 +36,18 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
+	ALLYDESC allyDesc;
+	ZeroMemory(&allyDesc, sizeof allyDesc);
+
+
 	if(g_LEVEL == LEVEL_CHAP1)
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(30.f, 0.f, 33.f, 1.f));
+	else if (pArg != nullptr && g_LEVEL == LEVEL_CHAP2)
+	{
+		memcpy(&allyDesc, pArg, sizeof allyDesc);
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(allyDesc.fRadian));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, allyDesc.vPos);
+	}
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
@@ -48,6 +58,7 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 
 	SetUp_UI();
 	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+	
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
 		m_CheckPoints.push_back(_float4(105.f, 7.f, 76.f , 1.f));
@@ -57,7 +68,17 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(33.f, 0.f, 24.f, 1.f));
 		m_CheckPoints.push_back(_float4(33.f, 0.f, 33.f, 1.f));
 	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_CheckPoints.push_back(_float4(279.f, 0.f, 235.f, 1.f));
+		m_CheckPoints.push_back(_float4(299.f, 0.f, 213.f, 1.f));
+		m_CheckPoints.push_back(_float4(295.f, 0.f, 200.f, 1.f));
+		m_CheckPoints.push_back(_float4(300.f, 0.f, 163.f, 1.f));
+		m_CheckPoints.push_back(_float4(299.f, 0.f, 142.f, 1.f));
+		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
+	}
 
+	TimeConversation = 0.0;
 	return S_OK;
 }
 
@@ -67,19 +88,12 @@ void CBalianBollwerk::Tick(_double TimeDelta)
 
 	// 만약에 플레이어와 상호 작용한 이후다? 그러면 ㄱ
 	
-	if(g_LEVEL == LEVEL_CHAP1)
+	if (g_LEVEL == LEVEL_CHAP1)
 		Level_Chap1Tick(TimeDelta);
+	else if (g_LEVEL == LEVEL_CHAP2)
+		Level_Chap2Tick(TimeDelta);
 
 	m_pModelCom->Play_Animation(TimeDelta);
-
-	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
-	if (_float3::Distance(vPos, vPlayerPos) > 5.f)
-		m_bChase = true;
-	else
-		m_bChase = false;
-
 	AdditiveAnim(TimeDelta);
 }
 
@@ -109,6 +123,14 @@ HRESULT CBalianBollwerk::Render()
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
 
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -116,6 +138,7 @@ HRESULT CBalianBollwerk::Render()
 			HasSpecular = true;
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -126,11 +149,6 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 {
 	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
 		Conversation(TimeDelta);
-
-	if (m_pPlayer->Get_Conversation() == true)
-		m_bConversation = true;
-	// UI 뜨고
-	//m_pFSM->Tick(TimeDelta);
 
 	if (!m_bConversation)
 	{
@@ -161,6 +179,45 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
 }
 
+void CBalianBollwerk::Level_Chap2Tick(_double TimeDelta)
+{
+	if (m_bSecondStageCheck && m_pFSM != nullptr)
+	{
+		m_pFSM->Tick(TimeDelta);
+		return;
+	}
+
+	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+		Conversation(TimeDelta);
+
+	if (!m_bConversation)
+	{
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		if (m_CheckPoints.size() <= 1)
+		{
+			if (DistancePointCheck(vPos, m_CheckPoints[0]))
+			{
+				m_bSecondStageCheck = true;
+			}
+			else
+			{
+				m_pTransformCom->ChaseAndLookAt(m_CheckPoints[0], TimeDelta, 0.1f, m_pNavigationCom);
+				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
+			}
+		}
+		else if (DistancePointCheck(vPos, m_CheckPoints.back()))
+			m_CheckPoints.pop_back();
+		else
+		{
+			m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
+			m_pTransformCom->ChaseAndLookAt(m_CheckPoints.back(), TimeDelta, 0.1f, m_pNavigationCom);
+		}
+	}
+	else
+		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
+}
+
 void CBalianBollwerk::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Navi~"))
@@ -171,25 +228,60 @@ void CBalianBollwerk::Imgui_RenderProperty()
 
 void CBalianBollwerk::Conversation(_double TimeDelta)
 {
-	m_UI[UI_CONVERSATION]->Tick(TimeDelta);
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-	TimeConversation += TimeDelta;
+		TimeConversation += TimeDelta;
 
-	if (TimeConversation > 2.0f)
-		m_strConversation = L"Hello";
-	else if (TimeConversation > 1.8f)
-		m_strConversation = L"Hell";
-	else if (TimeConversation > 1.6f)
-		m_strConversation = L"Hel";
-	else if (TimeConversation > 1.4f)
-		m_strConversation = L"He";
-	else if (TimeConversation > 1.2f)
-		m_strConversation = L"H";
+		if (TimeConversation > 2.0f)
+			m_strConversation = L"안녕하세요";
+		else if (TimeConversation > 1.8f)
+			m_strConversation = L"안녕하세";
+		else if (TimeConversation > 1.6f)
+			m_strConversation = L"안녕하";
+		else if (TimeConversation > 1.4f)
+			m_strConversation = L"안녕";
+		else if (TimeConversation > 1.2f)
+			m_strConversation = L"안";
 
-	static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-	if (TimeConversation > 2.f)
-		m_bConversation = false;
+		if (TimeConversation > 5.f)
+		{
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
+			m_bConversation = false;
+		}
+		else
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
+
+		TimeConversation += TimeDelta;
+
+		if (TimeConversation > 2.0f)
+			m_strConversation = L"알아서 도망쳐라이~";
+		else if (TimeConversation > 1.8f)
+			m_strConversation = L"앞에 좀비";
+		else if (TimeConversation > 1.6f)
+			m_strConversation = L"앞에 좀";
+		else if (TimeConversation > 1.4f)
+			m_strConversation = L"앞에";
+		else if (TimeConversation > 1.2f)
+			m_strConversation = L"앞";
+
+		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+
+		if (TimeConversation > 5.f)
+		{
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
+			m_bConversation = false;
+		}
+		else
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
+	}
 }
 
 _bool CBalianBollwerk::DistancePointCheck(_float4 vTargetPos, _float4 vPos)

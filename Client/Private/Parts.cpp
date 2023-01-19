@@ -64,17 +64,23 @@ HRESULT CParts::PartsRender(_uint iPassIndex)
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		
+
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
 		else
 			HasSpecular = true;
-	
+
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
-		
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, iPassIndex, "g_BoneMatrices");
 	}
 

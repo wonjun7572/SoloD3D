@@ -75,7 +75,7 @@ void CEffect_Rect::Imgui_RenderProperty()
 void CEffect_Rect::LinkObject(_double TimeDelta, _fvector targetpos)
 {
 	_float3 vPos = targetpos;
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, vPos.y, vPos.z, 1.f));
 }
 
 void CEffect_Rect::Compute_BillBoard()

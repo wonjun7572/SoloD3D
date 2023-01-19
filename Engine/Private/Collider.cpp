@@ -136,6 +136,14 @@ void CCollider::Update(_fmatrix TransformMatrix)
 	}
 }
 
+_float CCollider::Get_AABBYSize()
+{
+	if (m_pAABB == nullptr)
+		return 0.f;
+
+	return m_pAABB->Center.y + m_pAABB->Extents.y;
+}
+
 _bool CCollider::Collision(CCollider * pTargetCollider)
 {
 	m_isColl = false;

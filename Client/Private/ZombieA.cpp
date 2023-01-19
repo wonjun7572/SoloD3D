@@ -33,19 +33,24 @@ HRESULT CZombieA::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10 + 25.f, 0.f, rand() % 3 + 19.f, 1.f));
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
+
+	if (pArg != nullptr && g_LEVEL == LEVEL_CHAP2)
+	{
+		_float4 vPos;
+		memcpy(&vPos, pArg, sizeof vPos);
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
 
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	m_strObjName = L"ZombieA";
 
-	m_fHp = 100;
+	m_fHp = 100.f;
 	m_fMaxHp = 100.f;
-	m_fAttack = 10;
-	m_fDefence = 5;
+	m_fAttack = 5.f;
+	m_fDefence = 0.f;
 	m_vMonsterNamePos = _float2(720.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
@@ -100,7 +105,15 @@ HRESULT CZombieA::Render()
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-		
+
+		bool HasNormal = false;
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
+			HasNormal = false;
+		else
+			HasNormal = true;
+
+		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
+
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
@@ -517,12 +530,15 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(ZOMBIEA_ADD_DMG_F);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bFrontDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_F);
+	}
 
-	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_F))
+	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_F, 0.3))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_F);
 	}
 
 	///////////////////////////////////////
@@ -533,12 +549,15 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Set_AdditiveAnimIndex(ZOMBIEA_ADD_DMG_B);
 		m_pModelCom->Play_AddtivieAnim(TimeDelta, 1.f);
 	}
+	else if (!m_bBackDamaged)
+	{
+		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_B);
+	}
 
-	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_B))
+	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_B, 0.3))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
-		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_B);
 	}
 }
 
@@ -555,7 +574,7 @@ HRESULT CZombieA::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_ZombieA"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Model_ZombieA"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
