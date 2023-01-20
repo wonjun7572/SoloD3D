@@ -31,6 +31,8 @@ HRESULT Client::CLevel_ChapTwo::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Tree(TEXT("Layer_Tree"))))
+		return E_FAIL;
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
@@ -130,8 +132,8 @@ HRESULT CLevel_ChapTwo::Ready_Ligths()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	LightDesc.vDiffuse = _float4(0.1f, 0.1f, 0.1f, 1.f);
-	LightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -161,9 +163,9 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-		return E_FAIL;
+   
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -385,6 +387,18 @@ HRESULT CLevel_ChapTwo::Ready_Layer_MapObject(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
 		return E_FAIL;
 	
+	RELEASE_INSTANCE(CGameInstance);
+	
+	return S_OK;
+}
+
+HRESULT CLevel_ChapTwo::Ready_Layer_Tree(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Tree"))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

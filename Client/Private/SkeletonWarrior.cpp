@@ -33,12 +33,20 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	_float4 vPos;
 
-	if (pArg != nullptr)
+	if (pArg != nullptr && g_LEVEL == LEVEL_CHAP1)
 	{
+		_float4 vPos;
 		memcpy(&vPos, pArg, sizeof(_float4));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+	}
+	else if (pArg != nullptr && g_LEVEL == LEVEL_CHAP2)
+	{
+		SKELETONDESC SkeletonDesc;
+		ZeroMemory(&SkeletonDesc, sizeof SkeletonDesc);
+		m_iGroup = SkeletonDesc.iGroup;
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(SkeletonDesc.fRadian));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, SkeletonDesc.vPos);
 	}
 
 	if (FAILED(SetUp_Components()))
@@ -418,7 +426,6 @@ void CSkeletonWarrior::Adjust_Collision(_double TimeDelta)
 
 void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 {
-	// 이 부분 충돌을 해야할 이유가 없는 것 같다
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);
@@ -619,8 +626,7 @@ HRESULT CSkeletonWarrior::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
-	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
-	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
+	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
 	else
 		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);

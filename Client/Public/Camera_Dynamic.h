@@ -25,6 +25,7 @@ public:
 
 private:
 	CGameObject* m_pPlayerCam = nullptr;
+	CGameObject* m_pPlayer = nullptr;
 
 	_bool		 m_bSwitchCam = false;
 	_bool		 m_bCheckPointFinish = false;

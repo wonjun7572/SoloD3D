@@ -37,6 +37,14 @@ class CSkeletonWarrior final : public CMonster
 		,SKELETON_WARRIOR_END
 	};
 
+public:
+	typedef struct tagSkeletonQDesc
+	{
+		_uint	iGroup;
+		_float4 vPos;
+		_float	fRadian;
+	}SKELETONDESC;
+
 private:
 	CSkeletonWarrior(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSkeletonWarrior(const CSkeletonWarrior& rhs);

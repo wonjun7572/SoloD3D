@@ -1,7 +1,5 @@
-﻿  Level_Tool.cpp
-  Camera_Dynamic.cpp
-  MainApp.cpp
-  Level_Logo.cpp
+﻿  Monster.cpp
+  Level_ChapTwo.cpp
   코드를 생성하고 있습니다...
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

@@ -8,6 +8,7 @@
 #include "DamageFontUI.h"
 #include "MonsterNameUI.h"
 #include "MonsterHpUI.h"
+#include "Tree.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -47,10 +48,13 @@ HRESULT CMonster::Init(void * pArg)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if(g_LEVEL == LEVEL_CHAP1)
+	if (g_LEVEL == LEVEL_CHAP1)
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
 	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_pTree = static_cast<CTree*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Tree", L"Tree"));
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Player"));
+	}
 	else if (g_LEVEL == LEVEL_CHAP3)
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
 
@@ -150,7 +154,6 @@ void CMonster::Late_Tick(_double TimeDelta)
 			iter++;
 		}
 	}
-
 	for (auto iter = m_MonsterDamageEffect.begin(); iter != m_MonsterDamageEffect.end();)
 	{
 		if ((*iter) != nullptr)
@@ -253,13 +256,11 @@ HRESULT CMonster::SetUP_UI()
 
 void CMonster::UI_Tick(_double TimeDelta)
 {
+	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+	_float fY = m_pColliderCom[COLLTYPE_AABB]->Get_AABBYSize() + 0.1f;
 	static_cast<CProgressBarUI*>(m_MonsterUI[HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
 	static_cast<CMonsterHpUI*>(m_MonsterUI[BILLBOARD_HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
-	
-	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
-
-	_float fY = m_pColliderCom[COLLTYPE_AABB]->Get_AABBYSize() + 0.1f;
 	static_cast<CEffect_Rect*>(m_MonsterUI[BILLBOARD_HP])->LinkObject(TimeDelta, _float4(vPos.x, fY, vPos.z, 1.f));
 }
 
@@ -270,7 +271,7 @@ void CMonster::UI_Switch(_double TimeDelta)
 		m_bUIOn = false;
 		_float fDis = 0.f;
 
-		if (m_pPlayer->Get_PlayerCam() != nullptr)
+		if (m_pPlayer->Get_PlayerCam() != nullptr && Get_CamDistance() < 30.f)
 		{
 			if (m_pColliderCom[COLLTYPE_AABB]->Collision(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),
 				m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK), fDis))
@@ -282,7 +283,7 @@ void CMonster::UI_Switch(_double TimeDelta)
 
 					if (bUI)
 						m_bUIOn = true;
-					
+
 					for (auto pMonster : m_Monsters)
 					{
 						if (pMonster->Get_UIOn() == true)
@@ -443,9 +444,7 @@ void CMonster::CollisionToMonster(_double TimeDelta)
 				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
 			
 				if (fabsf(fDistance) < 10.f &&	pTargetCollider != this->m_pColliderCom[COLLTYPE_AABB])
-				{
 					m_Monsters.push_back(static_cast<CMonster*>(pMonster));
-				}
 
 				if (pTargetCollider == nullptr ||
 					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||
@@ -472,9 +471,7 @@ void CMonster::CollisionToMonster(_double TimeDelta)
 				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
 
 				if (fabsf(fDistance) < 10.f &&	pTargetCollider != this->m_pColliderCom[COLLTYPE_AABB])
-				{
 					m_Monsters.push_back(static_cast<CMonster*>(pMonster));
-				}
 
 				if (pTargetCollider == nullptr ||
 					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||
@@ -501,9 +498,7 @@ void CMonster::CollisionToMonster(_double TimeDelta)
 				_float fDistance = CMathUtils::Distance(vPos, pTargetCollider->Get_CollisionCenter());
 
 				if(fabsf(fDistance) < 10.f &&	pTargetCollider != this->m_pColliderCom[COLLTYPE_AABB])
-				{
 					m_Monsters.push_back(static_cast<CMonster*>(pMonster));
-				}
 
 				if (pTargetCollider == nullptr ||
 					pTargetCollider == this->m_pColliderCom[COLLTYPE_AABB] ||

@@ -84,6 +84,18 @@ void CConversationUI::SetConversation(const wstring& strConversation)
 	lstrcpy(m_tagConversationFont.szConversation, strConversation.c_str());
 }
 
+void CConversationUI::Imgui_RenderProperty()
+{
+	ImGui::DragFloat("ConverSationX", &m_fX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("ConverSationY", &m_fY, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("ConverSationSizeX", &m_fSizeX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("ConverSationSizeY", &m_fSizeY, 0.1f, -1000.f, 1000.f);
+
+	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+}
+
 HRESULT CConversationUI::SetUp_Components()
 {
 	/* For.Com_Renderer */

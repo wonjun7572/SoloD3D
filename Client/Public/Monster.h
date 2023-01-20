@@ -94,6 +94,9 @@ protected:
 	/* 플레이어를 찾기위한 멤버 변수 */
 protected:
 	CPlayer*				m_pPlayer = nullptr;
+	
+	CGameObject*			m_pTree = nullptr;
+
 	_float					m_fPlayerAttack = 0;
 	/*****************************/
 

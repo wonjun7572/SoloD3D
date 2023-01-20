@@ -76,6 +76,8 @@
 #include "ConversationUI.h"
 #include "MonsterHpUI.h"
 
+#include "Tree.h"
+
 unsigned int	g_LEVEL = 0;
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -917,6 +919,10 @@ HRESULT CLoader::Loading_ForChapter_2()
 
 	/* For.Prototype_GameObject_Delilah*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Delilah"), CDelilah::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Tree*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tree"), CTree::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("네비게이션 정보 로딩중입니다. ");

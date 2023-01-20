@@ -163,11 +163,7 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
 
-			_vector V = XMVectorSubtract(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos);
-			_vector X = XMVector4Length(V);
-			_float fDistance = XMVectorGetX(V);
-			
-			if (fabs(fDistance) > 0.1f)
+			if (Get_CamDistance() > 0.1f)
 			{
 				_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
 				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));

@@ -57,7 +57,7 @@ private:
 
 
 	// 시네마틱 카메라가 없다면 true해줘야함
-	_bool  m_bCinematic = false;
+	_bool  m_bCinematic = true;
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

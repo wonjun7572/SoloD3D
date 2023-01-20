@@ -37,6 +37,8 @@ public:
 
 	CONVERSATIONFONT m_tagConversationFont;
 
+	void	Imgui_RenderProperty() override;
+
 private:
 	HRESULT SetUp_Components();
 

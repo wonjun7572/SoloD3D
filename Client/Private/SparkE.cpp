@@ -34,7 +34,6 @@ HRESULT CSparkE::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
 	m_strObjName = L"Effect_Rect_HitE";
 
 	m_fAlpha = 1.f;

@@ -27,7 +27,7 @@ HRESULT CTrollQ::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 2.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -188,15 +188,52 @@ void CTrollQ::SetUp_FSM()
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		_vector	vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-		if (!m_bPlayerAttack)
+		if (g_LEVEL == LEVEL_CHAP2)
 		{
-			m_pModelCom->Set_AnimationIndex(TROLLQ_Run_F);
-			m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+			_vector vTreePos = m_pTree->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+			_float fPlayerToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vPlayerPos);
+			_float fTreeToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTreePos);
+
+			if (fPlayerToPos < fTreeToPos)
+			{
+				if (!m_bPlayerAttack)
+				{
+					m_pModelCom->Set_AnimationIndex(TROLLQ_Run_F);
+					m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+				}
+				else
+				{
+					m_pModelCom->Set_AnimationIndex(TROLLQ_Idle_C);
+					m_pTransformCom->LookAt(vPlayerPos);
+				}
+			}
+			else
+			{
+				if (fTreeToPos > 11.f)
+				{
+					m_pModelCom->Set_AnimationIndex(TROLLQ_Run_F);
+					m_pTransformCom->ChaseAndLookAt(vTreePos, TimeDelta, 0.1f, m_pNavigationCom);
+				}
+				else
+				{
+					m_pModelCom->Set_AnimationIndex(TROLLQ_ATK_01);
+					m_pTransformCom->LookAt(vTreePos);
+				}
+			}
 		}
 		else
 		{
-			m_pModelCom->Set_AnimationIndex(TROLLQ_Idle_C);
-			m_pTransformCom->LookAt(vPlayerPos);
+			if (!m_bPlayerAttack)
+			{
+				m_pModelCom->Set_AnimationIndex(TROLLQ_Run_F);
+				m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+			}
+			else
+			{
+				m_pModelCom->Set_AnimationIndex(TROLLQ_Idle_C);
+				m_pTransformCom->LookAt(vPlayerPos);
+			}
 		}
 
 		m_AttackDelayTime += TimeDelta;
@@ -445,10 +482,20 @@ void CTrollQ::CollisionToPlayer(_double TimeDelta)
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);
 
-	if (fabsf(fDistance) < 10.f)
-		m_bPlayerChase = true;
+	if (g_LEVEL == LEVEL_CHAP2)
+	{
+		if (fabsf(fDistance) < 100.f)
+			m_bPlayerChase = true;
+		else
+			m_bPlayerChase = false;
+	}
 	else
-		m_bPlayerChase = false;
+	{
+		if (fabsf(fDistance) < 10.f)
+			m_bPlayerChase = true;
+		else
+			m_bPlayerChase = false;
+	}
 }
 
 void CTrollQ::CollisionToAttack(_double TimeDelta)
@@ -641,11 +688,12 @@ HRESULT CTrollQ::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
-	_float3 vCamPos = _float3(pGameInstance->Get_CamPosition().x, pGameInstance->Get_CamPosition().y, pGameInstance->Get_CamPosition().z);
-	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
+
+	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
 	else
 		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
+	
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 

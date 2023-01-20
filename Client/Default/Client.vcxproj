@@ -239,6 +239,7 @@
     <ClInclude Include="..\public\TestSphere.h" />
     <ClInclude Include="..\Public\ThunderWave.h" />
     <ClInclude Include="..\public\TownA.h" />
+    <ClInclude Include="..\public\Tree.h" />
     <ClInclude Include="..\public\TrollA.h" />
     <ClInclude Include="..\public\TrollQ.h" />
     <ClInclude Include="..\public\Upper.h" />
@@ -316,6 +317,7 @@
     <ClCompile Include="..\private\TestSphere.cpp" />
     <ClCompile Include="..\Private\ThunderWave.cpp" />
     <ClCompile Include="..\private\TownA.cpp" />
+    <ClCompile Include="..\private\Tree.cpp" />
     <ClCompile Include="..\private\TrollA.cpp" />
     <ClCompile Include="..\private\TrollQ.cpp" />
     <ClCompile Include="..\private\Upper.cpp" />

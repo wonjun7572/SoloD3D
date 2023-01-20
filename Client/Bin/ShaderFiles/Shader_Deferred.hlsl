@@ -189,7 +189,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vSpecularBlend = g_SpecularBlendTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRimColor = g_RimTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor = (vDiffuse * vShade) + ((vSpecular * 30.f) * vSpecularBlend) + (vRimColor * 0.5f);
+	Out.vColor = (vDiffuse * vShade) + (vSpecular * vSpecularBlend) + (vRimColor * 0.3f);
 
 	if (0.0f == Out.vColor.a)
 		discard;
