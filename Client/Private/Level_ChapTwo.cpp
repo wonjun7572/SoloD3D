@@ -10,6 +10,7 @@
 #include "Ally.h"
 #include "TrollQ.h"
 #include "TrollA.h"
+#include "SkeletonWarrior.h"
 
 CLevel_ChapTwo::CLevel_ChapTwo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -364,6 +365,44 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 	vPos = _float4(289.f, 0.f, 220.f, 1.f);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_ZombieA"), &vPos)))
+		return E_FAIL;
+
+	CSkeletonWarrior::SKELETONDESC SkeletonDesc;
+	ZeroMemory(&SkeletonDesc, sizeof SkeletonDesc);
+
+	SkeletonDesc.iGroup = 10;
+	SkeletonDesc.vPos = _float4(243.f, 0.f, 244.f, 1.f);
+	SkeletonDesc.fRadian = 0.f;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
+		return E_FAIL;
+
+	SkeletonDesc.iGroup = 11;
+	SkeletonDesc.vPos = _float4(245.6f, 0.f, 263.f, 1.f);
+	SkeletonDesc.fRadian = 0.f;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
+		return E_FAIL;
+
+	SkeletonDesc.iGroup = 12;
+	SkeletonDesc.vPos = _float4(264.f, 0.f, 273.f, 1.f);
+	SkeletonDesc.fRadian = 0.f;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
+		return E_FAIL;
+
+	SkeletonDesc.iGroup = 13;
+	SkeletonDesc.vPos = _float4(282.f, 0.f, 251.f, 1.f);
+	SkeletonDesc.fRadian = 0.f;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
+		return E_FAIL;
+
+	SkeletonDesc.iGroup = 14;
+	SkeletonDesc.vPos = _float4(258.f, 0.f, 234.f, 1.f);
+	SkeletonDesc.fRadian = 0.f;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

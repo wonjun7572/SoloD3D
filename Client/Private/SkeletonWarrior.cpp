@@ -44,6 +44,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	{
 		SKELETONDESC SkeletonDesc;
 		ZeroMemory(&SkeletonDesc, sizeof SkeletonDesc);
+		memcpy(&SkeletonDesc, pArg, sizeof(SKELETONDESC));
 		m_iGroup = SkeletonDesc.iGroup;
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(SkeletonDesc.fRadian));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, SkeletonDesc.vPos);
@@ -52,7 +53,6 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	m_strObjName = L"SkeletonWarrior";
