@@ -57,6 +57,20 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 
 	m_strObjName = L"SkeletonWarrior";
 
+	if (g_LEVEL == LEVEL_CHAP2)
+	{
+		if (m_iGroup == 10)
+			m_strObjName = TEXT("SkeletonWarrior_0");
+		if (m_iGroup == 11)
+			m_strObjName = TEXT("SkeletonWarrior_1");
+		if (m_iGroup == 12)
+			m_strObjName = TEXT("SkeletonWarrior_2");
+		if (m_iGroup == 13)
+			m_strObjName = TEXT("SkeletonWarrior_3");
+		if (m_iGroup == 14)
+			m_strObjName = TEXT("SkeletonWarrior_4");
+	}
+
 	m_fHp = 100;
 	m_fMaxHp = 100.f;
 	m_fAttack = 10;
@@ -74,6 +88,15 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 void CSkeletonWarrior::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	if (!m_bFoundAlly && m_iGroup == 14 && g_LEVEL == LEVEL_CHAP2)
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Delilah");
+		RELEASE_INSTANCE(CGameInstance);
+		m_bFoundAlly = true;
+	}
+
 	AdditiveAnim(TimeDelta);
 }
 
@@ -183,15 +206,52 @@ void CSkeletonWarrior::SetUp_FSM()
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		_vector	vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 
-		if (!m_bPlayerAttack)
+		if (g_LEVEL == LEVEL_CHAP2 && m_pAlly != nullptr)
 		{
-			m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Run_F);
-			m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+			_vector vAllyPos = m_pAlly->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+
+			_float fPlayerToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vPlayerPos);
+			_float fAllyToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vAllyPos);
+
+			if (fPlayerToPos < fAllyToPos)
+			{
+				if (!m_bPlayerAttack)
+				{
+					m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Run_F);
+					m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+				}
+				else
+				{
+					m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Idle_C);
+					m_pTransformCom->LookAt(vPlayerPos);
+				}
+			}
+			else
+			{
+				if (fAllyToPos > 11.f)
+				{
+					m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Run_F);
+					m_pTransformCom->ChaseAndLookAt(vAllyPos, TimeDelta, 0.1f, m_pNavigationCom);
+				}
+				else
+				{
+					m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_ATK_01);
+					m_pTransformCom->LookAt(vAllyPos);
+				}
+			}
 		}
 		else
 		{
-			m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Idle_C);
-			m_pTransformCom->LookAt(vPlayerPos);
+			if (!m_bPlayerAttack)
+			{
+				m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Run_F);
+				m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
+			}
+			else
+			{
+				m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Idle_C);
+				m_pTransformCom->LookAt(vPlayerPos);
+			}
 		}
 
 		m_AttackDelayTime += TimeDelta;
@@ -430,10 +490,20 @@ void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);
 
-	if (fabsf(fDistance) < 20.f)
-		m_bPlayerChase = true;
+	if (g_LEVEL == LEVEL_CHAP2)
+	{
+		if (fabsf(fDistance) < 100.f)
+			m_bPlayerChase = true;
+		else
+			m_bPlayerChase = false;
+	}
 	else
-		m_bPlayerChase = false;
+	{
+		if (fabsf(fDistance) < 10.f)
+			m_bPlayerChase = true;
+		else
+			m_bPlayerChase = false;
+	}
 }
 
 void CSkeletonWarrior::CollisionToAttack(_double TimeDelta)

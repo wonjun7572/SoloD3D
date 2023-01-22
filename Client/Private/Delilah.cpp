@@ -64,6 +64,10 @@ HRESULT CDelilah::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(300.f, 0.f, 163.f, 1.f));
 		m_CheckPoints.push_back(_float4(299.f, 0.f, 142.f, 1.f));
 		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_4");
+		RELEASE_INSTANCE(CGameInstance);
 	}
 
 	return S_OK;
@@ -153,6 +157,7 @@ void CDelilah::Level_Chap2Tick(_double TimeDelta)
 			if (DistancePointCheck(vPos, m_CheckPoints[0]))
 			{
 				m_bSecondStageCheck = true;
+				m_bMonsterChase = true;
 			}
 			else
 			{
@@ -220,35 +225,7 @@ void CDelilah::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(DELILAH_Idle_C);
 	})
-		.AddTransition("Idle to Player_Chase", "Player_Chase")
-		.Predicator([this]()
-	{
-		return m_bChase && !m_bMonsterChase;
-	})
 		.AddTransition("Idel to Monster_Chase", "Monster_Chase")
-		.Predicator([this]()
-	{
-		return m_bMonsterChase;
-	})
-
-		.AddState("Player_Chase")
-		.Tick([this](_double TimeDelta)
-	{
-		m_pModelCom->Set_AnimationIndex(DELILAH_Run_F);
-		m_pTransformCom->ChaseAndLookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
-
-		if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 15.f)
-		{
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
-			m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-		}
-	})
-		.AddTransition("Player_Chase to Idle", "Idle")
-		.Predicator([this]()
-	{
-		return !m_bChase && !m_bMonsterChase;
-	})
-		.AddTransition("Player_Chase to Monster_Chase", "Monster_Chase")
 		.Predicator([this]()
 	{
 		return m_bMonsterChase;
@@ -257,6 +234,24 @@ void CDelilah::SetUp_FSM()
 		.AddState("Monster_Chase")
 		.Tick([this](_double TimeDelta)
 	{
+		if (m_pSkeleton != nullptr)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 2.f)
+			{
+				m_pTransformCom->ChaseAndLookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 0.1f, m_pNavigationCom);
+				m_pModelCom->Set_AnimationIndex(DELILAH_Run_F);
+			}
+			else
+			{
+				m_pTransformCom->LookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+				m_pModelCom->Set_AnimationIndex(DELILAH_Idle_C);
+				m_AttackDelayTime += TimeDelta;
+			}
+		}
+		else
+		{
+			m_bMonsterChase = false;
+		}
 	})
 		.AddTransition("Monster_Chase to Idle", "Idle")
 		.Predicator([this]()
@@ -266,7 +261,7 @@ void CDelilah::SetUp_FSM()
 		.AddTransition("Monster_Chase to Attack", "Attack")
 		.Predicator([this]()
 	{
-		return m_AttackDelayTime > 0.1;
+		return m_AttackDelayTime > 0.2;
 	})
 
 		.AddState("Attack")

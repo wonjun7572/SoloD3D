@@ -87,6 +87,9 @@ private:
 	_double m_HitDownDelayTime = 0.0;
 	_double m_GroggyDelayTime = 0.0;
 
+	_bool	m_bFoundAlly = false;
+	CGameObject* m_pAlly = nullptr;
+
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;

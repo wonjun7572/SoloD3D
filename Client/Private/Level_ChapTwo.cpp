@@ -423,8 +423,8 @@ HRESULT CLevel_ChapTwo::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
-		return E_FAIL;
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
+	//	return E_FAIL;
 	
 	RELEASE_INSTANCE(CGameInstance);
 	

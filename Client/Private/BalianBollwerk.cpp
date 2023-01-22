@@ -75,7 +75,11 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(295.f, 0.f, 200.f, 1.f));
 		m_CheckPoints.push_back(_float4(300.f, 0.f, 163.f, 1.f));
 		m_CheckPoints.push_back(_float4(299.f, 0.f, 142.f, 1.f));
-		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
+		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));	
+	
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_0");
+		RELEASE_INSTANCE(CGameInstance);
 	}
 
 	TimeConversation = 0.0;
@@ -311,7 +315,7 @@ void CBalianBollwerk::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
-		m_pTransformCom->ChaseAndLookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
+		m_pTransformCom->ChaseAndLookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
 	})
 		.AddTransition("Chase to Idle", "Idle")
 		.Predicator([this]()

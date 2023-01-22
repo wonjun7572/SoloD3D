@@ -68,7 +68,8 @@ protected:
 	/****************/
 
 protected:
-	class	CPlayer*		m_pPlayer = nullptr;
+	class	CGameObject*		m_pPlayer = nullptr;
+	class	CGameObject*		m_pSkeleton = nullptr;
 
 protected:
 	CShader*				m_pShaderCom = nullptr;
