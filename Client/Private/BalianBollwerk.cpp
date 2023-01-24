@@ -203,6 +203,7 @@ void CBalianBollwerk::Level_Chap2Tick(_double TimeDelta)
 			if (DistancePointCheck(vPos, m_CheckPoints[0]))
 			{
 				m_bSecondStageCheck = true;
+				m_bMonsterChase = true;
 			}
 			else
 			{
@@ -305,22 +306,70 @@ void CBalianBollwerk::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_C);
 	})
-		.AddTransition("Idle to Chase", "Chase")
+		.AddTransition("Idel to Monster_Chase", "Monster_Chase")
 		.Predicator([this]()
 	{
-		return m_bChase;
+		return m_bMonsterChase;
 	})
 
-		.AddState("Chase")
+		.AddState("Monster_Chase")
 		.Tick([this](_double TimeDelta)
 	{
-		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
-		m_pTransformCom->ChaseAndLookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
+		if (m_pSkeleton != nullptr)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 2.f)
+			{
+				m_pTransformCom->ChaseAndLookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 0.1f, m_pNavigationCom);
+				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
+			}
+			else
+			{
+				m_pTransformCom->LookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_C);
+				m_AttackDelayTime += TimeDelta;
+			}
+		}
+		else
+		{
+			m_bMonsterChase = false;
+		}
 	})
-		.AddTransition("Chase to Idle", "Idle")
+		.AddTransition("Monster_Chase to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bChase;
+		return !m_bMonsterChase;
+	})
+		.AddTransition("Monster_Chase to Attack", "Attack")
+		.Predicator([this]()
+	{
+		return m_AttackDelayTime > 0.2;
+	})
+
+		.AddState("Attack")
+		.OnStart([this]()
+	{
+		m_iRandAttack = rand() % 2;
+
+		if (m_iRandAttack == 0)
+		{
+			m_pModelCom->Reset_AnimPlayTime(BALIANBOLLWERK_ATK_01);
+			m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_ATK_01);
+		}
+		else if (m_iRandAttack == 1)
+		{
+			m_pModelCom->Reset_AnimPlayTime(BALIANBOLLWERK_ATK_02);
+			m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_ATK_02);
+		}
+	})
+		.OnExit([this]()
+	{
+		m_AttackDelayTime = 0.0;
+	})
+		.AddTransition("Attack to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return 	AnimFinishChecker(BALIANBOLLWERK_ATK_01) ||
+			AnimFinishChecker(BALIANBOLLWERK_ATK_02);
 	})
 
 		.Build();

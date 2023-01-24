@@ -66,7 +66,7 @@ HRESULT CDelilah::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_4");
+		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_3");
 		RELEASE_INSTANCE(CGameInstance);
 	}
 

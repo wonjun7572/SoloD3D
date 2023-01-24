@@ -57,6 +57,11 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 
 	m_strObjName = L"SkeletonWarrior";
 
+	m_fHp = 100;
+	m_fMaxHp = 100.f;
+	m_fAttack = 10;
+	m_fDefence = 5;
+
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
 		if (m_iGroup == 10)
@@ -67,15 +72,10 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 			m_strObjName = TEXT("SkeletonWarrior_2");
 		if (m_iGroup == 13)
 			m_strObjName = TEXT("SkeletonWarrior_3");
-		if (m_iGroup == 14)
-			m_strObjName = TEXT("SkeletonWarrior_4");
+
+		m_fHp = 1000.f;
+		m_fMaxHp = 1000.f;
 	}
-
-	m_fHp = 100;
-	m_fMaxHp = 100.f;
-	m_fAttack = 10;
-	m_fDefence = 5;
-
 	m_vMonsterNamePos = _float2(680.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
@@ -89,12 +89,23 @@ void CSkeletonWarrior::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if (!m_bFoundAlly && m_iGroup == 14 && g_LEVEL == LEVEL_CHAP2)
+	if (!m_bFoundAlly && g_LEVEL == LEVEL_CHAP2)
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Delilah");
+
+		if(m_iGroup == 10)
+			m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"BalianBollwerk");
+		if(m_iGroup == 11)
+			m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Chinuwa");
+		if (m_iGroup == 12)
+			m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Chitata");
+		if (m_iGroup == 13)
+			m_pAlly = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Delilah");
+
 		RELEASE_INSTANCE(CGameInstance);
-		m_bFoundAlly = true;
+
+		if (m_pAlly != nullptr)
+			m_bFoundAlly = true;
 	}
 
 	AdditiveAnim(TimeDelta);
@@ -165,8 +176,7 @@ void CSkeletonWarrior::Imgui_RenderProperty()
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
-
-	m_pSwordColCom->FixedSizeForImgui(1);
+	ImGui::Text("%d", &m_iGroup);
 }
 
 void CSkeletonWarrior::SetUp_FSM()

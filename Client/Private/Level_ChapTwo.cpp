@@ -378,28 +378,21 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 		return E_FAIL;
 
 	SkeletonDesc.iGroup = 11;
-	SkeletonDesc.vPos = _float4(245.6f, 0.f, 263.f, 1.f);
+	SkeletonDesc.vPos = _float4(273.f, 0.f, 230.f, 1.f);
 	SkeletonDesc.fRadian = 0.f;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
 		return E_FAIL;
 
 	SkeletonDesc.iGroup = 12;
-	SkeletonDesc.vPos = _float4(264.f, 0.f, 273.f, 1.f);
+	SkeletonDesc.vPos = _float4(256.f, 0.f, 234.f, 1.f);
 	SkeletonDesc.fRadian = 0.f;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
 		return E_FAIL;
 
 	SkeletonDesc.iGroup = 13;
-	SkeletonDesc.vPos = _float4(282.f, 0.f, 251.f, 1.f);
-	SkeletonDesc.fRadian = 0.f;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))
-		return E_FAIL;
-
-	SkeletonDesc.iGroup = 14;
-	SkeletonDesc.vPos = _float4(258.f, 0.f, 234.f, 1.f);
+	SkeletonDesc.vPos = _float4(283.f, 0.f, 244.f, 1.f);
 	SkeletonDesc.fRadian = 0.f;
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &SkeletonDesc)))

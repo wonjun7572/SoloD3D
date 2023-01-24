@@ -74,17 +74,15 @@ private:
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
 
-	_bool	m_bConversation = true;
-	_bool	m_bSecondStageCheck = false;
+	_double m_AttackDelayTime = 0.0;
+
+	_int	m_iRandAttack = 0;
 
 	vector<CGameObject*> m_UI;
+
 	_double TimeConversation = 0.0;
-
-	_float m_fX = 0.f;
-	_float m_fY = 0.f;
-	_float m_fSizeX = 0.f;
-	_float m_fSizeY = 0.f;
-
+	_bool	m_bConversation = true;
+	_bool	m_bSecondStageCheck = false;
 	vector<_float4> m_CheckPoints;
 	wstring	m_strConversation;
 

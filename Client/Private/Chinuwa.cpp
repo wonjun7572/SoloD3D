@@ -62,6 +62,10 @@ HRESULT CChinuwa::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(300.f, 0.f, 163.f, 1.f));
 		m_CheckPoints.push_back(_float4(299.f, 0.f, 142.f, 1.f));
 		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_1");
+		RELEASE_INSTANCE(CGameInstance);
 	}
 
 	return S_OK;
@@ -129,19 +133,6 @@ HRESULT CChinuwa::Render()
 
 void CChinuwa::Imgui_RenderProperty()
 {
-	if (ImGui::Button("Navi~"))
-	{
-		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	}
-
-	if (ImGui::Button("FrontDamage"))
-		m_bFrontDamaged = true;
-
-	if (ImGui::Button("BackDamage"))
-		m_bBackDamaged = true;
-
-	m_pColliderCom[COLLTYPE_AABB]->FixedSizeForImgui(COLLTYPE_AABB);
-	m_pColliderCom[COLLTYPE_SPHERE]->FixedSizeForImgui(COLLTYPE_SPHERE);
 }
 
 void CChinuwa::Level_Chap2Tick(_double TimeDelta)
@@ -164,6 +155,7 @@ void CChinuwa::Level_Chap2Tick(_double TimeDelta)
 			if (DistancePointCheck(vPos, m_CheckPoints[0]))
 			{
 				m_bSecondStageCheck = true;
+				m_bMonsterChase = true;
 			}
 			else
 			{
@@ -231,22 +223,82 @@ void CChinuwa::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(CHINUWA_Idle_C);
 	})
-		.AddTransition("Idle to Chase", "Chase")
+		.AddTransition("Idel to Monster_Chase", "Monster_Chase")
 		.Predicator([this]()
 	{
-		return m_bChase;
+		return m_bMonsterChase;
 	})
 
-		.AddState("Chase")
+		.AddState("Monster_Chase")
 		.Tick([this](_double TimeDelta)
 	{
-		m_pModelCom->Set_AnimationIndex(CHINUWA_Run_F);
-		m_pTransformCom->ChaseAndLookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 5.f, m_pNavigationCom);
+		if (m_pSkeleton != nullptr)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 2.f)
+			{
+				m_pTransformCom->ChaseAndLookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 0.1f, m_pNavigationCom);
+				m_pModelCom->Set_AnimationIndex(CHINUWA_Run_F);
+			}
+			else
+			{
+				m_pTransformCom->LookAt(m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+				m_pModelCom->Set_AnimationIndex(CHINUWA_Idle_C);
+				m_AttackDelayTime += TimeDelta;
+			}
+		}
+		else
+		{
+			m_bMonsterChase = false;
+		}
 	})
-		.AddTransition("Chase to Idle", "Idle")
+		.AddTransition("Monster_Chase to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return !m_bChase;
+		return !m_bMonsterChase;
+	})
+		.AddTransition("Monster_Chase to Attack", "Attack")
+		.Predicator([this]()
+	{
+		return m_AttackDelayTime > 0.2;
+	})
+
+		.AddState("Attack")
+		.OnStart([this]()
+	{
+		m_iRandAttack = rand() % 4;
+
+		if (m_iRandAttack == 0)
+		{
+			m_pModelCom->Reset_AnimPlayTime(CHINUWA_ATK_01);
+			m_pModelCom->Set_AnimationIndex(CHINUWA_ATK_01);
+		}
+		else if (m_iRandAttack == 1)
+		{
+			m_pModelCom->Reset_AnimPlayTime(CHINUWA_ATK_02);
+			m_pModelCom->Set_AnimationIndex(CHINUWA_ATK_02);
+		}
+		else if (m_iRandAttack == 2)
+		{
+			m_pModelCom->Reset_AnimPlayTime(CHINUWA_SK_Firing_01);
+			m_pModelCom->Set_AnimationIndex(CHINUWA_SK_Firing_01);
+		}
+		else if (m_iRandAttack == 3)
+		{
+			m_pModelCom->Reset_AnimPlayTime(CHINUWA_SK_Firing_02);
+			m_pModelCom->Set_AnimationIndex(CHINUWA_SK_Firing_02);
+		}
+	})
+		.OnExit([this]()
+	{
+		m_AttackDelayTime = 0.0;
+	})
+		.AddTransition("Attack to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return AnimFinishChecker(CHINUWA_SK_Firing_01) ||
+			AnimFinishChecker(CHINUWA_SK_Firing_02) ||
+			AnimFinishChecker(CHINUWA_ATK_01) ||
+			AnimFinishChecker(CHINUWA_ATK_02);
 	})
 
 		.Build();
