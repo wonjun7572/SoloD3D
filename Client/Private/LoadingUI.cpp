@@ -2,8 +2,8 @@
 #include "LoadingUI.h"
 #include "GameInstance.h"
 
-CLoadingUI::CLoadingUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec, pContext)
+CLoadingUI::CLoadingUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice, pContext)
 {
 }
 

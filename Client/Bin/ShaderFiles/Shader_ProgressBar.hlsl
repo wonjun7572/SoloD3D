@@ -6,12 +6,22 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_AlbedoTexture;
 texture2D		g_FillTexture;
 texture2D		g_BackTexture;
+texture2D		g_MaskTexture;
 
 float			g_fAmount;
+float			g_fAlpha;
+float2			g_UVMoveFactor;
 
 sampler AlbedoSampler = sampler_state
 {
-	filter = min_mag_mip_linear;
+	filter = min_mag_mip_point;
+	AddressU = wrap;
+	AddressV = wrap;
+};
+
+sampler AlphaMaskSampler = sampler_state
+{
+	filter = min_mag_mip_point;
 	AddressU = wrap;
 	AddressV = wrap;
 };
@@ -86,8 +96,11 @@ PS_OUT ProgressPS(PS_IN In)
 	if (In.vTexUV.x > g_fAmount)
 		discard;
 
-	Out.vColor = albedo;
+	In.vTexUV += g_UVMoveFactor;
+	float4 mask = g_MaskTexture.Sample(AlphaMaskSampler, In.vTexUV);
 	
+	Out.vColor = albedo * mask.r * g_fAlpha;
+
 	return Out;
 }
 
@@ -102,6 +115,17 @@ PS_OUT BillboardBarPS(PS_IN In)
 		Out.vColor = back;
 	else
 		Out.vColor = fill;
+
+	return Out;
+}
+
+PS_OUT Texture_EFFECTSimple(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 albedo = g_AlbedoTexture.Sample(AlbedoSampler, In.vTexUV);
+
+	Out.vColor = albedo * g_fAlpha;
 
 	return Out;
 }
@@ -131,5 +155,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 BillboardBarPS();
+	}
+
+	pass BaseTex
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Test, 0);
+		SetBlendState(BS_AlphaBlending, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
 	}
 }

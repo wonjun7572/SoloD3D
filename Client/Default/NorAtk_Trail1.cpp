@@ -43,7 +43,7 @@ void CNorAtk_Trail1::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bPlay)
+	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_ALPHABLEND, this);
 }
 

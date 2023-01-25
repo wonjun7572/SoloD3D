@@ -1,19 +1,15 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "GameObject.h"
+#include "Effect.h"
 
 BEGIN(Engine)
-class CShader;
-class CTexture;
-class CRenderer;
-class CTransform;
 class CVIBuffer_Point_Instancing;
 END
 
 BEGIN(Client)
 
-class Effect_Point final : public CGameObject
+class Effect_Point final : public CEffect
 {
 private:
 	Effect_Point(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -28,8 +24,6 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	CShader*					m_pShaderCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Point_Instancing*	m_pVIBufferCom = nullptr;
 
@@ -40,8 +34,7 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 public:
-	static Effect_Point* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 };
 

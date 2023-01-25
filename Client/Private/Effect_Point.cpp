@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 Effect_Point::Effect_Point(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CGameObject(pDevice, pContext)
+	:CEffect(pDevice, pContext)
 {
 }
 
 Effect_Point::Effect_Point(const Effect_Point & rhs)
-	:CGameObject(rhs)
+	: CEffect(rhs)
 {
 }
 
@@ -102,9 +102,6 @@ HRESULT Effect_Point::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	// 0~9
-	// m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_WorldMatrix);
-
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
@@ -113,7 +110,6 @@ HRESULT Effect_Point::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
@@ -125,36 +121,10 @@ HRESULT Effect_Point::SetUp_ShaderResources()
 	return S_OK;
 }
 
-Effect_Point * Effect_Point::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-{
-	Effect_Point*		pInstance = new Effect_Point(pDevice, pContext);
-
-	if (FAILED(pInstance->Init_Prototype()))
-	{
-		MSG_BOX("Failed to Created : Effect_Point");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
-CGameObject * Effect_Point::Clone(void * pArg)
-{
-	Effect_Point*		pInstance = new Effect_Point(*this);
-
-	if (FAILED(pInstance->Init(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : Effect_Point");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-
 void Effect_Point::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 }

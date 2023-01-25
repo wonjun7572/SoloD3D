@@ -1,19 +1,15 @@
 #pragma once
 
 #include "Client_Define.h"
-#include "GameObject.h"
+#include "Effect.h"
 
 BEGIN(Engine)
-class CShader;
-class CTexture;
-class CRenderer;
-class CTransform;
 class CVIBuffer_Rect;
 END
 
 BEGIN(Client)
 
-class CEffect_Rect : public CGameObject
+class CEffect_Rect : public CEffect
 {
 protected:
 	CEffect_Rect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,8 +31,6 @@ public:
 	void	Compute_BillBoard();
 
 protected:
-	CShader*					m_pShaderCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
 	_float						m_fAlpha = 0.f;

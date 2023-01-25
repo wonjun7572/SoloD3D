@@ -2,8 +2,8 @@
 #include "..\Public\MonsterNameUI.h"
 #include "GameInstance.h"
 
-CMonsterNameUI::CMonsterNameUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec, pContext)
+CMonsterNameUI::CMonsterNameUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice, pContext)
 {
 }
 

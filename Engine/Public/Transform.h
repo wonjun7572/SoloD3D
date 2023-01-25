@@ -74,6 +74,8 @@ public:
 	void Go_Up(_double TimeDelta);
 	void Go_Down(_double TimeDelta);
 
+	void Go_Direction(_double TimeDelta, _float3 vDir);
+
 	_bool Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight);
 	// TODO : Jump ¼öÁ¤ & SlidingVector
 	

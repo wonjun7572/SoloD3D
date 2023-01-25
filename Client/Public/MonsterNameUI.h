@@ -21,7 +21,7 @@ public:
 	}NAMEFONT;
 
 private:
-	CMonsterNameUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CMonsterNameUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMonsterNameUI(const CMonsterNameUI& rhs);
 	virtual	~CMonsterNameUI() = default;
 

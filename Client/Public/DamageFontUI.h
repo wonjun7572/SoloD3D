@@ -18,7 +18,7 @@ public:
 	}DAMAGEFONT;
 
 private:
-	CDamageFontUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CDamageFontUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDamageFontUI(const CDamageFontUI& rhs);
 	virtual	~CDamageFontUI() = default;
 

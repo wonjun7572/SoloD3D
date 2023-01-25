@@ -33,12 +33,13 @@ HRESULT CTree::Init(void * pArg)
 	progressBarDesc.fAmount = 1.f;
 	progressBarDesc.fSizeX = 200.f;
 	progressBarDesc.fSizeY = 40.f;
-	progressBarDesc.fX = -670.f;
+	progressBarDesc.fX = -650.f;
 	progressBarDesc.fY = 30.f;
 	progressBarDesc.iAlbedoTexNum = 3;
 	progressBarDesc.iFillTexNum = 3;
 	progressBarDesc.iBackTexNum = 4;
 	progressBarDesc.iPassIndex = 1;
+	progressBarDesc.iOption = CProgressBarUI::TREE;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
@@ -54,6 +55,7 @@ HRESULT CTree::Init(void * pArg)
 	conversationDesc.fY = 371.f;
 	conversationDesc.fSizeX = 0.5f;
 	conversationDesc.fSizeY = 0.5f;
+	conversationDesc.bTextureOn = false;
 
 	m_pCountDown = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ConversationUI"), &conversationDesc);
 

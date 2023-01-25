@@ -87,11 +87,6 @@ void CChitata::Tick(_double TimeDelta)
 void CChitata::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-	if (m_bConversation == true)
-	{
-		for (auto pUI : m_UI)
-			pUI->Late_Tick(TimeDelta);
-	}
 }
 
 HRESULT CChitata::Render()
@@ -144,7 +139,10 @@ void CChitata::Level_Chap2Tick(_double TimeDelta)
 	}
 
 	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+	{
 		Conversation(TimeDelta);
+		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+	}
 
 	if (!m_bConversation)
 	{
@@ -181,22 +179,25 @@ void CChitata::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		TimeConversation += TimeDelta;
-
-		if (TimeConversation > 2.0f)
-			m_strConversation = L"냥냥냥냥";
-		else if (TimeConversation > 1.8f)
-			m_strConversation = L"앞에 좀비냥냥";
-		else if (TimeConversation > 1.6f)
-			m_strConversation = L"앞에 좀냥냥";
-		else if (TimeConversation > 1.4f)
-			m_strConversation = L"앞에냥냥";
-		else if (TimeConversation > 1.2f)
-			m_strConversation = L"냥냥스";
+		if (TimeConversation < 5.f)
+		{
+			m_strConversation = L"나는 구로 제국에 살고 있는 전인복이다냥";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		{
+			m_strConversation = L"나도 이 제국을 도우러 왔다냥";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		{
+			m_strConversation = L"나 먼저 가겠다냥";
+			TimeConversation += TimeDelta;
+		}
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 5.f)
+		if (TimeConversation > 15.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -304,12 +305,13 @@ void CChitata::SetUp_UI()
 
 	wcscpy_s(conversationDesc.szConversation, MAX_PATH, L"");
 	wcscpy_s(conversationDesc.szFontName, MAX_PATH, L"");
-	conversationDesc.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	conversationDesc.vColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
 
-	conversationDesc.fX = 475.f;
-	conversationDesc.fY = 610.f;
+	conversationDesc.fX = 375.f;
+	conversationDesc.fY = 800.f;
 	conversationDesc.fSizeX = 1.f;
 	conversationDesc.fSizeY = 1.f;
+	conversationDesc.bTextureOn = true;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pUI = nullptr;

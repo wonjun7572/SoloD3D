@@ -8,6 +8,8 @@ BEGIN(Client)
 class CProgressBarUI final : public CUI
 {
 public:
+	enum OPTION { PLAYER, TREE, BOSS, OPTION_END};
+
 	typedef struct tagProgressBar
 	{
 		_float fAmount;
@@ -22,10 +24,11 @@ public:
 		_uint  iBackTexNum;
 
 		_int   iPassIndex;
+		_int   iOption;
 	}PROGRESSBARDESC;
 
 private:
-	CProgressBarUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CProgressBarUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CProgressBarUI(const CProgressBarUI& rhs);
 	virtual	~CProgressBarUI() = default;
 
@@ -44,8 +47,16 @@ public:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUp_PlayerShaderResources();
+	HRESULT	SetUp_TreeShaderResources();
+	HRESULT	SetUp_BossShaderResources();
 
 	PROGRESSBARDESC	m_ProgressBarDesc;
+
+	class CTexture* m_BaseTexture = nullptr;
+
+	_float2			m_UVMoveFactor;
+	_float			m_fAlpha = 1.f;
 
 public:
 	static CProgressBarUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

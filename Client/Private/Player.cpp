@@ -15,6 +15,7 @@
 #include "Effect_Mesh.h"
 #include "SkillChargingUI.h"
 #include "ProgressBarUI.h"
+#include "EffectManager.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -53,9 +54,6 @@ HRESULT CPlayer::Init(void * pArg)
 	if (FAILED(SetUp_Parts()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_Effects()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_UI()))
 		return E_FAIL;
 
@@ -72,6 +70,95 @@ HRESULT CPlayer::Init(void * pArg)
 		
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	
+	CEffect_Mesh::EFFECTDESC effectDesc;
+	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
+
+	_matrix pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
+		XMMatrixRotationX(XMConvertToRadians(0.f)) *
+		XMMatrixRotationY(XMConvertToRadians(0.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 0.f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 3.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 14;
+	effectDesc.iMaskTex = 28;
+	effectDesc.fAlpha = 2.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_ThunderWave", L"ThunderWave", &effectDesc);
+
+	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+		XMMatrixRotationX(XMConvertToRadians(0.f)) *
+		XMMatrixRotationY(XMConvertToRadians(0.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 0.f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 3.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 14;
+	effectDesc.iMaskTex = 14;
+	effectDesc.fAlpha = 1.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail1", L"NorAtk_Trail1", &effectDesc);
+	
+	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+		XMMatrixRotationX(XMConvertToRadians(0.f)) *
+		XMMatrixRotationY(XMConvertToRadians(0.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 0.f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 3.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 14;
+	effectDesc.iMaskTex = 14;
+	effectDesc.fAlpha = 1.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail2", L"NorAtk_Trail2", &effectDesc);
+	
+	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+		XMMatrixRotationX(XMConvertToRadians(0.f)) *
+		XMMatrixRotationY(XMConvertToRadians(0.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 0.3f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 3.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 14;
+	effectDesc.iMaskTex = 14;
+	effectDesc.fAlpha = 1.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail3", L"NorAtk_Trail3", &effectDesc);
+
+	pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
+		XMMatrixRotationX(XMConvertToRadians(0.f)) *
+		XMMatrixRotationY(XMConvertToRadians(270.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 2.f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.fMoveSpeed = 0.f;
+	effectDesc.iPassIndex = 2;
+	effectDesc.iDiffuseTex = 1;
+	effectDesc.iMaskTex = 5;
+	effectDesc.fAlpha = 1.f;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Wing", L"Wing", &effectDesc);
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_QskillCrackE", L"CrackE");
+
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
 	m_fHp = 100;
 	m_fMp = 100;
@@ -100,11 +187,6 @@ void CPlayer::Tick(_double TimeDelta)
 		static_cast<CParts*>(m_PlayerParts[i])->LinkPlayer(m_pTransformCom);
 	}
 
-	for (auto& pEffect : m_PlayerEffects)
-		pEffect->Tick(TimeDelta);
-
-	Effect_Tick(TimeDelta);
-
 	for (auto& pUI : m_PlayerUI)
 		pUI->Tick(TimeDelta);
 
@@ -115,7 +197,7 @@ void CPlayer::Tick(_double TimeDelta)
 	AdditiveAnim(TimeDelta);
 
 	m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
-	
+
 	LinkObject(TimeDelta);
 }
 
@@ -125,9 +207,6 @@ void CPlayer::Late_Tick(_double TimeDelta)
 
 	for (_uint i = 0; i < m_PartSize; ++i)
 		m_PlayerParts[i]->Late_Tick(TimeDelta);
-
-	for (auto& pEffect : m_PlayerEffects)
-		pEffect->Late_Tick(TimeDelta);
 
 	if (m_bUI)
 	{
@@ -187,7 +266,7 @@ HRESULT CPlayer::Render()
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
-
+	
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
@@ -222,11 +301,6 @@ HRESULT CPlayer::Render()
 	}
 
 	return S_OK;
-}
-
-void CPlayer::Effect_Tick(_double TimeDelta)
-{
-	static_cast<CEffect_Mesh*>(m_PlayerEffects[LINE_AURA])->Set_EffectPlay(true);
 }
 
 void CPlayer::UI_Tick(_double TimeDelta)
@@ -604,12 +678,13 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_01);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv2.wav", 1.f, false);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.1, 0.3))
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK1])->Set_EffectPlay(true);
+			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail1", TimeDelta);
 
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.0, 0.6))
 			MonsterNormalAttack(true);
@@ -648,13 +723,14 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_02);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv3.wav", 1.f, false);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_02, 0.1, 0.3))
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK2])->Set_EffectPlay(true);
-
+			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail2", TimeDelta);
+			
 		MonsterNormalAttack(true);
 	})
 		.OnExit([this]()
@@ -690,12 +766,13 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_03);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv4.wav", 1.f, false);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_03, 0.1, 0.3))
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[NORATK3])->Set_EffectPlay(true);
+			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail3", TimeDelta);
 
 		if(AnimIntervalChecker(PLAYER_ATK_03, 0.0, 0.6))
 			MonsterNormalAttack(true);
@@ -772,11 +849,13 @@ void CPlayer::SetUp_FSM()
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 5.f);
 		Reset_Anim(PLAYER_SK09);
 		Set_Anim(PLAYER_SK09);
-		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_EffectPlay(true);
-		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_Alpha(0.f);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(0.f);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_UV(_float2(0.f, 0.f));
 	})
 		.Tick([this](_double TimeDelta)
 	{
+		CEffectManager::GetInstance()->Render_Effects(L"Wing", TimeDelta);
+
 		if (!AnimFinishChecker(PLAYER_SK09, 0.3))
 			m_pTransformCom->Go_Straight(TimeDelta * 2.f, m_pNavigationCom);
 
@@ -798,7 +877,7 @@ void CPlayer::SetUp_FSM()
 			_float4x4 pivot;
 			XMStoreFloat4x4(&pivot, pivotMat);
 
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_PivotMatrix(pivot);
+			static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_PivotMatrix(pivot);
 		}
 		else if (AnimIntervalChecker(PLAYER_SK09, 0.15, 0.3))
 		{
@@ -812,8 +891,7 @@ void CPlayer::SetUp_FSM()
 
 			_float4x4 pivot;
 			XMStoreFloat4x4(&pivot, pivotMat);
-
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_PivotMatrix(pivot);
+			static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_PivotMatrix(pivot);
 		}
 		else
 		{
@@ -826,7 +904,7 @@ void CPlayer::SetUp_FSM()
 			_float4x4 pivot;
 			XMStoreFloat4x4(&pivot, pivotMat);
 
-			static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_PivotMatrix(pivot);
+			static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_PivotMatrix(pivot);
 		}
 
 		if (AnimIntervalChecker(PLAYER_SK09, 0.2, 0.5))
@@ -834,20 +912,21 @@ void CPlayer::SetUp_FSM()
 		else
 			MonsterSkill02(false);
 
-		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_Alpha(static_cast<_float>(m_WingAlpha));
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(static_cast<_float>(m_WingAlpha));
 
 		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 0.4))
 		{
 			_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
-			static_cast<CEffect_Rect*>(m_PlayerEffects[QSKILLCRACK])->Set_Play(true);
+			static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"CrackE"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
 		}
+
+		if(AnimIntervalChecker(PLAYER_SK09, 0.3, 1.0))
+			CEffectManager::GetInstance()->Render_Effects(L"CrackE", TimeDelta);
 	})
 		.OnExit([this]()
 	{
 		m_fWingY = 0.f;
 		m_WingAlpha = 0.0;
-		static_cast<CEffect_Mesh*>(m_PlayerEffects[WING_SKILL2])->Set_EffectPlay(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.5f);
 		MonsterSkill02(false);
 		m_bAction = false;
@@ -907,6 +986,14 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		Set_Anim(PLAYER_SK29_CHARGING);
+
+		CEffectManager::GetInstance()->Render_Effects(L"ThunderWave", TimeDelta);
+		
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(true);
+		_vector vWeaponPos = Get_WeaponCollider()->Get_CollisionCenter();
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
+		_float3 vPos = _float3::Lerp(static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 1.5f);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -933,6 +1020,10 @@ void CPlayer::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta)
 	{
+		CEffectManager::GetInstance()->Render_Effects(L"ThunderWave", TimeDelta);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Go_Direction(TimeDelta * 2.0, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
+		// 플레이어가 바라보는 방향으로 나아가야함!
 		if (AnimIntervalChecker(PLAYER_SK27_FIRING, 0.1, 0.8))
 			MonsterSkill04(true);
 		else
@@ -940,6 +1031,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.65f);
 		MonsterSkill04(false);
 	})
@@ -1145,6 +1237,7 @@ void CPlayer::Movement(_double TimeDelta)
 		{
 			m_bRunning = true;
 			m_eState = PLAYER_FR;
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
 		}
 
 		if (m_eState == PLAYER_FR)
@@ -1160,6 +1253,7 @@ void CPlayer::Movement(_double TimeDelta)
 		{
 			m_bRunning = true;
 			m_eState = PLAYER_FL;
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -1.0 * TimeDelta);
 		}
 
 		if (m_eState == PLAYER_FL)
@@ -1175,6 +1269,7 @@ void CPlayer::Movement(_double TimeDelta)
 		{
 			m_bRunning = true;
 			m_eState = PLAYER_BR;
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), -1.0 * TimeDelta);
 		}
 
 		if (m_eState == PLAYER_BR)
@@ -1190,6 +1285,7 @@ void CPlayer::Movement(_double TimeDelta)
 		{
 			m_bRunning = true;
 			m_eState = PLAYER_BL;
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta);
 		}
 
 		if (m_eState == PLAYER_BL)
@@ -1328,63 +1424,79 @@ void CPlayer::Movement(_double TimeDelta)
 	
 	/* SKILL1 !!*/
 	m_Skill_1IconCollTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_E) && m_Skill_1IconCollTime > 15.0 && m_fMp >= 15.f
-		&& !m_bSK02
-		&& !m_bSK03
-		&& !m_bSK04_Charging
-		&& !m_bSK05)
+	if (pGameInstance->Key_Down(DIK_E))
 	{
-		m_bAction = true;
-		m_bSK01 = true;
-		m_Skill_1IconCollTime = 0.0;
-		m_fMp -= 15.f;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_1])->Set_Clicked(true);
+		if (m_Skill_1IconCollTime > 15.0 && m_fMp >= 15.f
+			&& !m_bSK02
+			&& !m_bSK03
+			&& !m_bSK04_Charging
+			&& !m_bSK05)
+		{
+			m_bAction = true;
+			m_bSK01 = true;
+			m_Skill_1IconCollTime = 0.0;
+			m_fMp -= 15.f;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	/* SKILL2 !!*/
 	m_Skill_2IconCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_Q) && m_Skill_2IconCoolTime > 20.0 && m_fMp >= 30.f
-		&& !m_bSK01
-		&& !m_bSK03
-		&& !m_bSK04_Charging
-		&& !m_bSK05)
+	if (pGameInstance->Key_Down(DIK_Q))
 	{
-		m_bAction = true;
-		m_bSK02 = true;
-		m_Skill_2IconCoolTime = 0.0;
-		m_fMp -= 30.f;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_2])->Set_Clicked(true);
+		if (m_Skill_2IconCoolTime > 20.0 && m_fMp >= 30.f
+			&& !m_bSK01
+			&& !m_bSK03
+			&& !m_bSK04_Charging
+			&& !m_bSK05)
+		{
+			m_bAction = true;
+			m_bSK02 = true;
+			m_Skill_2IconCoolTime = 0.0;
+			m_fMp -= 30.f;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	/* SKILL3 !!*/
 	m_Skill_3IconCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_R) && m_Skill_3IconCoolTime > 10.0 && m_fMp >= 20.f
-		&& !m_bSK01
-		&& !m_bSK02
-		&& !m_bSK04_Charging
-		&& !m_bSK05)
+	if (pGameInstance->Key_Down(DIK_R))
 	{
-		m_bAction = true;
-		m_bSK03 = true;
-		m_Skill_3IconCoolTime = 0.0;
-		m_fMp -= 20.f;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_3])->Set_Clicked(true);
+		if (m_Skill_3IconCoolTime > 10.0 && m_fMp >= 20.f
+			&& !m_bSK01
+			&& !m_bSK02
+			&& !m_bSK04_Charging
+			&& !m_bSK05)
+		{
+			m_bAction = true;
+			m_bSK03 = true;
+			m_Skill_3IconCoolTime = 0.0;
+			m_fMp -= 20.f;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	/* SKILL4 !!*/
 	m_Skill_4IconCollTime += TimeDelta;
-	if (pGameInstance->Key_Pressing(DIK_F) && m_Skill_4IconCollTime > 20.0 && m_fMp >= 40.f
-		&& !m_bSK01
-		&& !m_bSK02
-		&& !m_bSK03
-		&& !m_bSK05)
+	if (pGameInstance->Key_Pressing(DIK_F))
 	{
-		m_bAction = true;
-		m_bSK04_Charging = true;
-		m_fMp -= 40.f;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Clicked(true);
+		if (m_Skill_4IconCollTime > 20.0 && m_fMp >= 40.f
+			&& !m_bSK01
+			&& !m_bSK02
+			&& !m_bSK03
+			&& !m_bSK05)
+		{
+			m_bAction = true;
+			m_bSK04_Charging = true;
+			m_fMp -= 40.f;
+		}
 	}
 
 	if (pGameInstance->Key_Up(DIK_F))
@@ -1397,28 +1509,36 @@ void CPlayer::Movement(_double TimeDelta)
 	
 	/* SKILL5 !! 변신*/
 	m_Skill_5IconCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_1) && m_Skill_5IconCoolTime > 30.0 && m_fMp >= 50.f
-		&& !m_bSK01
-		&& !m_bSK02
-		&& !m_bSK03
-		&& !m_bSK04_Charging)
+	if (pGameInstance->Key_Down(DIK_1))
 	{
-		m_bAction = true;
-		m_bSK05 = true;
-		m_Skill_5IconCoolTime = 0.0;
-		m_fMp -= 50.f;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_5])->Set_Clicked(true);
+		if (m_Skill_5IconCoolTime > 30.0 && m_fMp >= 50.f
+			&& !m_bSK01
+			&& !m_bSK02
+			&& !m_bSK03
+			&& !m_bSK04_Charging)
+		{
+			m_bAction = true;
+			m_bSK05 = true;
+			m_Skill_5IconCoolTime = 0.0;
+			m_fMp -= 50.f;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	m_Skill_VDefCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_LSHIFT) && m_Skill_VDefCoolTime > 3.0)
+	if (pGameInstance->Key_Down(DIK_LSHIFT))
 	{
-		m_bAction = true;
-		m_bV_DEF = true;
-		m_Skill_VDefCoolTime = 0.0;
-		RELEASE_INSTANCE(CGameInstance);
-		return;
+		static_cast<CSkillChargingUI*>(m_PlayerUI[V_DEF])->Set_Clicked(true);
+		if (m_Skill_VDefCoolTime > 3.0)
+		{
+			m_bAction = true;
+			m_bV_DEF = true;
+			m_Skill_VDefCoolTime = 0.0;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	if (!m_bJump && pGameInstance->Key_Down(DIK_SPACE) &&
@@ -1566,7 +1686,12 @@ void CPlayer::ChangeModel(MODEL eModelIndex)
 
 void CPlayer::Imgui_RenderProperty()
 {
-	m_pFSM->Imgui_RenderProperty();
+	ImGui::Begin("ICon_1");
+	m_PlayerUI[HP]->Imgui_RenderProperty();
+	ImGui::End();
+	ImGui::Begin("ICon_2");
+	m_PlayerUI[MP]->Imgui_RenderProperty();
+	ImGui::End();
 }
 
 void CPlayer::Idle_Tick(_double TimeDelta)
@@ -2181,138 +2306,6 @@ HRESULT CPlayer::SetUp_Parts()
 	return S_OK;
 }
 
-HRESULT CPlayer::SetUp_Effects()
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CGameObject*		 pEffect = nullptr;
-
-	CEffect_Mesh::EFFECTDESC effectDesc;
-	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
-
-	_matrix pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_NorAtk_Trail1"), &effectDesc);
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_NorAtk_Trail2"), &effectDesc);
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.3f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_NorAtk_Trail3"), &effectDesc);
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-	pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(270.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 2.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 0.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 1;
-	effectDesc.iMaskTex = 5;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Wing"), &effectDesc);
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-	pivotMat = XMMatrixScaling(5.f, 3.f, 5.f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 0.3f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 20;
-	effectDesc.iMaskTex = 21;
-	effectDesc.fAlpha = 5.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Line_Aura"), &effectDesc);
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_QskillCrackE"));
-
-	if (nullptr == pEffect)
-		return E_FAIL;
-
-	m_PlayerEffects.push_back(pEffect);
-
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
 HRESULT CPlayer::SetUp_UI()
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
@@ -2324,12 +2317,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
 	SkillIconDesc.fX = -300.f;
-	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.fY = -350.f;
 	SkillIconDesc.iTexNum = 7;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2340,12 +2333,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
 	SkillIconDesc.fX = -200.f;
-	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.fY = -350.f;
 	SkillIconDesc.iTexNum = 1;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2356,12 +2349,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
 	SkillIconDesc.fX = -100.f;
-	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.fY = -350.f;
 	SkillIconDesc.iTexNum = 5;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2372,12 +2365,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
 	SkillIconDesc.fX = 100.f;
-	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.fY = -350.f;
 	SkillIconDesc.iTexNum = 2;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2388,12 +2381,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
 	SkillIconDesc.fX = 200.f;
-	SkillIconDesc.fY = -300.f;
+	SkillIconDesc.fY = -350.f;
 	SkillIconDesc.iTexNum = 3;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2401,31 +2394,15 @@ HRESULT CPlayer::SetUp_UI()
 		return E_FAIL;
 
 	m_PlayerUI.push_back(pUI);
-
-	//SkillIconDesc.fAlpha = 0.9f;
-	//SkillIconDesc.fAmount = 0.f;
-	//SkillIconDesc.fSizeX = 75.f;
-	//SkillIconDesc.fSizeY = 75.f;
-	//SkillIconDesc.fX = 300.f;
-	//SkillIconDesc.fY = -300.f;
-	//SkillIconDesc.iTexNum = 8;
-	//SkillIconDesc.iPassIndex = 1;
-
-	//pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
-
-	//if (nullptr == pUI)
-	//	return E_FAIL;
-
-	//m_PlayerUI.push_back(pUI);
 
 	SkillIconDesc.fAlpha = 0.7f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
-	SkillIconDesc.fX = -300.f;
-	SkillIconDesc.fY = -150.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
+	SkillIconDesc.fX = -100.f;
+	SkillIconDesc.fY = -260.f;
 	SkillIconDesc.iTexNum = 11;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2436,12 +2413,12 @@ HRESULT CPlayer::SetUp_UI()
 
 	SkillIconDesc.fAlpha = 0.9f;
 	SkillIconDesc.fAmount = 0.f;
-	SkillIconDesc.fSizeX = 75.f;
-	SkillIconDesc.fSizeY = 75.f;
-	SkillIconDesc.fX = 300.f;
-	SkillIconDesc.fY = -150.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
+	SkillIconDesc.fX = 100.f;
+	SkillIconDesc.fY = -260.f;
 	SkillIconDesc.iTexNum = 9;
-	SkillIconDesc.iPassIndex = 1;
+	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
 
@@ -2454,14 +2431,15 @@ HRESULT CPlayer::SetUp_UI()
 	ZeroMemory(&progressBarDesc, sizeof(CProgressBarUI::PROGRESSBARDESC));
 
 	progressBarDesc.fAmount = 1.f;
-	progressBarDesc.fSizeX = 500.f;
-	progressBarDesc.fSizeY = 40.f;
-	progressBarDesc.fX = -300.f;
-	progressBarDesc.fY = -250.f;
+	progressBarDesc.fSizeX = 350.f;
+	progressBarDesc.fSizeY = 25.f;
+	progressBarDesc.fX = -280.f;
+	progressBarDesc.fY = -310.f;
 	progressBarDesc.iAlbedoTexNum = 3;
 	progressBarDesc.iFillTexNum = 3;
 	progressBarDesc.iBackTexNum = 4;
-	progressBarDesc.iPassIndex = 1;
+	progressBarDesc.iPassIndex = 0;
+	progressBarDesc.iOption = CProgressBarUI::PLAYER;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ProgressBarUI"), &progressBarDesc);
 
@@ -2471,14 +2449,15 @@ HRESULT CPlayer::SetUp_UI()
 	m_PlayerUI.push_back(pUI);
 
 	progressBarDesc.fAmount = 1.f;
-	progressBarDesc.fSizeX = 500.f;
-	progressBarDesc.fSizeY = 40.f;
-	progressBarDesc.fX = 300.f;
-	progressBarDesc.fY = -250.f;
+	progressBarDesc.fSizeX = 350.f;
+	progressBarDesc.fSizeY = 25.f;
+	progressBarDesc.fX = 280.f;
+	progressBarDesc.fY = -310.f;
 	progressBarDesc.iAlbedoTexNum = 2;
 	progressBarDesc.iFillTexNum = 2;
 	progressBarDesc.iBackTexNum = 4;
-	progressBarDesc.iPassIndex = 1;
+	progressBarDesc.iPassIndex = 0;
+	progressBarDesc.iOption = CProgressBarUI::PLAYER;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ProgressBarUI"), &progressBarDesc);
 
@@ -2487,6 +2466,13 @@ HRESULT CPlayer::SetUp_UI()
 
 	m_PlayerUI.push_back(pUI);
 
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Portrait"));
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+	
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -2504,20 +2490,10 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	//if (g_LEVEL == LEVEL_CHAP1)
-	//{
-	//	/* For.Com_Model */
-	//	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"), TEXT("Com_Model"),
-	//		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
-	//		return E_FAIL;
-	//}
-	//else
-	//{
-		/* For.Com_Model */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
-			(CComponent**)&m_pModelCom[MODEL_NOMAL])))
-			return E_FAIL;
-	//}
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
+		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
+		return E_FAIL;
 	
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_A"), TEXT("Com_Model_A"),
@@ -2641,11 +2617,6 @@ void CPlayer::Free()
 
 	m_PlayerParts.clear();
 
-	for (auto& pEffect : m_PlayerEffects)
-		Safe_Release(pEffect);
-
-	m_PlayerEffects.clear();
-
 	for (auto& pUI : m_PlayerUI)
 		Safe_Release(pUI);
 
@@ -2659,4 +2630,6 @@ void CPlayer::Free()
 	Safe_Release(m_pNavigationCom);
 
 	Safe_Release(m_pFSM);
+
+	CEffectManager::GetInstance()->DestroyInstance();
 }

@@ -2,8 +2,8 @@
 #include "..\Public\DamageFontUI.h"
 #include "GameInstance.h"
 
-CDamageFontUI::CDamageFontUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec , pContext)
+CDamageFontUI::CDamageFontUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice , pContext)
 {
 }
 

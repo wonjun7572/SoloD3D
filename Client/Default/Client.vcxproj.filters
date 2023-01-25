@@ -382,6 +382,12 @@
     <ClInclude Include="..\public\Tree.h">
       <Filter>GameObject\Tree</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EffectManager.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PortraitCircleUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -603,6 +609,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Tree.cpp">
       <Filter>GameObject\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectManager.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PortraitCircleUI.cpp">
+      <Filter>GameObject\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

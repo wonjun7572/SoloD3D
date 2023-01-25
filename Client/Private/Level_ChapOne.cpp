@@ -7,6 +7,7 @@
 #include "GameInstance.h"
 #include "ImGui_ProtoEditor.h"
 #include "ImGui_PropertyEditor.h"
+#include "EffectManager.h"
 
 CLevel_ChapOne::CLevel_ChapOne(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -23,7 +24,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 
 	CGameInstance::GetInstance()->Clear_ImguiObjects();
 	CGameInstance::GetInstance()->Add_ImguiObject(CImgui_PropertyEditor::Create(m_pDevice, m_pContext));
-
+	
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
@@ -265,42 +266,13 @@ HRESULT CLevel_ChapOne::Ready_Layer_Ally(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_NorAtk_Trail1"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_NorAtk_Trail2"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_NorAtk_Trail3"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Wing"))))
-		return E_FAIL;
+	/*CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ThunderWave"))))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FireBallLine"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ExplosionE"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ArcaneE"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FireE_0"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"))))
-		return E_FAIL;
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SparkE"))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance);*/
+	
 
 	return S_OK;
 }

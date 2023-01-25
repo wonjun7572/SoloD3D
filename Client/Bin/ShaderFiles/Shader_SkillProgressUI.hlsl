@@ -92,6 +92,17 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT Texture_EFFECTSimple(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 albedo = g_Texture.Sample(AlbedoSampler, In.vTexUV);
+
+	Out.vColor = albedo * g_fAlpha;
+
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass ProgressUI
@@ -117,6 +128,6 @@ technique11 DefaultTechnique
 		GeometryShader = NULL;
 		HullShader = NULL;
 		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
+		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
 	}
 }

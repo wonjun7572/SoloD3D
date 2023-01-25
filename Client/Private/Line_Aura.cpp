@@ -33,17 +33,11 @@ HRESULT CLine_Aura::Init(void * pArg)
 
 void CLine_Aura::Tick(_double TimeDelta)
 {
-	if (m_bPlay)
-	{
-		m_UVMove.x -= static_cast<_float>(TimeDelta) * m_MEffectDesc.fMoveSpeed;
+	__super::Tick(TimeDelta);
 
-		if (m_UVMove.x <= -1.f)
-		{
-			m_UVMove.x = 1.f;
-			m_bPlay = false;
-		}
-	}
-	else
+	m_UVMove.x -= static_cast<_float>(TimeDelta) * m_MEffectDesc.fMoveSpeed;
+
+	if (m_UVMove.x <= -1.f)
 	{
 		m_UVMove.x = 1.f;
 	}
@@ -62,19 +56,16 @@ void CLine_Aura::Late_Tick(_double TimeDelta)
 
 HRESULT CLine_Aura::Render()
 {
-	if (m_bPlay)
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(SetUp_ShaderResources()))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
-			m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
-			m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
-		}
+		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
+		m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
+		m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
 	}
 
 	return S_OK;

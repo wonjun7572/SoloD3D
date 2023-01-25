@@ -32,11 +32,6 @@ public:
 		PLAYER_END
 	};
 
-	enum PLAYER_EFFECT
-	{
-		NORATK1, NORATK2, NORATK3, WING_SKILL2, LINE_AURA, QSKILLCRACK, EFFECT_END
-	};
-
 	enum ANIMATION
 	{
 		PLAYER_ADD_DMG_B, PLAYER_ADD_DMG_F,
@@ -86,7 +81,7 @@ public:
 
 	enum UI	{ SKILL_ICON_1, SKILL_ICON_2, SKILL_ICON_3, 
 		SKILL_ICON_4, SKILL_ICON_5, SKILL_MODELATIME, V_DEF,
-		HP , MP, UI_END };
+		HP , MP, PORTRAIT, UI_END };
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -100,7 +95,6 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void Effect_Tick(_double TimeDelta);
 	void UI_Tick(_double TimeDelta);
 
 	CModel*					Get_ModelCom() { return m_pModelCom[m_eModelState]; }
@@ -108,7 +102,6 @@ public:
 	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
 
 	void    SetUp_FSM();
-	//void	MoveToAnim(_double TimeDelta);
 	void	Movement(_double TimeDelta);
 	void	AdditiveAnim(_double TimeDelta);
 	void	LinkObject(_double TimeDelta);
@@ -132,8 +125,6 @@ private:
 private:
 	vector<CGameObject*>	m_PlayerParts;
 	
-	vector<CGameObject*>	m_PlayerEffects;
-
 	vector<CGameObject*>	m_PlayerUI;
 
 	_uint					m_PartSize = 0;
@@ -152,8 +143,6 @@ private:
 	_bool					m_bCamTurn = false;
 
 	_float					m_fVelocity = 1.f;
-	/* 로컬 애니메이션 움직임때문에 넣었으나 현재 그냥 조종해주는것이 더 낫다고 판단 */
-	//_float4					m_vAnimationMove = _float4(0.f, 0.f, 0.f, 1.f);
 
 	/* 피격을 위해서 */
 public:
@@ -290,7 +279,6 @@ private:
 
 private:
 	HRESULT SetUp_Parts();
-	HRESULT SetUp_Effects();
 	HRESULT SetUp_UI();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

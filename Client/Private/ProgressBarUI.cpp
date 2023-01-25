@@ -2,8 +2,8 @@
 #include "..\Public\ProgressBarUI.h"
 #include "GameInstance.h"
 
-CProgressBarUI::CProgressBarUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec, pContext)
+CProgressBarUI::CProgressBarUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice, pContext)
 {
 }
 
@@ -56,6 +56,7 @@ HRESULT CProgressBarUI::Init(void * pArg)
 void CProgressBarUI::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+	m_UVMoveFactor.x += static_cast<_float>(TimeDelta * 0.01f);
 }
 
 void CProgressBarUI::Late_Tick(_double TimeDelta)
@@ -70,6 +71,26 @@ HRESULT CProgressBarUI::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	if (m_ProgressBarDesc.iOption == PLAYER)
+	{
+		if (FAILED(SetUp_PlayerShaderResources()))
+			return E_FAIL;
+
+		m_pShaderCom->Begin(2);
+
+		m_pVIBufferCom->Render();
+	}
+	else if (m_ProgressBarDesc.iOption == TREE)
+	{
+		if (FAILED(SetUp_TreeShaderResources()))
+			return E_FAIL;
+
+		m_pShaderCom->Begin(2);
+
+		m_pVIBufferCom->Render();
+	}
+
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -130,6 +151,14 @@ HRESULT CProgressBarUI::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	m_fSizeX = m_ProgressBarDesc.fSizeX;
+	m_fSizeY = m_ProgressBarDesc.fSizeY;
+	m_fX = m_ProgressBarDesc.fX; // -300
+	m_fY = m_ProgressBarDesc.fY;
+	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
@@ -142,15 +171,91 @@ HRESULT CProgressBarUI::SetUp_ShaderResources()
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_AlbedoTexture", m_ProgressBarDesc.iAlbedoTexNum)))
 		return E_FAIL;
 	
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_FillTexture", m_ProgressBarDesc.iFillTexNum)))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_BackTexture", m_ProgressBarDesc.iBackTexNum)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 5)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &m_ProgressBarDesc.fAmount, sizeof(_float))))
 		return E_FAIL;
 
+	m_fAlpha = 4.f;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMoveFactor, sizeof(_float2))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CProgressBarUI::SetUp_PlayerShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	m_fSizeX = 425.f;
+	m_fSizeY = 20.f;
+	m_fX = m_ProgressBarDesc.fX;
+	m_fY = -307.f;
+	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_AlbedoTexture", 6)))
+		return E_FAIL;
+
+	m_fAlpha = 0.8f;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CProgressBarUI::SetUp_TreeShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	m_fSizeX = 240.f;
+	m_fSizeY = 40.f;
+	m_fX = m_ProgressBarDesc.fX - 15.f;
+	m_fY = m_ProgressBarDesc.fY;
+	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_AlbedoTexture", 0)))
+		return E_FAIL;
+
+	m_fAlpha = 1.f;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CProgressBarUI::SetUp_BossShaderResources()
+{
 	return S_OK;
 }
 

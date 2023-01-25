@@ -104,12 +104,6 @@ void CBalianBollwerk::Tick(_double TimeDelta)
 void CBalianBollwerk::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
-
-	if (m_bConversation == true)
-	{
-		for (auto pUI : m_UI)
-			pUI->Late_Tick(TimeDelta);
-	}
 }
 
 HRESULT CBalianBollwerk::Render()
@@ -151,8 +145,28 @@ HRESULT CBalianBollwerk::Render()
 
 void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 {
+	// 몬스터 리스트가 비어있다면 끝나면서 Chap2로
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster")->empty())
+	{
+		m_bConversation = true;
+		static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
+		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
+		m_strConversation = L"역시 소문대로 엄청나게 강력하군! 바로 출발하자고!";
+		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+
+	RELEASE_INSTANCE(CGameInstance);
+
 	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
+	{
 		Conversation(TimeDelta);
+		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+	}
 
 	if (!m_bConversation)
 	{
@@ -192,7 +206,10 @@ void CBalianBollwerk::Level_Chap2Tick(_double TimeDelta)
 	}
 
 	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+	{
 		Conversation(TimeDelta);
+		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+	}
 
 	if (!m_bConversation)
 	{
@@ -229,6 +246,8 @@ void CBalianBollwerk::Imgui_RenderProperty()
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
+
+	m_UI[UI_CONVERSATION]->Imgui_RenderProperty();
 }
 
 void CBalianBollwerk::Conversation(_double TimeDelta)
@@ -237,22 +256,35 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		TimeConversation += TimeDelta;
-
-		if (TimeConversation > 2.0f)
-			m_strConversation = L"안녕하세요";
-		else if (TimeConversation > 1.8f)
-			m_strConversation = L"안녕하세";
-		else if (TimeConversation > 1.6f)
-			m_strConversation = L"안녕하";
-		else if (TimeConversation > 1.4f)
-			m_strConversation = L"안녕";
-		else if (TimeConversation > 1.2f)
-			m_strConversation = L"안";
+		if (TimeConversation < 5.f)
+		{
+			m_strConversation = L"나는 의정부 제국에 살고 있는 이재호라고 하네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		{
+			m_strConversation = L"현재 우리 제국은 공격을 받고 있다네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		{
+			m_strConversation = L"자네가 이 마을에서 제일 강하다고 들었네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 15.f && TimeConversation < 20.f)
+		{
+			m_strConversation = L"혹시 도와줄 수 있는가? 보상은 넉넉히 드리지";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 20.f && TimeConversation < 25.f)
+		{
+			m_strConversation = L"일단 자네가 다칠 수 있으니 테스트 먼저 하러가자고!";
+			TimeConversation += TimeDelta;
+		}
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 5.f)
+		if (TimeConversation > 25.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -264,22 +296,40 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		TimeConversation += TimeDelta;
-
-		if (TimeConversation > 2.0f)
-			m_strConversation = L"알아서 도망쳐라이~";
-		else if (TimeConversation > 1.8f)
-			m_strConversation = L"앞에 좀비";
-		else if (TimeConversation > 1.6f)
-			m_strConversation = L"앞에 좀";
-		else if (TimeConversation > 1.4f)
-			m_strConversation = L"앞에";
-		else if (TimeConversation > 1.2f)
-			m_strConversation = L"앞";
+		if (TimeConversation < 5.f)
+		{
+			m_strConversation = L"여기가 바로 우리 제국이라네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		{
+			m_strConversation = L"우리 제국 한 가운데에는 나무가 존재하네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		{
+			m_strConversation = L"그 나무를 지켜야한다네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 15.f && TimeConversation < 20.f)
+		{
+			m_strConversation = L"뒤에 있는 동료들이 우리를 도와주려고 기다리고있네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 20.f && TimeConversation < 25.f)
+		{
+			m_strConversation = L"동료들을 모아 함께 지키러가면 되겠네";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 25.f && TimeConversation < 30.f)
+		{
+			m_strConversation = L"일단 나 먼저 가서 싸우고 있겠네 빨리 와주게";
+			TimeConversation += TimeDelta;
+		}
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 5.f)
+		if (TimeConversation > 30.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -381,12 +431,13 @@ void CBalianBollwerk::SetUp_UI()
 
 	wcscpy_s(conversationDesc.szConversation, MAX_PATH, L"");
 	wcscpy_s(conversationDesc.szFontName, MAX_PATH, L"");
-	conversationDesc.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	conversationDesc.vColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
 
-	conversationDesc.fX = 475.f;
-	conversationDesc.fY = 610.f;
+	conversationDesc.fX = 375.f;
+	conversationDesc.fY = 800.f;
 	conversationDesc.fSizeX = 1.f;
 	conversationDesc.fSizeY = 1.f;
+	conversationDesc.bTextureOn = true;
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	CGameObject* pUI = nullptr;

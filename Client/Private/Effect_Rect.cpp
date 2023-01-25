@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CEffect_Rect::CEffect_Rect(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: CGameObject(pDevice, pContext)
+	: CEffect(pDevice, pContext)
 {
 }
 
 CEffect_Rect::CEffect_Rect(const CEffect_Rect & rhs)
-	: CGameObject(rhs)
+	: CEffect(rhs)
 {
 }
 
@@ -94,6 +94,4 @@ void CEffect_Rect::Free()
 	__super::Free();
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 }

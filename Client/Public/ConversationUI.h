@@ -18,10 +18,11 @@ public:
 		_float	fY;
 		_float	fSizeX;
 		_float	fSizeY;
+		_bool	bTextureOn;
 	}CONVERSATIONFONT;
 
 private:
-	CConversationUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CConversationUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CConversationUI(const CConversationUI& rhs);
 	virtual	~CConversationUI() = default;
 
@@ -41,6 +42,12 @@ public:
 
 private:
 	HRESULT SetUp_Components();
+	HRESULT SetUp_ShaderResources();
+
+	_float	m_fTextureX = 0.f, m_fTextureY = 0.f;
+	_float	m_fTextureCX = 1.f, m_fTextureCY = 1.f;
+
+	_float	m_fAlpha = 0.f;
 
 public:
 	static CConversationUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

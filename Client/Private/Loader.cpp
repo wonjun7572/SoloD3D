@@ -75,6 +75,7 @@
 
 #include "ConversationUI.h"
 #include "MonsterHpUI.h"
+#include "PortraitCircleUI.h"
 
 #include "Tree.h"
 
@@ -218,6 +219,11 @@ HRESULT CLoader::Loading_ForChapter_1()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/%d.png"), 35))))
 			return E_FAIL;
 
+		/* For.Texture_Lighting*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Lighting"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/Lighting/%d.png"), 16))))
+			return E_FAIL;
+
 		/* For. Texture_DamageFont */
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_DamageFont"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Damage/Damage_%d.png"), 12))))
@@ -276,15 +282,37 @@ HRESULT CLoader::Loading_ForChapter_1()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/SkillIcon/Lups_%d.png"), 12))))
 			return E_FAIL;
 
+		/* For.Texture_SkillIconBase*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_SkillIconBase"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/SkillIcon/SkillIconBase/SkillIconBase_%d.png"), 2))))
+			return E_FAIL;
+
 		/* For.Texture_ProgressBar*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_ProgressBar"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/HPGauge/HPGauge_%d.png"), 6))))
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/HPGauge/HPGauge_%d.png"), 7))))
 			return E_FAIL;
 
 		/* For. Texture_MonsterAimUI*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_MonsterAimUI"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Aim/Aim_%d.png"), 2))))
 			return E_FAIL;
+
+		/* For. Texture_PortraitCircle*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_PortraitCircle"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/PortraitCircle/PortraitCircle_%d.png"), 28))))
+			return E_FAIL;
+
+		/* For. Texture_Portrait*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Portrait"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Portrait_1.png")))))
+			return E_FAIL;
+
+		/* For. Texture_SquareMask*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_SquareMask"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/SingleTexture/fx_SquareMask_001_TEX_KKJ.png")))))
+			return E_FAIL;
+
+
 	}
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
@@ -595,6 +623,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("FireBallLine"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/FireBallLine.model"), PivotMatrix))))
 			return E_FAIL;
+
+		/* For. RcTex_Long */
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("RcTex_Long"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/RcTex_Long.model"), PivotMatrix))))
+			return E_FAIL;
 	}
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
@@ -671,10 +705,6 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 	/* For. Prototype_GameObject_PlayerCamera*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PlayerCamera"), CPlayerCamera::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For. Prototype_GameObject_Effect_Point*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Point"), Effect_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_Cube*/
@@ -780,6 +810,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 
 		/* For. Prototype_GameObject_MonsterHPUI*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MonsterHPUI"), CMonsterHpUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_Portrait*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Portrait"), CPortraitCircleUI::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
 

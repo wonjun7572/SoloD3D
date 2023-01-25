@@ -34,7 +34,6 @@ HRESULT CNorAtk_Trail2::Init(void * pArg)
 void CNorAtk_Trail2::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
 	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
 		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
@@ -49,19 +48,16 @@ void CNorAtk_Trail2::Late_Tick(_double TimeDelta)
 
 HRESULT CNorAtk_Trail2::Render()
 {
-	if (m_bPlay)
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(SetUp_ShaderResources()))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
-			m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
-			m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
-		}
+		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
+		m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
+		m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
 	}
 
 	return S_OK;

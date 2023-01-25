@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Wing.h"
 #include "GameInstance.h"
+#include "EffectManager.h"
 
 CWing::CWing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CEffect_Mesh(pDevice, pContext)
@@ -37,11 +38,6 @@ void CWing::Tick(_double TimeDelta)
 
 	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
 		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
-
-	if (m_bPlay)
-		m_UVMove.x = 0.f;
-	else 
-		m_UVMove.x = -1.f;
 }
 
 void CWing::Late_Tick(_double TimeDelta)
@@ -54,19 +50,16 @@ void CWing::Late_Tick(_double TimeDelta)
 
 HRESULT CWing::Render()
 {
-	if (m_bPlay)
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(SetUp_ShaderResources()))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
-			m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
-			m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
-		}
+		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
+		m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
+		m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
 	}
 
 	return S_OK;

@@ -192,6 +192,7 @@
     <ClInclude Include="..\public\Delilah.h" />
     <ClInclude Include="..\public\Demon.h" />
     <ClInclude Include="..\Public\Effect.h" />
+    <ClInclude Include="..\public\EffectManager.h" />
     <ClInclude Include="..\Public\Effect_Mesh.h" />
     <ClInclude Include="..\Public\Effect_Point.h" />
     <ClInclude Include="..\Public\Effect_Rect.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="..\public\Parts.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerCamera.h" />
+    <ClInclude Include="..\public\PortraitCircleUI.h" />
     <ClInclude Include="..\public\ProgressBarUI.h" />
     <ClInclude Include="..\public\QskillCrackE.h" />
     <ClInclude Include="..\public\Shoulder.h" />
@@ -270,6 +272,7 @@
     <ClCompile Include="..\private\Delilah.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
     <ClCompile Include="..\Private\Effect.cpp" />
+    <ClCompile Include="..\private\EffectManager.cpp" />
     <ClCompile Include="..\Private\Effect_Mesh.cpp" />
     <ClCompile Include="..\Private\Effect_Point.cpp" />
     <ClCompile Include="..\Private\Effect_Rect.cpp" />
@@ -302,6 +305,7 @@
     <ClCompile Include="..\private\Parts.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerCamera.cpp" />
+    <ClCompile Include="..\private\PortraitCircleUI.cpp" />
     <ClCompile Include="..\private\ProgressBarUI.cpp" />
     <ClCompile Include="..\private\QskillCrackE.cpp" />
     <ClCompile Include="..\private\Shoulder.cpp" />

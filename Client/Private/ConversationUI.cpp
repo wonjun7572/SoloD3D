@@ -2,8 +2,8 @@
 #include "..\Public\ConversationUI.h"
 #include "GameInstance.h"
 
-CConversationUI::CConversationUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec, pContext)
+CConversationUI::CConversationUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice, pContext)
 {
 }
 
@@ -39,6 +39,18 @@ HRESULT CConversationUI::Init(void * pArg)
 	m_fSizeX = m_tagConversationFont.fSizeX;
 	m_fSizeY = m_tagConversationFont.fSizeY;
 
+	m_fTextureX = 0.f;
+	m_fTextureY = -375.f;
+	m_fTextureCX = 1200.f;
+	m_fTextureCY = 100.f;
+	m_fAlpha = 0.7f;
+
+	m_pTransformCom->Set_Scaled(_float3(m_fTextureCX, m_fTextureCY, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
+		XMVectorSet(m_fTextureX, m_fTextureY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
+
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
@@ -60,11 +72,23 @@ void CConversationUI::Late_Tick(_double TimeDelta)
 
 HRESULT CConversationUI::Render()
 {
+	if (m_tagConversationFont.bTextureOn)
+	{
+		if (FAILED(__super::Render()))
+			return E_FAIL;
+
+		if (FAILED(SetUp_ShaderResources()))
+			return E_FAIL;
+
+		m_pShaderCom->Begin(2);
+
+		m_pVIBufferCom->Render();
+	}
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	pGameInstance->Render_Font(TEXT("Font_Comic"), m_tagConversationFont.szConversation, _float2(m_fX, m_fY), 0.f, _float2(m_fSizeX, m_fSizeY), m_tagConversationFont.vColor);
-
 	RELEASE_INSTANCE(CGameInstance);
+	
 	return S_OK;
 }
 
@@ -91,9 +115,16 @@ void CConversationUI::Imgui_RenderProperty()
 	ImGui::DragFloat("ConverSationSizeX", &m_fSizeX, 0.1f, -1000.f, 1000.f);
 	ImGui::DragFloat("ConverSationSizeY", &m_fSizeY, 0.1f, -1000.f, 1000.f);
 
-	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
+	ImGui::DragFloat("X", &m_fTextureX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("Y", &m_fTextureY, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("SizeX", &m_fTextureCX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("SizeY", &m_fTextureCY, 0.1f, -1000.f, 1000.f);
+
+	m_pTransformCom->Set_Scaled(_float3(m_fTextureCX, m_fTextureCY, 1.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+		XMVectorSet(m_fTextureX, m_fTextureY, 0.f, 1.f));
+
+	ImGui::DragFloat("Alpha", &m_fAlpha, 0.1f, -1.f, 1.f);
 }
 
 HRESULT CConversationUI::SetUp_Components()
@@ -101,6 +132,44 @@ HRESULT CConversationUI::SetUp_Components()
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
+		return E_FAIL;
+
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_TextureEffect"), TEXT("Com_Shader"),
+		(CComponent**)&m_pShaderCom)))
+		return E_FAIL;
+
+	/* For.Com_VIBuffer */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_VIBuffer_Rect"), TEXT("Com_VIBuffer"),
+		(CComponent**)&m_pVIBufferCom)))
+		return E_FAIL;
+
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_SquareMask"), TEXT("Com_Texture"),
+		(CComponent**)&m_pTextureCom)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CConversationUI::SetUp_ShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_AlbedoTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

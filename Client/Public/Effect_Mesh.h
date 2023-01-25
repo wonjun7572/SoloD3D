@@ -30,23 +30,19 @@ public:
 	virtual HRESULT Render();
 	virtual void Imgui_RenderProperty();
 
-	void LinkPlayer(CTransform* pTarget, _float4x4 mat);
-	void Set_EffectPlay(_bool bPlay) { m_bPlay = bPlay; }
+	void Set_Link(_bool bLink) { m_bLinking = bLink; }
+	void Set_UV(_float2 UV) { m_UVMove = UV; }
 	void Set_Alpha(_float fAlpha) { m_MEffectDesc.fAlpha = fAlpha; }
 	void Set_MoveSpeed(_float fSpeed) { m_MEffectDesc.fMoveSpeed = fSpeed; }
 	void Set_PivotMatrix(_float4x4 pivotMatrix);
 
 protected:
 	EFFECTDESC	m_MEffectDesc;
-
 	CModel*		m_pModelCom = nullptr;
 	CTexture*   m_pDiffuseTexCom = nullptr;
 	CTexture*   m_pMaskTexCom = nullptr;
-	
 	_float2		m_UVMove;
-
 	_int        m_iTexRadioBtn = 0;
-	_bool		m_bPlay = false;
 	_int		m_iPassnum = 0;
 	_bool		m_bLinking = false;
 

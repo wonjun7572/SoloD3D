@@ -599,15 +599,6 @@ void CDemon::SetUp_FSM()
 		.Tick([this](_double TimeDelta) 
 	{
 		m_bRealSkill = true;
-		
-		if(AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.3))
-			static_cast<CEffect_Mesh*>(m_Effects[FIRE_SKILL3])->Set_EffectPlay(true);
-
-		if (AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
-			m_fRotationY += static_cast<_float>(TimeDelta);
-
-		if (m_fRotationY >= 1.f)
-			m_fRotationY = 1.f;
 	})
 		.OnExit([this]()
 	{

@@ -24,7 +24,7 @@ public:
 	}SKILLICONDESC;
 
 private:
-	CSkillChargingUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CSkillChargingUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSkillChargingUI(const CSkillChargingUI& rhs);
 	virtual	~CSkillChargingUI() = default;
 
@@ -39,12 +39,17 @@ public:
 
 	void	Set_Amount(_float fAmount);
 	_float  Get_Amount() { return m_SkillIconDesc.fAmount; }
+	void	Set_Clicked(_bool bClick) { m_bClicked = bClick; }
 
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUp_ShaderBaseResources();
 
 	SKILLICONDESC	m_SkillIconDesc;
+	class CTexture* m_pBaseTexture = nullptr;
+
+	_bool	m_bClicked = false;
 
 public:
 	static CSkillChargingUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

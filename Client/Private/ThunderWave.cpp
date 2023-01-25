@@ -28,6 +28,13 @@ HRESULT CThunderWave::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+
+	CTransform::TRANSFORMDESC transformDesc;
+
+	transformDesc.fRotationPerSec = XMConvertToRadians(270.0f);
+	transformDesc.fSpeedPerSec = 1.0f;
+	m_pTransformCom->Set_TransformDesc(transformDesc);
+
 	return S_OK;
 }
 
@@ -35,8 +42,15 @@ void CThunderWave::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	m_UVMove.x = 0.f;
+	m_UVMove.y = -1.f;
+
 	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
 		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
+
+	m_fFrame += 16.f * static_cast<_float>(TimeDelta);
+	if (m_fFrame >= 16.f)
+		m_fFrame = 0.f;
 }
 
 void CThunderWave::Late_Tick(_double TimeDelta)
@@ -49,19 +63,16 @@ void CThunderWave::Late_Tick(_double TimeDelta)
 
 HRESULT CThunderWave::Render()
 {
-	if (m_bPlay)
+	if (FAILED(SetUp_ShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		if (FAILED(SetUp_ShaderResources()))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (_uint i = 0; i < iNumMeshes; ++i)
-		{
-			m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
-			m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
-			m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
-		}
+		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_int)m_fFrame);
+		m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex); // 28
+		m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex); // 2
 	}
 
 	return S_OK;
@@ -80,12 +91,12 @@ HRESULT CThunderWave::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("ThunderWave"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("RcTex_Long"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	/* For.Com_Texture_Diffuse */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_Trail"), TEXT("Com_Texture_Diffuse"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_Lighting"), TEXT("Com_Texture_Diffuse"),
 		(CComponent**)&m_pDiffuseTexCom)))
 		return E_FAIL;
 

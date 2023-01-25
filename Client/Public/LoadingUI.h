@@ -8,7 +8,7 @@ BEGIN(Client)
 class CLoadingUI final : public CUI
 {
 private:
-	CLoadingUI(ID3D11Device* pDeviec, ID3D11DeviceContext* pContext);
+	CLoadingUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CLoadingUI(const CLoadingUI& rhs);
 	virtual	~CLoadingUI() = default;
 

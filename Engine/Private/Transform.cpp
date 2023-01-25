@@ -252,6 +252,13 @@ void CTransform::Go_Down(_double TimeDelta)
 	Set_State(CTransform::STATE_TRANSLATION, vPosition);
 }
 
+void CTransform::Go_Direction(_double TimeDelta, _float3 vDir)
+{
+	_vector		vPosition = Get_State(CTransform::STATE_TRANSLATION);
+	vPosition += XMVector3Normalize(vDir)* m_TransformDesc.fSpeedPerSec  * static_cast<float>(TimeDelta);
+	Set_State(CTransform::STATE_TRANSLATION, vPosition);
+}
+
 _bool CTransform::Jump(_double TimeDelta, _float fJumHeight, _float fLandHeight)
 {
 	static _float fGravity = 8.81f;

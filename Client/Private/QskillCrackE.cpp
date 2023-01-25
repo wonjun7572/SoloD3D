@@ -47,6 +47,8 @@ HRESULT CQskillCrackE::Init(void * pArg)
 
 void CQskillCrackE::Tick(_double TimeDelta)
 {
+	m_bPlay = true;
+
 	__super::Tick(TimeDelta);
 
 	if (m_bPlay)

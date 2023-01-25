@@ -2,8 +2,8 @@
 #include "SkillChargingUI.h"
 #include "GameInstance.h"
 
-CSkillChargingUI::CSkillChargingUI(ID3D11Device * pDeviec, ID3D11DeviceContext * pContext)
-	:CUI(pDeviec, pContext)
+CSkillChargingUI::CSkillChargingUI(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+	:CUI(pDevice, pContext)
 {
 }
 
@@ -75,11 +75,19 @@ HRESULT CSkillChargingUI::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
+	if (m_SkillIconDesc.fAmount >= 0.f)
+	{
+		if (FAILED(SetUp_ShaderBaseResources()))
+			return E_FAIL;
+
+		m_pShaderCom->Begin(1);
+		m_pVIBufferCom->Render();
+	}
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
 	m_pShaderCom->Begin(m_SkillIconDesc.iPassIndex);
-
 	m_pVIBufferCom->Render();
 
 	return S_OK;
@@ -127,6 +135,11 @@ HRESULT CSkillChargingUI::SetUp_Components()
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
+	/* For.Com_BaseTexture */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_SkillIconBase"), TEXT("Com_BaseTexture"),
+		(CComponent**)&m_pBaseTexture)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -151,6 +164,37 @@ HRESULT CSkillChargingUI::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAmount", &m_SkillIconDesc.fAmount, sizeof(_float))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSkillChargingUI::SetUp_ShaderBaseResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	_int iClick = 0;
+	if (m_bClicked)
+		iClick = 1;
+	else
+		iClick = 0;
+
+	if (FAILED(m_pBaseTexture->Bind_ShaderResource(m_pShaderCom, "g_Texture", iClick)))
+		return E_FAIL;
+
+	m_bClicked = false;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_SkillIconDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -184,4 +228,5 @@ CGameObject * CSkillChargingUI::Clone(void * pArg)
 void CSkillChargingUI::Free()
 {
 	__super::Free();
+	Safe_Release(m_pBaseTexture);
 }

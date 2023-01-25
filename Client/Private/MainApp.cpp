@@ -36,7 +36,7 @@ HRESULT CMainApp::Init()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/Noto_Sans_KR.spritefont"))))
+	if (FAILED(m_pGameInstance->Add_Fonts(m_pDevice, m_pContext, TEXT("Font_Comic"), TEXT("../Bin/Resources/Fonts/InfinitySansRegular.spritefont"))))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL_LOGO)))
@@ -247,7 +247,6 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	m_pGameInstance->Clear_ImguiObjects();
-
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);
