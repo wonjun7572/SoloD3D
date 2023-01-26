@@ -181,6 +181,8 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\BalianBollwerk.h" />
     <ClInclude Include="..\public\Belt.h" />
+    <ClInclude Include="..\public\BoomWave_0.h" />
+    <ClInclude Include="..\public\BoomWave_1.h" />
     <ClInclude Include="..\public\Boots.h" />
     <ClInclude Include="..\public\BridgeCastle.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="..\Public\FireBallLine.h" />
     <ClInclude Include="..\public\FireE_0.h" />
     <ClInclude Include="..\public\FlameE.h" />
+    <ClInclude Include="..\public\FSkillTrail.h" />
     <ClInclude Include="..\public\Glove.h" />
     <ClInclude Include="..\public\Helmet.h" />
     <ClInclude Include="..\public\HitE.h" />
@@ -244,6 +247,8 @@
     <ClInclude Include="..\public\Tree.h" />
     <ClInclude Include="..\public\TrollA.h" />
     <ClInclude Include="..\public\TrollQ.h" />
+    <ClInclude Include="..\public\Twister_Cycle.h" />
+    <ClInclude Include="..\public\Twister_Line.h" />
     <ClInclude Include="..\public\Upper.h" />
     <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="..\Public\Wing.h" />
@@ -262,6 +267,8 @@
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\BalianBollwerk.cpp" />
     <ClCompile Include="..\private\Belt.cpp" />
+    <ClCompile Include="..\private\BoomWave_0.cpp" />
+    <ClCompile Include="..\private\BoomWave_1.cpp" />
     <ClCompile Include="..\private\Boots.cpp" />
     <ClCompile Include="..\private\BridgeCastle.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
@@ -281,6 +288,7 @@
     <ClCompile Include="..\Private\FireBallLine.cpp" />
     <ClCompile Include="..\private\FireE_0.cpp" />
     <ClCompile Include="..\private\FlameE.cpp" />
+    <ClCompile Include="..\private\FSkillTrail.cpp" />
     <ClCompile Include="..\private\Glove.cpp" />
     <ClCompile Include="..\private\Helmet.cpp" />
     <ClCompile Include="..\private\HitE.cpp" />
@@ -324,6 +332,8 @@
     <ClCompile Include="..\private\Tree.cpp" />
     <ClCompile Include="..\private\TrollA.cpp" />
     <ClCompile Include="..\private\TrollQ.cpp" />
+    <ClCompile Include="..\private\Twister_Cycle.cpp" />
+    <ClCompile Include="..\private\Twister_Line.cpp" />
     <ClCompile Include="..\private\Upper.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="..\Private\Wing.cpp" />

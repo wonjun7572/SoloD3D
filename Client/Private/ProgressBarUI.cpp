@@ -91,7 +91,6 @@ HRESULT CProgressBarUI::Render()
 		m_pVIBufferCom->Render();
 	}
 
-
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 

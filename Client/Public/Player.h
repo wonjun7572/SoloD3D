@@ -100,6 +100,7 @@ public:
 	CModel*					Get_ModelCom() { return m_pModelCom[m_eModelState]; }
 	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
 	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
+	CFSMComponent*			Get_FSM() { return m_pFSM; }
 
 	void    SetUp_FSM();
 	void	Movement(_double TimeDelta);

@@ -51,8 +51,8 @@ HRESULT CZombieA::Init(void * pArg)
 	m_fMaxHp = 100.f;
 	m_fAttack = 5.f;
 	m_fDefence = 0.f;
-	m_vMonsterNamePos = _float2(720.f, 40.f);
-	m_vMonsterNameScale = _float2(1.f, 1.f);
+	m_vMonsterNamePos = _float2(750.f, 40.f);
+	m_vMonsterNameScale = _float2(0.6f, 0.6f);
 
 	if (FAILED(SetUP_UI()))
 		return E_FAIL;
@@ -135,13 +135,7 @@ void CZombieA::Imgui_RenderProperty()
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 
-	m_pFSM->Imgui_RenderProperty();
-
-	if (ImGui::Button("Spawn"))
-	{
-		m_bSpawn = true;
-	}
-
+	m_MonsterUI[MONSTER_NAME]->Imgui_RenderProperty();
 }
 
 void CZombieA::SetUp_FSM()

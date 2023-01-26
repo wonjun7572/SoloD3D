@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ #include "stdafx.h"
 #include "..\Public\Sky.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
@@ -59,7 +59,7 @@ HRESULT CSky::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(0);
 
 	m_pVIBufferCom->Render();
 
@@ -76,36 +76,20 @@ HRESULT CSky::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxNorTex"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxCubeTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Sphere"), TEXT("Com_VIBuffer"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_VIBuffer_Cube"), TEXT("Com_VIBuffer"),
 		(CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;
 
-	if (g_LEVEL == LEVEL_CHAP1)
-	{
-		/* For.Com_Texture */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom)))
-			return E_FAIL;
-	}
-	else if (g_LEVEL == LEVEL_CHAP2)
-	{
-		/* For.Com_Texture */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom)))
-			return E_FAIL;
-	}
-	else if (g_LEVEL == LEVEL_CHAP3)
-	{
-		/* For.Com_Texture */
-		if (FAILED(__super::Add_Component(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
-			(CComponent**)&m_pTextureCom)))
-			return E_FAIL;
-	}
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"), TEXT("Com_Texture"),
+		(CComponent**)&m_pTextureCom)))
+		return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -120,8 +104,21 @@ HRESULT CSky::SetUp_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture")))
-		return E_FAIL;
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+			return E_FAIL;
+	}
+	else if(g_LEVEL == LEVEL_CHAP2)
+	{
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture",1)))
+			return E_FAIL;
+	}
+	else if(g_LEVEL == LEVEL_CHAP2)
+	{
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 2)))
+			return E_FAIL;
+	}
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 

@@ -131,6 +131,7 @@ void CMonster::Late_Tick(_double TimeDelta)
 	{
 		m_MonsterUI[HP]->Late_Tick(TimeDelta);
 		m_MonsterUI[TARGET_AIM]->Late_Tick(TimeDelta);
+		m_MonsterUI[MONSTER_NAME]->Late_Tick(TimeDelta);
 	}
 	m_MonsterUI[BILLBOARD_HP]->Late_Tick(TimeDelta);
 
@@ -206,6 +207,7 @@ HRESULT CMonster::SetUP_UI()
 	progressBarDesc.iFillTexNum = 3;
 	progressBarDesc.iBackTexNum = 4;
 	progressBarDesc.iPassIndex = 1;
+	progressBarDesc.iOption = CProgressBarUI::MONSTER;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ProgressBarUI"), &progressBarDesc);
 
@@ -214,14 +216,14 @@ HRESULT CMonster::SetUP_UI()
 
 	m_MonsterUI.push_back(pUI);
 
-	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_AimUI"), &progressBarDesc);
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_AimUI"));
 
 	if (nullptr == pUI)
 		return E_FAIL;
 
 	m_MonsterUI.push_back(pUI);
 
-	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_MonsterHPUI"), &progressBarDesc);
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_MonsterHPUI"));
 
 	if (nullptr == pUI)
 		return E_FAIL;
@@ -246,9 +248,6 @@ HRESULT CMonster::SetUP_UI()
 
 	m_MonsterUI.push_back(pUI);
 
-	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->Set_Play(true);
-	static_cast<CEffect_Rect*>(m_MonsterUI[BILLBOARD_HP])->Set_Play(true);
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -258,10 +257,12 @@ void CMonster::UI_Tick(_double TimeDelta)
 {
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float fY = m_pColliderCom[COLLTYPE_AABB]->Get_AABBYSize() + 0.1f;
+	
 	static_cast<CProgressBarUI*>(m_MonsterUI[HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
+	static_cast<CEffect*>(m_MonsterUI[TARGET_AIM])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
+
 	static_cast<CMonsterHpUI*>(m_MonsterUI[BILLBOARD_HP])->Set_Amount((1.f + m_fHp / m_fMaxHp) - 1.f);
-	static_cast<CEffect_Rect*>(m_MonsterUI[TARGET_AIM])->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
-	static_cast<CEffect_Rect*>(m_MonsterUI[BILLBOARD_HP])->LinkObject(TimeDelta, _float4(vPos.x, fY, vPos.z, 1.f));
+	static_cast<CEffect*>(m_MonsterUI[BILLBOARD_HP])->LinkObject(TimeDelta, _float4(vPos.x, fY, vPos.z, 1.f));
 }
 
 void CMonster::UI_Switch(_double TimeDelta)
@@ -418,12 +419,7 @@ void CMonster::AdjustSetDamageToSkill()
 
 void CMonster::Imgui_RenderProperty()
 {
-	ImGui::DragFloat("NamePosX", &m_vMonsterNamePos.x, 0.1f, -1000.f, 1000.f);
-	ImGui::DragFloat("NamePosY", &m_vMonsterNamePos.y, 0.1f, -1000.f, 1000.f);
-	ImGui::DragFloat("NameScaleX", &m_vMonsterNameScale.x, 0.1f, -1000.f, 1000.f);
-	ImGui::DragFloat("NameScaleY", &m_vMonsterNameScale.y, 0.1f, -1000.f, 1000.f);
 
-	m_MonsterUI[TARGET_AIM]->Imgui_RenderProperty();
 }
 
 void CMonster::CollisionToMonster(_double TimeDelta)

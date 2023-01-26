@@ -7,7 +7,7 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CRenderer;
-class CVIBuffer_Sphere;
+class CVIBuffer_Cube;
 END
 
 BEGIN(Client)
@@ -30,7 +30,7 @@ private:
 	CShader*					m_pShaderCom = nullptr;
 	CTexture*					m_pTextureCom = nullptr;
 	CRenderer*					m_pRendererCom = nullptr;
-	CVIBuffer_Sphere*			m_pVIBufferCom = nullptr;
+	CVIBuffer_Cube*				m_pVIBufferCom = nullptr;
 
 private:
 	HRESULT SetUp_Components();

@@ -76,8 +76,8 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 		m_fHp = 1000.f;
 		m_fMaxHp = 1000.f;
 	}
-	m_vMonsterNamePos = _float2(680.f, 40.f);
-	m_vMonsterNameScale = _float2(1.f, 1.f);
+	m_vMonsterNamePos = _float2(710.f, 40.f);
+	m_vMonsterNameScale = _float2(0.6f, 0.6f);
 
 	if (FAILED(SetUP_UI()))
 		return E_FAIL;
@@ -176,7 +176,7 @@ void CSkeletonWarrior::Imgui_RenderProperty()
 	{
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
-	ImGui::Text("%d", &m_iGroup);
+	m_MonsterUI[MONSTER_NAME]->Imgui_RenderProperty();
 }
 
 void CSkeletonWarrior::SetUp_FSM()
@@ -509,7 +509,7 @@ void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 	}
 	else
 	{
-		if (fabsf(fDistance) < 10.f)
+		if (fabsf(fDistance) < 20.f)
 			m_bPlayerChase = true;
 		else
 			m_bPlayerChase = false;

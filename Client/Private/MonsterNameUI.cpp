@@ -69,6 +69,16 @@ HRESULT CMonsterNameUI::Render()
 	return S_OK;
 }
 
+void CMonsterNameUI::Imgui_RenderProperty()
+{
+	ImGui::Begin("Name");
+	ImGui::DragFloat("X", &m_fX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("Y", &m_fY, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("CX", &m_fSizeX, 0.1f, -1000.f, 1000.f);
+	ImGui::DragFloat("CY", &m_fSizeY, 0.1f, -1000.f, 1000.f);
+	ImGui::End();
+}
+
 HRESULT CMonsterNameUI::SetUp_Components()
 {
 	/* For.Com_Renderer */

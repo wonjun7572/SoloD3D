@@ -23,19 +23,12 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void	Set_Play(_bool bPlay) { m_bPlay = bPlay; }
-	void	Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
-
 	void	Imgui_RenderProperty() override;
-	void	LinkObject(_double TimeDelta, _fvector targetpos);
 	void	Compute_BillBoard();
 
 protected:
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
-	_float						m_fAlpha = 0.f;
-	_bool						m_bPlay = false;
-	_float2						m_UVMoveFactor;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

@@ -40,8 +40,6 @@ HRESULT Client::CLevel_ChapTwo::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Ally(TEXT("Layer_Ally"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
 	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
 
@@ -53,11 +51,72 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 	CLevel::Tick(TimeDelta);
 	ImguiRenderTab();
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
+	
 	if (pGameInstance->Key_Down(DIK_P))
 	{
 		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP3))))
 			return;
+		
+		RELEASE_INSTANCE(CGameInstance);
+		return;
+	}
+	
+	if (!m_bDemonCreate && pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster")->size() == 4)
+	{
+		const list<CGameObject*>* monlist = pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster");
+
+		if (monlist == nullptr)
+		{
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+
+		for (auto& pMonster : *(const_cast<list<CGameObject*>*>(monlist)))
+			Safe_Release(pMonster);
+
+		const_cast<list<CGameObject*>*>(monlist)->clear();
+
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, L"Layer_Monster", TEXT("Prototype_GameObject_Demon"))))
+			return;
+
+		m_bDemonCreate = true;
+	}
+
+	if (m_bDemonCreate)
+	{
+		m_TimeDelta += TimeDelta;
+
+		if (m_TimeDelta >= 10.0)
+		{
+			CTrollA::TROLLADESC TrollADesc;
+			ZeroMemory(&TrollADesc, sizeof TrollADesc);
+
+			_int iA = rand() % 3;
+
+			if (iA == 0)
+			{
+				TrollADesc.iGroup = 1;
+				TrollADesc.fRadian = 45.f;
+				TrollADesc.vPos = _float4(52.f, 0.f, 185.f, 1.f);
+			}
+			else if (iA == 1)
+			{
+				TrollADesc.iGroup = 2;
+				TrollADesc.fRadian = 150.f;
+				TrollADesc.vPos = _float4(103.4f, 0.f, 379.f, 1.f);
+			}
+			else if (iA == 2)
+			{
+				TrollADesc.iGroup = 3;
+				TrollADesc.fRadian = 200.f;
+				TrollADesc.vPos = _float4(317.f, 0.f, 410.f, 1.f);
+			}
+
+			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, L"Layer_Monster", TEXT("Prototype_GameObject_TrollA"), &TrollADesc)))
+				return;
+
+			m_TimeDelta = 0;
+		}
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -254,7 +313,7 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_TrollQ"), &TrollQDesc)))
 		return E_FAIL;
-	
+
 	CTrollA::TROLLADESC TrollADesc;
 	ZeroMemory(&TrollADesc, sizeof TrollADesc);
 
@@ -342,7 +401,7 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_TrollA"), &TrollADesc)))
 		return E_FAIL;
 
-	_float4 vPos = _float4(300.f , 0.f, 135.f , 1.f);
+	_float4 vPos = _float4(300.f, 0.f, 135.f, 1.f);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_ZombieA"), &vPos)))
 		return E_FAIL;
@@ -403,21 +462,12 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring & pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
 HRESULT CLevel_ChapTwo::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
+		return E_FAIL;
 	
 	RELEASE_INSTANCE(CGameInstance);
 	

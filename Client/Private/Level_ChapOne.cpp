@@ -35,11 +35,11 @@ HRESULT Client::CLevel_ChapOne::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Ally(TEXT("Layer_Ally"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
 	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
+	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
@@ -135,7 +135,7 @@ HRESULT CLevel_ChapOne::Ready_Lights()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
@@ -264,19 +264,6 @@ HRESULT CLevel_ChapOne::Ready_Layer_Ally(const wstring & pLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
-{
-	/*CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ThunderWave"))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);*/
-	
-
-	return S_OK;
-}
-
 HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
@@ -290,6 +277,27 @@ HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Stair"))))
 		return E_FAIL;
 
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BoomWave_0"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BoomWave_1"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Twister_Cycle"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Twister_Line"))))
+		return E_FAIL;
+	
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

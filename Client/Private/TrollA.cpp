@@ -55,8 +55,8 @@ HRESULT CTrollA::Init(void * pArg)
 	m_fMaxHp = 300.f;
 	m_fAttack = 20.f;
 	m_fDefence = 10.f;
-	m_vMonsterNamePos = _float2(720.f, 40.f);
-	m_vMonsterNameScale = _float2(1.f, 1.f);
+	m_vMonsterNamePos = _float2(760.f, 40.f);
+	m_vMonsterNameScale = _float2(0.6f, 0.6f);
 
 	if (FAILED(SetUP_UI()))
 		return E_FAIL;
@@ -151,6 +151,7 @@ HRESULT CTrollA::Render()
 
 void CTrollA::Imgui_RenderProperty()
 {
+	m_MonsterUI[MONSTER_NAME]->Imgui_RenderProperty();
 }
 
 void CTrollA::SetUp_FSM()

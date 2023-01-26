@@ -34,7 +34,6 @@ HRESULT CMonsterHpUI::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	
 	m_strObjName = L"MonsterHPUI";
 
 	m_fAlpha = 1.f;

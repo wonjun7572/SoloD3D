@@ -137,7 +137,7 @@ PS_OUT MeshEffectWithAlphaMaskWrapPS(PS_IN In)
 	float2 texcoord2 = In.vTexUV;
 	texcoord2 += g_UVMoveFactor;
 
-	float4 albedo = g_DiffuseTexture.Sample(AlbedoSampler, texcoord2);
+	float4 albedo = g_DiffuseTexture.Sample(AlbedoWrapSampler, texcoord2);
 	float4 maskTex = g_MaskTexture.Sample(AlphaMaskWrapSampler, texcoord2);
 
 	if (maskTex.r == 0)

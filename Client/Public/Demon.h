@@ -75,6 +75,9 @@ public:
 	void CollisionToSkill(_double TimeDelta);
 	void Play_Skill(_double TimeDelta);
 
+	void	Level_Chap2Tick(_double TimeDelta);
+	_bool	Get_LevelChap2Finished() { return m_bLevel2Finish; }
+
 private:
 	void AdditiveAnim(_double TimeDelta);
 
@@ -87,6 +90,7 @@ private:
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
 
 private:
+	_bool	m_bLevel2Finish = false;
 	_bool	m_bPlayerChase = false;
 	_bool	m_bPlayerAttack = true;
 	_bool	m_bRealAttack = false;

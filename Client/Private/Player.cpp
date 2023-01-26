@@ -61,109 +61,218 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
 
-	if(g_LEVEL == LEVEL_CHAP1)
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
-	else if(g_LEVEL == LEVEL_CHAP2)
+		CEffect_Mesh::EFFECTDESC effectDesc;
+		ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
+
+		_matrix pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 14;
+		effectDesc.iMaskTex = 28;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_ThunderWave", L"ThunderWave", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"ThunderWave", 0.f, 2.f, _float2(0.f, -1.f));
+
+		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 14;
+		effectDesc.iMaskTex = 14;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail1", L"NorAtk_Trail1", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"NorAtk_Trail1", 3.f, 1.f);
+
+		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 14;
+		effectDesc.iMaskTex = 14;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail2", L"NorAtk_Trail2", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"NorAtk_Trail2", 3.f, 1.f);
+
+		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.3f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 14;
+		effectDesc.iMaskTex = 14;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail3", L"NorAtk_Trail3", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"NorAtk_Trail3", 3.f, 1.f);
+
+		pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(-10.f)) *
+			XMMatrixTranslation(0.f, -0.3f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 41;
+		effectDesc.iMaskTex = 29;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_FSKillTrail", L"FSkillTrail", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"FSkillTrail", 3.f, 2.f);
+
+		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 2;
+		effectDesc.iDiffuseTex = 1;
+		effectDesc.iMaskTex = 5;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Wing", L"Wing", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"Wing", 0.f, 2.f);
+
+		pivotMat = XMMatrixScaling(2.f, 2.f, 2.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 42;
+		effectDesc.iMaskTex = 53;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_BoomWave_0", L"ESkill_BoomWave", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"ESkill_BoomWave", 0.6f, 1.f);
+
+		pivotMat = XMMatrixScaling(2.f, 2.f, 2.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 119;
+		effectDesc.iMaskTex = 53;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_BoomWave_0", L"QSkillEnd_BoomWave", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"QSkillEnd_BoomWave", 1.f, 2.f);
+
+		pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 30;
+		effectDesc.iMaskTex = 103;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_BoomWave_1", L"FSkill_BoomWave_1", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"FSkill_BoomWave_1", -0.3f, 1.f);
+
+		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(-90.f)) *
+			XMMatrixTranslation(0.f, 0.f, 0.f);
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 121;
+		effectDesc.iMaskTex = 100;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Twister_Line", L"ChangeModel_Twister", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"ChangeModel_Twister", 0.3f, 2.f);
+
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_QskillCrackE", L"CrackE");
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(320.f, 0.f, 30.f, 1.f));
+		
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkillTrail"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ESkill_BoomWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ChangeModel_Twister"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+	}
 	else if (g_LEVEL == LEVEL_CHAP3)
+	{
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(65.f, 0.f, 10.f, 1.f));
+
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkillTrail"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ESkill_BoomWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ChangeModel_Twister"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+	}
 		
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	
-	CEffect_Mesh::EFFECTDESC effectDesc;
-	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
-
-	_matrix pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 28;
-	effectDesc.fAlpha = 2.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_ThunderWave", L"ThunderWave", &effectDesc);
-
-	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail1", L"NorAtk_Trail1", &effectDesc);
-	
-	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail2", L"NorAtk_Trail2", &effectDesc);
-	
-	pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(0.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 0.3f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 3.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 14;
-	effectDesc.iMaskTex = 14;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_NorAtk_Trail3", L"NorAtk_Trail3", &effectDesc);
-
-	pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
-		XMMatrixRotationX(XMConvertToRadians(0.f)) *
-		XMMatrixRotationY(XMConvertToRadians(270.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 2.f, 0.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 0.f;
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 1;
-	effectDesc.iMaskTex = 5;
-	effectDesc.fAlpha = 1.f;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Wing", L"Wing", &effectDesc);
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_QskillCrackE", L"CrackE");
-
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
-	m_fHp = 100;
-	m_fMp = 100;
+	m_fHp = 1000;
+	m_fMp = 200;
 	m_fAttack = 20;
-	m_fDefence = 5;
+	m_fDefence = 20;
 
 	SetUp_FSM();
 	
@@ -181,6 +290,7 @@ void CPlayer::Tick(_double TimeDelta)
 	
 	m_pFSM->Tick(TimeDelta);
 	
+	m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
 	for (_uint i = PART_UPPER; i < PART_END; ++i)
 	{
 		m_PlayerParts[i]->Tick(TimeDelta);
@@ -195,8 +305,6 @@ void CPlayer::Tick(_double TimeDelta)
 	m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
 
 	AdditiveAnim(TimeDelta);
-
-	m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
 
 	LinkObject(TimeDelta);
 }
@@ -523,12 +631,6 @@ void CPlayer::SetUp_FSM()
 
 		/* For. run */
 		.AddState("Run")
-		.OnStart([this]() 
-	{
-		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Play_Sound(L"WalkSound.ogg", 0.5f, true, SOUND_PLAYER);
-		RELEASE_INSTANCE(CGameInstance);
-	})
 		.Tick(this, &CPlayer::Run_Tick)
 		.OnExit([this]() 
 	{
@@ -678,14 +780,14 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_01);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv2.wav", 1.f, false);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_UV(_float2(-1.f, 0.f));
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.1, 0.3))
 			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail1", TimeDelta);
-
+		
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.0, 0.6))
 			MonsterNormalAttack(true);
 		else
@@ -723,7 +825,7 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_02);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv3.wav", 1.f, false);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_UV(_float2(-1.f, 0.f));
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
@@ -757,8 +859,6 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bHitDown;
 	})
-
-
 		.AddState("Attack_3")
 		.OnStart([this]()
 	{
@@ -766,7 +866,7 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_03);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv4.wav", 1.f, false);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_UV(_float2(-1.f, 0.f));
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
@@ -818,7 +918,9 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		MonsterNormalAttack(true);
-	})
+		if (AnimIntervalChecker(PLAYER_SK24, 0.1 , 0.8))
+			CEffectManager::GetInstance()->Render_Effects(L"ESkill_BoomWave", TimeDelta);
+	})                        
 		.OnExit([this]() 
 	{
 		MonsterNormalAttack(false);
@@ -849,8 +951,8 @@ void CPlayer::SetUp_FSM()
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 5.f);
 		Reset_Anim(PLAYER_SK09);
 		Set_Anim(PLAYER_SK09);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(0.f);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_UV(_float2(0.f, 0.f));
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(0.f);
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_UV(_float2(0.f, 0.f));
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -912,7 +1014,7 @@ void CPlayer::SetUp_FSM()
 		else
 			MonsterSkill02(false);
 
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(static_cast<_float>(m_WingAlpha));
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(static_cast<_float>(m_WingAlpha));
 
 		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 0.4))
 		{
@@ -920,8 +1022,13 @@ void CPlayer::SetUp_FSM()
 			static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"CrackE"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
 		}
 
-		if(AnimIntervalChecker(PLAYER_SK09, 0.3, 1.0))
+		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 1.0))
+		{
 			CEffectManager::GetInstance()->Render_Effects(L"CrackE", TimeDelta);
+			_float2 vBoomWave = static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Get_UV();
+			static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Set_UV(_float2(0.f, vBoomWave.y));
+			CEffectManager::GetInstance()->Render_Effects(L"QSkillEnd_BoomWave", TimeDelta);
+		}
 	})
 		.OnExit([this]()
 	{
@@ -983,17 +1090,20 @@ void CPlayer::SetUp_FSM()
 		
 		// KEY F
 		.AddState("Skill_4_Charging")
+		.OnStart([this]()
+	{
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_UVSpeed(-0.3f);
+	})
 		.Tick([this](_double TimeDelta)
 	{
 		Set_Anim(PLAYER_SK29_CHARGING);
-
 		CEffectManager::GetInstance()->Render_Effects(L"ThunderWave", TimeDelta);
-		
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(true);
+		CEffectManager::GetInstance()->Render_Effects(L"FSkill_BoomWave_1", TimeDelta);
 		_vector vWeaponPos = Get_WeaponCollider()->Get_CollisionCenter();
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
-		_float3 vPos = _float3::Lerp(static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 1.5f);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(true);
+		_float3 vPos = _float3::Lerp(CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 5.f);
+		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -1014,16 +1124,21 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_4_Attacking")
 		.OnStart([this]()
 	{
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"FSkillTrail"))->Set_UV(_float2(-1.f, -1.f));
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 2.f);
 		Reset_Anim(PLAYER_SK27_FIRING);
 		Set_Anim(PLAYER_SK27_FIRING);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_UVSpeed(0.4f);
 	})
 		.Tick([this](_double TimeDelta)
 	{
+		if (AnimIntervalChecker(PLAYER_SK27_FIRING, 0.1, 0.3))
+			CEffectManager::GetInstance()->Render_Effects(L"FSkillTrail", TimeDelta);
+		
 		CEffectManager::GetInstance()->Render_Effects(L"ThunderWave", TimeDelta);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
-		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Get_TransformCom()->Go_Direction(TimeDelta * 2.0, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
-		// 플레이어가 바라보는 방향으로 나아가야함!
+		CEffectManager::GetInstance()->Render_Effects(L"FSkill_BoomWave_1", TimeDelta);
+		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
+		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Go_Direction(TimeDelta * 5.0, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
 		if (AnimIntervalChecker(PLAYER_SK27_FIRING, 0.1, 0.8))
 			MonsterSkill04(true);
 		else
@@ -1063,6 +1178,8 @@ void CPlayer::SetUp_FSM()
 	{
 		m_bCamTurn = false;
 
+		CEffectManager::GetInstance()->Render_Effects(L"ChangeModel_Twister", TimeDelta);
+		
 		if (AnimIntervalChecker(PLAYER_SK11, 0, 0.14))
 			static_cast<CParts*>(m_PlayerParts[PART_BOOTS])->ChangeModel(CParts::MODEL_A);
 		if (AnimIntervalChecker(PLAYER_SK11, 0.14, 0.28))
@@ -2630,6 +2747,4 @@ void CPlayer::Free()
 	Safe_Release(m_pNavigationCom);
 
 	Safe_Release(m_pFSM);
-
-	CEffectManager::GetInstance()->DestroyInstance();
 }

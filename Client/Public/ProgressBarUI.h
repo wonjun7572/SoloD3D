@@ -8,7 +8,7 @@ BEGIN(Client)
 class CProgressBarUI final : public CUI
 {
 public:
-	enum OPTION { PLAYER, TREE, BOSS, OPTION_END};
+	enum OPTION { PLAYER, TREE, BOSS, MONSTER, OPTION_END};
 
 	typedef struct tagProgressBar
 	{

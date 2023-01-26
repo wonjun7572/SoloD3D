@@ -100,10 +100,10 @@ HRESULT CWing::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMove, sizeof(_float2))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMoveFactor, sizeof(_float2))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_MEffectDesc.fAlpha, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))

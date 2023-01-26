@@ -180,17 +180,17 @@ void CDelilah::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		if (TimeConversation < 5.f)
+		if (TimeConversation < 3.f)
 		{
 			m_strConversation = L"나는 아산 제국에 살고 있는 이혜원이야";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		else if (TimeConversation >= 3.f && TimeConversation < 6.f)
 		{
 			m_strConversation = L"나도 이 제국을 도우러 왔어";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		else if (TimeConversation >= 6.f && TimeConversation < 9.f)
 		{
 			m_strConversation = L"나 먼저 가볼께";
 			TimeConversation += TimeDelta;
@@ -198,7 +198,7 @@ void CDelilah::Conversation(_double TimeDelta)
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 15.f)
+		if (TimeConversation > 9.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -230,11 +230,33 @@ void CDelilah::SetUp_FSM()
 	{
 		return m_bMonsterChase;
 	})
+		.AddTransition("Idle to Player_Chase", "Player_Chase")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase;
+	})
+
+		.AddState("Player_Chase")
+		.Tick([this](_double TimeDelta)
+	{
+		m_pTransformCom->ChaseAndLookAt(_float4(185.f, 0.f, 255.f, 1.f), TimeDelta, 0.1f, m_pNavigationCom);
+		m_pModelCom->Set_AnimationIndex(DELILAH_Run_F);
+		m_fDeadTime += TimeDelta;
+		if (m_fDeadTime > 10.f)
+			m_bDead = true;
+	})
+		.AddTransition("Player_Chase to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return !m_bPlayerChase;
+	})
 
 		.AddState("Monster_Chase")
 		.Tick([this](_double TimeDelta)
 	{
-		if (m_pSkeleton != nullptr)
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+		if (pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_3") != nullptr)
 		{
 			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 2.f)
 			{
@@ -251,7 +273,10 @@ void CDelilah::SetUp_FSM()
 		else
 		{
 			m_bMonsterChase = false;
+			m_bPlayerChase = true;
 		}
+
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("Monster_Chase to Idle", "Idle")
 		.Predicator([this]()

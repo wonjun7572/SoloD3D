@@ -43,6 +43,41 @@ HRESULT CEffectManager::Render_Effects(const wstring & pEffectTag, _double TimeD
 	return S_OK;
 }
 
+HRESULT CEffectManager::LinkObject(const wstring & pEffectTag, _float4 vTargetPos, _float4 vLook)
+{
+	CGameObject* pGameObject = Find_Effects(pEffectTag);
+
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	pGameObject->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, vTargetPos);
+	return S_OK;
+}
+
+HRESULT CEffectManager::SetUp_Effects(const wstring & pEffectTag, _float fUVSpeed, _float fAlpha, _float2 UV)
+{
+	CGameObject* pGameObject = Find_Effects(pEffectTag);
+
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	static_cast<CEffect*>(pGameObject)->Set_Alpha(fAlpha);
+	static_cast<CEffect*>(pGameObject)->Set_UVSpeed(fUVSpeed);
+	static_cast<CEffect*>(pGameObject)->Set_UV(UV);
+
+	return S_OK;
+}
+
+CTransform * CEffectManager::Get_Transform(const wstring & pEffectTag)
+{
+	CGameObject* pGameObject = Find_Effects(pEffectTag);
+
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	return pGameObject->Get_TransformCom();
+}
+
 CGameObject * CEffectManager::Find_Effects(const wstring & pEffectTag)
 {
 	auto iter = m_Effects.find(pEffectTag);

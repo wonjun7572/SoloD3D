@@ -52,7 +52,7 @@ HRESULT CPortraitCircleUI::Init(void * pArg)
 void CPortraitCircleUI::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	m_fFrame += 27.f * TimeDelta;
+	m_fFrame += 15.f * TimeDelta;
 
 	if (m_fFrame >= 27.0f)
 		m_fFrame = 1.f;

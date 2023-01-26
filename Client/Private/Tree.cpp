@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "ProgressBarUI.h"
 #include "ConversationUI.h"
+#include "Demon.h"
 
 CTree::CTree(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CGameObject(pDevice,pContext)
@@ -71,7 +72,26 @@ HRESULT CTree::Init(void * pArg)
 void CTree::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	m_fHp -=	static_cast<_float>(TimeDelta);
+	
+	m_fHp -= static_cast<_float>(TimeDelta);
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	CGameObject* pDemon = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"DEMON");
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	if (pDemon != nullptr)
+	{
+		if (static_cast<CDemon*>(pDemon)->Get_LevelChap2Finished() == true)
+		{
+			m_fHp -= static_cast<_float>(TimeDelta) * 50.f;
+		}
+	}
+
+	if (m_fHp <= 0.f)
+		m_fHp = 0.f;
+
 	UI_Tick(TimeDelta);
 	m_pUI->Tick(TimeDelta);
 	m_pCountDown->Tick(TimeDelta);

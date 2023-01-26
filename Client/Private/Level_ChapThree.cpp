@@ -31,8 +31,6 @@ HRESULT Client::CLevel_ChapThree::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
-		return E_FAIL;
 	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
 
@@ -170,14 +168,8 @@ HRESULT CLevel_ChapThree::Ready_Layer_Monster(const wstring & pLayerTag)
 {
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CLevel_ChapThree::Ready_Layer_Effect(const wstring & pLayerTag)
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, L"Layer_Monster", TEXT("Prototype_GameObject_Demon"))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

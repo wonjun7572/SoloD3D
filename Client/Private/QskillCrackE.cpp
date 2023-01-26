@@ -47,17 +47,8 @@ HRESULT CQskillCrackE::Init(void * pArg)
 
 void CQskillCrackE::Tick(_double TimeDelta)
 {
-	m_bPlay = true;
-
 	__super::Tick(TimeDelta);
-
-	if (m_bPlay)
-		m_fAlpha -= static_cast<float>(TimeDelta) * 0.3f;
-	else
-		m_fAlpha = 1.f;
-
-	if (m_fAlpha <= 0.f)
-		m_bPlay = false;
+	m_fAlpha -= static_cast<float>(TimeDelta) * 0.3f;
 }
 
 void CQskillCrackE::Late_Tick(_double TimeDelta)

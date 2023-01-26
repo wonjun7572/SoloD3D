@@ -8,6 +8,7 @@
 #include "Terrain.h"
 #include "Bone.h"
 #include "Effect_Mesh.h"
+#include "Tree.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -38,13 +39,23 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 20 + 95.f, 0.f, 100.f, 1.f));
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Effects()))
 		return E_FAIL;
+
+	if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(270.f, 0.f, 280.f , 1.f));
+	}
+
+	if (g_LEVEL == LEVEL_CHAP3)
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(65.f, 25.f, 90.f, 1.f));
+	}
 
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
@@ -70,12 +81,37 @@ HRESULT CDemon::Init(void * pArg)
 
 void CDemon::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
-	AdditiveAnim(TimeDelta);
-	Play_Skill(TimeDelta);
-	for (auto& pEffect : m_Effects)
+	if (g_LEVEL == LEVEL_CHAP3)
 	{
-		pEffect->Tick(TimeDelta);
+		__super::Tick(TimeDelta);
+		AdditiveAnim(TimeDelta);
+		Play_Skill(TimeDelta);
+		for (auto& pEffect : m_Effects)
+			pEffect->Tick(TimeDelta);
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		Level_Chap2Tick(TimeDelta);
+	
+		m_pModelCom->Play_Animation(TimeDelta);
+
+		if (m_pNavigationCom)
+		{
+			_float yPos = 0.f;
+			m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
+			m_pTransformCom->Set_Height(yPos);
+		}
+
+		for (auto& pUI : m_MonsterUI)
+			pUI->Tick(TimeDelta);
+
+		for (auto& pDamageFont : m_MonsterDamageFontUI)
+			pDamageFont->Tick(TimeDelta);
+
+		for (auto& pDamageEffect : m_MonsterDamageEffect)
+			pDamageEffect->Tick(TimeDelta);
+
+		UI_Tick(TimeDelta);
 	}
 }
 
@@ -350,6 +386,29 @@ void CDemon::Play_Skill(_double TimeDelta)
 			m_bSkill_5ToPlayer = true;
 		if (iSkill == 5)
 			m_bSkill_6ToPlayer = true;
+	}
+}
+
+void CDemon::Level_Chap2Tick(_double TimeDelta)
+{
+	_vector vTreePos = m_pTree->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
+	_float fTreeToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTreePos);
+
+	if (fTreeToPos > 11.f)
+	{
+		m_pModelCom->Set_AnimationIndex(DEMON_Run_F);
+		m_pTransformCom->ChaseAndLookAt(m_pTree->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), TimeDelta, 0.1f, m_pNavigationCom);
+	}
+	else
+	{
+		m_bLevel2Finish = true;
+		m_pModelCom->Set_AnimationIndex(DEMON_ATK_02);
+		m_pTransformCom->LookAt(vTreePos);
+	}
+
+	if (static_cast<CTree*>(m_pTree)->Get_Hp() <= 0)
+	{
+		// 화면 흔들리면서 다음 씬으로 넘어가기
 	}
 }
 
@@ -1094,15 +1153,11 @@ HRESULT CDemon::SetUp_Effects()
 		XMMatrixTranslation(0.f, 4.5f, 1.f);
 
 	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.fMoveSpeed = 1.f;
 	effectDesc.iPassIndex = 2;
 	effectDesc.iDiffuseTex = 25;
 	effectDesc.iMaskTex = 27;
-	effectDesc.fAlpha = 1.f;
 	effectDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(m_pTransformCom);
-
-
 
 	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_FireBallLine"), &effectDesc);
 

@@ -35,6 +35,10 @@ void CNorAtk_Trail1::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
+	m_UVMoveFactor.x += static_cast<_float>(TimeDelta) * m_fUVSpeed;
+	if (m_UVMoveFactor.x >= 1.f)
+		m_UVMoveFactor.x = -1.f;
+
 	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
 		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
@@ -99,10 +103,10 @@ HRESULT CNorAtk_Trail1::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMove, sizeof(_float2))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMoveFactor, sizeof(_float2))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_MEffectDesc.fAlpha, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))

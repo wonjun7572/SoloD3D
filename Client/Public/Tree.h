@@ -23,6 +23,8 @@ public:
 
 	void	Imgui_RenderProperty() override;
 
+	_float Get_Hp() { return m_fHp; }
+
 private:
 	CGameObject* m_pUI = nullptr;
 	CGameObject* m_pCountDown = nullptr;

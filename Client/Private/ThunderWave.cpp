@@ -42,15 +42,12 @@ void CThunderWave::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	m_UVMove.x = 0.f;
-	m_UVMove.y = -1.f;
-
-	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
-		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
-
 	m_fFrame += 16.f * static_cast<_float>(TimeDelta);
 	if (m_fFrame >= 16.f)
 		m_fFrame = 0.f;
+
+	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
+		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
 }
 
 void CThunderWave::Late_Tick(_double TimeDelta)
@@ -113,10 +110,10 @@ HRESULT CThunderWave::SetUp_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMove, sizeof(_float2))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMoveFactor, sizeof(_float2))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_MEffectDesc.fAlpha, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))

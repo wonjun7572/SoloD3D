@@ -7,6 +7,8 @@
 #include "Camera_Dynamic.h"
 #include "LoadingUI.h"
 
+#include "EffectManager.h"
+
 CMainApp::CMainApp()
 	:m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -247,6 +249,7 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	m_pGameInstance->Clear_ImguiObjects();
+	CEffectManager::GetInstance()->DestroyInstance();
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pContext);

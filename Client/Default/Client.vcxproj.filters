@@ -388,6 +388,21 @@
     <ClInclude Include="..\public\PortraitCircleUI.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BoomWave_0.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BoomWave_1.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FSkillTrail.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Twister_Cycle.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Twister_Line.h">
+      <Filter>GameObject\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -615,6 +630,21 @@
     </ClCompile>
     <ClCompile Include="..\private\PortraitCircleUI.cpp">
       <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BoomWave_0.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BoomWave_1.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FSkillTrail.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Twister_Cycle.cpp">
+      <Filter>GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Twister_Line.cpp">
+      <Filter>GameObject\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

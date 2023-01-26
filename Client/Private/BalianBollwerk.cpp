@@ -89,8 +89,6 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 void CBalianBollwerk::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
-	// 만약에 플레이어와 상호 작용한 이후다? 그러면 ㄱ
 	
 	if (g_LEVEL == LEVEL_CHAP1)
 		Level_Chap1Tick(TimeDelta);
@@ -256,27 +254,27 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		if (TimeConversation < 5.f)
+		if (TimeConversation < 3.f)
 		{
 			m_strConversation = L"나는 의정부 제국에 살고 있는 이재호라고 하네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		else if (TimeConversation >= 3.f && TimeConversation < 6.f)
 		{
 			m_strConversation = L"현재 우리 제국은 공격을 받고 있다네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		else if (TimeConversation >= 6.f && TimeConversation < 9.f)
 		{
 			m_strConversation = L"자네가 이 마을에서 제일 강하다고 들었네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 15.f && TimeConversation < 20.f)
+		else if (TimeConversation >= 9.f && TimeConversation < 12.f)
 		{
 			m_strConversation = L"혹시 도와줄 수 있는가? 보상은 넉넉히 드리지";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 20.f && TimeConversation < 25.f)
+		else if (TimeConversation >= 12.f && TimeConversation < 15.f)
 		{
 			m_strConversation = L"일단 자네가 다칠 수 있으니 테스트 먼저 하러가자고!";
 			TimeConversation += TimeDelta;
@@ -284,7 +282,7 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 25.f)
+		if (TimeConversation > 15.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -296,32 +294,32 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 	{
 		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
 
-		if (TimeConversation < 5.f)
+		if (TimeConversation < 3.f)
 		{
 			m_strConversation = L"여기가 바로 우리 제국이라네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 5.f && TimeConversation < 10.f)
+		else if (TimeConversation >= 3.f && TimeConversation < 6.f)
 		{
 			m_strConversation = L"우리 제국 한 가운데에는 나무가 존재하네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 10.f && TimeConversation < 15.f)
+		else if (TimeConversation >= 6.f && TimeConversation < 9.f)
 		{
 			m_strConversation = L"그 나무를 지켜야한다네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 15.f && TimeConversation < 20.f)
+		else if (TimeConversation >= 9.f && TimeConversation < 12.f)
 		{
 			m_strConversation = L"뒤에 있는 동료들이 우리를 도와주려고 기다리고있네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 20.f && TimeConversation < 25.f)
+		else if (TimeConversation >= 12.f && TimeConversation < 15.f)
 		{
 			m_strConversation = L"동료들을 모아 함께 지키러가면 되겠네";
 			TimeConversation += TimeDelta;
 		}
-		else if (TimeConversation >= 25.f && TimeConversation < 30.f)
+		else if (TimeConversation >= 15.f && TimeConversation < 18.f)
 		{
 			m_strConversation = L"일단 나 먼저 가서 싸우고 있겠네 빨리 와주게";
 			TimeConversation += TimeDelta;
@@ -329,7 +327,7 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 
 		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
 
-		if (TimeConversation > 30.f)
+		if (TimeConversation > 18.f)
 		{
 			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
 			m_bConversation = false;
@@ -361,11 +359,47 @@ void CBalianBollwerk::SetUp_FSM()
 	{
 		return m_bMonsterChase;
 	})
+		.AddTransition("Idle to Player_Chase", "Player_Chase")
+		.Predicator([this]()
+	{
+		return m_bPlayerChase;
+	})
+
+		.AddState("Player_Chase")
+		.Tick([this](_double TimeDelta)
+	{
+		m_fDeadTime += TimeDelta;
+
+		if (m_fDeadTime <= 5.f)
+		{
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
+			m_strConversation = L"데몬이 등장했다!! 도망쳐!!!!";
+			static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+			m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+		}
+		else
+		{
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(true);
+		}
+
+		if (m_fDeadTime > 10.f)
+			m_bDead = true;
+
+		m_pTransformCom->ChaseAndLookAt(_float4(185.f,0.f,255.f,1.f), TimeDelta, 0.1f, m_pNavigationCom);
+		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
+	})
+		.AddTransition("Player_Chase to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return !m_bPlayerChase;
+	})
 
 		.AddState("Monster_Chase")
 		.Tick([this](_double TimeDelta)
 	{
-		if (m_pSkeleton != nullptr)
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+		if (pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_0") != nullptr)
 		{
 			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), m_pSkeleton->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) > 2.f)
 			{
@@ -382,7 +416,10 @@ void CBalianBollwerk::SetUp_FSM()
 		else
 		{
 			m_bMonsterChase = false;
+			m_bPlayerChase = true;
 		}
+
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("Monster_Chase to Idle", "Idle")
 		.Predicator([this]()

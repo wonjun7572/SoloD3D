@@ -32,6 +32,8 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	Imgui_RenderProperty()override;
+
 	NAMEFONT m_tagNameFont;
 
 private:

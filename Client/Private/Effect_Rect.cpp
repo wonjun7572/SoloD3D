@@ -49,7 +49,7 @@ void CEffect_Rect::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (nullptr != m_pRendererCom && m_bPlay)
+	if (nullptr != m_pRendererCom)
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
@@ -70,12 +70,6 @@ void CEffect_Rect::Imgui_RenderProperty()
 	ImGui::Begin("Effect");
 	m_pTransformCom->Imgui_RenderProperty();
 	ImGui::End();
-}
-
-void CEffect_Rect::LinkObject(_double TimeDelta, _fvector targetpos)
-{
-	_float3 vPos = targetpos;
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(vPos.x, vPos.y, vPos.z, 1.f));
 }
 
 void CEffect_Rect::Compute_BillBoard()

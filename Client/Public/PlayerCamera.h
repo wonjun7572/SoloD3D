@@ -9,6 +9,8 @@ END
 
 BEGIN(Client)
 
+class CPlayer;
+
 class CPlayerCamera : public CCamera
 {
 private:
@@ -38,6 +40,8 @@ private:
 	bool m_bFix = true;
 
 	_float m_vLookImgui = 1.f;
+
+	CPlayer* m_pPlayer = nullptr;
 
 	_float4 m_vLookAt = _float4(0.f, 0.f, 0.f,-1.f);
 	_float4 m_vPlayerPos;

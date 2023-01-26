@@ -78,6 +78,11 @@
 #include "PortraitCircleUI.h"
 
 #include "Tree.h"
+#include "BoomWave_0.h"
+#include "BoomWave_1.h"
+#include "Twister_Cycle.h"
+#include "Twister_Line.h"
+#include "FSkillTrail.h"
 
 unsigned int	g_LEVEL = 0;
 
@@ -202,21 +207,16 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap1.dds"), 1))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Texture_Cube*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Cube"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky.dds")))))
-		return E_FAIL;
-
 	/* For.Prototype_Component_Texture_Sky*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap1_Sky.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 3))))
 		return E_FAIL;
 
 	// For. EffectTexture~
 	{
 		/* For.Texture_Trail*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Trail"),
-			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/%d.png"), 35))))
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Effect/%d.png"), 130))))
 			return E_FAIL;
 
 		/* For.Texture_Lighting*/
@@ -342,21 +342,22 @@ HRESULT CLoader::Loading_ForChapter_1()
 		CVIBuffer_Point_Instancing::Create(m_pDevice, m_pContext, 30))))
 		return E_FAIL;
 
-	m_strLoadingText = TEXT("콜라이더를 로딩중입니다. ");
+	{
+		m_strLoadingText = TEXT("콜라이더를 로딩중입니다. ");
 
-	/* For.Prototype_Component_Collider_AABB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
-		return E_FAIL;
-	/* For.Prototype_Component_Collider_OBB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
-		return E_FAIL;
-	/* For.Prototype_Component_Collider_SPHERE*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
-		return E_FAIL;
-
+		/* For.Prototype_Component_Collider_AABB*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"),
+			CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+			return E_FAIL;
+		/* For.Prototype_Component_Collider_OBB*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_OBB"),
+			CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
+			return E_FAIL;
+		/* For.Prototype_Component_Collider_SPHERE*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_SPHERE"),
+			CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+			return E_FAIL;
+	}
 	m_strLoadingText = TEXT("모델을 로딩중입니다. ");
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
@@ -371,7 +372,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	}
 
 	// For. PLAYER
-	{
+		{
 		/* For.Prototype_Component_Model_HumanF */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF"),
@@ -419,7 +420,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Helmet"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Helmet/Helmet.model"), PivotMatrix))))
 			return E_FAIL;
-
+	}
 		{
 			/* For.Prototype_Component_Model_HumanF */
 			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
@@ -469,7 +470,6 @@ HRESULT CLoader::Loading_ForChapter_1()
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/B/Helmet.model"), PivotMatrix))))
 				return E_FAIL;
 		}
-
 		{
 			/* For.Prototype_Component_Model_HumanF */
 			PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
@@ -519,8 +519,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 				CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, TEXT("../Bin/Resources/Meshes/Bless/Human/A/Helmet.model"), PivotMatrix))))
 				return E_FAIL;
 		}
-
-
+		{
 		/* For.Prototype_Component_Model_Sword*/
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f)
 			* XMMatrixRotationX(XMConvertToRadians(97.5f))
@@ -551,7 +550,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	}
 
 	// For. Ally
-	{
+		{
 		/* For.Prototype_Component_Model_BalianBollwerk */
 		PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Prototype_Component_Model_BalianBollwerk"),
@@ -560,7 +559,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	}
 
 	// For. Maps
-	{
+		{
 		/* For.Tower_BridgeCastle */
 		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Tower_BridgeCastle"),
@@ -581,7 +580,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 	}
 
 	// For.Effect
-	{
+		{
 		/* For.NormalAtk1_Trail */
 		PivotMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("NormalAtk1_Trail"),
@@ -629,6 +628,36 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("RcTex_Long"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/RcTex_Long.model"), PivotMatrix))))
 			return E_FAIL;
+
+		/* For. BoomWave_0 */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BoomWave_0"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/BoomWave_0.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. BoomWave_1 */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("BoomWave_1"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/BoomWave_1.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. Twister_Cycle */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Twister_Cycle"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/Twister_Cycle.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. Twister_Line*/
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Twister_Line"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/Twister_Line.model"), PivotMatrix))))
+			return E_FAIL;
+
+		/* For. FSkillTrail*/
+		PivotMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("FSkillTrail"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Effect/FSkillTrail.model"), PivotMatrix))))
+			return E_FAIL;
 	}
 
 	m_strLoadingText = TEXT("셰이더를 로딩중입니다. ");
@@ -646,7 +675,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 		return E_FAIL;
 
 	// PLAYER
-	{
+		{
 		/* For.Prototype_GameObject_Player*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"), CPlayer::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
@@ -698,6 +727,7 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BalianBollwerk"), CBalianBollwerk::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
 	}
+
 
 	/* For. Prototype_GameObject_Terrain*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"), CTerrain::Create(m_pDevice, m_pContext))))
@@ -780,6 +810,26 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Prototype_GameObject_QskillCrackE*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_QskillCrackE"), CQskillCrackE::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
+
+		/* For. Prototype_GameObject_BoomWave_0 */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BoomWave_0"), CBoomWave_0::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_BoomWave_1 */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BoomWave_1"), CBoomWave_1::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_Twister_Cycle */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Twister_Cycle"), CTwister_Cycle::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_Twister_Line */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Twister_Line"), CTwister_Line::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
+
+		/* For. Prototype_GameObject_FSKillTrail */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_FSKillTrail"), CFSkillTrail::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 
 	// UI
@@ -845,11 +895,6 @@ HRESULT CLoader::Loading_ForChapter_2()
 	/* For.Prototype_Component_Texture_Filter*/
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Filter"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Newfilter_Chap2_Change.dds"), 1))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Texture_Sky*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap2_Sky.png")))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
@@ -981,11 +1026,6 @@ HRESULT CLoader::Loading_ForChapter_3()
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
-
-	/* For.Prototype_Component_Texture_Sky*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP3, TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Sky/Chap3_Sky.png")))))
-		return E_FAIL;
 
 	m_strLoadingText = TEXT("버퍼를 로딩중입니다. ");
 

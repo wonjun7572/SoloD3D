@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "MathUtils.h"
 #include "Player.h"
+#include "FSMComponent.h"
 
 CPlayerCamera::CPlayerCamera(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera(pDevice, pContext)
@@ -50,6 +51,19 @@ HRESULT CPlayerCamera::Init(void * pArg)
 		return E_FAIL;
 
 	m_strObjName = TEXT("PlayerCamera");
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (g_LEVEL == LEVEL_CHAP1)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+	else if (g_LEVEL == LEVEL_CHAP2)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Player"));
+	else if (g_LEVEL == LEVEL_CHAP3)
+		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
+
+	Safe_AddRef(m_pPlayer);
+
+	RELEASE_INSTANCE(CGameInstance);
 	
 	return S_OK;
 }
@@ -149,7 +163,7 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 		_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 		ShakeUpdate(TimeDelta);
 		_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f + m_fCamY, 0.f, 0.f));
-		_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+		_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 5.f);
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 		m_pTransformCom->LookAt(XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + XMVectorSet(0.f, 2.5f, 0.f, 0.f), true);
 		m_bChange = false;
@@ -158,14 +172,34 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 	{
 		if (!m_bChange)
 		{
-			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+			if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+			{
+				XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
+				m_fDistanceToTarget = 7.f;
+			}
+			else if(!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
+			{
+				XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 10.f;
+			}
+			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
+			{
+				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 2.f;
+			}
+			else
+			{
+				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 5.f;
+			}
+
 			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
 
 			if (Get_CamDistance() > 0.1f)
 			{
-				_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+				_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 5.f);
 				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 			}
 			else
@@ -173,12 +207,32 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 		}
 		else
 		{
-			XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+			if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+			{
+				XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
+				m_fDistanceToTarget = 7.f;
+			}
+			else if(!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
+			{
+				XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 10.f;
+			}
+			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
+			{
+				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 2.f;
+			}
+			else
+			{
+				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+				m_fDistanceToTarget = 5.f;
+			}
+
 			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
 			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
 			ShakeUpdate(TimeDelta);
 			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
-			_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 1.5f);
+			_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 5.f);
 			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 			m_fCamY = 0.f;
 		}
@@ -268,4 +322,5 @@ CGameObject * CPlayerCamera::Clone(void * pArg)
 void CPlayerCamera::Free()
 {
 	__super::Free();
+	Safe_Release(m_pPlayer);
 }

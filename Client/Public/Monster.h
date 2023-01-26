@@ -18,7 +18,7 @@ class CMonster abstract : public CGameObject
 {
 public:
 	enum COLLIDERTYPE { COLLTYPE_AABB, COLLTYPE_SPHERE, COLLTYPE_END };
-	enum UI { HP, TARGET_AIM, BILLBOARD_HP, UI_END };
+	enum UI { HP, TARGET_AIM, BILLBOARD_HP, MONSTER_NAME,UI_END };
 
 protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

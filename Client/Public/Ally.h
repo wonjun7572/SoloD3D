@@ -61,6 +61,7 @@ protected:
 
 	_bool					m_bChase = false;
 	_bool					m_bMonsterChase = false;
+	_bool					m_bPlayerChase = false;
 
 	// 데미지를 입을 수 있는 상황인가?
 	_bool					m_bImpossibleSkillDamaged = false;
@@ -78,6 +79,8 @@ protected:
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CNavigation*			m_pNavigationCom = nullptr;
 	CFSMComponent*			m_pFSM = nullptr;
+
+	_float					m_fDeadTime = 0.f;
 
 protected:
 	vector<CCollider*>		m_AllyColliders;

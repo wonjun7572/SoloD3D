@@ -46,6 +46,11 @@ HRESULT CEffect::Render()
 	return S_OK;
 }
 
+void CEffect::LinkObject(_double TimeDelta, _float4 targetpos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, targetpos);
+}
+
 void CEffect::Free()
 {
 	__super::Free();
