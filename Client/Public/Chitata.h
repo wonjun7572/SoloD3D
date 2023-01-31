@@ -58,6 +58,7 @@ public:
 	void	Level_Chap2Tick(_double TimeDelta);
 	void	Conversation(_double TimeDelta);
 	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
+	_bool	Get_Conversation() { return m_bConversation; }
 
 private:
 	void	SetUp_FSM() override;

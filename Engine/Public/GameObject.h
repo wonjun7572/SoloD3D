@@ -29,6 +29,7 @@ public:
 	virtual void Tick(_double TimeDelta);
 	virtual void Late_Tick(_double TimeDelta);
 	virtual HRESULT Render();
+	virtual	HRESULT RenderShadow();
 
 	virtual void Set_ModelTag(_tchar* szTag){wcscpy_s(m_szModelTag,MAX_PATH, szTag);}
 	virtual const _tchar*	Get_ModelTag() { return nullptr; }
@@ -38,6 +39,7 @@ public:
 	virtual void	Remove_Component(const wstring& strTag);
 
 	bool		Get_Dead() { return m_bDead; }
+	bool		Get_HasShadow() { return m_bHasShadow; }
 
 protected:
 	ID3D11Device*			m_pDevice = nullptr;
@@ -59,6 +61,7 @@ protected:
 
 	_bool									m_bClone;
 	_bool									m_bDead;
+	_bool									m_bHasShadow = false;
 	_float									m_fCamDistance = { 0.f };
 	_float4									m_vRimColor = { _float4(0.f,0.f,0.f,0.f) };
 

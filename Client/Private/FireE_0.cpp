@@ -22,19 +22,12 @@ HRESULT CFireE_0::Init_Prototype()
 
 HRESULT CFireE_0::Init(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(CGameObject::Init(&GameObjectDesc)))
+	if (FAILED(__super::Init(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
 	m_strObjName = L"Effect_Rect_FireE_0";
 
 	m_fAlpha = 1.f;
@@ -48,8 +41,9 @@ void CFireE_0::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 
 	Compute_BillBoard();
+	m_pTransformCom->Set_Scaled(_float3(m_CSize[0], m_CSize[1], m_CSize[2]));
 
-	m_fFrame += 32.0f * TimeDelta;
+	m_fFrame += 32.0f * static_cast<_float>(TimeDelta);
 
 	if (m_fFrame >= 32.0f)
 		m_fFrame = 0.f;
@@ -78,6 +72,11 @@ HRESULT CFireE_0::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CFireE_0::Imgui_RenderProperty()
+{
+	ImGui::DragFloat3("AfterScale", m_CSize, 0.01f, 0.f, 100.f);
 }
 
 HRESULT CFireE_0::SetUp_Components()

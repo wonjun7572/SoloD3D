@@ -22,13 +22,7 @@ HRESULT CArcaneE::Init_Prototype()
 
 HRESULT CArcaneE::Init(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(CGameObject::Init(&GameObjectDesc)))
+	if (FAILED(__super::Init(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
@@ -39,6 +33,25 @@ HRESULT CArcaneE::Init(void * pArg)
 	m_fAlpha = 1.f;
 	m_UVMoveFactor = _float2(0.f, 0.f);
 
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(39.f, 0.f, 65.f, 1.f));
+
+	LIGHTDESC			LightDesc;
+	ZeroMemory(&LightDesc, sizeof LightDesc);
+	LightDesc.eType = LIGHTDESC::TYPE_POINT;
+	LightDesc.isEnable = true;
+	XMStoreFloat4(&LightDesc.vPosition, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	LightDesc.fRange = 10.0f;
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -48,7 +61,7 @@ void CArcaneE::Tick(_double TimeDelta)
 
 	Compute_BillBoard();
 
-	m_fFrame += 42.0f * TimeDelta;
+	m_fFrame += 42.0f * static_cast<_float>(TimeDelta);
 
 	if (m_fFrame >= 42.0f)
 		m_fFrame = 0.f;

@@ -6,6 +6,7 @@
 
 #include "Camera_Dynamic.h"
 #include "LoadingUI.h"
+#include "VIBuffer_Trail.h"
 
 #include "EffectManager.h"
 
@@ -179,6 +180,11 @@ HRESULT CMainApp::Ready_Prototype_Component()
 	/* For.Prototype_Component_Shader_VtxPointInstancing */
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxPointInstancing"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointInstancing.hlsl"), VTXPOINT_DECLARATION::Elements, VTXPOINT_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_Shadow */
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Shadow"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Shadow.hlsl"), VTXSHADOWANIMMODEL_DECLARATION::Elements, VTXSHADOWANIMMODEL_DECLARATION::iNumElements))))
 		return E_FAIL;
 
 	/*For.Prototype_Component_Texture_LoadingUI*/

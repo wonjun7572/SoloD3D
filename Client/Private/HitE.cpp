@@ -31,6 +31,9 @@ HRESULT CHitE::Init(void * pArg)
 	if (FAILED(CGameObject::Init(&GameObjectDesc)))
 		return E_FAIL;
 
+	XMStoreFloat4x4(&m_RectEffectDesc.PivotMatrix, XMMatrixIdentity());
+	m_RectEffectDesc.pTargetTransform = nullptr;
+
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 

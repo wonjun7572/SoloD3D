@@ -9,6 +9,9 @@
 #include "Bone.h"
 #include "Effect_Mesh.h"
 #include "Tree.h"
+#include "ProgressBarUI.h"
+#include "EffectManager.h"
+#include "DemonSkillCircular.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -42,8 +45,11 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_Effects()))
-		return E_FAIL;
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(35.f, 0.f, 60.f, 1.f));
+	}
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
@@ -74,14 +80,40 @@ HRESULT CDemon::Init(void * pArg)
 	if (FAILED(SetUP_UI()))
 		return E_FAIL;
 
-	m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
+	m_vRimColor = _float4(0.3f, 0.1f, 0.1f, 1.f);
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillFloor", L"DEMON_SKILL_FLOOR");
+
+	CEffect_Rect::RECTEFFECTDESC rectDesc;
+
+	_matrix pivotMat = XMMatrixScaling(20.f, 20.f, 1.f) *
+		XMMatrixRotationX(XMConvertToRadians(-90.f)) *
+		XMMatrixRotationY(XMConvertToRadians(-110.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(-180.f)) *
+		XMMatrixTranslation(0.f, 0.6f, 0.f);
+
+	XMStoreFloat4x4(&rectDesc.PivotMatrix, pivotMat);
+	rectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillCircular", L"DEMON_SKILL_CIRCULAR", &rectDesc);
+	
+	pivotMat = XMMatrixScaling(3.f, 3.f, 1.f) *
+		XMMatrixRotationX(XMConvertToRadians(90.f)) *
+		XMMatrixRotationY(XMConvertToRadians(-90.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 0.6f, 0.f);
+
+	XMStoreFloat4x4(&rectDesc.PivotMatrix, pivotMat);
+	rectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillStraight", L"DEMON_SKILL_Straight", &rectDesc);
 
 	return S_OK;
 }
 
 void CDemon::Tick(_double TimeDelta)
 {
-	if (g_LEVEL == LEVEL_CHAP3)
+	if (g_LEVEL == LEVEL_CHAP3 || g_LEVEL == LEVEL_CHAP1)
 	{
 		__super::Tick(TimeDelta);
 		AdditiveAnim(TimeDelta);
@@ -174,6 +206,9 @@ HRESULT CDemon::Render()
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
+		if (FAILED(m_pDissolveTexCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture")))
+			return E_FAIL;
+
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}	
 
@@ -189,6 +224,29 @@ void CDemon::Imgui_RenderProperty()
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 	
+	ImGui::DragFloat("Dissolve", &m_fDissolveAmount, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Finge", &m_fFringeAmount, 0.01f, -10.f, 10.f);
+	
+	ImGui::DragFloat("test", &test, 0.01f, 0.f, 10.f);
+
+	if (ImGui::Button("Skill1"))
+		m_bSkill_1ToPlayer = true;
+
+	if (ImGui::Button("Skill2"))
+		m_bSkill_2ToPlayer = true;
+
+	if (ImGui::Button("Skill3"))
+		m_bSkill_3ToPlayer = true;
+
+	if (ImGui::Button("Skill4"))
+		m_bSkill_4ToPlayer = true;
+
+	if (ImGui::Button("Skill5"))
+		m_bSkill_5ToPlayer = true;
+
+	if (ImGui::Button("Skill6"))
+		m_bSkill_6ToPlayer = true;
+
 	//ImGui::DragFloat("CX", &m_CX, 0.1f, -10.f, 10.f);
 	//ImGui::DragFloat("CY", &m_CY, 0.1f, -10.f, 10.f);
 	//ImGui::DragFloat("CZ", &m_CZ, 0.1f, -10.f, 10.f);
@@ -267,12 +325,11 @@ void CDemon::Adjust_Collision(_double TimeDelta)
 
 void CDemon::CollisionToPlayer(_double TimeDelta)
 {
-	// 이 부분 충돌을 해야할 이유가 없는 것 같다
 	_float3 vPos =	m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance =	CMathUtils::Distance(vPos, vPlayerPos);
 
-	if (fabsf(fDistance) < 10.f)
+	if (fabsf(fDistance) < 20.f)
 		m_bPlayerChase = true;
 	else
 		m_bPlayerChase = false;
@@ -487,7 +544,7 @@ void CDemon::SetUp_FSM()
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		_vector	vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-
+		
 		if (!m_bPlayerAttack)
 		{
 			m_pModelCom->Set_AnimationIndex(DEMON_Run_F);
@@ -498,7 +555,6 @@ void CDemon::SetUp_FSM()
 			m_pModelCom->Set_AnimationIndex(DEMON_Idle_C);
 			m_pTransformCom->LookAt(vPlayerPos);
 		}
-
 		m_AttackDelayTime += TimeDelta;
 		RELEASE_INSTANCE(CGameInstance);
 	})
@@ -613,8 +669,14 @@ void CDemon::SetUp_FSM()
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_02);
 		m_fSkillHitDownRange = 4.f;
 	})
-		.Tick([this](_double TImeDelta)
+		.Tick([this](_double TimeDelta)
 	{
+		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_FLOOR"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
+		CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL_FLOOR")->Set_Scaled(_float3(m_fSkillHitDownRange * 2.5f, m_fSkillHitDownRange * 2.5f, 1.f));
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_FLOOR", TimeDelta);
+		
 		if (AnimIntervalChecker(DEMON_SK_Firing_02, 0.6, 0.8))
 			m_bRealSkill = true;
 		else
@@ -654,10 +716,34 @@ void CDemon::SetUp_FSM()
 		m_fRotationX = 0.5f;
 		m_fRotationY = -1.f;
 		m_fRotationZ = 0.f;
+		m_fSkill3EffectTime = 0.0;
+		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Linking(true);
 	})
 		.Tick([this](_double TimeDelta) 
 	{
 		m_bRealSkill = true;
+		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		CGameObject* pSkillEffect = CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR");
+
+		m_fSkill3EffectTime += static_cast<float>(TimeDelta) * 0.25f;
+		
+		if (m_fSkill3EffectTime >= 0.4f)
+			m_fSkill3EffectTime = 0.4f;
+
+		/*_matrix pivotMat = XMMatrixScaling(20.f, 20.f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(-90.f)) *
+			XMMatrixRotationY(XMConvertToRadians(70.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(-180.f)) *
+			XMMatrixTranslation(0.f, 0.6f, 0.f);*/
+		//static_cast<CEffect_Rect*>(pSkillEffect)->Set_PivotMatrix(pivotMat);
+		static_cast<CDemonSkillCircular*>(pSkillEffect)->Set_Amount(m_fSkill3EffectTime);
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_CIRCULAR", TimeDelta);
+		if (AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
+			m_fRotationY += static_cast<_float>(TimeDelta) * 1.2f;
+
+		if (m_fRotationY >= 1.f)
+			m_fRotationY = 1.f;
 	})
 		.OnExit([this]()
 	{
@@ -694,7 +780,7 @@ void CDemon::SetUp_FSM()
 		m_fOBBY = 3.f;
 		m_fOBBZ = 0.f;
 
-		m_fOBBCX = 0.5f;
+		m_fOBBCX = 1.f;
 		m_fOBBCY = 1.f;
 		m_fOBBCZ = 0.f;
 
@@ -704,13 +790,30 @@ void CDemon::SetUp_FSM()
 
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_04);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_04);
+		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_Linking(true);
+		m_fSkill5EffectTime = 0.f;
 	})
 		.Tick([this](_double TimeDelta) 
 	{
-		m_fOBBZ  += static_cast<_float>(TimeDelta) * 2.f;
-		m_fOBBCZ += static_cast<_float>(TimeDelta) * 2.f;
+		m_fSkill5EffectTime += static_cast<float>(TimeDelta) * 10.f;
+
+		if (m_fSkill5EffectTime >= 20.f)
+			m_fSkill5EffectTime = 20.f;
+
+		_matrix pivotMat = XMMatrixScaling(m_fSkill5EffectTime, 4.f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(90.f)) *
+			XMMatrixRotationY(XMConvertToRadians(-90.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 0.6f, 0.f);
+		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_PivotMatrix(pivotMat);
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_Straight", TimeDelta);
+
 		if (AnimIntervalChecker(DEMON_SK_Firing_04, 0.7, 0.9))
+		{
 			m_bRealSkill = true;
+			m_fOBBZ = 5.f;
+			m_fOBBCZ = 5.f;
+		}
 		else
 			m_bRealSkill = false;
 	})
@@ -741,6 +844,12 @@ void CDemon::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta) 
 	{
+		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_FLOOR"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
+		CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL_FLOOR")->Set_Scaled(_float3(m_fSkillHitDownRange * 2.5f, m_fSkillHitDownRange * 2.5f, 1.f));
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_FLOOR", TimeDelta);
+
 		if (AnimIntervalChecker(DEMON_SK_Firing_05, 0.6, 0.7))
 			m_bRealSkill = true;
 		else
@@ -772,10 +881,14 @@ void CDemon::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta) 
 	{
+		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_FLOOR"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
 		m_fSkillHitDownRange += static_cast<_float>(TimeDelta) * 2.5f;
+		CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL_FLOOR")->Set_Scaled(_float3(m_fSkillHitDownRange * 2.5f, m_fSkillHitDownRange * 2.5f, 1.f));
 		m_bImpossibleDamaged = true;
 		m_bImpossibleSkillDamaged = true;
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06);
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_FLOOR", TimeDelta);
 	})
 		.AddTransition("Skill_6_Charging to Skill_6", "Skill_6")
 		.Predicator([this]()
@@ -814,8 +927,6 @@ void CDemon::SetUp_FSM()
 	{
 		return m_bDeadAnim;
 	})
-
-
 
 		// Groggy
 		.AddState("Groggy")
@@ -986,7 +1097,8 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(DEMON_DeadBody);
 		m_dDeadTime += TimeDelta;
-
+		m_fDissolveAmount += static_cast<_float>(TimeDelta);
+		
 		if (m_dDeadTime > 3.0)
 			m_bDead = true;
 	})
@@ -996,6 +1108,8 @@ void CDemon::SetUp_FSM()
 
 HRESULT CDemon::SetUp_Components()
 {
+	__super::SetUp_Components();
+
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
@@ -1007,7 +1121,7 @@ HRESULT CDemon::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP2, TEXT("Prototype_Component_Model_Demon"), TEXT("Com_Model"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Demon"), TEXT("Com_Model"),
 		(CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -1126,45 +1240,21 @@ HRESULT CDemon::SetUp_ShaderResources()
 
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
-	else
-		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
 	
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CDemon::SetUp_Effects()
-{
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	CGameObject*		 pEffect = nullptr;
-
-	CEffect_Mesh::EFFECTDESC effectDesc;
-	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
-
-	_matrix	pivotMat = XMMatrixScaling(3.f, 3.f, 6.f) *
-		XMMatrixRotationX(XMConvertToRadians(270.f)) *
-		XMMatrixRotationY(XMConvertToRadians(270.f)) *
-		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
-		XMMatrixTranslation(0.f, 4.5f, 1.f);
-
-	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
-	effectDesc.iPassIndex = 2;
-	effectDesc.iDiffuseTex = 25;
-	effectDesc.iMaskTex = 27;
-	effectDesc.pTargetTransform = m_pTransformCom;
-	Safe_AddRef(m_pTransformCom);
-
-	pEffect = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_FireBallLine"), &effectDesc);
-
-	if (nullptr == pEffect)
+	if (FAILED(m_pShaderCom->Set_RawValue("fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
 		return E_FAIL;
 
-	m_Effects.push_back(pEffect);
+	if (FAILED(m_pShaderCom->Set_RawValue("fFringeAmount", &m_fFringeAmount, sizeof(_float))))
+		return E_FAIL;
+
+	_bool bTRUE = true;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bTRUE, sizeof(_bool))))
+		return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

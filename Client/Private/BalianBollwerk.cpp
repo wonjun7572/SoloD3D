@@ -57,7 +57,7 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 	m_strObjName = L"BalianBollwerk";
 
 	SetUp_UI();
-	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 	
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
@@ -148,6 +148,7 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 
 	if (pGameInstance->Find_LayerList(LEVEL_CHAP1, L"Layer_Monster")->empty())
 	{
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 1.f);
 		m_bConversation = true;
 		static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
 		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
@@ -162,12 +163,14 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 
 	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
 	{
+		m_vRimColor = _float4(0.f, 0.f, 0.f, 1.f);
 		Conversation(TimeDelta);
 		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
 	}
 
 	if (!m_bConversation)
 	{
+		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	
 		if (m_CheckPoints.size() <= 1)
@@ -368,7 +371,7 @@ void CBalianBollwerk::SetUp_FSM()
 		.AddState("Player_Chase")
 		.Tick([this](_double TimeDelta)
 	{
-		m_fDeadTime += TimeDelta;
+		m_fDeadTime += static_cast<_float>(TimeDelta);
 
 		if (m_fDeadTime <= 5.f)
 		{
@@ -615,8 +618,7 @@ HRESULT CBalianBollwerk::SetUp_ShaderResources()
 
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
-	else
-		m_vRimColor = _float4(0.1f, 0.1f, 1.0f, 1.f);
+	
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;

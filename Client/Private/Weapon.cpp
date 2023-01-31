@@ -2,7 +2,6 @@
 #include "..\Public\Weapon.h"
 #include "GameInstance.h"
 #include "Bone.h"
-#include "Effect_Point.h"
 
 CWeapon::CWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -34,7 +33,6 @@ HRESULT CWeapon::Init(void * pArg)
 		return E_FAIL;
 	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.113f,-0.637f, -1.511f, 1.f));
-	m_vRimColor = _float4(0.01f, 0.01f, 0.1f, 0.1f);
 	return S_OK;
 }
 
@@ -128,13 +126,7 @@ HRESULT CWeapon::SetUp_Components()
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxModel"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	//if (g_LEVEL == LEVEL_CHAP1)
-	//{
-	//	/* For.Com_Model */
-	//	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Sword"), TEXT("Com_Model"),
-	//		(CComponent**)&m_pModelCom)))
-	//		return E_FAIL;
-	//}
+
 	if (g_LEVEL == LEVEL_CHAP1 || g_LEVEL == LEVEL_CHAP2)
 	{
 		/* For.Com_Model */

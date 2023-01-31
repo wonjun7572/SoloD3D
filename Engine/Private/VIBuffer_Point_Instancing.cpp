@@ -1,5 +1,5 @@
-
 #include "..\public\VIBuffer_Point_Instancing.h"
+#include "MathUtils.h"
 
 CVIBuffer_Point_Instancing::CVIBuffer_Point_Instancing(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CVIBuffer_Instancing(pDevice, pContext)
@@ -17,6 +17,11 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 {
 	if (FAILED(__super::Init_Prototype()))
 		return E_FAIL;
+
+	m_pSpeeds = new _float[iNumInstance];
+
+	for (_uint i = 0; i < iNumInstance; ++i)
+		m_pSpeeds[i] = static_cast<_double>(CMathUtils::GetRandomFloat(1.f, 10.f));
 
 	m_iNumInstance = iNumInstance;
 	m_iIndexCountPerInstance = 1;
@@ -45,7 +50,7 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 	ZeroMemory(pVertices, sizeof(VTXPOINT));
 
 	pVertices->vPosition = _float3(0.0f, 0.0f, 0.0f);
-	pVertices->vPSize = _float2(0.1f, 0.1f);
+	pVertices->vPSize = _float2(0.5f, 0.5f);
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
 	m_SubResourceData.pSysMem = pVertices;
@@ -102,7 +107,7 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);
 		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
 		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		pInstanceVertices[i].vPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		pInstanceVertices[i].vPosition = _float4(CMathUtils::GetRandomFloat(-3.f, 3.f), 2.f, CMathUtils::GetRandomFloat(-3.f, 3.f), 1.f);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -127,6 +132,36 @@ HRESULT CVIBuffer_Point_Instancing::Tick(_double TimeDelta)
 	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Point_Instancing::Go_Dir(_float4 vDir, _double TimeDelta, _double dRespawnTime)
+{
+	D3D11_MAPPED_SUBRESOURCE			SubResource;
+	ZeroMemory(&SubResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	m_TimeDelta += TimeDelta;
+
+	m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + (XMLoadFloat4(&(vDir * m_pSpeeds[i] * TimeDelta))));
+		
+		if (m_TimeDelta >= dRespawnTime)
+		{
+			XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, 
+				XMLoadFloat4(&_float4(CMathUtils::GetRandomFloat(-3.f, 3.f), 
+				2.f, 
+				CMathUtils::GetRandomFloat(-3.f, 3.f), 1.f)));
+
+			if(i == m_iNumInstance - 1 )
+				m_TimeDelta = 0.0;
+		}
+	}
 
 	m_pContext->Unmap(m_pInstanceBuffer, 0);
 
@@ -197,5 +232,8 @@ void CVIBuffer_Point_Instancing::Free()
 	__super::Free();
 
 	if (false == m_bClone)
+	{
 		Safe_Delete_Array(m_pSpeeds);
+	}
 }
+

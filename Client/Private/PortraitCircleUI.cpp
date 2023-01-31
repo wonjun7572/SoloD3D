@@ -52,7 +52,7 @@ HRESULT CPortraitCircleUI::Init(void * pArg)
 void CPortraitCircleUI::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-	m_fFrame += 15.f * TimeDelta;
+	m_fFrame += 15.f * static_cast<_float>(TimeDelta);
 
 	if (m_fFrame >= 27.0f)
 		m_fFrame = 1.f;
@@ -73,17 +73,17 @@ HRESULT CPortraitCircleUI::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(3);
 	m_pVIBufferCom->Render();
 
 	if (FAILED(SetUp_ShaderResourcesIcon()))
 		return E_FAIL;
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(3);
 	m_pVIBufferCom->Render();
 
 	if (FAILED(SetUp_ShaderResourcesAni()))
 		return E_FAIL;
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(3);
 	m_pVIBufferCom->Render();
 
 	return S_OK;

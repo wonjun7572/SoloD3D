@@ -263,6 +263,7 @@ call Copy.bat</Command>
     <ClInclude Include="..\public\VIBuffer_Cube.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Sphere.h" />
+    <ClInclude Include="..\public\VIBuffer_Trail.h" />
     <ClInclude Include="BaseDelegater.h" />
   </ItemGroup>
   <ItemGroup>
@@ -326,6 +327,7 @@ call Copy.bat</Command>
     <ClCompile Include="..\private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Sphere.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Trail.cpp" />
     <ClCompile Include="..\Public\ImGui\GraphEditor.cpp" />
     <ClCompile Include="..\Public\ImGui\ImCurveEdit.cpp" />
     <ClCompile Include="..\Public\ImGui\ImGradient.cpp" />

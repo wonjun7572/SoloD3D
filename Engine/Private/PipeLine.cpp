@@ -30,8 +30,8 @@ void CPipeLine::Tick()
 {
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_VIEW], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_VIEW])));
 	XMStoreFloat4x4(&m_TransformMatrices_Inverse[D3DTS_PROJ], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[D3DTS_PROJ])));
-
-	memcpy(&m_vCamUp, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[1][0], sizeof(_float4));
+	memcpy(&m_vCamUp, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[1][0], sizeof(_float3));
+	memcpy(&m_vCamLook, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[2][0], sizeof(_float3));
 	memcpy(&m_vCamPosition, &m_TransformMatrices_Inverse[D3DTS_VIEW].m[3][0], sizeof(_float4));
 }
 

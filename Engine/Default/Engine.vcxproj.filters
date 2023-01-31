@@ -178,6 +178,9 @@
     <Filter Include="RenderTarget\Manager">
       <UniqueIdentifier>{e67a2d35-3fe0-47ca-aa20-8f8626889130}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Singleton\ComponentManager\Component\VIBuffer\Trail">
+      <UniqueIdentifier>{b4e648a4-b7cc-4e2b-9a28-96054a58dedb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -230,9 +233,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Component_Manager.h">
       <Filter>Singleton\ComponentManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer.h">
-      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Rect.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Rect</Filter>
@@ -427,6 +427,12 @@
     <ClInclude Include="..\public\Target_Manager.h">
       <Filter>RenderTarget\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Trail.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -464,9 +470,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Component_Manager.cpp">
       <Filter>Singleton\ComponentManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer.cpp">
-      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Rect</Filter>
@@ -645,6 +648,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Target_Manager.cpp">
       <Filter>RenderTarget\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Trail.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

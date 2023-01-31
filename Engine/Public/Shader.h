@@ -27,10 +27,15 @@ public:
 	HRESULT Set_ShaderResourceViewArray(const char* pConstantName, ID3D11ShaderResourceView** ppSRV, _uint iNumTextures);
 	
 	HRESULT Set_MatrixArray(const char* pConstantName, const _float4x4* pData, _uint iNumMatrices);
+	HRESULT ReCompile();
 
 private:
 	ID3DX11Effect*		m_pEffect = nullptr;
 	vector<ID3D11InputLayout*>	m_InputLayouts;
+
+	wstring							m_wstrFilePath = L"";
+	const D3D11_INPUT_ELEMENT_DESC* m_pElements = nullptr;
+	_uint							m_iNumElements = 0;
 
 private:
 	_uint				m_iNumPasses = 0;

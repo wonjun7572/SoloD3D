@@ -11,6 +11,13 @@ BEGIN(Client)
 
 class CEffect_Rect : public CEffect
 {
+public:
+	typedef struct tagRectEffectDesc
+	{
+		CTransform* pTargetTransform;
+		_float4x4	PivotMatrix;
+	}RECTEFFECTDESC;
+
 protected:
 	CEffect_Rect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CEffect_Rect(const CEffect_Rect& rhs);
@@ -23,12 +30,16 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	Set_Linking(_bool bLink) { m_bLinking = bLink; }
+	void	Set_PivotMatrix(_fmatrix mat) { XMStoreFloat4x4(&m_RectEffectDesc.PivotMatrix, mat); }
 	void	Imgui_RenderProperty() override;
 	void	Compute_BillBoard();
 
 protected:
-	CTexture*					m_pTextureCom = nullptr;
-	CVIBuffer_Rect*				m_pVIBufferCom = nullptr;
+	RECTEFFECTDESC					m_RectEffectDesc;
+	CTexture*						m_pTextureCom = nullptr;
+	CVIBuffer_Rect*					m_pVIBufferCom = nullptr;
+	_bool							m_bLinking = false;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

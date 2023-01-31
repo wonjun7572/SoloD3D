@@ -6,10 +6,13 @@ CShader::CShader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 }
 
 CShader::CShader(const CShader & rhs)
-	:CComponent(rhs)
-	,m_pEffect(rhs.m_pEffect)
-	,m_InputLayouts(rhs.m_InputLayouts)
-	,m_iNumPasses(rhs.m_iNumPasses)
+	: CComponent(rhs)
+	, m_pEffect(rhs.m_pEffect)
+	, m_InputLayouts(rhs.m_InputLayouts)
+	, m_iNumPasses(rhs.m_iNumPasses)
+	, m_wstrFilePath(rhs.m_wstrFilePath)
+	, m_pElements(rhs.m_pElements)
+	, m_iNumElements(rhs.m_iNumElements)
 {
 	Safe_AddRef(m_pEffect);
 
@@ -29,6 +32,10 @@ HRESULT CShader::Init_Prototype(const wstring& pShaderFilePath, const D3D11_INPU
 
 	if (FAILED(D3DX11CompileEffectFromFile(pShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
+
+	m_wstrFilePath = pShaderFilePath;
+	m_pElements = pElements;
+	m_iNumElements = iNumElements;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	
@@ -55,6 +62,7 @@ HRESULT CShader::Init_Prototype(const wstring& pShaderFilePath, const D3D11_INPU
 		m_InputLayouts.push_back(pInputLayout);
 	}
 
+
 	return S_OK;
 }
 
@@ -63,11 +71,72 @@ HRESULT CShader::Init(void * pArg)
 	return S_OK;
 }
 
+HRESULT CShader::ReCompile()
+{
+	for (auto& pInputLayout : m_InputLayouts)
+		Safe_Release(pInputLayout);
+
+	m_InputLayouts.clear();
+
+	Safe_Release(m_pEffect);
+
+	_uint   iHlslFlag = 0;
+
+#ifdef _DEBUG
+	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+#endif
+
+	if (FAILED(D3DX11CompileEffectFromFile(m_wstrFilePath.c_str(),
+		nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		iHlslFlag,
+		0,
+		m_pDevice,
+		&m_pEffect,
+		nullptr)))
+		return E_FAIL;
+
+	ID3DX11EffectTechnique*   pTechnique = m_pEffect->GetTechniqueByIndex(0);
+
+	D3DX11_TECHNIQUE_DESC   TechniqueDesc;
+	pTechnique->GetDesc(&TechniqueDesc);
+
+	m_iNumPasses = TechniqueDesc.Passes;
+
+	for (_uint i = 0; i < m_iNumPasses; ++i)
+	{
+		ID3D11InputLayout*   pInputLayout = nullptr;
+
+		ID3DX11EffectPass*   pPass = pTechnique->GetPassByIndex(i);
+		if (pPass == nullptr)
+			return E_FAIL;
+
+		D3DX11_PASS_DESC   PassDesc;
+		pPass->GetDesc(&PassDesc);
+
+		if (FAILED(m_pDevice->CreateInputLayout(m_pElements,
+			m_iNumElements,
+			PassDesc.pIAInputSignature,
+			PassDesc.IAInputSignatureSize,
+			&pInputLayout)))
+			return E_FAIL;
+
+		m_InputLayouts.push_back(pInputLayout);
+	}
+
+	return S_OK;
+}
+
 void CShader::Imgui_RenderProperty()
 {
 	ImGui::Text("PASSES All Count  :");
 	ImGui::SameLine();
 	ImGui::Text(to_string(m_iNumPasses).c_str());
+	
+	if (ImGui::Button("ReCompile Shader"))
+		ReCompile();
 }
 
 HRESULT CShader::Begin(_uint iPassIndex)

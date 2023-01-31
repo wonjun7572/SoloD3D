@@ -1,5 +1,6 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_ProjMatrixInv, g_ViewMatrixInv;
+matrix			g_LightProjMatrix, g_LightViewMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
@@ -16,8 +17,8 @@ vector			g_vMtrlSpecular = (vector)1.f;
 texture2D		g_Texture; /* 디버그용텍스쳐*/
 texture2D		g_NormalTexture;
 texture2D		g_DepthTexture;
+texture2D		g_ShadowTexture;
 
-texture2D		g_SpecularBlendTexture;
 texture2D		g_SpecularTexture;
 texture2D		g_DiffuseTexture;
 texture2D		g_ShadeTexture;
@@ -97,9 +98,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecularDesc = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	vector		vShadowDesc = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
 
 	float		fViewZ = vDepthDesc.y * 300.f;
-
+	
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
 	Out.vShade = g_vLightDiffuse * saturate(saturate(dot(normalize(g_vLightDir) * -1.f, normalize(vNormal))) + (g_vLightAmbient * g_vMtrlAmbient));
@@ -124,6 +126,21 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = vWorldPos - g_vCamPosition;
+
+	// For. Shadow
+	//matrix		ShadowCameraVP = mul(g_LightViewMatrix, g_LightProjMatrix);
+	//vector		vShadowClipPos = mul(vWorldPos, ShadowCameraVP);
+	//float		fDepth = vShadowClipPos.z / vShadowClipPos.w;
+	//float2 uv = vShadowClipPos.xy / vShadowClipPos.w;
+	//uv.y = -uv.y;
+	//uv = uv * 0.5f + 0.5f;
+
+	//if (0 < uv.x && uv.x < 1 && 0 < uv.y && uv.y < 1)
+	//{
+	//	float fShadowDepth = g_ShadowTexture.Sample(LinearSampler, uv).x;
+	//	if (fDepth > fShadowDepth + 0.00001f)
+	//		Out.vShade *= 0.1f;
+	//}
 
 	Out.vSpecular = (g_vLightSpecular * vSpecularDesc) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
 	Out.vSpecular.a = 0.f;
@@ -186,10 +203,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vSpecularBlend = g_SpecularBlendTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vRimColor = g_RimTexture.Sample(LinearSampler, In.vTexUV);
 
-	Out.vColor = (vDiffuse * vShade) + (vSpecular * vSpecularBlend) + (vRimColor * 0.3f);
+	Out.vColor = (vDiffuse * vShade) + vSpecular + vRimColor;
 
 	if (0.0f == Out.vColor.a)
 		discard;
@@ -314,5 +330,4 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_BLEND();
 	}
-
 }

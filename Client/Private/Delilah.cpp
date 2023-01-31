@@ -54,7 +54,7 @@ HRESULT CDelilah::Init(void * pArg)
 	m_strObjName = L"Delilah";
 
 	SetUp_UI();
-	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
@@ -241,7 +241,7 @@ void CDelilah::SetUp_FSM()
 	{
 		m_pTransformCom->ChaseAndLookAt(_float4(185.f, 0.f, 255.f, 1.f), TimeDelta, 0.1f, m_pNavigationCom);
 		m_pModelCom->Set_AnimationIndex(DELILAH_Run_F);
-		m_fDeadTime += TimeDelta;
+		m_fDeadTime += static_cast<_float>(TimeDelta);
 		if (m_fDeadTime > 10.f)
 			m_bDead = true;
 	})
@@ -491,7 +491,7 @@ HRESULT CDelilah::SetUp_ShaderResources()
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
 	else
-		m_vRimColor = _float4(0.1f, 0.1f, 1.0f, 1.f);
+		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;

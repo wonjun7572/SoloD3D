@@ -9,9 +9,16 @@ END
 
 BEGIN(Client)
 
-class Effect_Point final : public CEffect
+class Effect_Point : public CEffect
 {
-private:
+public:
+	typedef struct tagPointEffectDesc
+	{
+		_float4x4   PivotMatrix;
+		CTransform* pTargetTransform;
+	}POINTDESC;
+
+protected:
 	Effect_Point(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	Effect_Point(const Effect_Point& rhs);
 	virtual ~Effect_Point() = default;
@@ -23,15 +30,12 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+protected:
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Point_Instancing*	m_pVIBufferCom = nullptr;
-
-	_int						m_iNumber = 0;
-
-private:
-	HRESULT SetUp_Components();
-	HRESULT SetUp_ShaderResources();
+	_float						m_fFrame = 0.f;
+	POINTDESC					m_ParticleDesc;
+	_bool						m_bLinking = false;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

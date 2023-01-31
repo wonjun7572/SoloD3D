@@ -56,6 +56,11 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
+HRESULT CGameObject::RenderShadow()
+{
+	return S_OK;
+}
+
 void CGameObject::Remove_Component(const wstring & strTag)
 {
 	auto iter = m_Components.find(strTag);

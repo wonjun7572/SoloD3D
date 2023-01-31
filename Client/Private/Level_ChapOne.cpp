@@ -8,6 +8,7 @@
 #include "ImGui_ProtoEditor.h"
 #include "ImGui_PropertyEditor.h"
 #include "EffectManager.h"
+#include "Camera.h"
 
 CLevel_ChapOne::CLevel_ChapOne(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -134,37 +135,10 @@ HRESULT CLevel_ChapOne::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
+	LightDesc.vPosition = _float4(0.f, 30.f, -10.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.6f, 0.4f, 0.4f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-
-	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
-		return E_FAIL;
-
-	ZeroMemory(&LightDesc, sizeof LightDesc);
-
-	LightDesc.eType = LIGHTDESC::TYPE_POINT;
-	LightDesc.isEnable = true;
-	/*LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);*/
-	LightDesc.vPosition = _float4(5.f, 3.f, 5.f, 1.f);
-	LightDesc.fRange = 10.0f;
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-
-	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
-		return E_FAIL;
-
-	ZeroMemory(&LightDesc, sizeof LightDesc);
-
-	LightDesc.eType = LIGHTDESC::TYPE_POINT;
-	LightDesc.isEnable = true;
-	/*LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);*/
-	LightDesc.vPosition = _float4(10.f, 3.f, 5.f, 1.f);
-	LightDesc.fRange = 10.0f;
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 0.2f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
@@ -198,8 +172,26 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+		return E_FAIL;
+
+	CCamera::CAMERADESC			CameraDesc;
+	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
+
+	CameraDesc.vEye = _float4(0.f, 50.f, -50.f, 1.f);
+	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+
+	CameraDesc.fFovy = XMConvertToRadians(60.0f);
+	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
+	CameraDesc.fNear = 0.2f;
+	CameraDesc.fFar = 300.f;
+
+	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
+	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), &CameraDesc)))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -247,6 +239,9 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
 		return E_FAIL;
 
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"))))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -277,6 +272,66 @@ HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Stair"))))
 		return E_FAIL;
 
+	_float4 vPos = _float4(100.9f, 14.f, 42.8f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(100.9f, 14.f, 55.1f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(100.9f, 14.f, 75.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(109.5f, 14.f, 42.8f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(109.5f, 14.f, 55.1f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(109.5f, 14.f, 75.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(121.5f, 14.f, 75.3f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(121.5f, 14.f, 94.7f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(121.5f, 14.f, 114.1f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(88.8f, 14.f, 75.3f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(88.8f, 14.f, 94.7f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(88.8f, 14.f, 114.1f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -298,8 +353,22 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Twister_Line"))))
 		return E_FAIL;
 	
-	RELEASE_INSTANCE(CGameInstance);
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_ArcaneE"))))
+		return E_FAIL;
 
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FireWave"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FireBallLine"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FireE_0"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 	return S_OK;
 }
 

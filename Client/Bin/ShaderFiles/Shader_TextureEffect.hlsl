@@ -162,4 +162,17 @@ technique11 DefaultTechnique
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
 	}
+
+	pass Tex_EffectSimpleAlpha
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Test, 0);
+		SetBlendState(BS_AlphaBlending, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
+	}
 }

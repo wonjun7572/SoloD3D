@@ -33,7 +33,6 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
-
 	if (pArg != nullptr && g_LEVEL == LEVEL_CHAP1)
 	{
 		_float4 vPos;
@@ -164,6 +163,13 @@ HRESULT CSkeletonWarrior::Render()
 			HasSpecular = true;
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
+		
+		if (m_bDeadAnim == true)
+		{
+			if (FAILED(m_pDissolveTexCom->Bind_ShaderResource(m_pShaderCom,"g_DissolveTexture")))
+				return E_FAIL;
+		}
+
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -177,6 +183,9 @@ void CSkeletonWarrior::Imgui_RenderProperty()
 		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 	}
 	m_MonsterUI[MONSTER_NAME]->Imgui_RenderProperty();
+	
+	ImGui::DragFloat("Dissolve", &m_fDissolveAmount, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Finge", &m_fFringeAmount, 0.01f, -10.f, 10.f);
 }
 
 void CSkeletonWarrior::SetUp_FSM()
@@ -458,7 +467,8 @@ void CSkeletonWarrior::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_DeadBody);
 		m_dDeadTime += TimeDelta;
-
+		m_fDissolveAmount += static_cast<float>(TimeDelta);
+		
 		if (m_dDeadTime > 3.0)
 			m_bDead = true;
 	})
@@ -570,11 +580,11 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_F);
 	}
 
-	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_F, 0.3))
+	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_F, 0.9))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
-	}
+	} 
 
 	///////////////////////////////////////
 
@@ -589,7 +599,7 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ADD_DMG_B);
 	}
 
-	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_B, 0.3))
+	if (AnimFinishChecker(SKELETON_WARRIOR_ADD_DMG_B, 0.9))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -598,6 +608,8 @@ void CSkeletonWarrior::AdditiveAnim(_double TimeDelta)
 
 HRESULT CSkeletonWarrior::SetUp_Components()
 {
+	__super::SetUp_Components();
+
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
@@ -706,13 +718,22 @@ HRESULT CSkeletonWarrior::SetUp_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vCamPosition", &pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
+	
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
-	else
-		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &_float4(1.f, 0.1f, 0.1f, 1.f), sizeof(_float4))))
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
+		return E_FAIL;
+	
+	if (FAILED(m_pShaderCom->Set_RawValue("fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("fFringeAmount", &m_fFringeAmount, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDeadAnim, sizeof(_bool))))
+		return E_FAIL;
+	
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

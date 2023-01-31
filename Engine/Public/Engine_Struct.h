@@ -95,7 +95,7 @@ namespace Engine
 		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXTEX_DECLARATION;
 
-	typedef struct tagVertexNormalTexture
+	typedef struct ENGINE_DLL tagVertexNormalTexture
 	{
 		XMFLOAT3		vPosition;
 		XMFLOAT3		vNormal;
@@ -163,4 +163,17 @@ namespace Engine
 		static const unsigned int			iNumElements = 6;
 		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXRECTINSTANCE_DECLARATION;
+
+	typedef struct tagVertexShadowAnim
+	{
+		XMFLOAT3		vPosition;
+		XMUINT4			vBlendIndex; /* 이 정점이 사용해야하는 뼈의 인덱스(전체뼈 중의 순서(x), 이 정점이 소속된 메시에 영향을 주는 뼈중의 순서(o))  */
+		XMFLOAT4		vBlendWeight;
+	}VTXSHADOWANIMMODEL;
+
+	typedef struct ENGINE_DLL tagVertexShadowAnimModel_Declaration
+	{
+		static const unsigned int		iNumElements = 3;
+		static D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXSHADOWANIMMODEL_DECLARATION;
 }

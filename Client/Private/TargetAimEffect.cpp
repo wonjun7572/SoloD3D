@@ -22,13 +22,7 @@ HRESULT CTargetAimEffect::Init_Prototype()
 
 HRESULT CTargetAimEffect::Init(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(CGameObject::Init(&GameObjectDesc)))
+	if (FAILED(__super::Init(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))

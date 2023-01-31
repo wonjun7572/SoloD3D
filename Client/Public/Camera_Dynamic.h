@@ -18,20 +18,32 @@ public:
 	virtual void Tick(_double TimeDelta)override;
 	virtual void Late_Tick(_double TimeDelta)override;
 	virtual HRESULT Render() override;
-	
+
 	void	Level_Chap1Tick(_double TimeDelta);
 	void	Level_Chap2Tick(_double TimeDelta);
-	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
+	void	Level_Chap3Tick(_double TimeDelta);
+	
+	void	Input_KeyBoard(_double TimeDelta);
+	void	Mouse_Fix();
+
+	void	Imgui_RenderProperty() override;
+	
+	HRESULT	Save_CheckPoints();
+	HRESULT	Load_CheckPoints();
 
 private:
-	CGameObject* m_pPlayerCam = nullptr;
-	CGameObject* m_pPlayer = nullptr;
+	CGameObject*			m_pPlayerCam = nullptr;
+	_bool					m_bCheckPointFinish = false;
+	_double					m_TimeDelta = 0.0;
+	vector<_float4>			m_CheckPoints;
 
-	_bool		 m_bSwitchCam = false;
-	_bool		 m_bCheckPointFinish = false;
+	_float					m_fMultipleTime = 0.1f;
 
-	_double		m_TimeDelta = 0.0;
-	vector<_float4> m_CheckPoints;
+	_int					m_iIndex = 1;
+	_bool					m_bFix = false;
+	_bool					m_bPaused = false;
+
+	_bool					m_bDynamicCam = true;
 
 public:
 	static CCamera_Dynamic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

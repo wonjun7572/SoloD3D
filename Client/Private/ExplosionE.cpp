@@ -22,19 +22,12 @@ HRESULT CExplosionE::Init_Prototype()
 
 HRESULT CExplosionE::Init(void * pArg)
 {
-	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
-	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(CGameObject::Init(&GameObjectDesc)))
+	if (FAILED(__super::Init(pArg)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(rand() % 10, 0.f, rand() % 10, 1.f));
 	m_strObjName = L"Effect_Rect_Explosion";
 
 	m_fAlpha = 1.f;
@@ -49,8 +42,7 @@ void CExplosionE::Tick(_double TimeDelta)
 
 	Compute_BillBoard();
 
-	m_fFrame += 58.0f * TimeDelta;
-
+	m_fFrame += 58.0f * static_cast<_float>(TimeDelta);
 	if (m_fFrame >= 58.0f)
 		m_fFrame = 0.f;
 }

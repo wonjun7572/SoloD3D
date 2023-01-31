@@ -7,6 +7,8 @@
 #include "Animation.h"
 #include "PlayerCamera.h"
 #include "Effect_Rect.h"
+#include "Effect_Point.h"
+
 #include "Upper.h"
 #include "Lower.h"
 #include "Glove.h"
@@ -16,6 +18,12 @@
 #include "SkillChargingUI.h"
 #include "ProgressBarUI.h"
 #include "EffectManager.h"
+
+#include "BalianBollwerk.h"
+#include "Abelardo.h"
+#include "Chinuwa.h"
+#include "Chitata.h"
+#include "Delilah.h"
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -61,13 +69,14 @@ HRESULT CPlayer::Init(void * pArg)
 
 	m_PartSize = static_cast<_uint>(m_PlayerParts.size());
 
+	/* For. Effect*/
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
 		CEffect_Mesh::EFFECTDESC effectDesc;
 		ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
 
-		_matrix pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
+		_matrix pivotMat = XMMatrixScaling(5.f, 1.f, 5.f) *
 			XMMatrixRotationX(XMConvertToRadians(0.f)) *
 			XMMatrixRotationY(XMConvertToRadians(0.f)) *
 			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
@@ -81,6 +90,36 @@ HRESULT CPlayer::Init(void * pArg)
 		Safe_AddRef(m_pTransformCom);
 		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_ThunderWave", L"ThunderWave", &effectDesc);
 		CEffectManager::GetInstance()->SetUp_Effects(L"ThunderWave", 0.f, 2.f, _float2(0.f, -1.f));
+
+		pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(-3.f, 0.f, 3.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 12;
+		effectDesc.iMaskTex = 11;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_FireWave", L"FireWave_0", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"FireWave_0", 0.5f, 2.f, _float2(0.f, -1.f));
+
+		pivotMat = XMMatrixScaling(1.f, 0.5f, 1.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(3.f, 0.f, -3.f);
+
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 12;
+		effectDesc.iMaskTex = 11;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_FireWave", L"FireWave_1", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"FireWave_1", 0.5f, 2.f, _float2(0.f, -1.f));
 
 		pivotMat = XMMatrixScaling(1.2f, 1.2f, 1.2f) *
 			XMMatrixRotationX(XMConvertToRadians(0.f)) *
@@ -213,12 +252,26 @@ HRESULT CPlayer::Init(void * pArg)
 		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Twister_Line", L"ChangeModel_Twister", &effectDesc);
 		CEffectManager::GetInstance()->SetUp_Effects(L"ChangeModel_Twister", 0.3f, 2.f);
 
+		pivotMat = XMMatrixScaling(0.1f, 0.1f, 2.f) *
+			XMMatrixRotationX(XMConvertToRadians(0.f)) *
+			XMMatrixRotationY(XMConvertToRadians(0.f)) *
+			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+			XMMatrixTranslation(0.f, 1.5f, 0.f);
+		XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+		effectDesc.iPassIndex = 3;
+		effectDesc.iDiffuseTex = 121;
+		effectDesc.iMaskTex = 28;
+		effectDesc.pTargetTransform = m_pTransformCom;
+		Safe_AddRef(m_pTransformCom);
+		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Twister_Line", L"VDEF_Twister", &effectDesc);
+		CEffectManager::GetInstance()->SetUp_Effects(L"VDEF_Twister", 1.f, 1.f);
+
 		CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_QskillCrackE", L"CrackE");
 	}
 	else if (g_LEVEL == LEVEL_CHAP2)
 	{
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(320.f, 0.f, 30.f, 1.f));
-		
+
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Target(m_pTransformCom);
 		Safe_AddRef(m_pTransformCom);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_Target(m_pTransformCom);
@@ -238,6 +291,12 @@ HRESULT CPlayer::Init(void * pArg)
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ChangeModel_Twister"))->Set_Target(m_pTransformCom);
 		Safe_AddRef(m_pTransformCom);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_0"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"VDEF_Twister"))->Set_Target(m_pTransformCom);
 		Safe_AddRef(m_pTransformCom);
 	}
 	else if (g_LEVEL == LEVEL_CHAP3)
@@ -264,10 +323,16 @@ HRESULT CPlayer::Init(void * pArg)
 		Safe_AddRef(m_pTransformCom);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Target(m_pTransformCom);
 		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_0"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_1"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"VDEF_Twister"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
 	}
-		
+
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	
+
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
 	m_fHp = 1000;
 	m_fMp = 200;
@@ -275,8 +340,9 @@ HRESULT CPlayer::Init(void * pArg)
 	m_fDefence = 20;
 
 	SetUp_FSM();
-	
-	m_vRimColor = _float4(0.1f , 0.1f , 1.f ,1.f);
+
+	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
+	m_bHasShadow = true;
 
 	return S_OK;
 }
@@ -285,11 +351,11 @@ void CPlayer::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	if(!m_bCamChange)
+	if (!m_bCamChange)
 		Movement(TimeDelta);
-	
+
 	m_pFSM->Tick(TimeDelta);
-	
+
 	m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
 	for (_uint i = PART_UPPER; i < PART_END; ++i)
 	{
@@ -328,7 +394,7 @@ void CPlayer::Late_Tick(_double TimeDelta)
 	if (nullptr != m_pRendererCom)
 	{
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-		
+
 #ifdef _DEBUG
 		for (auto& pCollider : m_pColliderCom)
 			m_pRendererCom->Add_DebugRenderGroup(pCollider);
@@ -374,7 +440,7 @@ HRESULT CPlayer::Render()
 		return E_FAIL;
 
 	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
-	
+
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
@@ -411,26 +477,62 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+HRESULT CPlayer::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShadowShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+	
+	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom[m_eModelState]->Render(m_pShadowShaderCom, i, 0, "g_BoneMatrices");
+	}
+
+	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
+	{
+		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsShadowRender(0)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 void CPlayer::UI_Tick(_double TimeDelta)
 {
-	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_1])->Set_Amount(static_cast<_float>(m_Skill_1IconCollTime / 15.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_1])->Set_Amount(static_cast<_float>(m_Skill_1IconCoolTime / 15.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_2])->Set_Amount(static_cast<_float>(m_Skill_2IconCoolTime / 20.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_3])->Set_Amount(static_cast<_float>(m_Skill_3IconCoolTime / 10.0));
-	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Amount(static_cast<_float>(m_Skill_4IconCollTime / 20.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Amount(static_cast<_float>(m_Skill_4IconCoolTime / 20.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_5])->Set_Amount(static_cast<_float>(m_Skill_5IconCoolTime / 30.0));
-
-	if(m_dModelATime >= 0.001)
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_6])->Set_Amount(static_cast<_float>(m_Skill_6IconCoolTime / 20.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_7])->Set_Amount(static_cast<_float>(m_Skill_7IconCoolTime / 25.0));
+	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_8])->Set_Amount(static_cast<_float>(m_Skill_8IconCoolTime / 12.0));
+	
+	if (m_dModelATime >= 0.001)
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_MODELATIME])->Set_Amount(static_cast<_float>(1.0 - (m_dModelATime / 20.0)));
 
 	static_cast<CSkillChargingUI*>(m_PlayerUI[V_DEF])->Set_Amount(static_cast<_float>(m_Skill_VDefCoolTime / 3.0));
-	
+
 	static_cast<CProgressBarUI*>(m_PlayerUI[HP])->Set_Amount((1.f + m_fHp / 100.f) - 1.f);
 
 	if (m_fMp >= 100.f)
 		m_fMp = 100.f;
 	else
- 		m_fMp += static_cast<_float>(TimeDelta) * 5.f;
-	
+		m_fMp += static_cast<_float>(TimeDelta) * 5.f;
+
 	static_cast<CProgressBarUI*>(m_PlayerUI[MP])->Set_Amount((1.f + m_fMp / 100.f) - 1.f);
 }
 
@@ -484,8 +586,23 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bAction && !m_bMove && m_bSK05;
 	})
-		.AddTransition("Idle to Groggy" , "Groggy")
-		.Predicator([this]() 
+		.AddTransition("Idle to Skill_6", "Skill_6")
+		.Predicator([this]()
+	{
+		return m_bAction && !m_bMove && m_bSK06;
+	})
+		.AddTransition("Idle to Skill_7", "Skill_7")
+		.Predicator([this]()
+	{
+		return m_bAction && !m_bMove && m_bSK07;
+	})
+		.AddTransition("Idle to Skill_8", "Skill_8")
+		.Predicator([this]()
+	{
+		return m_bAction && !m_bMove && m_bSK08;
+	})
+		.AddTransition("Idle to Groggy", "Groggy")
+		.Predicator([this]()
 	{
 		return m_bGroggy;
 	})
@@ -502,30 +619,30 @@ void CPlayer::SetUp_FSM()
 
 		// Groggy
 		.AddState("Groggy")
-		.OnStart([this]() 
+		.OnStart([this]()
 	{
 		m_bCamTurn = true;
 		Reset_Anim(PLAYER_PASSOUT);
 		Set_Anim(PLAYER_PASSOUT);
 	})
-		.Tick([this](_double TimeDelta) 
+		.Tick([this](_double TimeDelta)
 	{
-		if(AnimIntervalChecker(PLAYER_PASSOUT,0, 0.4))
+		if (AnimIntervalChecker(PLAYER_PASSOUT, 0, 0.4))
 			m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
 	})
-		.OnExit([this]() 
+		.OnExit([this]()
 	{
 		m_bGroggy = false;
-		m_bCamTurn = false; 
+		m_bCamTurn = false;
 		m_bImpossibleSkillDamaged = false;
 		Reset_Action();
 	})
-		.AddTransition("Groggy to Idle" , "Idle")
-		.Predicator([this]() 
-	{	
+		.AddTransition("Groggy to Idle", "Idle")
+		.Predicator([this]()
+	{
 		return AnimFinishChecker(PLAYER_PASSOUT);
 	})
-		
+
 		// HitDown
 		.AddState("HitDown")
 		.OnStart([this]()
@@ -536,7 +653,7 @@ void CPlayer::SetUp_FSM()
 		Reset_Anim(PLAYER_DOWN);
 		Set_Anim(PLAYER_DOWN);
 	})
-		.Tick([this](_double TimeDelta) 
+		.Tick([this](_double TimeDelta)
 	{
 		m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
 	})
@@ -556,8 +673,8 @@ void CPlayer::SetUp_FSM()
 		.Tick([this](_double TimeDelta)
 	{
 		m_HitDownDelayTime += TimeDelta;
-		
-		if(m_HitDownDelayTime <= m_HitDownDurationTime)
+
+		if (m_HitDownDelayTime <= m_HitDownDurationTime)
 			m_pTransformCom->Go_Backward(TimeDelta * m_fKnockBackPower, m_pNavigationCom);
 
 		Set_Anim(PLAYER_DOWN_LOOP);
@@ -586,14 +703,14 @@ void CPlayer::SetUp_FSM()
 	{
 		return  AnimFinishChecker(PLAYER_GETUP, 0.85) && !m_bJump;
 	})
-		
+
 		/* 움직임을 위한 */
 		.AddState("Move")
 		.AddTransition("Move to Walk", "Walk")
-		.Predicator([this]() 
+		.Predicator([this]()
 	{
 		return m_bWalking && m_bMove;
-	})	
+	})
 		.AddTransition("Move to Run", "Run")
 		.Predicator([this]()
 	{
@@ -632,7 +749,7 @@ void CPlayer::SetUp_FSM()
 		/* For. run */
 		.AddState("Run")
 		.Tick(this, &CPlayer::Run_Tick)
-		.OnExit([this]() 
+		.OnExit([this]()
 	{
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Stop_Sound(SOUND_PLAYER);
@@ -701,14 +818,14 @@ void CPlayer::SetUp_FSM()
 	})
 
 		.AddState("F_RunJumpUp")
-		.OnStart([this]() 
+		.OnStart([this]()
 	{
 		m_fJumpPower = 0.5f;
 		Reset_Anim(PLAYER_RUN_JUMP_UP_F);
 		Set_Anim(PLAYER_RUN_JUMP_UP_F);
 	})
-		.AddTransition("F_RunJumpUp to F_RunJumpLand" , "F_RunJumpLand")
-		.Predicator([this]() 
+		.AddTransition("F_RunJumpUp to F_RunJumpLand", "F_RunJumpLand")
+		.Predicator([this]()
 	{
 		return AnimFinishChecker(PLAYER_RUN_JUMP_UP_F, 0.2);
 	})
@@ -756,13 +873,18 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_V_DEF);
 		Set_Anim(PLAYER_V_DEF);
+		m_Skill_VDefCoolTime = 0.0;
+		m_bPlayerTurn = false;
 	})
-		.Tick([this](_double TimeDelta) 
+		.Tick([this](_double TimeDelta)
 	{
-		m_pTransformCom->Go_Straight(TimeDelta, m_pNavigationCom);
+		CEffectManager::GetInstance()->Render_Effects(L"VDEF_Twister", TimeDelta);
+		CEffectManager::GetInstance()->Render_Effects(L"DahsParticle", TimeDelta);
+		m_pTransformCom->Go_Straight(TimeDelta * 2.f, m_pNavigationCom);
 	})
-		.OnExit([this]() 
+		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		m_bAction = false;
 		m_bV_DEF = false;
 	})
@@ -771,7 +893,7 @@ void CPlayer::SetUp_FSM()
 	{
 		return CheckFinish_V_DEF();
 	})
-		
+
 		/* For. Attack */
 		.AddState("Attack_1")
 		.OnStart([this]()
@@ -782,12 +904,23 @@ void CPlayer::SetUp_FSM()
 		pGameInstance->Play_Sound(L"common_swing_lv2.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
+		ChangePartsAnimSpeed(1.5);
+		m_bPlayerTurn = false;
 	})
 		.Tick([this](_double TimeDelta)
 	{
+
+		if(m_pCam != nullptr)
+			m_pCam->Shake(0.1f, 0.01f);
+
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.1, 0.3))
+		{
 			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail1", TimeDelta);
-		
+			ChangePartsAnimSpeed(0.7);
+		}
+		else
+			ChangePartsAnimSpeed(1.5);
+
 		if (AnimIntervalChecker(PLAYER_ATK_01, 0.0, 0.6))
 			MonsterNormalAttack(true);
 		else
@@ -795,14 +928,16 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		MonsterNormalAttack(false);
+		ChangePartsAnimSpeed(1.0);
 	})
 		.AddTransition("Attack_1 to Idle", "Idle")
 		.Predicator([this]()
 	{
 		return !m_bAction && CheckFinish_Attack1();
-	}) 
-			.AddTransition("Attack_1 to Attack_2", "Attack_2")
+	})
+		.AddTransition("Attack_1 to Attack_2", "Attack_2")
 		.Predicator([this]()
 	{
 		return m_bAction &&	m_bNormalAttack_2;
@@ -817,27 +952,42 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bHitDown;
 	})
-		
+
 		.AddState("Attack_2")
 		.OnStart([this]()
 	{
+		m_bPlayerTurn = false;
 		Reset_Anim(PLAYER_ATK_02);
 		Set_Anim(PLAYER_ATK_02);
+		MonsterNormalAttack(true);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv3.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
+		ChangePartsAnimSpeed(1.5);
 	})
 		.Tick([this](_double TimeDelta)
 	{
+		if (m_pCam != nullptr)
+			m_pCam->Shake(0.1f, 0.01f);
+
+		m_pCam->Shake(0.1f, 0.01f);
+
 		if (AnimIntervalChecker(PLAYER_ATK_02, 0.1, 0.3))
+		{
 			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail2", TimeDelta);
-			
+			ChangePartsAnimSpeed(0.7);
+		}
+		else
+			ChangePartsAnimSpeed(1.5);
+
 		MonsterNormalAttack(true);
 	})
 		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		MonsterNormalAttack(false);
+		ChangePartsAnimSpeed(1.0);
 	})
 		.AddTransition("Attack_2 to Idle", "Idle")
 		.Predicator([this]()
@@ -862,26 +1012,33 @@ void CPlayer::SetUp_FSM()
 		.AddState("Attack_3")
 		.OnStart([this]()
 	{
+		m_bPlayerTurn = false;
 		Reset_Anim(PLAYER_ATK_03);
 		Set_Anim(PLAYER_ATK_03);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"common_swing_lv4.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
+		ChangePartsAnimSpeed(1.5);
 	})
 		.Tick([this](_double TimeDelta)
 	{
+		if (m_pCam != nullptr)
+			m_pCam->Shake(0.1f, 0.01f);
+
 		if (AnimIntervalChecker(PLAYER_ATK_03, 0.1, 0.3))
 			CEffectManager::GetInstance()->Render_Effects(L"NorAtk_Trail3", TimeDelta);
 
-		if(AnimIntervalChecker(PLAYER_ATK_03, 0.0, 0.6))
+		if (AnimIntervalChecker(PLAYER_ATK_03, 0.0, 0.6))
 			MonsterNormalAttack(true);
 		else
 			MonsterNormalAttack(false);
 	})
 		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		MonsterNormalAttack(false);
+		ChangePartsAnimSpeed(1.0);
 	})
 		.AddTransition("Attack_3 to Idle", "Idle")
 		.Predicator([this]()
@@ -911,18 +1068,30 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_1")
 		.OnStart([this]()
 	{
+		m_Skill_1IconCoolTime = 0.0;
+		m_fMp -= 15.f;
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 1.f);
 		Reset_Anim(PLAYER_SK24);
 		Set_Anim(PLAYER_SK24);
+		MonsterNormalAttack(true);
+		m_bPlayerTurn = false;
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		MonsterNormalAttack(true);
-		if (AnimIntervalChecker(PLAYER_SK24, 0.1 , 0.8))
+		if(m_pCam != nullptr)
+			m_pCam->Shake(0.5f);
+
+		if (AnimIntervalChecker(PLAYER_SK24, 0.1, 0.8))
+		{
+			MonsterNormalAttack(true);
 			CEffectManager::GetInstance()->Render_Effects(L"ESkill_BoomWave", TimeDelta);
-	})                        
-		.OnExit([this]() 
+		}
+		else
+			MonsterNormalAttack(false);
+	})
+		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		MonsterNormalAttack(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.65f);
 		m_bAction = false;
@@ -948,11 +1117,14 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_2")
 		.OnStart([this]()
 	{
+		m_bPlayerTurn = false;
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 5.f);
 		Reset_Anim(PLAYER_SK09);
 		Set_Anim(PLAYER_SK09);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_Alpha(0.f);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_UV(_float2(0.f, 0.f));
+		m_Skill_2IconCoolTime = 0.0;
+		m_fMp -= 30.f;
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -984,7 +1156,7 @@ void CPlayer::SetUp_FSM()
 		else if (AnimIntervalChecker(PLAYER_SK09, 0.15, 0.3))
 		{
 			m_fWingY -= static_cast<_float>(TimeDelta) * 15.f;
-		
+
 			_matrix	pivotMat = XMMatrixScaling(1.f, 1.f, 1.f) *
 				XMMatrixRotationX(XMConvertToRadians(0.f)) *
 				XMMatrixRotationY(XMConvertToRadians(270.f)) *
@@ -1024,6 +1196,7 @@ void CPlayer::SetUp_FSM()
 
 		if (AnimIntervalChecker(PLAYER_SK09, 0.3, 1.0))
 		{
+			m_pCam->Shake(0.3f);
 			CEffectManager::GetInstance()->Render_Effects(L"CrackE", TimeDelta);
 			_float2 vBoomWave = static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Get_UV();
 			static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"QSkillEnd_BoomWave"))->Set_UV(_float2(0.f, vBoomWave.y));
@@ -1032,6 +1205,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		m_fWingY = 0.f;
 		m_WingAlpha = 0.0;
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.5f);
@@ -1059,18 +1233,24 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_3")
 		.OnStart([this]()
 	{
-		Reset_Anim(PLAYER_SK35);
+		Reset_Anim(PLAYER_SK35); // 앞으로 나아가면서 공격
 		Set_Anim(PLAYER_SK35);
+		MonsterNormalAttack(true);
+		m_Skill_3IconCoolTime = 0.0;
+		m_fMp -= 20.f;
+		m_bPlayerTurn = false;
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		MonsterNormalAttack(true);
+		if(AnimIntervalChecker(PLAYER_SK35,0.0, 0.3))
+			m_pTransformCom->Go_Straight(TimeDelta, m_pNavigationCom);
 	})
-		.OnExit([this]() 
+		.OnExit([this]()
 	{
+		MonsterNormalAttack(false);
 		m_bAction = false;
 		m_bSK03 = false;
-		MonsterNormalAttack(false);
+		m_bPlayerTurn = true;
 	})
 		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
@@ -1087,7 +1267,7 @@ void CPlayer::SetUp_FSM()
 	{
 		return m_bHitDown;
 	})
-		
+
 		// KEY F
 		.AddState("Skill_4_Charging")
 		.OnStart([this]()
@@ -1104,6 +1284,7 @@ void CPlayer::SetUp_FSM()
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(true);
 		_float3 vPos = _float3::Lerp(CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 5.f);
 		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+		m_pCam->Shake(0.1f);
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -1124,6 +1305,9 @@ void CPlayer::SetUp_FSM()
 		.AddState("Skill_4_Attacking")
 		.OnStart([this]()
 	{
+		m_bPlayerTurn = false;
+		m_fMp -= 40.f;
+		m_Skill_4IconCoolTime = 0.0;
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"FSkillTrail"))->Set_UV(_float2(-1.f, -1.f));
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 2.f);
 		Reset_Anim(PLAYER_SK27_FIRING);
@@ -1134,7 +1318,8 @@ void CPlayer::SetUp_FSM()
 	{
 		if (AnimIntervalChecker(PLAYER_SK27_FIRING, 0.1, 0.3))
 			CEffectManager::GetInstance()->Render_Effects(L"FSkillTrail", TimeDelta);
-		
+
+		m_pCam->Shake(0.1f, 0.01f);
 		CEffectManager::GetInstance()->Render_Effects(L"ThunderWave", TimeDelta);
 		CEffectManager::GetInstance()->Render_Effects(L"FSkill_BoomWave_1", TimeDelta);
 		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * 5.0);
@@ -1146,6 +1331,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		m_bPlayerTurn = true;
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(false);
 		Get_WeaponCollider()->FixedSphereSize(1.f, -0.15f, 0.1f, 0.65f);
 		MonsterSkill04(false);
@@ -1166,20 +1352,21 @@ void CPlayer::SetUp_FSM()
 		return m_bHitDown;
 	})
 
-		// Key_1
+		// Key T
 		.AddState("Skill_5")
 		.OnStart([this]()
 	{
 		Reset_Anim(PLAYER_SK11);
 		Set_Anim(PLAYER_SK11);
 		ChangeModel(CPlayer::MODEL_A);
+		m_Skill_5IconCoolTime = 0.0;
+		m_fMp -= 50.f;
+		m_bCamTurn = true;
 	})
 		.Tick([this](_double TimeDelta)
 	{
-		m_bCamTurn = false;
-
 		CEffectManager::GetInstance()->Render_Effects(L"ChangeModel_Twister", TimeDelta);
-		
+
 		if (AnimIntervalChecker(PLAYER_SK11, 0, 0.14))
 			static_cast<CParts*>(m_PlayerParts[PART_BOOTS])->ChangeModel(CParts::MODEL_A);
 		if (AnimIntervalChecker(PLAYER_SK11, 0.14, 0.28))
@@ -1197,6 +1384,7 @@ void CPlayer::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		m_bCamTurn = false;
 		m_bAction = false;
 		m_bSK05 = false;
 	})
@@ -1204,6 +1392,136 @@ void CPlayer::SetUp_FSM()
 		.Predicator([this]()
 	{
 		return CheckFinish_Skill5();
+	})
+
+		// Key 1
+		.AddState("Skill_6")
+		.OnStart([this]()
+	{
+		m_bPlayerTurn = false;
+		Reset_Anim(PLAYER_SK38); // 발차기
+		Set_Anim(PLAYER_SK38);
+		m_fMp -= 10.f;
+		m_Skill_6IconCoolTime = 0.0;
+		MonsterNormalAttack(true);
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		m_pTransformCom->Go_Straight(TimeDelta * 2.0, m_pNavigationCom); // 38		
+		CEffectManager::GetInstance()->Render_Effects(L"VDEF_Twister", TimeDelta);
+	})
+		.OnExit([this]()
+	{
+		m_bPlayerTurn = true;
+		MonsterNormalAttack(false);
+		m_bAction = false;
+		m_bSK06 = false;
+	})
+		.AddTransition("Skill_6 to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return CheckFinish_Skill6();
+	})
+		.AddTransition("Skill_6 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Skill_6 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+
+		// Key 2
+		.AddState("Skill_7")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_SK41); // 달려 나가기
+		Set_Anim(PLAYER_SK41);
+		MonsterNormalAttack(true);
+		m_fMp -= 15.f;
+		m_Skill_7IconCoolTime = 0.0;
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		if (AnimIntervalChecker(PLAYER_SK41, 0.0, 0.3))
+			m_pTransformCom->Go_Straight(TimeDelta * 2.0, m_pNavigationCom);
+
+		CEffectManager::GetInstance()->Render_Effects(L"VDEF_Twister", TimeDelta);
+	})
+		.OnExit([this]()
+	{
+		MonsterNormalAttack(false);
+		m_bAction = false;
+		m_bSK07 = false;
+	})
+		.AddTransition("Skill_7 to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return CheckFinish_Skill7();
+	})
+		.AddTransition("Skill_7 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Skill_7 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
+	})
+		
+		// Key 3
+		.AddState("Skill_8")
+		.OnStart([this]()
+	{
+		Reset_Anim(PLAYER_SK42); // 간지나네
+		Set_Anim(PLAYER_SK42);
+
+		MonsterNormalAttack(true);
+		m_fMp -= 15.f;
+		m_Skill_8IconCoolTime = 0.0;
+		ChangePartsAnimSpeed(0.5);
+		m_bPlayerTurn = false;
+		m_Skill8EffectTime = 0.0;
+	})
+		.Tick([this](_double TimeDelta)
+	{
+		m_Skill8EffectTime += TimeDelta * 3.0;
+		CEffectManager::GetInstance()->Get_Transform(L"FireWave_0")->Set_Scaled(_float3(static_cast<float>(m_Skill8EffectTime), 0.5f, static_cast<float>(m_Skill8EffectTime)));
+		CEffectManager::GetInstance()->Get_Transform(L"FireWave_1")->Set_Scaled(_float3(static_cast<float>(m_Skill8EffectTime), 0.5f, static_cast<float>(m_Skill8EffectTime)));
+
+		CEffectManager::GetInstance()->Render_Effects(L"FireWave_0", TimeDelta);
+		CEffectManager::GetInstance()->Render_Effects(L"FireWave_1", TimeDelta);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_0"))->Set_Link(true);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_1"))->Set_Link(true);
+	})
+		.OnExit([this]()
+	{
+		m_Skill8EffectTime = 0.0;
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_0"))->Set_Link(false);
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_1"))->Set_Link(false);
+		ChangePartsAnimSpeed(1.0);
+		MonsterNormalAttack(false);
+		m_bAction = false;
+		m_bSK08 = false;
+		m_bPlayerTurn = true;
+	})
+		.AddTransition("Skill_8 to Idle", "Idle")
+		.Predicator([this]()
+	{
+		return CheckFinish_Skill8();
+	})
+		.AddTransition("Skill_8 to Groggy", "Groggy")
+		.Predicator([this]()
+	{
+		return m_bGroggy;
+	})
+		.AddTransition("Skill_8 to HitDown", "HitDown")
+		.Predicator([this]()
+	{
+		return m_bHitDown;
 	})
 
 		.Build();
@@ -1248,19 +1566,19 @@ void CPlayer::Movement(_double TimeDelta)
 	{
 		_float yPos = 0.f;
 		m_pNavigationCom->isHeighit_OnNavigation(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), &yPos);
-		
+
 		if (m_bJump)
 		{
 			static _float fGravity = 8.81f;
 			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			_float	fJumpPower = yPos + m_fJumpPower;
 			_float fVelocity = sqrtf(fabsf(fJumpPower * 2.f * fGravity));
-			
+
 			if (vPos.y >= fVelocity)
 				fGravity *= -1.f;
-			
+
 			_float y = max(vPos.y + fGravity * static_cast<_float>(TimeDelta), yPos);
-			
+
 			if (y - yPos <= 0.00001f)
 			{
 				fGravity *= -1.f;
@@ -1457,7 +1775,7 @@ void CPlayer::Movement(_double TimeDelta)
 	if (pGameInstance->Mouse_Down(DIM_LB))
 	{
 		m_bAction = true;
-		
+
 		if (!strcmp(m_pFSM->GetCurStateName(), "Idle"))
 		{
 			m_bNormalAttack_1 = true;
@@ -1538,22 +1856,18 @@ void CPlayer::Movement(_double TimeDelta)
 			return;
 		}
 	}
-	
+
+	IsActingSkill();
+
 	/* SKILL1 !!*/
-	m_Skill_1IconCollTime += TimeDelta;
+	m_Skill_1IconCoolTime += TimeDelta;
 	if (pGameInstance->Key_Down(DIK_E))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_1])->Set_Clicked(true);
-		if (m_Skill_1IconCollTime > 15.0 && m_fMp >= 15.f
-			&& !m_bSK02
-			&& !m_bSK03
-			&& !m_bSK04_Charging
-			&& !m_bSK05)
+		if (m_Skill_1IconCoolTime > 15.0 && m_fMp >= 15.f && !m_bSK01)
 		{
 			m_bAction = true;
 			m_bSK01 = true;
-			m_Skill_1IconCollTime = 0.0;
-			m_fMp -= 15.f;
 			RELEASE_INSTANCE(CGameInstance);
 			return;
 		}
@@ -1564,16 +1878,10 @@ void CPlayer::Movement(_double TimeDelta)
 	if (pGameInstance->Key_Down(DIK_Q))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_2])->Set_Clicked(true);
-		if (m_Skill_2IconCoolTime > 20.0 && m_fMp >= 30.f
-			&& !m_bSK01
-			&& !m_bSK03
-			&& !m_bSK04_Charging
-			&& !m_bSK05)
+		if (m_Skill_2IconCoolTime > 20.0 && m_fMp >= 30.f && !m_bSK02)
 		{
 			m_bAction = true;
 			m_bSK02 = true;
-			m_Skill_2IconCoolTime = 0.0;
-			m_fMp -= 30.f;
 			RELEASE_INSTANCE(CGameInstance);
 			return;
 		}
@@ -1584,61 +1892,85 @@ void CPlayer::Movement(_double TimeDelta)
 	if (pGameInstance->Key_Down(DIK_R))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_3])->Set_Clicked(true);
-		if (m_Skill_3IconCoolTime > 10.0 && m_fMp >= 20.f
-			&& !m_bSK01
-			&& !m_bSK02
-			&& !m_bSK04_Charging
-			&& !m_bSK05)
+		if (m_Skill_3IconCoolTime > 10.0 && m_fMp >= 20.f && !m_bSK03)
 		{
 			m_bAction = true;
 			m_bSK03 = true;
-			m_Skill_3IconCoolTime = 0.0;
-			m_fMp -= 20.f;
 			RELEASE_INSTANCE(CGameInstance);
 			return;
 		}
 	}
 
 	/* SKILL4 !!*/
-	m_Skill_4IconCollTime += TimeDelta;
+	m_Skill_4IconCoolTime += TimeDelta;
 	if (pGameInstance->Key_Pressing(DIK_F))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_4])->Set_Clicked(true);
-		if (m_Skill_4IconCollTime > 20.0 && m_fMp >= 40.f
-			&& !m_bSK01
-			&& !m_bSK02
-			&& !m_bSK03
-			&& !m_bSK05)
+		if (m_Skill_4IconCoolTime > 20.0 && m_fMp >= 40.f && !m_bSK04_Charging)
 		{
 			m_bAction = true;
 			m_bSK04_Charging = true;
-			m_fMp -= 40.f;
 		}
 	}
 
 	if (pGameInstance->Key_Up(DIK_F))
 	{
 		m_bSK04_Charging = false;
-		m_Skill_4IconCollTime = 0.0;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
-	
+
 	/* SKILL5 !! 변신*/
 	m_Skill_5IconCoolTime += TimeDelta;
-	if (pGameInstance->Key_Down(DIK_1))
+	if (pGameInstance->Key_Down(DIK_T))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_5])->Set_Clicked(true);
-		if (m_Skill_5IconCoolTime > 30.0 && m_fMp >= 50.f
-			&& !m_bSK01
-			&& !m_bSK02
-			&& !m_bSK03
-			&& !m_bSK04_Charging)
+		if (m_Skill_5IconCoolTime > 30.0 && m_fMp >= 50.f && !m_bSK05)
 		{
 			m_bAction = true;
 			m_bSK05 = true;
-			m_Skill_5IconCoolTime = 0.0;
-			m_fMp -= 50.f;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+	}
+
+	/* SKILL6 !!*/
+	m_Skill_6IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_1))
+	{
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_6])->Set_Clicked(true);
+		if (m_Skill_6IconCoolTime > 20.0 && m_fMp >= 10.f && !m_bSK06)
+		{
+			m_bAction = true;
+			m_bSK06 = true;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+	}
+
+	/* SKILL7 !!*/
+	m_Skill_7IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_2))
+	{
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_7])->Set_Clicked(true);
+		if (m_Skill_7IconCoolTime > 25.0 &&m_fMp >= 15.f && !m_bSK07)
+		{
+			m_bAction = true;
+			m_bSK07 = true;
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
+	}
+
+	/* SKILL8 !!*/
+	m_Skill_8IconCoolTime += TimeDelta;
+	if (pGameInstance->Key_Down(DIK_3))
+	{
+		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_8])->Set_Clicked(true);
+		if (m_Skill_8IconCoolTime > 12.0 && m_fMp >= 15.f && !m_bSK08)
+		{
+			m_bAction = true;
+			m_bSK08 = true;
 			RELEASE_INSTANCE(CGameInstance);
 			return;
 		}
@@ -1648,27 +1980,26 @@ void CPlayer::Movement(_double TimeDelta)
 	if (pGameInstance->Key_Down(DIK_LSHIFT))
 	{
 		static_cast<CSkillChargingUI*>(m_PlayerUI[V_DEF])->Set_Clicked(true);
-		if (m_Skill_VDefCoolTime > 3.0)
+		if (m_Skill_VDefCoolTime > 3.0 && !m_bV_DEF)
 		{
 			m_bAction = true;
 			m_bV_DEF = true;
-			m_Skill_VDefCoolTime = 0.0;
 			RELEASE_INSTANCE(CGameInstance);
 			return;
 		}
 	}
 
 	if (!m_bJump && pGameInstance->Key_Down(DIK_SPACE) &&
-		(!strcmp(m_pFSM->GetCurStateName(), "Idle") || 
-		 (!strcmp(m_pFSM->GetCurStateName(), "Run") && 
+		(!strcmp(m_pFSM->GetCurStateName(), "Idle") ||
+		(!strcmp(m_pFSM->GetCurStateName(), "Run") &&
 			(m_eState == CPlayer::PLAYER_FM || m_eState == CPlayer::PLAYER_BM)))) // 점프를 할 수 있는 조건을 줘
 	{
 		m_bJump = true;
 		RELEASE_INSTANCE(CGameInstance);
 		return;
 	}
-		
-	if (m_bCamTurn == false)
+
+	if (!m_bCamTurn && m_bPlayerTurn)
 	{
 		_long MouseMove_X = 0;
 
@@ -1677,7 +2008,7 @@ void CPlayer::Movement(_double TimeDelta)
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove_X * m_MouseSensity * TimeDelta);
 		}
 	}
-		
+
 	RELEASE_INSTANCE(CGameInstance);
 	return;
 }
@@ -1710,7 +2041,7 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 	}
 
 	///////////////////////////////////////
-	
+
 	if (m_bBackDamagedToMonster)
 	{
 		Reset_Anim(PLAYER_ADD_DMG_B);
@@ -1740,12 +2071,83 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 void CPlayer::LinkObject(_double TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-	
+
 	m_pCam = static_cast<CPlayerCamera*>(pGameInstance->Find_GameObject(pGameInstance->GetCurLevelIdx(), L"Layer_Camera", L"PlayerCamera"));
-	
+
 	if (pGameInstance->Key_Down(DIK_F2))
 		m_bCamChange = !m_bCamChange;
-		
+
+	if (g_LEVEL == LEVEL_CHAP1)
+	{
+		CGameObject* pBalianBollwerk = pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Ally", L"BalianBollwerk");
+		if (pBalianBollwerk != nullptr && static_cast<CBalianBollwerk*>(pBalianBollwerk)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pBalianBollwerk->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pBalianBollwerk->Get_TransformCom());
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP2)
+	{
+		CGameObject* pBalianBollwerk = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"BalianBollwerk");
+		if (pBalianBollwerk != nullptr && static_cast<CBalianBollwerk*>(pBalianBollwerk)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pBalianBollwerk->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pBalianBollwerk->Get_TransformCom());
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+
+		CGameObject* pAbelardo = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Abelardo");
+		if (pAbelardo != nullptr && static_cast<CAbelardo*>(pAbelardo)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pAbelardo->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pAbelardo->Get_TransformCom());
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+
+		CGameObject* pDelilah = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Delilah");
+		if (pDelilah != nullptr && static_cast<CDelilah*>(pDelilah)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pDelilah->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pDelilah->Get_TransformCom());
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+
+		CGameObject* pChinuwa = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Chinuwa");
+		if (pChinuwa != nullptr && static_cast<CChinuwa*>(pChinuwa)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pChinuwa->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pChinuwa->Get_TransformCom(), 1.f , 1.5f);
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+
+		CGameObject* pChitata = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Ally", L"Chitata");
+		if (pChitata != nullptr && static_cast<CBalianBollwerk*>(pChitata)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pChitata->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pChitata->Get_TransformCom(), -1.f);
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+	}
+
 	if (m_pCam != nullptr && !m_bCamChange)
 		m_pCam->LinkPlayer(TimeDelta, m_pTransformCom, m_bCamTurn);
 	else if (m_pCam != nullptr && m_bCamChange)
@@ -1801,14 +2203,21 @@ void CPlayer::ChangeModel(MODEL eModelIndex)
 	static_cast<CWeapon*>(m_PlayerParts[PART_WEAPON])->Set_TargetTrasform(WeaponDesc);
 }
 
+void CPlayer::ChangePartsAnimSpeed(_double dTime)
+{
+	if(m_eModelState == MODEL_NOMAL)
+		m_pModelCom[MODEL_NOMAL]->Set_AnimPlaySpeed(dTime);
+	else if(m_eModelState == MODEL_A)
+		m_pModelCom[MODEL_A]->Set_AnimPlaySpeed(dTime);
+
+	for (_uint i = PART_UPPER; i < PART_END; ++i)
+		static_cast<CParts*>(m_PlayerParts[i])->Get_ModelCom()->Set_AnimPlaySpeed(dTime);
+}
+
 void CPlayer::Imgui_RenderProperty()
 {
-	ImGui::Begin("ICon_1");
-	m_PlayerUI[HP]->Imgui_RenderProperty();
-	ImGui::End();
-	ImGui::Begin("ICon_2");
-	m_PlayerUI[MP]->Imgui_RenderProperty();
-	ImGui::End();
+	ImGui::DragFloat("Dissolve", &m_fDissolveAmount, 0.01f, -10.f, 10.f);
+	ImGui::DragFloat("Finge", &m_fFringeAmount, 0.01f, -10.f, 10.f);
 }
 
 void CPlayer::Idle_Tick(_double TimeDelta)
@@ -1883,7 +2292,7 @@ void CPlayer::Run_Tick(_double TimeDelta)
 			Reset_Anim(PLAYER_RUN_BL);
 			break;
 		}
-			
+
 		m_ePreState = m_eState;
 	}
 
@@ -1946,6 +2355,11 @@ CCollider* CPlayer::Get_WeaponCollider()
 	return static_cast<CWeapon*>(m_PlayerParts[PART_WEAPON])->Get_Collider();
 }
 
+CTransform * CPlayer::Get_WeaponTransform()
+{
+	return static_cast<CWeapon*>(m_PlayerParts[PART_WEAPON])->Get_TransformCom();
+}
+
 void CPlayer::BackDamagedToMonster(_float fDamage)
 {
 	m_pCam->Shake(0.5f);
@@ -1960,7 +2374,7 @@ void CPlayer::FrontDamagedToMonster(_float fDamage)
 	AdjustDamage(fDamage);
 }
 
-void CPlayer::PassOutToMonster(_float fDamage,_float fKnockBackPower)
+void CPlayer::PassOutToMonster(_float fDamage, _float fKnockBackPower)
 {
 	m_bGroggy = true;
 	m_fKnockBackPower = fKnockBackPower;
@@ -1996,9 +2410,9 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 			{
 				_float3 vMonsterPos = pMonster->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-				_float fDistance =	CMathUtils::Distance(vMonsterPos, vPos);
+				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
-				if(fabsf(fDistance) < 10.f)
+				if (fabsf(fDistance) < 30.f)
 					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
@@ -2021,7 +2435,7 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
-				if (fabsf(fDistance) < 10.f)
+				if (fabsf(fDistance) < 30.f)
 					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
@@ -2044,17 +2458,19 @@ void CPlayer::MonsterNormalAttack(_bool bAttack)
 				_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 				_float fDistance = CMathUtils::Distance(vMonsterPos, vPos);
 
-				if (fabsf(fDistance) < 10.f)
+				if (fabsf(fDistance) < 30.f)
 					static_cast<CMonster*>(pMonster)->Set_PlayerAttackCommand(bAttack, 20.f);
 			}
 		}
-	}	
+	}
 
 	RELEASE_INSTANCE(CGameInstance);
+
 }
 
 void CPlayer::MonsterSkill02(_bool bAttack)
 {
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -2128,10 +2544,12 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
+
 }
 
 void CPlayer::MonsterSkill04(_bool bAttack)
 {
+
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -2205,6 +2623,7 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
+
 }
 
 void CPlayer::Reset_Action()
@@ -2221,7 +2640,7 @@ void CPlayer::Reset_Action()
 	m_bSK05 = false;
 }
 
-void CPlayer::CamLockOn(CGameObject * pGameObject , OUT _bool& bLock)
+void CPlayer::CamLockOn(CGameObject * pGameObject, OUT _bool& bLock)
 {
 	if (pGameObject == nullptr)
 		return;
@@ -2231,10 +2650,40 @@ void CPlayer::CamLockOn(CGameObject * pGameObject , OUT _bool& bLock)
 	else
 		bLock = false;
 
-	_float fDistance =	_float3::Distance(pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
+	_float fDistance = _float3::Distance(pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	if (m_bCamLock && fabsf(fDistance) > 2.f)
 		m_pTransformCom->LookAt(pGameObject->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+}
+
+void CPlayer::IsActingSkill()
+{
+	if (m_Skill_1IconCoolTime >= 15.0)
+		m_bSK01 = false;
+
+	if (m_Skill_2IconCoolTime >= 20.0)
+		m_bSK02 = false;
+
+	if (m_Skill_3IconCoolTime >= 10.0)
+		m_bSK03 = false;
+
+	if (m_Skill_4IconCoolTime >= 20.0)
+		m_bSK04_Charging = false;
+
+	if (m_Skill_5IconCoolTime >= 30.0)
+		m_bSK05 = false;
+
+	if (m_Skill_6IconCoolTime >= 20.0)
+		m_bSK06 = false;
+
+	if (m_Skill_7IconCoolTime >= 25.0)
+		m_bSK07 = false;
+
+	if (m_Skill_8IconCoolTime >= 12.0)
+		m_bSK08 = false;
+
+	if (m_Skill_VDefCoolTime >= 7.0)
+		m_bV_DEF = false;
 }
 
 _bool CPlayer::AnimFinishChecker(ANIMATION eAnim, _double FinishRate)
@@ -2303,6 +2752,21 @@ _bool CPlayer::CheckFinish_Skill5()
 	return AnimFinishChecker(PLAYER_SK11, 0.9);
 }
 
+_bool CPlayer::CheckFinish_Skill6()
+{
+	return AnimFinishChecker(PLAYER_SK38, 0.8);
+}
+
+_bool CPlayer::CheckFinish_Skill7()
+{
+	return AnimFinishChecker(PLAYER_SK41, 0.9);
+}
+
+_bool CPlayer::CheckFinish_Skill8()
+{
+	return AnimFinishChecker(PLAYER_SK42, 0.9);
+}
+
 _bool CPlayer::CheckFinish_V_DEF()
 {
 	return AnimFinishChecker(PLAYER_V_DEF, 0.8);
@@ -2362,7 +2826,7 @@ HRESULT CPlayer::SetUp_Parts()
 	Safe_AddRef(m_pTransformCom);
 
 	pPartObject = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Weapon"), &WeaponDesc);
-	
+
 	if (nullptr == pPartObject)
 		return E_FAIL;
 
@@ -2589,7 +3053,55 @@ HRESULT CPlayer::SetUp_UI()
 		return E_FAIL;
 
 	m_PlayerUI.push_back(pUI);
-	
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
+	SkillIconDesc.fX = -400.f;
+	SkillIconDesc.fY = -350.f;
+	SkillIconDesc.iTexNum = 6;
+	SkillIconDesc.iPassIndex = 0;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
+	SkillIconDesc.fX = 300.f;
+	SkillIconDesc.fY = -350.f;
+	SkillIconDesc.iTexNum = 4;
+	SkillIconDesc.iPassIndex = 0;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	SkillIconDesc.fAlpha = 0.9f;
+	SkillIconDesc.fAmount = 0.f;
+	SkillIconDesc.fSizeX = 50.f;
+	SkillIconDesc.fSizeY = 50.f;
+	SkillIconDesc.fX = 400.f;
+	SkillIconDesc.fY = -350.f;
+	SkillIconDesc.iTexNum = 10;
+	SkillIconDesc.iPassIndex = 0;
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -2607,11 +3119,16 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	/* For.Com_ShaderShadow */
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Shadow"), TEXT("Com_ShaderShadow"),
+		(CComponent**)&m_pShadowShaderCom)))
+		return E_FAIL;
+
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
 		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
 		return E_FAIL;
-	
+
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_A"), TEXT("Com_Model_A"),
 		(CComponent**)&m_pModelCom[MODEL_A])))
@@ -2688,9 +3205,20 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
 	else
-		m_vRimColor = _float4(0.1f, 0.1f, 1.0f, 1.f);
+		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("fFringeAmount", &m_fFringeAmount, sizeof(_float))))
+		return E_FAIL;
+
+	_bool bFALSE = false;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bFALSE, sizeof(_bool))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -2741,8 +3269,9 @@ void CPlayer::Free()
 
 	for (_uint i = 0; i < MODEL_END; ++i)
 		Safe_Release(m_pModelCom[i]);
-	
+
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShadowShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pNavigationCom);
 

@@ -30,6 +30,7 @@ public:
 	void Shake(_float fShakeDuration, _float fShakeAmount = 0.1f, _float fDecreaseFactor = 1.f);
 
 	void LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCamTurn);
+	void LinkAlly(_double TimeDelta, CTransform* pTarget, _float fY = 0.f, _float fDistance = 0.f);
 	void DynamicCamera(_double TimeDelta);
 
 	void Set_CinematicCam(_bool bCinematic) { m_bCinematic = bCinematic; }
@@ -59,9 +60,8 @@ private:
 	_float m_fShakeAmount = 0.f;
 	_float m_fDecreaseFactor = 0.f;
 
-
 	// 시네마틱 카메라가 없다면 true해줘야함
-	_bool  m_bCinematic = true;
+	_bool  m_bCinematic = false;
 
 public:
 	static CPlayerCamera* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

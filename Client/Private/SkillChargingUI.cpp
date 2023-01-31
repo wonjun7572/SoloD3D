@@ -41,8 +41,8 @@ HRESULT CSkillChargingUI::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
-	m_fSizeX = m_SkillIconDesc.fSizeX;//(_float)g_iWinSizeX / 22.f;
-	m_fSizeY = m_SkillIconDesc.fSizeY;//(_float)g_iWinSizeY / 12.f; //75
+	m_fSizeX = m_SkillIconDesc.fSizeX;
+	m_fSizeY = m_SkillIconDesc.fSizeY;
 
 	m_fX = m_SkillIconDesc.fX; // -300
 	m_fY = m_SkillIconDesc.fY;

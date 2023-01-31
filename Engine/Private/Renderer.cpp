@@ -29,10 +29,14 @@ HRESULT CRenderer::Init_Prototype()
 
 	/* 렌터타겟들을 생성하낟. */
 
+	/* For.Target_Diffuse */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), static_cast<_uint>(ViewportDesc.Width),static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
 	/* For.Target_Normal */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Normal"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-
+	
 	/* For.Target_Depth */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Depth"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
@@ -41,20 +45,20 @@ HRESULT CRenderer::Init_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
-	/* For.Target_Diffuse */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Diffuse"), static_cast<_uint>(ViewportDesc.Width),static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
-		return E_FAIL;
-
 	/* For.Target_RimColor */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_RimColor"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
-	/* For.Target_Specular_Blend */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular_Blend"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
+	/* For.Target_Specular_Light */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Specular_Light"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	/* For.Target_Shade */
 	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shade"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, &_float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+	/* For.Target_Shadow */
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shadow"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
@@ -67,7 +71,7 @@ HRESULT CRenderer::Init_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Depth"))))
 		return E_FAIL;
 
-	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Specular_Blend"))))
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Specular_Light"))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_RimColor"))))
@@ -78,6 +82,10 @@ HRESULT CRenderer::Init_Prototype()
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
+		return E_FAIL;
+
+	/* For.MRT_Shadow*/
+	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Shadow"), TEXT("Target_Shadow"))))
 		return E_FAIL;
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
@@ -99,15 +107,15 @@ HRESULT CRenderer::Init_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Depth"), 100.0f, 500.f, 200.f, 200.f)))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular_Blend"), 300.0f, 500.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular_Light"), 300.0f, 500.f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_RimColor"), 100.0f, 700.f, 200.f, 200.f)))
 		return E_FAIL;
-
-
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shade"), 300.0f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Specular"), 300.0f, 300.f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Ready_Debug(TEXT("Target_Shadow"), 300.0f, 700.f, 200.f, 200.f)))
 		return E_FAIL;
 #endif
 
@@ -153,6 +161,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
+	//if (FAILED(Render_Shadow()))
+	//	return E_FAIL;
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
@@ -182,6 +192,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 	{
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_Deferred"));
 		m_pTarget_Manager->Render_Debug(TEXT("MRT_LightAcc"));
+		m_pTarget_Manager->Render_Debug(TEXT("MRT_Shadow"));
 	}
 #endif
 
@@ -199,6 +210,31 @@ HRESULT CRenderer::Render_Priority()
 	}
 
 	m_RenderObjects[RENDER_PRIORITY].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Shadow()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	/* Shadow */
+	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderObjects[RENDER_NONALPHABLEND])
+	{
+		if (nullptr != pGameObject && pGameObject->Get_HasShadow() == true)
+			pGameObject->RenderShadow();
+
+		//Safe_Release(pGameObject);
+	}
+
+	//m_RenderObjects[RENDER_NONALPHABLEND].clear();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -250,7 +286,11 @@ HRESULT CRenderer::Render_LightAcc()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular_Blend")))))
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular_Light")))))
+		return E_FAIL;
+	
+	/* For. Shadow */
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shadow")))))
 		return E_FAIL;
 
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
@@ -259,6 +299,7 @@ HRESULT CRenderer::Render_LightAcc()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
 	if (FAILED(m_pShader->Set_RawValue("g_vCamPosition", &pInst->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
@@ -289,8 +330,6 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadeTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shade")))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular")))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularBlendTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular_Blend")))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_RimTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_RimColor")))))
 		return E_FAIL;

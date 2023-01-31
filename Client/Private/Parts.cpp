@@ -27,8 +27,8 @@ HRESULT CParts::Init(void * pArg)
 	if (FAILED(__super::Init(pArg)))
 		return E_FAIL;
 
-	m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
-
+	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
+	m_bHasShadow = true;
 	return S_OK;
 }
 
@@ -87,6 +87,33 @@ HRESULT CParts::PartsRender(_uint iPassIndex)
 	return S_OK;
 }
 
+HRESULT CParts::PartsShadowRender(_uint iPassIndex)
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShadowShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		m_pModelCom[m_eModelState]->Render(m_pShadowShaderCom, i, iPassIndex, "g_BoneMatrices");
+	}
+
+	return S_OK;
+}
+
 void CParts::Imgui_RenderProperty()
 {
 }
@@ -111,7 +138,7 @@ HRESULT CParts::SetUp_ShaderResources()
 	if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos) > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
 	else
-		m_vRimColor = _float4(0.1f, 0.1f, 1.f, 1.f);
+		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
 
@@ -151,4 +178,5 @@ void CParts::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShadowShaderCom);
 }

@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+#define NUM_CASCADEDES 2
+
 BEGIN(Engine)
 
 class ENGINE_DLL CRenderer final : public CComponent
@@ -39,10 +41,10 @@ private:
 	class CShader*						m_pShader = nullptr;
 	_float4x4							m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
-
 private:
 	HRESULT Render_Priority();
-	HRESULT Render_NonAlphaBlend();
+	HRESULT Render_Shadow();
+	HRESULT Render_NonAlphaBlend(); 
 	HRESULT Render_LightAcc();
 	HRESULT	Render_Blend();
 	HRESULT Render_NonLight();

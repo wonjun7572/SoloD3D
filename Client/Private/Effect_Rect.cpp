@@ -24,18 +24,20 @@ HRESULT CEffect_Rect::Init(void * pArg)
 {
 	CGameObject::GAMEOBJECTDESC		GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
-	
-	if (pArg == nullptr)
-	{
-		GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
-		GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-	}
-	else
-		memcpy(&GameObjectDesc, pArg, sizeof(CGameObject::GAMEOBJECTDESC));
-	
 
-	if (FAILED(CGameObject::Init(&GameObjectDesc)))
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.f;
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
+
+	if (nullptr != pArg)
+		memcpy(&m_RectEffectDesc, pArg, sizeof(m_RectEffectDesc));
+	else
+	{
+		XMStoreFloat4x4(&m_RectEffectDesc.PivotMatrix, XMMatrixIdentity());
+		m_RectEffectDesc.pTargetTransform = nullptr;
+	}
 
 	return S_OK;
 }
@@ -88,4 +90,7 @@ void CEffect_Rect::Free()
 	__super::Free();
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
+
+	if(m_bClone)
+		Safe_Release(m_RectEffectDesc.pTargetTransform);
 }

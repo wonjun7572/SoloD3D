@@ -213,7 +213,7 @@ PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 		vNormal = normalize(mul(vNormal, WorldMatrix));
 	}
 
-	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 5.0f);
+	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 25.0f);
 	vector rimColor = g_vRimColor;
 	rimColor = rim * rimColor;
 

@@ -93,6 +93,11 @@ void CMonster::Tick(_double TimeDelta)
 		pDamageEffect->Tick(TimeDelta);
 
 	UI_Tick(TimeDelta);
+
+	m_vRimColor = _float4(m_fRimRed, 0.1f, 0.1f, 1.f);
+
+	if (m_fRimRed > 0.3f)
+		m_fRimRed -= static_cast<_float>(TimeDelta) * 0.1f;
 }
 
 void CMonster::Late_Tick(_double TimeDelta)
@@ -177,6 +182,9 @@ void CMonster::Late_Tick(_double TimeDelta)
 	}
 
 	m_Monsters.clear();
+
+	if(!m_bDeadAnim)
+		CollisionToAABBPlayer(TimeDelta);
 
 	RELEASE_INSTANCE(CGameInstance);
 }
@@ -274,31 +282,36 @@ void CMonster::UI_Switch(_double TimeDelta)
 
 		if (m_pPlayer->Get_PlayerCam() != nullptr && Get_CamDistance() < 30.f)
 		{
-			if (m_pColliderCom[COLLTYPE_AABB]->Collision(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),
-				m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK), fDis))
+#ifdef _DEBUG
+			if (DirectX::Internal::XMVector3IsUnit(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK)))
+#endif			
 			{
-				if (fDis < 20.f)
+				if (m_pColliderCom[COLLTYPE_AABB]->Collision(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),
+					m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK), fDis))
 				{
-					_bool bUI = false;
-					m_pPlayer->CamLockOn(this, bUI);
-
-					if (bUI)
-						m_bUIOn = true;
-
-					for (auto pMonster : m_Monsters)
+					if (fDis < 20.f)
 					{
-						if (pMonster->Get_UIOn() == true)
+						_bool bUI = false;
+						m_pPlayer->CamLockOn(this, bUI);
+
+						if (bUI)
+							m_bUIOn = true;
+
+						for (auto pMonster : m_Monsters)
 						{
-							m_bUIOn = false;
-							return;
+							if (pMonster->Get_UIOn() == true)
+							{
+								m_bUIOn = false;
+								return;
+							}
 						}
 					}
+					else
+						m_bUIOn = false;
 				}
 				else
 					m_bUIOn = false;
 			}
-			else
-				m_bUIOn = false;
 		}
 	}
 }
@@ -551,6 +564,41 @@ void CMonster::CollisionToMonster(_double TimeDelta)
 	RELEASE_INSTANCE(CGameInstance);
 }
 
+void CMonster::CollisionToAABBPlayer(_double TimeDelta)
+{
+	CCollider*	pTargetCollider = static_cast<CPlayer*>(m_pPlayer)->Get_AABB();
+
+	// sphere -> AttackColCom
+	// AABB -> pTargetCollider
+	
+	// 이 콜라이더는 sphere여야만함
+	_float3 sphereCenter = m_pColliderCom[COLLTYPE_SPHERE]->Get_CollisionCenter();
+	_float sphereRadius = m_pColliderCom[COLLTYPE_SPHERE]->Get_SphereRadius();
+	_float3	p;
+	ClosestPtPointAABB(sphereCenter, pTargetCollider, p);
+
+	_vector v = p - sphereCenter;
+
+	_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+	if (fDistance_Squared <= sphereRadius * sphereRadius)
+	{
+		if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+		{
+			v = XMVector3Normalize(v);
+		}
+		_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+		vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+
+		if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+		}
+	}
+}
+
 void CMonster::CollisionToWeapon(_double TimeDelta)
 {
 	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
@@ -568,6 +616,8 @@ void CMonster::CollisionToWeapon(_double TimeDelta)
 			m_bFrontDamaged = true;
 		else
 			m_bBackDamaged = true;
+
+		m_fRimRed = 1.f;
 	}
 }
 
@@ -622,6 +672,16 @@ void CMonster::ClosestPtPointAABB(_float3 sphereCenter, CCollider* pAABB, _float
 	p.z = z;
 }
 
+HRESULT CMonster::SetUp_Components()
+{
+	/* For.Com_DissolveTex */
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Texture_Dissolve"), TEXT("Com_DissolveTex"),
+		(CComponent**)&m_pDissolveTexCom)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CMonster::Free()
 {
 	__super::Free();
@@ -652,4 +712,5 @@ void CMonster::Free()
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pFSM);
 	Safe_Release(m_pPlayer);
+	Safe_Release(m_pDissolveTexCom);
 }

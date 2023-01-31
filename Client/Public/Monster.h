@@ -50,7 +50,8 @@ public:
 
 	/* 충돌 관련 */
 	void CollisionToMonster(_double TimeDelta);
-	
+	void CollisionToAABBPlayer(_double TimeDelta);
+
 	virtual	void CollisionToWeapon(_double TimeDelta);
 	virtual	void CollisionToWeaponSkill02(_double TimeDelta);
 	virtual void CollisionToWeaponSkill04(_double TimeDelta);
@@ -63,7 +64,7 @@ public:
 	_bool		Get_UIOn() { return m_bUIOn; }
 
 protected:
-	virtual	HRESULT SetUp_Components() = 0;
+	virtual	HRESULT SetUp_Components();
 	virtual HRESULT SetUp_ShaderResources() = 0;
 
 protected:
@@ -90,6 +91,7 @@ protected:
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CNavigation*			m_pNavigationCom = nullptr;
 	CFSMComponent*			m_pFSM = nullptr;
+	CTexture*				m_pDissolveTexCom = nullptr;
 
 	/* 플레이어를 찾기위한 멤버 변수 */
 protected:
@@ -106,6 +108,8 @@ protected:
 	_float					m_fAttack = 0;
 	_float					m_fDefence = 0;
 
+	_float					m_fRimRed = 0.f;
+
 	_double					m_dDeadTime = 0;
 
 	vector<CCollider*>		m_MonsterColliders;
@@ -121,6 +125,8 @@ protected:
 	vector<CMonster*>		m_Monsters;
 
 	_uint					m_iGroup = 0;
+	_float					m_fDissolveAmount = -1.f;
+	_float					m_fFringeAmount = 1.f;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

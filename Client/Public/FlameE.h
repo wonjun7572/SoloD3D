@@ -16,11 +16,14 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void	Imgui_RenderProperty() override;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
 
 	_float m_fFrame = { 0.f };
+	_float m_CSize[3] = { 1.f, 1.f , 1.f };
 
 public:
 	static CFlameE* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

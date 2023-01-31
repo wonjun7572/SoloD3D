@@ -28,12 +28,28 @@ HRESULT CFireBallLine::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	CTransform::TRANSFORMDESC transformDesc;
+
+	transformDesc.fRotationPerSec = XMConvertToRadians(270.0f);
+	transformDesc.fSpeedPerSec = 1.0f;
+	m_pTransformCom->Set_TransformDesc(transformDesc);
+
+	m_UVMoveFactor = _float2(0.f, 0.f);
+
 	return S_OK;
 }
 
 void CFireBallLine::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
+
+	m_fFrame += 19.f * static_cast<_float>(TimeDelta);
+	if (m_fFrame >= 19.f)
+		m_fFrame = 0.f;
+
+	m_UVMoveFactor.x += static_cast<_float>(TimeDelta) * m_fUVSpeed;
+	if (m_UVMoveFactor.x >= 1.f)
+		m_UVMoveFactor.x = -1.f;
 
 	if (m_MEffectDesc.pTargetTransform != nullptr && !m_bLinking)
 		m_pTransformCom->SetWorldMatrix(XMLoadFloat4x4(&m_MEffectDesc.PivotMatrix) * m_MEffectDesc.pTargetTransform->Get_WorldMatrix());
@@ -56,7 +72,7 @@ HRESULT CFireBallLine::Render()
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
-		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", m_MEffectDesc.iDiffuseTex);
+		m_pDiffuseTexCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", (_int)m_fFrame);
 		m_pMaskTexCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", m_MEffectDesc.iMaskTex);
 		m_pModelCom->Render(m_pShaderCom, i, m_MEffectDesc.iPassIndex);
 	}
@@ -82,7 +98,7 @@ HRESULT CFireBallLine::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture_Diffuse */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_Trail"), TEXT("Com_Texture_Diffuse"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_FireTile"), TEXT("Com_Texture_Diffuse"),
 		(CComponent**)&m_pDiffuseTexCom)))
 		return E_FAIL;
 

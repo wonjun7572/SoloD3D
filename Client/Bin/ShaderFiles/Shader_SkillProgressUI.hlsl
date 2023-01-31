@@ -4,6 +4,7 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
+texture2D		g_MaskTexture;
 
 float			g_fAmount;
 float			g_fAlpha;
@@ -92,6 +93,39 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_MAIN_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 fillColor = g_Texture.Sample(AlbedoSampler, In.vTexUV);
+	float4 maskColor = g_MaskTexture.Sample(AlbedoSampler, In.vTexUV);
+
+	float3 center = float3(0.5f, 0.5f, 0);
+	float3 top = float3(0.5f, 0, 0);
+	float3 curUV = float3(In.vTexUV.xy, 0);
+	float angle = 0;
+
+	float3 centerToTop = top - center;
+	float3 centerToCurUV = curUV - center;
+
+	centerToTop = normalize(centerToTop);
+	centerToCurUV = normalize(centerToCurUV);
+
+	angle = acos(dot(centerToTop, centerToCurUV));
+	angle = angle * (180.0f / 3.141592654f); // radian to degree
+
+	angle = (centerToTop.x * centerToCurUV.x - centerToTop.y * centerToCurUV.x > 0.0f) ? angle : (-angle) + 360.0f;
+
+	float condition = 360 * g_fAmount;
+
+	if (angle >= condition)
+		discard;
+
+	Out.vColor = fillColor * maskColor * g_fAlpha;
+
+	return Out;
+}
+
 PS_OUT Texture_EFFECTSimple(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -109,7 +143,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Test, 0);
-		SetBlendState(BS_Trail,float4(0.f,0.f,0.f,1.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlending,float4(0.f,0.f,0.f,1.f), 0xffffffff);
 		
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;
@@ -129,5 +163,18 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 Texture_EFFECTSimple();
+	}
+
+	pass ProgressUI_Mask
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Test, 0);
+		SetBlendState(BS_Trail, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_MASK();
 	}
 }

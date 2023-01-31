@@ -81,6 +81,7 @@ public:
 	
 	void Turn(_fvector vAxis, _double TimeDelta); /* Dynamic */
 	void Rotation(_fvector vAxis, _float fRadian); /* Static */
+	void Rotation(_fmatrix rotMatrix);
 
 	/* 쳐다본다. */
 	/*void LookAt(const CTransform* pTarget);*/

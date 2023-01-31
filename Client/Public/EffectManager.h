@@ -19,6 +19,7 @@ public:
 
 	HRESULT Add_Effects(const wstring& pPrototypeEffectTag, const wstring& pEffectTag, void* pArg = nullptr);
 	HRESULT Render_Effects(const wstring& pEffectTag, _double TimeDelta);
+
 	HRESULT	LinkObject(const wstring& pEffectTag, _float4 vTargetPos, _float4 vLook = _float4(0.f, 0.f, 0.f, 0.f));
 	HRESULT SetUp_Effects(const wstring& pEffectTag, _float fUVSpeed, _float fAlpha, _float2 UV = _float2(0.f, 0.f));
 

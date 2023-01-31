@@ -121,9 +121,6 @@
     <Filter Include="GameObject\UI">
       <UniqueIdentifier>{dffb60f8-b772-48a6-9674-bd34daf09acd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\UI\UI">
-      <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Effect">
       <UniqueIdentifier>{cc92dde6-9a10-4f9f-8e44-4b21fad3200c}</UniqueIdentifier>
     </Filter>
@@ -136,9 +133,6 @@
     <Filter Include="GameObject\Ally\BalianBollwerk">
       <UniqueIdentifier>{249597b9-d32b-4c80-a7a4-cf2c4aea6bf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Ally\Chinuwa">
-      <UniqueIdentifier>{6332daf9-7f5e-4944-9013-3f18e41d26ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Ally\Chitata">
       <UniqueIdentifier>{f7058fee-efcf-42f5-a6d0-5ddb653a6d0b}</UniqueIdentifier>
     </Filter>
@@ -147,6 +141,21 @@
     </Filter>
     <Filter Include="GameObject\Tree">
       <UniqueIdentifier>{d888c315-97e6-438c-b676-04e12a8ed7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Ally\Chinuwa">
+      <UniqueIdentifier>{6332daf9-7f5e-4944-9013-3f18e41d26ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Mesh">
+      <UniqueIdentifier>{2307c750-5261-4d20-bbbc-2bcd94a1e34c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Rect">
+      <UniqueIdentifier>{c21597f4-588e-49d0-a170-a35a58dbd7e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Effect\Point">
+      <UniqueIdentifier>{80967f41-8939-4eae-88b6-3c6fd54a89fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\UI\LoadingUI">
+      <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -278,7 +287,7 @@
       <Filter>GameObject\Monster\Troll</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LoadingUI.h">
-      <Filter>GameObject\UI\UI</Filter>
+      <Filter>GameObject\UI\LoadingUI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LogoUI.h">
       <Filter>GameObject\Logo</Filter>
@@ -292,37 +301,10 @@
     <ClInclude Include="..\public\SkillChargingUI.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Effect_Rect.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Effect.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Effect_Mesh.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Effect_Point.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\FireBallLine.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\NorAtk_Trail2.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\NorAtk_Trail3.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ThunderWave.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Wing.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Line_Aura.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="NorAtk_Trail1.h">
       <Filter>GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DamageFontUI.h">
@@ -349,32 +331,8 @@
     <ClInclude Include="..\public\Delilah.h">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ExplosionE.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TargetAimEffect.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\ConversationUI.h">
       <Filter>GameObject\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ArcaneE.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FireE_0.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\FlameE.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\HitE.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\QskillCrackE.h">
-      <Filter>GameObject\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SparkE.h">
-      <Filter>GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterHpUI.h">
       <Filter>GameObject\UI</Filter>
@@ -388,20 +346,90 @@
     <ClInclude Include="..\public\PortraitCircleUI.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\BoomWave_0.h">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BoomWave_1.h">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Mesh.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FireBallLine.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\FSkillTrail.h">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Line_Aura.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="NorAtk_Trail1.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NorAtk_Trail2.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NorAtk_Trail3.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ThunderWave.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Twister_Cycle.h">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Twister_Line.h">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wing.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ArcaneE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Rect.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ExplosionE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FireE_0.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FlameE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\HitE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\QskillCrackE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SparkE.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TargetAimEffect.h">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FireWave.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Effect_Trail.h">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DashParticle.h">
+      <Filter>GameObject\Effect\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemonSkillFloor.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemonSkillCircular.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemonSkillStraight.h">
+      <Filter>GameObject\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,7 +549,7 @@
       <Filter>GameObject\Monster\Troll</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LoadingUI.cpp">
-      <Filter>GameObject\UI\UI</Filter>
+      <Filter>GameObject\UI\LoadingUI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LogoUI.cpp">
       <Filter>GameObject\Logo</Filter>
@@ -538,34 +566,7 @@
     <ClCompile Include="..\Private\Effect_Point.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Effect_Rect.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Effect.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Effect_Mesh.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\NorAtk_Trail2.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\NorAtk_Trail3.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ThunderWave.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Wing.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Line_Aura.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\FireBallLine.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="NorAtk_Trail1.cpp">
       <Filter>GameObject\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DamageFontUI.cpp">
@@ -592,32 +593,8 @@
     <ClCompile Include="..\private\Delilah.cpp">
       <Filter>GameObject\Ally\Delilah</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ExplosionE.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TargetAimEffect.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ConversationUI.cpp">
       <Filter>GameObject\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ArcaneE.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FireE_0.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\FlameE.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\HitE.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\QskillCrackE.cpp">
-      <Filter>GameObject\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SparkE.cpp">
-      <Filter>GameObject\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterHpUI.cpp">
       <Filter>GameObject\UI</Filter>
@@ -631,20 +608,90 @@
     <ClCompile Include="..\private\PortraitCircleUI.cpp">
       <Filter>GameObject\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\BoomWave_0.cpp">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BoomWave_1.cpp">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect_Mesh.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FireBallLine.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FSkillTrail.cpp">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Line_Aura.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="NorAtk_Trail1.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NorAtk_Trail2.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NorAtk_Trail3.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ThunderWave.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Twister_Cycle.cpp">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Twister_Line.cpp">
-      <Filter>GameObject\Effect</Filter>
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wing.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ArcaneE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Effect_Rect.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ExplosionE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireE_0.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FlameE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\HitE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\QskillCrackE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SparkE.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TargetAimEffect.cpp">
+      <Filter>GameObject\Effect\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FireWave.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Effect_Trail.cpp">
+      <Filter>GameObject\Effect\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DashParticle.cpp">
+      <Filter>GameObject\Effect\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemonSkillFloor.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemonSkillCircular.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemonSkillStraight.cpp">
+      <Filter>GameObject\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,6 +753,9 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ProgressBar.hlsl">
+      <Filter>ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

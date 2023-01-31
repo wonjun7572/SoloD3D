@@ -9,12 +9,17 @@ matrix			g_BoneMatrices[256];
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
 texture2D		g_SpecularTexture;
+texture2D		g_DissolveTexture;
 
 bool			g_HasSpecular;
 bool			g_HasNormal;
+bool			g_bDissolve = false;
 
 vector			g_vCamPosition;
 vector			g_vRimColor;
+
+float			fDissolveAmount;
+float			fFringeAmount;
 
 struct VS_IN
 {
@@ -44,8 +49,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT		Out = (VS_OUT)0;
 
 	matrix		matWV, matWVP;
-
-	matWV = mul(g_WorldMatrix, g_ViewMatrix);
+	matWV  = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	float4 worldPosition = mul(float4(In.vPosition, 1.f), g_WorldMatrix);
@@ -86,11 +90,11 @@ struct PS_IN
 struct PS_OUT
 {
 	/*SV_TARGET0 : 모든 정보가 결정된 픽셀이다. AND 0번째 렌더타겟에 그리기위한 색상이다. */
-	float4		vDiffuse  : SV_TARGET0;
-	float4		vNormal	  : SV_TARGET1;
-	float4		vDepth	  : SV_TARGET2;
-	float4		vSpecular : SV_TARGET3;
-	float4		vRimColor : SV_TARGET4;
+	float4		vDiffuse	 : SV_TARGET0;
+	float4		vNormal		 : SV_TARGET1;
+	float4		vDepth		 : SV_TARGET2;
+	float4		vSpecular	 : SV_TARGET3;
+	float4		vRimColor	 : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -108,7 +112,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	else
 		vSpecular = (vector)0.2f;
 
-	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 5.0f);
+	float rim = pow(1 - saturate(dot(In.vNormal.xyz, -In.vViewDir)), 25.0f);
 	vector rimColor = g_vRimColor;
 	rimColor = rim * rimColor;
 
@@ -122,11 +126,29 @@ PS_OUT PS_MAIN(PS_IN In)
 		vNormal = normalize(mul(vNormal, WorldMatrix));
 	}
 
+	if (g_vRimColor.x >= 0.95f)
+		vDiffuse.r += g_vRimColor.x;
+		
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
 	Out.vRimColor = rimColor;
+
+	if (g_bDissolve)
+	{
+		float4 DissolveMap = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+		float  DissolveValue = DissolveMap.x;
+
+		if (DissolveValue <= fDissolveAmount)
+			discard;
+		
+		else if (DissolveValue <= fDissolveAmount + fFringeAmount && fDissolveAmount != 0)
+		{
+			if (Out.vDiffuse.a != 0.0f)
+				Out.vDiffuse = Out.vDiffuse + float4(10.f, 0.f, 0.f, DissolveMap.x);
+		}
+	}
 
 	return Out;
 }

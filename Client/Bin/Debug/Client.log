@@ -1,23 +1,3 @@
-﻿  Tree.cpp
-  PortraitCircleUI.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\portraitcircleui.cpp(55): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Monster.cpp
-  Demon.cpp
-  Delilah.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\delilah.cpp(244): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Chitata.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\chitata.cpp(245): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Chinuwa.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\chinuwa.cpp(243): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  BalianBollwerk.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\balianbollwerk.cpp(371): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Abelardo.cpp
-c:\users\sam51\desktop\brightmemory\solod3d\client\private\abelardo.cpp(244): warning C4244: '+=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Loader.cpp
-  코드를 생성하고 있습니다...
-DirectXTKd.lib(pch.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(pch.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(ScreenGrab.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(ScreenGrab.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(SimpleMath.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(SimpleMath.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 'C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Bin\Debug\DirectXTK.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+﻿  Demon.cpp
   Client.vcxproj -> C:\Users\sam51\Desktop\BrightMemory\SoloD3D\Client\Default\..\Bin\Debug\Client.exe
   Client.vcxproj -> ..\Bin\Debug\Client.pdb (Full PDB)

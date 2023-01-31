@@ -84,7 +84,6 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
-	HRESULT SetUp_Effects();
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
@@ -110,6 +109,9 @@ private:
 	_double m_GroggyDelayTime = 0.0;
 	_double	m_SkillDelayTime = 0.0;
 
+	_float	m_fSkill3EffectTime = 0.f;
+	_float	m_fSkill5EffectTime = 0.f;
+	_float test = 1.f;
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;

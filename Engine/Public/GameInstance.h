@@ -81,6 +81,7 @@ public: /* For.PipeLine */
 	void		Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 	_float4		Get_CamPosition();
 	_float3		Get_CamUp();
+	_float3		Get_CamLook();
 
 public: /* For.Timer_Manager */
 	_double		Get_TimeDelta(const wstring& pTimerTag);

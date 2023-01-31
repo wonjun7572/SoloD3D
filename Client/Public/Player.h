@@ -81,7 +81,7 @@ public:
 
 	enum UI	{ SKILL_ICON_1, SKILL_ICON_2, SKILL_ICON_3, 
 		SKILL_ICON_4, SKILL_ICON_5, SKILL_MODELATIME, V_DEF,
-		HP , MP, PORTRAIT, UI_END };
+		HP , MP, PORTRAIT, SKILL_ICON_6, SKILL_ICON_7, SKILL_ICON_8, UI_END };
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -94,6 +94,7 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 	void UI_Tick(_double TimeDelta);
 
@@ -101,6 +102,7 @@ public:
 	CNavigation*			Get_NaviCom() { return m_pNavigationCom; }
 	vector<CGameObject*>	Get_PlayerParts() { return m_PlayerParts; }
 	CFSMComponent*			Get_FSM() { return m_pFSM; }
+	CCollider*				Get_AABB() { return m_pColliderCom[COLLTYPE_AABB]; }
 
 	void    SetUp_FSM();
 	void	Movement(_double TimeDelta);
@@ -111,6 +113,7 @@ public:
 	void	Set_Anim(ANIMATION eAnim);
 
 	void	ChangeModel(MODEL eModelIndex);
+	void	ChangePartsAnimSpeed(_double dTime);
 
 private:
 	void	Imgui_RenderProperty() override;
@@ -120,6 +123,7 @@ private:
 
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CShader*				m_pShaderCom = nullptr;
+	CShader*				m_pShadowShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 
@@ -139,9 +143,11 @@ public:
 
 public:
 	CCollider*				Get_WeaponCollider();
+	CTransform*				Get_WeaponTransform();
 
 private:
 	_bool					m_bCamTurn = false;
+	_bool					m_bPlayerTurn = true;
 
 	_float					m_fVelocity = 1.f;
 
@@ -166,6 +172,8 @@ public:
 	
 	_bool					Get_Conversation() { return m_bConversation; }
 	void					Set_PlayerUI(_bool bTurnOn) { m_bUI = bTurnOn; }
+
+	void					IsActingSkill();
 
 private:
 	CFSMComponent*			m_pFSM = nullptr;
@@ -204,6 +212,9 @@ private:
 	_bool					m_bSK03 = false;
 	_bool					m_bSK04_Charging = false;
 	_bool					m_bSK05 = false;
+	_bool					m_bSK06 = false;
+	_bool					m_bSK07 = false;
+	_bool					m_bSK08 = false;
 
 	_bool					m_bV_DEF = false;
 	_bool					m_bJump = false;
@@ -230,12 +241,16 @@ private:
 	_bool					CheckFinish_Skill3();
 	_bool					CheckFinish_Skill4();
 	_bool					CheckFinish_Skill5();
+	_bool					CheckFinish_Skill6();
+	_bool					CheckFinish_Skill7();
+	_bool					CheckFinish_Skill8();
 
 	_bool					CheckFinish_V_DEF();
 	
 	_bool					m_bCamChange = false;
 
 	_double					m_dModelATime = 0.0;
+	_double					m_Skill8EffectTime = 0.0;
 
 	/* for . Imgui*/
 	_float					m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;
@@ -259,11 +274,14 @@ private:
 	_bool	m_bUI = true;
 
 	/* ½ºÅ³ ÄðÅ¸ÀÓ~! */
-	_double m_Skill_1IconCollTime = 15.0;
+	_double m_Skill_1IconCoolTime = 15.0;
 	_double m_Skill_2IconCoolTime = 20.0;
 	_double m_Skill_3IconCoolTime = 10.0;
-	_double m_Skill_4IconCollTime = 20.0;
+	_double m_Skill_4IconCoolTime = 20.0;
 	_double m_Skill_5IconCoolTime = 30.0;
+	_double m_Skill_6IconCoolTime = 20.0;
+	_double m_Skill_7IconCoolTime = 25.0;
+	_double m_Skill_8IconCoolTime = 12.0;
 
 	_double m_Skill_VDefCoolTime = 7.0;
 
@@ -277,6 +295,12 @@ private:
 	_bool					m_bCamLock = false;
 
 	_bool					m_bConversation = false;
+
+	_float					m_fDissolveAmount = 0.f;
+	_float					m_fFringeAmount = 0.f;
+
+	_bool					m_bChangeAnimSpeed = false;
+	_double					m_dChangeAnimSpeed = 0.3;
 
 private:
 	HRESULT SetUp_Parts();

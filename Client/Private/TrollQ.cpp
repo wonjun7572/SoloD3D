@@ -141,6 +141,12 @@ HRESULT CTrollQ::Render()
 
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
 
+		if (m_bDeadAnim == true)
+		{
+			if (FAILED(m_pDissolveTexCom->Bind_ShaderResource(m_pShaderCom, "g_DissolveTexture")))
+				return E_FAIL;
+		}
+
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
 
@@ -436,6 +442,7 @@ void CTrollQ::SetUp_FSM()
 	{
 		m_pModelCom->Set_AnimationIndex(TROLLQ_DeadBody);
 		m_dDeadTime += TimeDelta;
+		m_fDissolveAmount += static_cast<float>(TimeDelta);
 
 		if (m_dDeadTime > 3.0)
 			m_bDead = true;
@@ -581,6 +588,8 @@ void CTrollQ::AdditiveAnim(_double TimeDelta)
 
 HRESULT CTrollQ::SetUp_Components()
 {
+	__super::SetUp_Components();
+
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
 		(CComponent**)&m_pRendererCom)))
@@ -692,11 +701,19 @@ HRESULT CTrollQ::SetUp_ShaderResources()
 
 	if (Get_CamDistance() > 30.f)
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 0.f);
-	else
-		m_vRimColor = _float4(1.f, 0.1f, 0.1f, 1.f);
-	
+
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
 		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("fFringeAmount", &m_fFringeAmount, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDeadAnim, sizeof(_bool))))
+		return E_FAIL;
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

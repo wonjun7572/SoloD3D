@@ -11,6 +11,7 @@
 #include "VIBuffer_Cylinder.h"
 #include "VIBuffer_Rect_Instancing.h"
 #include "VIBuffer_Point_Instancing.h"
+#include "VIBuffer_Trail.h"
 
 #include "Transform.h"
 

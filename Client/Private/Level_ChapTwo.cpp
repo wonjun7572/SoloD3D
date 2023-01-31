@@ -224,8 +224,8 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
    
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
-	//	return E_FAIL;
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

@@ -11,8 +11,8 @@ float2			g_UVMoveFactor;
 sampler AlbedoSampler = sampler_state
 {
 	filter = min_mag_mip_linear;
-	AddressU = Border;
-	AddressV = Border;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 sampler AlbedoWrapSampler = sampler_state
@@ -45,12 +45,16 @@ sampler AlphaMaskWrapSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
+	float3		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT
 {
 	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float4		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 };
 
@@ -64,6 +68,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_ProjMatrix);
 
 	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+	Out.vNormal = normalize(mul(float4(In.vNormal, 0.f), matWVP));
+	Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), matWVP));
 	Out.vTexUV = In.vTexUV;
 	return Out;
 }
@@ -71,6 +77,8 @@ VS_OUT VS_MAIN(VS_IN In)
 struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
+	float4		vNormal : NORMAL;
+	float4		vTangent : TANGENT;
 	float2		vTexUV : TEXCOORD0;
 };
 
@@ -121,12 +129,11 @@ PS_OUT MeshEffectWithAlphaMaskPS(PS_IN In)
 	
 	float4 albedo = g_DiffuseTexture.Sample(AlbedoSampler, texcoord2);
 	float4 maskTex = g_MaskTexture.Sample(AlphaMaskSampler, texcoord2);
-
 	if (maskTex.r == 0)
 		discard;
-
+	
 	Out.vColor = albedo * maskTex.r * g_fAlpha;
-
+	
 	return Out;
 }
 
@@ -137,8 +144,8 @@ PS_OUT MeshEffectWithAlphaMaskWrapPS(PS_IN In)
 	float2 texcoord2 = In.vTexUV;
 	texcoord2 += g_UVMoveFactor;
 
-	float4 albedo = g_DiffuseTexture.Sample(AlbedoWrapSampler, texcoord2);
-	float4 maskTex = g_MaskTexture.Sample(AlphaMaskWrapSampler, texcoord2);
+	float4 albedo = g_DiffuseTexture.Sample(AlbedoWrapSampler, texcoord2 * 2.f);
+	float4 maskTex = g_MaskTexture.Sample(AlphaMaskWrapSampler, texcoord2 * 2.f);
 
 	if (maskTex.r == 0)
 		discard;
