@@ -123,7 +123,6 @@ private:
 
 	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CShader*				m_pShaderCom = nullptr;
-	CShader*				m_pShadowShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 
@@ -307,6 +306,7 @@ private:
 	HRESULT SetUp_UI();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUP_ShadowShaderResources();
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -38,6 +38,7 @@ HRESULT CSkeletonWarrior::Init(void * pArg)
 		_float4 vPos;
 		memcpy(&vPos, pArg, sizeof(_float4));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 	}
 	else if (pArg != nullptr && g_LEVEL == LEVEL_CHAP2)
 	{
@@ -172,6 +173,22 @@ HRESULT CSkeletonWarrior::Render()
 
 		m_pModelCom->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
+
+	return S_OK;
+}
+
+HRESULT CSkeletonWarrior::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUP_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
 
 	return S_OK;
 }
@@ -734,6 +751,26 @@ HRESULT CSkeletonWarrior::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDeadAnim, sizeof(_bool))))
 		return E_FAIL;
 	
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CSkeletonWarrior::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

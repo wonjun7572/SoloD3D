@@ -20,7 +20,9 @@ public:
 	HRESULT Add_RenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4* pClearColor);
 	HRESULT Add_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 
+	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 	HRESULT Begin_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
+	HRESULT Begin_ShadowMRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 	HRESULT End_MRT(ID3D11DeviceContext* pContext, const _tchar* pMRTTag);
 
 #ifdef _DEBUG
@@ -41,6 +43,7 @@ private:
 private:
 	ID3D11RenderTargetView*				m_pBackBufferView = nullptr;
 	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
+	D3D11_VIEWPORT						m_OriginViewPort;
 
 #ifdef _DEBUG
 private:
@@ -50,7 +53,6 @@ private:
 #endif
 
 private:
-	class CRenderTarget* Find_RenderTarget(const _tchar* pTargetTag);
 	list<class CRenderTarget*>* Find_MRT(const _tchar* pMRTTag);
 
 public:

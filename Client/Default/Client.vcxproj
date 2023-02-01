@@ -238,6 +238,10 @@
     <ClInclude Include="..\public\PortraitCircleUI.h" />
     <ClInclude Include="..\public\ProgressBarUI.h" />
     <ClInclude Include="..\public\QskillCrackE.h" />
+    <ClInclude Include="..\public\Rock_1.h" />
+    <ClInclude Include="..\public\Rock_2.h" />
+    <ClInclude Include="..\public\Rock_3.h" />
+    <ClInclude Include="..\public\Rock_4.h" />
     <ClInclude Include="..\public\Shoulder.h" />
     <ClInclude Include="..\public\SkeletonWarrior.h" />
     <ClInclude Include="..\public\SkillChargingUI.h" />
@@ -250,6 +254,8 @@
     <ClInclude Include="..\public\TestCylinder.h" />
     <ClInclude Include="..\public\TestSphere.h" />
     <ClInclude Include="..\Public\ThunderWave.h" />
+    <ClInclude Include="..\public\TorchFlame.h" />
+    <ClInclude Include="..\public\Torchlight.h" />
     <ClInclude Include="..\public\TownA.h" />
     <ClInclude Include="..\public\Tree.h" />
     <ClInclude Include="..\public\TrollA.h" />
@@ -330,6 +336,10 @@
     <ClCompile Include="..\private\PortraitCircleUI.cpp" />
     <ClCompile Include="..\private\ProgressBarUI.cpp" />
     <ClCompile Include="..\private\QskillCrackE.cpp" />
+    <ClCompile Include="..\private\Rock_1.cpp" />
+    <ClCompile Include="..\private\Rock_2.cpp" />
+    <ClCompile Include="..\private\Rock_3.cpp" />
+    <ClCompile Include="..\private\Rock_4.cpp" />
     <ClCompile Include="..\private\Shoulder.cpp" />
     <ClCompile Include="..\private\SkeletonWarrior.cpp" />
     <ClCompile Include="..\private\SkillChargingUI.cpp" />
@@ -342,6 +352,8 @@
     <ClCompile Include="..\private\TestCylinder.cpp" />
     <ClCompile Include="..\private\TestSphere.cpp" />
     <ClCompile Include="..\Private\ThunderWave.cpp" />
+    <ClCompile Include="..\private\TorchFlame.cpp" />
+    <ClCompile Include="..\private\Torchlight.cpp" />
     <ClCompile Include="..\private\TownA.cpp" />
     <ClCompile Include="..\private\Tree.cpp" />
     <ClCompile Include="..\private\TrollA.cpp" />
@@ -371,7 +383,6 @@
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_MeshEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ProgressBar.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_SkillProgressUI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_TextureEffect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />

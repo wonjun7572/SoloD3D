@@ -72,7 +72,9 @@ HRESULT CPlayer::Init(void * pArg)
 	/* For. Effect*/
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(45.f, 0.f, 75.f, 1.f));
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(34.383572f, 0.f, 80.610695f, 1.f));
+		m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 		CEffect_Mesh::EFFECTDESC effectDesc;
 		ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
 
@@ -342,7 +344,6 @@ HRESULT CPlayer::Init(void * pArg)
 	SetUp_FSM();
 
 	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
-	m_bHasShadow = true;
 
 	return S_OK;
 }
@@ -390,6 +391,9 @@ void CPlayer::Late_Tick(_double TimeDelta)
 
 	for (_uint i = 0; i < COLLTYPE_END; ++i)
 		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+
+	if (nullptr != m_pRendererCom)
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 	if (nullptr != m_pRendererCom)
 	{
@@ -482,28 +486,20 @@ HRESULT CPlayer::RenderShadow()
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShadowShaderCom, "g_WorldMatrix")))
+	if (FAILED(SetUP_ShadowShaderResources()))
 		return E_FAIL;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShadowShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
-	
 	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		m_pModelCom[m_eModelState]->Render(m_pShadowShaderCom, i, 0, "g_BoneMatrices");
-	}
+		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
 
 	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
 	{
-		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsShadowRender(0)))
+		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->SetUp_ShadowShaderResources()))
+			return E_FAIL;
+
+		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsShadowRender(1)))
 			return E_FAIL;
 	}
 
@@ -1284,7 +1280,9 @@ void CPlayer::SetUp_FSM()
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"ThunderWave"))->Set_Link(true);
 		_float3 vPos = _float3::Lerp(CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 5.f);
 		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
-		m_pCam->Shake(0.1f);
+		
+		if(m_pCam != nullptr)
+			m_pCam->Shake(0.1f);
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -3119,11 +3117,6 @@ HRESULT CPlayer::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_ShaderShadow */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Shadow"), TEXT("Com_ShaderShadow"),
-		(CComponent**)&m_pShadowShaderCom)))
-		return E_FAIL;
-
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_HumanF_B"), TEXT("Com_Model_B"),
 		(CComponent**)&m_pModelCom[MODEL_NOMAL])))
@@ -3226,6 +3219,26 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CPlayer::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
 CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CPlayer*		pInstance = new CPlayer(pDevice, pContext);
@@ -3271,7 +3284,6 @@ void CPlayer::Free()
 		Safe_Release(m_pModelCom[i]);
 
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pShadowShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pNavigationCom);
 

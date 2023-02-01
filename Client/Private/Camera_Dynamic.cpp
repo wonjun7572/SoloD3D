@@ -51,6 +51,19 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 
 	m_strObjName = TEXT("DynamicCamera");
 
+	/*if (g_LEVEL == LEVEL_CHAP1)
+	{
+		Load_CheckPoints();
+		m_fMultipleTime = 0.7f;
+		m_bDynamicCam = !m_bDynamicCam;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		m_pPlayerCam = static_cast<CPlayerCamera*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Camera", L"PlayerCamera"));
+		RELEASE_INSTANCE(CGameInstance);
+		static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(false);
+		m_bPaused = false;
+		m_iIndex = 1;
+	}*/
+
 	return S_OK;
 }
 
@@ -415,8 +428,6 @@ HRESULT CCamera_Dynamic::Load_CheckPoints()
 		ReadFile(hFile, &vPoint, sizeof(_float4), &dwByte, nullptr);
 		m_CheckPoints.push_back(vPoint);
 	}
-
-	MSG_BOX("Load_Complete!!");
 
 	CloseHandle(hFile);
 

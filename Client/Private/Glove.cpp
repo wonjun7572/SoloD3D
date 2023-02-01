@@ -64,11 +64,6 @@ HRESULT CGlove::SetUp_Components()
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_ShaderShadow */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_Shadow"), TEXT("Com_ShaderShadow"),
-		(CComponent**)&m_pShadowShaderCom)))
-		return E_FAIL;
-
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Model_Glove_B"), TEXT("Com_Model_B"),
 		(CComponent**)&m_pModelCom[MODEL_NOMAL])))

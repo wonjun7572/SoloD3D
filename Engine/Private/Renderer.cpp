@@ -1,6 +1,7 @@
 #include "..\Public\Renderer.h"
 #include "GameInstance.h"
 #include "Target_Manager.h"
+#include "RenderTarget.h"
 #include "Light_Manager.h"
 #include "VIBuffer_Rect.h"
 #include "GameObject.h"
@@ -58,8 +59,13 @@ HRESULT CRenderer::Init_Prototype()
 		return E_FAIL;
 
 	/* For.Target_Shadow */
-	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shadow"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_RenderTarget(m_pDevice, m_pContext, TEXT("Target_Shadow"), 8000, 4500, DXGI_FORMAT_R32G32B32A32_FLOAT, &_float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
+	m_pTarget_Manager->Find_RenderTarget(TEXT("Target_Shadow"))->Ready_DepthStencilRenderTargetView(8000, 4500, DXGI_FORMAT_D24_UNORM_S8_UINT);
+
+	// DepthStencilView 만들어준후 쉐도우를 그릴때는 잠깐의 다른 Depth로 활용해서 그려준후 다시 쉐도우렌더가 끝나면 원래의 
+	// DepthStencilView로 그려준다. -> 성공
 
 	/* For.MRT_Deferred */ /* 디퍼드 렌더링(빛)을 수행하기위해 필요한 데이터들을 저장한 렌더타겟들. */
 	if (FAILED(m_pTarget_Manager->Add_MRT(TEXT("MRT_Deferred"), TEXT("Target_Diffuse"))))
@@ -161,8 +167,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	//if (FAILED(Render_Shadow()))
-	//	return E_FAIL;
+	if (FAILED(Render_Shadow()))
+		return E_FAIL;
+
 	if (FAILED(Render_NonAlphaBlend()))
 		return E_FAIL;
 	if (FAILED(Render_LightAcc()))
@@ -220,20 +227,20 @@ HRESULT CRenderer::Render_Shadow()
 		return E_FAIL;
 
 	/* Shadow */
-	if (FAILED(m_pTarget_Manager->Begin_MRT(m_pContext, TEXT("MRT_Shadow"))))
+	if (FAILED(m_pTarget_Manager->Begin_ShadowMRT(m_pContext, TEXT("Target_Shadow"))))
 		return E_FAIL;
 
-	for (auto& pGameObject : m_RenderObjects[RENDER_NONALPHABLEND])
+	for (auto& pGameObject : m_RenderObjects[RENDER_SHADOW])
 	{
-		if (nullptr != pGameObject && pGameObject->Get_HasShadow() == true)
+		if (nullptr != pGameObject)
 			pGameObject->RenderShadow();
 
-		//Safe_Release(pGameObject);
+		Safe_Release(pGameObject);
 	}
 
-	//m_RenderObjects[RENDER_NONALPHABLEND].clear();
+	m_RenderObjects[RENDER_SHADOW].clear();
 
-	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("MRT_Shadow"))))
+	if (FAILED(m_pTarget_Manager->End_MRT(m_pContext, TEXT("Target_Shadow"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -284,19 +291,18 @@ HRESULT CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_NormalTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Normal")))))
 		return E_FAIL;
+	
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular_Light")))))
-		return E_FAIL;
 	
-	/* For. Shadow */
-	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shadow")))))
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_SpecularTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Specular_Light")))))
 		return E_FAIL;
 
 	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
 
 	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
+	
 	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
@@ -333,6 +339,28 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_ShaderResourceView("g_RimTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_RimColor")))))
 		return E_FAIL;
+
+	/* For. Shadow */
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_DepthTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Depth")))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_ShaderResourceView("g_ShadowTexture", m_pTarget_Manager->Get_SRV(TEXT("Target_Shadow")))))
+		return E_FAIL;
+	
+	CGameInstance* pInst = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShader->Set_Matrix("g_ViewMatrixInv", &pInst->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_ProjMatrixInv", &pInst->Get_TransformMatrix_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
 
 	m_pShader->Begin(3);
 	m_pVIBuffer->Render();

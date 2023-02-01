@@ -175,22 +175,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
 		return E_FAIL;
 
-	CCamera::CAMERADESC			CameraDesc;
-	ZeroMemory(&CameraDesc, sizeof(CCamera::CAMERADESC));
-
-	CameraDesc.vEye = _float4(0.f, 50.f, -50.f, 1.f);
-	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-	CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
-
-	CameraDesc.fFovy = XMConvertToRadians(60.0f);
-	CameraDesc.fAspect = g_iWinSizeX / _float(g_iWinSizeY);
-	CameraDesc.fNear = 0.2f;
-	CameraDesc.fFar = 300.f;
-
-	CameraDesc.TransformDesc.fSpeedPerSec = 10.0f;
-	CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_LightCamera"), &CameraDesc)))
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_LightCamera"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -330,6 +315,126 @@ HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 	vPos = _float4(88.8f, 14.f, 114.1f, 1.f);
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(5.6f, 0.f, -3.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_1"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(26.953f, 0.f, -3.025f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(64.043f, 0.779f, -7.510f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(93.444f, 0.f, -11.924f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(128.f, 0.f, 23.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(128.f, 0.f, 54.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(138.f, 0.f, 88.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(48.041f, 0.f, 0.664f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_3"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(85.f, 0.f, 2.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_3"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(0.320f, -2.744f, 18.228f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_4"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(121.173f, 0.f, 5.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_4"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(112.018f, -0.573f, -1.45f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Rock_4"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(36.073f, 5.f, 31.573f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(37.946f, 5.f, 46.914f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(28.638f, 5.f, 47.234f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(33.215f, 5.f, 13.235f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(62.376f, 5, 7.831f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(86.143f, 5.f, 9.061f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(28.660f, 5.5f, 47.245f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(37.834f, 5.5f, 47.245f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(36.081f, 5.5f, 31.486f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(33.199f, 5.5f, 13.255f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(62.418f, 5.5f, 7.849f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(86.153f, 5.5f, 9.075f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -90,6 +90,13 @@
 #include "DemonSkillCircular.h"
 #include "DemonSkillStraight.h"
 
+#include "Rock_1.h"
+#include "Rock_2.h"
+#include "Rock_3.h"
+#include "Rock_4.h"
+#include "Torchlight.h"
+#include "TorchFlame.h"
+
 unsigned int	g_LEVEL = 0;
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -631,6 +638,12 @@ HRESULT CLoader::Loading_ForChapter_1()
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Rock_4"),
 			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Rock/Rock_4.model"), PivotMatrix))))
 			return E_FAIL;
+
+		/* For.Torchlight */
+		PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Torchlight"),
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Torchlight/Torchlight.model"), PivotMatrix))))
+			return E_FAIL;
 	}
 
 	// For.Effect
@@ -815,6 +828,30 @@ HRESULT CLoader::Loading_ForChapter_1()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Stair"), CStair::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
+	/* For. Prototype_GameObject_Rock_1*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rock_1"), CRock_1::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Rock_2*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rock_2"), CRock_2::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Rock_3*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rock_3"), CRock_3::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Rock_4*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Rock_4"), CRock_4::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Torchlight*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Torchlight"), CTorchlight::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For. Prototype_GameObject_Torchlight_Flame*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Torchlight_Flame"), CTorchFlame::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	// Effect
 	{
 		/* For. Prototype_GameObject_NorAtk_Trail1*/

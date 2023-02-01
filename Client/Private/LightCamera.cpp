@@ -30,8 +30,8 @@ HRESULT CLightCamera::Init(void * pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
 	else
 	{
-		CameraDesc.vEye = _float4(0.f, 30.f, 0.f, 1.f);
-		CameraDesc.vAt = _float4(0.f, 0.f, -1.f, 1.f);
+		CameraDesc.vEye = _float4(-5.f, 50.f, -5.f, 1.f);
+		CameraDesc.vAt = _float4(60.f, 0.f, 60.f, 1.f);
 		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 
 		CameraDesc.fFovy = XMConvertToRadians(60.f);
@@ -55,7 +55,7 @@ void CLightCamera::Tick(_double TimeDelta)
 {
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTVIEW, m_pTransformCom->Get_WorldMatrixInverse());
-	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTPROJ, XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
+	//원래의 투영행렬을 던져주면 됨
 	RELEASE_INSTANCE(CGameInstance);
 }
 

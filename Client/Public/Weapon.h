@@ -34,6 +34,7 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 	CCollider*				Get_Collider() { return m_pColliderCom; }
 
@@ -54,6 +55,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUP_ShadowShaderResources();
 
 public:
 	void Imgui_RenderProperty() override;

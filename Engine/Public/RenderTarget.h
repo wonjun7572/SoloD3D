@@ -24,7 +24,11 @@ public:
 
 public:
 	HRESULT Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4* pClearColor);
+	HRESULT Ready_DepthStencilRenderTargetView(_uint iWidth, _uint iHeight, DXGI_FORMAT eFormat);
 	HRESULT Clear();
+
+	ID3D11DepthStencilView*				GetDepthStencilView() { return m_pDepthStencilView; }
+	D3D11_VIEWPORT						GetViewPortDesc() { return m_ViewPort; }
 
 #ifdef _DEBUG
 public:
@@ -35,6 +39,9 @@ public:
 private:
 	ID3D11Device*						m_pDevice = nullptr;
 	ID3D11DeviceContext*				m_pContext = nullptr;
+
+	D3D11_VIEWPORT						m_ViewPort;
+	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
 
 private:
 	ID3D11Texture2D*					m_pTexture2D = nullptr;

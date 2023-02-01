@@ -118,6 +118,7 @@ void CMonster::Late_Tick(_double TimeDelta)
 	if (nullptr != m_pRendererCom &&
 		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
 	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 	
 #ifdef _DEBUG
@@ -125,10 +126,6 @@ void CMonster::Late_Tick(_double TimeDelta)
 			m_pRendererCom->Add_DebugRenderGroup(pCollider);
 #endif
 	}
-
-	// 내 주변에 있는 몬스터와 거리 비교 이후에 그녀석의 UI가 켜져있는가? 
-	// 한명이라도 켜져있다면 내껀 꺼버리고 아니면 키고
-	// 아닌데.. 흠 
 
 	UI_Switch(TimeDelta);
 

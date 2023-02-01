@@ -28,15 +28,6 @@ HRESULT CLight::Render(CVIBuffer_Rect * pVIBuffer, CShader * pShader)
 		if (FAILED(pShader->Set_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
 			return E_FAIL;
 
-		CGameInstance* pInst = GET_INSTANCE(CGameInstance);
-
-		if (FAILED(pShader->Set_Matrix("g_LightViewMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Matrix("g_LightProjMatrix", &pInst->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTPROJ))))
-			return E_FAIL;
-
-		RELEASE_INSTANCE(CGameInstance);
-
 		// 빛을 임시적으로 배치한 카메라라고 한번 생각해보기
 		// 절두체 영역으로 보고 있을 것이고 물체가 그려져야할지 안 그려져야할지 
 		// 깊이값 저장하는 것처럼

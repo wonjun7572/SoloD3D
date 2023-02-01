@@ -41,12 +41,12 @@ public:
 	HRESULT PartsRender(_uint iPassIndex);
 	HRESULT PartsShadowRender(_uint iPassIndex);
 	HRESULT SetUp_ShaderResources();
+	HRESULT SetUp_ShadowShaderResources();
 
 	void	ChangeModel(MODEL iModelIndex);
 
 protected:
 	CShader*				m_pShaderCom = nullptr;
-	CShader*				m_pShadowShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	
 	CModel*					m_pModelCom[MODEL_END] = { nullptr };

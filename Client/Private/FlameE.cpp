@@ -45,14 +45,14 @@ HRESULT CFlameE::Init(void * pArg)
 	}
 
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
-	m_strObjName = L"Effect_Rect_Explosion";
+	m_strObjName = L"Effect_Rect_Flame";
 
 	LIGHTDESC			LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 	LightDesc.eType = LIGHTDESC::TYPE_POINT;
 	LightDesc.isEnable = true;
 	XMStoreFloat4(&LightDesc.vPosition, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	LightDesc.fRange = 5.0f;
+	LightDesc.fRange = 20.0f;
 	LightDesc.vDiffuse = _float4(0.6f, 0.4f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;

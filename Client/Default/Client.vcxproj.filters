@@ -346,7 +346,6 @@
     <ClInclude Include="..\public\PortraitCircleUI.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\public\BoomWave_0.h">
       <Filter>GameObject\Effect\Mesh</Filter>
     </ClInclude>
@@ -431,6 +430,23 @@
     <ClInclude Include="..\public\DemonSkillStraight.h">
       <Filter>GameObject\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightCamera.h">
+      <Filter>GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rock_1.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rock_2.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rock_3.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rock_4.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Torchlight.h" />
+    <ClInclude Include="..\public\TorchFlame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -608,7 +624,6 @@
     <ClCompile Include="..\private\PortraitCircleUI.cpp">
       <Filter>GameObject\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\private\BoomWave_0.cpp">
       <Filter>GameObject\Effect\Mesh</Filter>
     </ClCompile>
@@ -693,6 +708,23 @@
     <ClCompile Include="..\private\DemonSkillStraight.cpp">
       <Filter>GameObject\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\LightCamera.cpp">
+      <Filter>GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rock_1.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rock_2.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rock_3.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rock_4.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Torchlight.cpp" />
+    <ClCompile Include="..\private\TorchFlame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -753,9 +785,6 @@
       <Filter>ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ProgressBar.hlsl">
-      <Filter>ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.hlsl">
       <Filter>ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>

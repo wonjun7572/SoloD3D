@@ -1,6 +1,6 @@
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix			g_ProjMatrixInv, g_ViewMatrixInv;
-matrix			g_LightProjMatrix, g_LightViewMatrix;
+matrix			g_LightViewMatrix, g_LightProjMatrix;
 
 vector			g_vLightDir;
 vector			g_vLightPos;
@@ -36,6 +36,13 @@ sampler PointSampler = sampler_state
 	filter = min_mag_mip_Point;
 	AddressU = wrap;
 	AddressV = wrap;
+};
+
+sampler DepthSampler = sampler_state
+{
+	filter = min_mag_mip_Point;
+	AddressU = clamp;
+	AddressV = clamp;
 };
 
 struct VS_IN
@@ -98,7 +105,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecularDesc = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
-	vector		vShadowDesc = g_ShadowTexture.Sample(LinearSampler, In.vTexUV);
 
 	float		fViewZ = vDepthDesc.y * 300.f;
 	
@@ -126,21 +132,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vNormal));
 	vector		vLook = vWorldPos - g_vCamPosition;
-
-	// For. Shadow
-	//matrix		ShadowCameraVP = mul(g_LightViewMatrix, g_LightProjMatrix);
-	//vector		vShadowClipPos = mul(vWorldPos, ShadowCameraVP);
-	//float		fDepth = vShadowClipPos.z / vShadowClipPos.w;
-	//float2 uv = vShadowClipPos.xy / vShadowClipPos.w;
-	//uv.y = -uv.y;
-	//uv = uv * 0.5f + 0.5f;
-
-	//if (0 < uv.x && uv.x < 1 && 0 < uv.y && uv.y < 1)
-	//{
-	//	float fShadowDepth = g_ShadowTexture.Sample(LinearSampler, uv).x;
-	//	if (fDepth > fShadowDepth + 0.00001f)
-	//		Out.vShade *= 0.1f;
-	//}
 
 	Out.vSpecular = (g_vLightSpecular * vSpecularDesc) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
 	Out.vSpecular.a = 0.f;
@@ -207,7 +198,39 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 
 	Out.vColor = (vDiffuse * vShade) + vSpecular + vRimColor;
 
-	if (0.0f == Out.vColor.a)
+	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
+	float		fViewZ = vDepthDesc.y * 300.f;
+	
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
+	vector		vPosition;
+	vPosition.x = In.vTexUV.x * 2.f - 1.f;
+	vPosition.y = In.vTexUV.y * -2.f + 1.f;
+	vPosition.z = vDepthDesc.x; /* 0 ~ 1 */
+	vPosition.w = 1.0f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+	vPosition *= fViewZ;
+
+	// 뷰 상
+	vPosition = mul(vPosition, g_ProjMatrixInv);
+
+	// 월드 상
+	vPosition = mul(vPosition, g_ViewMatrixInv);
+
+	vPosition = mul(vPosition, g_LightViewMatrix);
+
+	vector	vUVPos = mul(vPosition, g_LightProjMatrix);
+	float2	vNewUV;
+
+	vNewUV.x = (vUVPos.x / vUVPos.w) * 0.5f + 0.5f;
+	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
+
+	vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
+
+	if (vPosition.z - 0.1f > vShadowDesc.r * 300.f)
+		Out.vColor *= 0.6f;
+
+	if (Out.vColor.a == 0.0f)
 		discard;
 
 	return Out;

@@ -39,7 +39,6 @@ HRESULT CStair::Init(void * pArg)
 void CStair::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
 }
 
 void CStair::Late_Tick(_double TimeDelta)
