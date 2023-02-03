@@ -87,8 +87,12 @@ private:
 	_double TimeConversation = 0.0;
 	_bool	m_bConversation = true;
 	_bool	m_bSecondStageCheck = false;
+	_bool	m_bChangeBGM = false;
 	vector<_float4> m_CheckPoints;
 	wstring	m_strConversation;
+
+	_bool	m_bChap1Speak = false;
+	_bool	m_bChap1FinSpeak = false;
 
 public:
 	static CBalianBollwerk* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -180,7 +180,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
 
 	return Out;
@@ -201,7 +201,6 @@ PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 	else
 		vSpecular = (vector)1.f;
-
 	
 	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
 	float3	vNormal = In.vNormal.xyz;
@@ -219,7 +218,7 @@ PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
 	Out.vRimColor = rimColor;
 	return Out;
@@ -280,7 +279,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
 
-	Out.vLightDepth.r = In.vProjPos.w / 300.f;
+	Out.vLightDepth.r = In.vProjPos.w / 500.f;
 
 	Out.vLightDepth.a = 1.f;
 

@@ -29,7 +29,7 @@ HRESULT CAbelardo::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 7.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -64,9 +64,9 @@ HRESULT CAbelardo::Init(void * pArg)
 		m_CheckPoints.push_back(_float4(299.f, 0.f, 142.f, 1.f));
 		m_CheckPoints.push_back(_float4(307.f, 0.f, 95.f, 1.f));
 
-		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 		m_pSkeleton = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"SkeletonWarrior_2");
-		RELEASE_INSTANCE(CGameInstance);
+		RELEASE_INSTANCE(CGameInstance)
 	}
 
 	return S_OK;
@@ -126,6 +126,22 @@ HRESULT CAbelardo::Render()
 	return S_OK;
 }
 
+HRESULT CAbelardo::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUP_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
+
+	return S_OK;
+}
+
 void CAbelardo::Level_Chap2Tick(_double TimeDelta)
 {
 	if (m_bSecondStageCheck && m_pFSM != nullptr)
@@ -177,6 +193,14 @@ void CAbelardo::Conversation(_double TimeDelta)
 
 		if (TimeConversation < 3.f)
 		{
+			if (!m_bSpeak)
+			{
+				CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"ByoungJoo .mp3", 1.f);
+				RELEASE_INSTANCE(CGameInstance)
+					m_bSpeak = true;
+			}
+
 			m_strConversation = L"나는 파주 제국에 살고 있는 김병주라고 하네";
 			TimeConversation += TimeDelta;
 		}
@@ -465,6 +489,26 @@ HRESULT CAbelardo::SetUp_ShaderResources()
 		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vRimColor", &m_vRimColor, sizeof(_float4))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CAbelardo::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

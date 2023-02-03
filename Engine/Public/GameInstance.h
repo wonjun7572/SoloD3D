@@ -97,7 +97,8 @@ public: /* For.Font_Manager */
 public: /* For. Light_Manager*/
 	const LIGHTDESC* Get_LightDesc(_uint iIndex);
 	HRESULT Add_Light(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const LIGHTDESC& LightDesc);
-
+	void	Clear_Light();
+	
 public: /* For.Frustum */
 	_bool isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
@@ -116,9 +117,9 @@ private:
 	static _uint					m_iStaticLevelIndex;
 
 private:
-	class CGraphic_Device*		m_pGraphicDev = nullptr;
-	class CInput_Device*		m_pInputDev = nullptr;
-	class CLevel_Manager*		m_pLevelMgr = nullptr;
+	class CGraphic_Device*			m_pGraphicDev = nullptr;
+	class CInput_Device*			   m_pInputDev = nullptr;
+	class CLevel_Manager*			m_pLevelMgr = nullptr;
 	class CObject_Manager*		m_pObjectMgr = nullptr;
 	class CComponent_Manager*	m_pComponetMgr = nullptr;
 	class CImGui_Manager*		m_pImGuiMgr = nullptr;

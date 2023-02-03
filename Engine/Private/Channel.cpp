@@ -14,6 +14,9 @@ HRESULT CChannel::Initialize(CHANNELLOAD& pAIChannel, CModel * pModel)
 	m_pBone = pModel->Get_BonePtr(m_szName);
 	Safe_AddRef(m_pBone);
 
+	m_pTrailBone = pModel->Get_BonePtr(m_szName);
+	Safe_AddRef(m_pTrailBone);
+	
 	m_iNumKeyframes = pAIChannel.mNumKeyFrames;
 
 	m_KeyFrames = pAIChannel.mKeyFrames;
@@ -74,6 +77,7 @@ void CChannel::Update_TransformMatrix(_double PlayTime)
 	Transform_Matrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 
 	m_pBone->Set_TransformMatrix(Transform_Matrix);
+	m_pTrailBone->Set_TransformMatrix(Transform_Matrix);
 }
 
 void CChannel::Blend_TransformMatrix(_double PlayTime, _float fBlendRatio)
@@ -182,6 +186,7 @@ CChannel * CChannel::Create(CHANNELLOAD& pAIChannel, CModel * pModel)
 void CChannel::Free()
 {
 	Safe_Release(m_pBone);
-
+	Safe_Release(m_pTrailBone);
+	
 	m_KeyFrames.clear();
 }

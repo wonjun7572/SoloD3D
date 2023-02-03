@@ -80,6 +80,8 @@
 #include "Tree.h"
 #include "BoomWave_0.h"
 #include "BoomWave_1.h"
+#include "CMedieval_City_Down.h"
+#include "CRainEffect.h"
 #include "Twister_Cycle.h"
 #include "Twister_Line.h"
 #include "FSkillTrail.h"
@@ -97,6 +99,9 @@
 #include "Torchlight.h"
 #include "TorchFlame.h"
 
+#include "CRainEffect.h"
+#include "BloodFrameUI.h"
+
 unsigned int	g_LEVEL = 0;
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -109,7 +114,7 @@ CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 _uint APIENTRY LoadingThread(void* pArg)
 {
-	CLoader*		pLoader = (CLoader*)pArg;
+	CLoader*		pLoader = static_cast<CLoader*>(pArg);
 
 	EnterCriticalSection(&pLoader->Get_CriticalSection());
 
@@ -149,7 +154,7 @@ HRESULT CLoader::Init(LEVEL eNextLevelID)
 	
 	InitializeCriticalSection(&m_CriticalSection);
 
-	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr);
+	m_hThread = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, LoadingThread, this, 0, nullptr));
 	if (0 == m_hThread)
 		return E_FAIL;
 
@@ -282,11 +287,21 @@ HRESULT CLoader::Loading_ForChapter_1()
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit/%d.png"), 16))))
 			return E_FAIL;
 
+		/* For. Texture_Blood */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Blood"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Blood/Blood01_%d.png"), 17))))
+			return E_FAIL;
+
 		/* For. Texture_Spark */
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Spark"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Spark/Spark%d.png"), 4))))
 			return E_FAIL;
 
+		/* For. Texture_Rain */
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_Rain"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/Rain/Rain.png")))))
+				return E_FAIL;
+		
 		/* For. Texture_QSkillCrack */
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_QSkillCrack"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/QskillCrack.png")))))
@@ -333,6 +348,11 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Texture_PortraitCircle*/
 		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_PortraitCircle"),
 			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/PortraitCircle/PortraitCircle_%d.png"), 28))))
+			return E_FAIL;
+
+		/* For. Texture_BloodFrameBackGround*/
+		if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP1, TEXT("Texture_BloodFrameBackGround"),
+			CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/BloodFrameBackGround.png")))))
 			return E_FAIL;
 
 		/* For. Texture_Portrait*/
@@ -937,6 +957,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Prototype_GameObject_DashParticle */
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DashParticle"), CDashParticle::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
+
+		/* For. Prototype_GameObject_RainParticle */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_RainParticle"), CRainEffect::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 
 	// UI
@@ -984,6 +1008,10 @@ HRESULT CLoader::Loading_ForChapter_1()
 		/* For. Prototype_GameObject_DemonSKillStraight*/
 		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DemonSKillStraight"), CDemonSkillStraight::Create(m_pDevice, m_pContext))))
 			return E_FAIL;
+
+		/* For. Prototype_GameObject_BloodFrameUI*/
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BloodFrameUI"), CBloodFrameUI::Create(m_pDevice, m_pContext))))
+			return E_FAIL;
 	}
 
 	m_strLoadingText = TEXT("로딩끝. ");
@@ -1027,11 +1055,17 @@ HRESULT CLoader::Loading_ForChapter_2()
 
 	_matrix			PivotMatrix = XMMatrixIdentity();
 
-	/* For.Medieval_City */
+	/* For.Medieval_City_Up */
 	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(15.0f));
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Medieval_City"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Medieval_City/Medieval_City.model"), PivotMatrix))))
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Medieval_City_Up"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Medieval_City/Medieval_City_Up.model"), PivotMatrix))))
 		return E_FAIL;
+
+	/* For.Medieval_City_Down */
+	PivotMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(15.0f));
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_CHAP2, TEXT("Medieval_City_Down"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, TEXT("../Bin/Resources/Meshes/Bless/Maps/Medieval_City/Medieval_City_Down.model"), PivotMatrix))))
+			return E_FAIL;
 
 	/* For.Prototype_Component_Model_ZombieA */
 	PivotMatrix = XMMatrixScaling(0.075f, 0.075f, 0.075f) * XMMatrixRotationY(XMConvertToRadians(270.0f));
@@ -1081,6 +1115,10 @@ HRESULT CLoader::Loading_ForChapter_2()
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medieval_City"), CMedieval_City::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For. Prototype_GameObject_Medieval_City_Down*/
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medieval_City_Down"), CMedieval_City_Down::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
 	/* For.Prototype_GameObject_ZombieA*/
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ZombieA"), CZombieA::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -1125,14 +1163,14 @@ HRESULT CLoader::Loading_ForChapter_2()
 
 	m_isFinished = true;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_ForChapter_3()
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 
 	m_strLoadingText = TEXT("텍스쳐를 로딩중입니다. ");
 

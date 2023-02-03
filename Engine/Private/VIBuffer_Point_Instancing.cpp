@@ -21,7 +21,7 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 	m_pSpeeds = new _float[iNumInstance];
 
 	for (_uint i = 0; i < iNumInstance; ++i)
-		m_pSpeeds[i] = static_cast<_double>(CMathUtils::GetRandomFloat(1.f, 10.f));
+		m_pSpeeds[i] = CMathUtils::GetRandomFloat(10.f, 50.f);
 
 	m_iNumInstance = iNumInstance;
 	m_iIndexCountPerInstance = 1;
@@ -107,7 +107,10 @@ HRESULT CVIBuffer_Point_Instancing::Init_Prototype(_uint iNumInstance)
 		pInstanceVertices[i].vRight = _float4(1.0f, 0.f, 0.f, 0.f);
 		pInstanceVertices[i].vUp = _float4(0.0f, 1.f, 0.f, 0.f);
 		pInstanceVertices[i].vLook = _float4(0.0f, 0.f, 1.f, 0.f);
-		pInstanceVertices[i].vPosition = _float4(CMathUtils::GetRandomFloat(-3.f, 3.f), 2.f, CMathUtils::GetRandomFloat(-3.f, 3.f), 1.f);
+		pInstanceVertices[i].vPosition
+		= _float4(CMathUtils::GetRandomFloat(-1.5f, 1.5f),
+			2.f,
+			CMathUtils::GetRandomFloat(-1.5f, 1.5f), 1.f);
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof m_SubResourceData);
@@ -149,17 +152,14 @@ HRESULT CVIBuffer_Point_Instancing::Go_Dir(_float4 vDir, _double TimeDelta, _dou
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + (XMLoadFloat4(&(vDir * m_pSpeeds[i] * TimeDelta))));
+		XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, XMLoadFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition) + (XMLoadFloat4(&(vDir * m_pSpeeds[i] * static_cast<float>(TimeDelta)))));
 		
-		if (m_TimeDelta >= dRespawnTime)
+		if(((VTXMATRIX*)SubResource.pData)[i].vPosition.y <= -1.f)
 		{
 			XMStoreFloat4(&((VTXMATRIX*)SubResource.pData)[i].vPosition, 
-				XMLoadFloat4(&_float4(CMathUtils::GetRandomFloat(-3.f, 3.f), 
-				2.f, 
-				CMathUtils::GetRandomFloat(-3.f, 3.f), 1.f)));
-
-			if(i == m_iNumInstance - 1 )
-				m_TimeDelta = 0.0;
+				XMLoadFloat4(&_float4(CMathUtils::GetRandomFloat(-1.5f, 1.5f), 
+				10.f, 
+				CMathUtils::GetRandomFloat(-1.5f, 1.5f), 1.f)));
 		}
 	}
 

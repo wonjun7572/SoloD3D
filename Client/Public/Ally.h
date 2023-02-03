@@ -63,6 +63,8 @@ protected:
 	_bool					m_bMonsterChase = false;
 	_bool					m_bPlayerChase = false;
 
+	_bool					m_bSpeak = false;
+
 	// 데미지를 입을 수 있는 상황인가?
 	_bool					m_bImpossibleSkillDamaged = false;
 	_bool					m_bImpossibleDamaged = false;

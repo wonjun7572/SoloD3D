@@ -136,7 +136,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DS_Test, 0);
-		SetBlendState(BS_AlphaBlending,float4(0.f,0.f,0.f,1.f), 0xffffffff);
+		SetBlendState(BS_Trail,float4(0.f,0.f,0.f,1.f), 0xffffffff);
 		
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = NULL;

@@ -30,7 +30,7 @@ HRESULT CBalianBollwerk::Init(void * pArg)
 	CGameObject::GAMEOBJECTDESC			GameObjectDesc;
 	ZeroMemory(&GameObjectDesc, sizeof GameObjectDesc);
 
-	GameObjectDesc.TransformDesc.fSpeedPerSec = 5.0f;
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 7.0f;
 	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Init(&GameObjectDesc)))
@@ -166,6 +166,16 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 	{
 		m_vRimColor = _float4(0.f, 0.f, 0.f, 1.f);
 		m_bConversation = true;
+
+		if (!m_bChap1FinSpeak)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"jaeho-Chap1Fin.mp3", 1.f);
+			RELEASE_INSTANCE(CGameInstance)
+				m_bSpeak = true;
+			m_bChap1FinSpeak = true;
+		}
+
 		static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
 		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
 		m_strConversation = L"역시 소문대로 엄청나게 강력하군! 바로 출발하자고!";
@@ -195,6 +205,14 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 			{
 				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_C);
 				m_pTransformCom->LookAt(m_CheckPoints[0]);
+				if (!m_bChangeBGM)
+				{
+					CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+					pGameInstance->Stop_Sound(SOUND_BGM);
+					pGameInstance->Play_Sound(L"MediumBattleLoop.mp3", 0.7f, true, SOUND_BGM);
+					RELEASE_INSTANCE(CGameInstance);
+					m_bChangeBGM = true;
+				}
 			}
 			else
 			{
@@ -275,6 +293,14 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 
 		if (TimeConversation < 3.f)
 		{
+			if (!m_bSpeak)
+			{
+				CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+					pGameInstance->Play_Sound(L"jaeho_Chap1.mp3", 1.f);
+				RELEASE_INSTANCE(CGameInstance)
+					m_bSpeak = true;
+			}
+
 			m_strConversation = L"나는 의정부 제국에 살고 있는 이재호라고 하네";
 			TimeConversation += TimeDelta;
 		}
@@ -315,6 +341,14 @@ void CBalianBollwerk::Conversation(_double TimeDelta)
 
 		if (TimeConversation < 3.f)
 		{
+			if (!m_bSpeak)
+			{
+				CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+					pGameInstance->Play_Sound(L"jaeho_Chap2.mp3", 1.f);
+				RELEASE_INSTANCE(CGameInstance)
+					m_bSpeak = true;
+			}
+
 			m_strConversation = L"여기가 바로 우리 제국이라네";
 			TimeConversation += TimeDelta;
 		}

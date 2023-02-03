@@ -45,7 +45,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
-	pGameInstance->Play_Sound(L"Stage1_BGM_01.mp3", 0.3f, true, -1);
+	pGameInstance->Play_Sound(L"FogtreeForest.mp3", 0.7f, true, SOUND_BGM);
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -128,7 +128,7 @@ void CLevel_ChapOne::ImguiRenderTab()
 
 HRESULT CLevel_ChapOne::Ready_Lights()
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	LIGHTDESC			LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
@@ -144,7 +144,7 @@ HRESULT CLevel_ChapOne::Ready_Lights()
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -167,7 +167,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_BackGround(const wstring& pLayerTag)
 
 HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
@@ -178,7 +178,7 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_LightCamera"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -234,26 +234,26 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapOne::Ready_Layer_Ally(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BalianBollwerk"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
 
 HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_TownA"))))
 		return E_FAIL;
 	
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BridgeCastle"))))
 		return E_FAIL;
-	
+
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Stair"))))
 		return E_FAIL;
 
@@ -437,14 +437,14 @@ HRESULT CLevel_ChapOne::Ready_Layer_MapObject(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Torchlight_Flame"), &vPos)))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
 
 HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_BoomWave_0"))))
 		return E_FAIL;
@@ -472,8 +472,8 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"))))
 		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance);
+	
+	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
 

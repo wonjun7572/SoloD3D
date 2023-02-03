@@ -74,6 +74,7 @@ protected:
 	_bool					m_bGroggy		= false;
 	_bool					m_bHitDown		= false;
 	_bool					m_bDeadAnim		= false;
+	_bool					m_bBillboardHp  = true;
 
 	// 데미지를 입을 수 있는 상황인가?
 	_bool					m_bImpossibleSkillDamaged		= false; 

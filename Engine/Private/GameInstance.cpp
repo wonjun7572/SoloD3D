@@ -72,7 +72,7 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
-	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 3)))
+	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 5)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
@@ -354,7 +354,7 @@ HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const wstring& pPrototyp
 	if (m_pComponetMgr == nullptr)
 		return E_FAIL;
 
-	return m_pComponetMgr->Add_Prototype(iLevelIndex, pPrototypeTag,pPrototype);
+	return m_pComponetMgr->Add_Prototype(iLevelIndex, pPrototypeTag, pPrototype);
 }
 
 CComponent * CGameInstance::Clone_Component(_uint iLevelIndex, const wstring& pPrototypeTag, void * pArg)
@@ -545,6 +545,14 @@ HRESULT CGameInstance::Add_Light(ID3D11Device * pDevice, ID3D11DeviceContext * p
 	return m_pLightMgr->Add_Light(pDevice, pContext, LightDesc);
 }
 
+void CGameInstance::Clear_Light()
+{
+	if (m_pLightMgr == nullptr)
+		return;
+
+	return m_pLightMgr->Clear();
+}
+
 _bool CGameInstance::isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange)
 {
 	if (nullptr == m_pFrustum)
@@ -612,47 +620,34 @@ ID3D11ShaderResourceView * CGameInstance::Get_DepthTargetSRV()
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
-
 	CObject_Manager::GetInstance()->DestroyInstance();
-
 	CComponent_Manager::GetInstance()->DestroyInstance();
-
 	CLevel_Manager::GetInstance()->DestroyInstance();
-
-	CPipeLine::GetInstance()->DestroyInstance();
-
 	CInput_Device::GetInstance()->DestroyInstance();
-
-	CFont_Manager::GetInstance()->DestroyInstance();
-
-	CLight_Manager::GetInstance()->DestroyInstance();
-
-	CFrustum::GetInstance()->DestroyInstance();
-
-	CTarget_Manager::GetInstance()->DestroyInstance();
-
-	CSound_Manager::GetInstance()->DestroyInstance();
-
-	CGraphic_Device::GetInstance()->DestroyInstance();
-
-	CTimer_Manager::GetInstance()->DestroyInstance();
-
 	CImGui_Manager::GetInstance()->DestroyInstance();
+	CFrustum::GetInstance()->DestroyInstance();
+	CPipeLine::GetInstance()->DestroyInstance();
+	CLight_Manager::GetInstance()->DestroyInstance();
+	CFont_Manager::GetInstance()->DestroyInstance();
+	CSound_Manager::GetInstance()->DestroyInstance();
+	CTarget_Manager::GetInstance()->DestroyInstance();
+	CGraphic_Device::GetInstance()->DestroyInstance();
+	CTimer_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
 	Safe_Release(m_pTargetMgr);
 	Safe_Release(m_pFrustum);
-	Safe_Release(m_pImGuiMgr);
-	Safe_Release(m_pComponetMgr);
 	Safe_Release(m_pPipeLine);
-	Safe_Release(m_pTimerMgr);
-	Safe_Release(m_pFontMgr);
+	Safe_Release(m_pComponetMgr);
 	Safe_Release(m_pObjectMgr);
 	Safe_Release(m_pLevelMgr);
 	Safe_Release(m_pInputDev);
-	Safe_Release(m_pLightMgr);
+	Safe_Release(m_pImGuiMgr);
 	Safe_Release(m_pSoundMgr);
+	Safe_Release(m_pTimerMgr);
+	Safe_Release(m_pFontMgr);
+	Safe_Release(m_pLightMgr);
 	Safe_Release(m_pGraphicDev);
 }

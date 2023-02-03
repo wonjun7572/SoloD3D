@@ -8,6 +8,7 @@
 #include "DamageFontUI.h"
 #include "MonsterNameUI.h"
 #include "MonsterHpUI.h"
+#include "TargetAimEffect.h"
 #include "Tree.h"
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -135,7 +136,9 @@ void CMonster::Late_Tick(_double TimeDelta)
 		m_MonsterUI[TARGET_AIM]->Late_Tick(TimeDelta);
 		m_MonsterUI[MONSTER_NAME]->Late_Tick(TimeDelta);
 	}
-	m_MonsterUI[BILLBOARD_HP]->Late_Tick(TimeDelta);
+
+	if(m_bBillboardHp && !m_bDeadAnim)
+		m_MonsterUI[BILLBOARD_HP]->Late_Tick(TimeDelta);
 
 	for (auto iter = m_MonsterDamageFontUI.begin(); iter != m_MonsterDamageFontUI.end();)
 	{
@@ -368,6 +371,13 @@ void CMonster::AdjustSetDamage()
 		if (nullptr != pUI)
 			m_MonsterDamageEffect.push_back(pUI);
 
+		int iA = rand() % 2;
+
+		if (iA == 0)
+			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f, false, SOUND_HITMONSTER);
+		else
+			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f, false, SOUND_HITMONSTER);
+
 		RELEASE_INSTANCE(CGameInstance);
 
 		m_fHp -= fRealDamage;
@@ -404,7 +414,6 @@ void CMonster::AdjustSetDamageToSkill()
 		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
 
 		CGameObject* pUI = nullptr;
-
 		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DamageFontUI"), &damageFontDesc);
 
 		if (nullptr != pUI)
@@ -414,6 +423,13 @@ void CMonster::AdjustSetDamageToSkill()
 
 		if (nullptr != pUI)
 			m_MonsterDamageEffect.push_back(pUI);
+
+		int iA = rand() % 2;
+
+		if (iA == 0)
+			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f, false, SOUND_HITMONSTER);
+		else
+			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f, false, SOUND_HITMONSTER);
 
 		RELEASE_INSTANCE(CGameInstance);
 
@@ -429,7 +445,6 @@ void CMonster::AdjustSetDamageToSkill()
 
 void CMonster::Imgui_RenderProperty()
 {
-
 }
 
 void CMonster::CollisionToMonster(_double TimeDelta)

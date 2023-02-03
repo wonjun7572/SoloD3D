@@ -31,7 +31,7 @@ HRESULT CTargetAimEffect::Init(void * pArg)
 	m_pTransformCom->Set_Scaled(_float3(5.f, 5.f, 1.f));
 	m_pTransformCom->Rotation(XMVectorSet(1.f, 0.f, 0.f, 0.f), XMConvertToRadians(90.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	m_strObjName = L"Effect_Rect";
+	m_strObjName = L"Effect_AimEffect";
 
 	m_fAlpha = 5.f;
 	m_UVMoveFactor = _float2(0.f, 0.f);
@@ -109,6 +109,9 @@ HRESULT CTargetAimEffect::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))

@@ -18,12 +18,15 @@
 #include "SkillChargingUI.h"
 #include "ProgressBarUI.h"
 #include "EffectManager.h"
-
 #include "BalianBollwerk.h"
 #include "Abelardo.h"
 #include "Chinuwa.h"
 #include "Chitata.h"
 #include "Delilah.h"
+#include "Demon.h"
+
+#include "BloodFrameUI.h"
+
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject(pDevice, pContext)
@@ -374,6 +377,9 @@ void CPlayer::Tick(_double TimeDelta)
 	AdditiveAnim(TimeDelta);
 
 	LinkObject(TimeDelta);
+
+	m_TrailTimeDelta += TimeDelta;
+	m_TrailPopTime  += TimeDelta;
 }
 
 void CPlayer::Late_Tick(_double TimeDelta)
@@ -745,12 +751,6 @@ void CPlayer::SetUp_FSM()
 		/* For. run */
 		.AddState("Run")
 		.Tick(this, &CPlayer::Run_Tick)
-		.OnExit([this]()
-	{
-		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Stop_Sound(SOUND_PLAYER);
-		RELEASE_INSTANCE(CGameInstance);
-	})
 		.AddTransition("Run to Move", "Move")
 		.Predicator([this]()
 	{
@@ -1121,6 +1121,11 @@ void CPlayer::SetUp_FSM()
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"Wing"))->Set_UV(_float2(0.f, 0.f));
 		m_Skill_2IconCoolTime = 0.0;
 		m_fMp -= 30.f;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"PSK_03.ogg", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
+
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1269,6 +1274,9 @@ void CPlayer::SetUp_FSM()
 		.OnStart([this]()
 	{
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_UVSpeed(-0.3f);
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Thunder.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1281,8 +1289,18 @@ void CPlayer::SetUp_FSM()
 		_float3 vPos = _float3::Lerp(CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Get_State(CTransform::STATE_TRANSLATION), vWeaponPos, static_cast<float>(TimeDelta) * 5.f);
 		CEffectManager::GetInstance()->Get_Transform(L"ThunderWave")->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
 		
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Electric_FSkill.mp3", 1.f, false, SOUND_PLAYER);
+		RELEASE_INSTANCE(CGameInstance);
+
 		if(m_pCam != nullptr)
-			m_pCam->Shake(0.1f);
+			m_pCam->Shake(0.5f, 0.05f);
+	})
+		.OnExit([this]() 
+	{
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Stop_Sound(SOUND_PLAYER);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("Skill_4_Charging to Skill_4_Attack", "Skill_4_Attacking")
 		.Predicator([this]()
@@ -1311,6 +1329,10 @@ void CPlayer::SetUp_FSM()
 		Reset_Anim(PLAYER_SK27_FIRING);
 		Set_Anim(PLAYER_SK27_FIRING);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FSkill_BoomWave_1"))->Set_UVSpeed(0.4f);
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"PSK_01.ogg", 1.f);
+		pGameInstance->Play_Sound(L"Thunder.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -2013,12 +2035,6 @@ void CPlayer::Movement(_double TimeDelta)
 
 void CPlayer::AdditiveAnim(_double TimeDelta)
 {
-	if (m_bFrontDamagedToMonster)
-	{
-		Reset_Anim(PLAYER_ADD_DMG_F);
-		m_bFrontDamage = true;
-	}
-
 	if (m_bFrontDamage)
 	{
 		m_pModelCom[m_eModelState]->Set_AdditiveAnimIndex(PLAYER_ADD_DMG_F);
@@ -2034,17 +2050,10 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_F))
 	{
 		m_bFrontDamage = false;
-		m_bFrontDamagedToMonster = false;
 		m_bImpossibleDamaged = false;
 	}
 
 	///////////////////////////////////////
-
-	if (m_bBackDamagedToMonster)
-	{
-		Reset_Anim(PLAYER_ADD_DMG_B);
-		m_bBackDamaged = true;
-	}
 
 	if (m_bBackDamaged)
 	{
@@ -2061,7 +2070,6 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
-		m_bBackDamagedToMonster = false;
 		m_bImpossibleDamaged = false;
 	}
 }
@@ -2140,6 +2148,17 @@ void CPlayer::LinkObject(_double TimeDelta)
 			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pChitata->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 2.f)
 			{
 				m_pCam->LinkAlly(TimeDelta, pChitata->Get_TransformCom(), -1.f);
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+
+		CGameObject* pDemon = pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Monster", L"DEMON");
+		if (pDemon != nullptr && static_cast<CDemon*>(pDemon)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pDemon->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 100.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pDemon->Get_TransformCom(), 1.f, 1.5f);
 				RELEASE_INSTANCE(CGameInstance);
 				return;
 			}
@@ -2261,6 +2280,10 @@ void CPlayer::Walk_Tick(_double TImeDelat)
 
 void CPlayer::Run_Tick(_double TimeDelta)
 {
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Play_Sound(L"Walk.mp3", 0.3f, false, SOUND_PLAYER);
+	RELEASE_INSTANCE(CGameInstance);
+
 	if (m_ePreState != m_eState)
 	{
 		switch (m_eState)
@@ -2293,7 +2316,6 @@ void CPlayer::Run_Tick(_double TimeDelta)
 
 		m_ePreState = m_eState;
 	}
-
 
 	switch (m_eState)
 	{
@@ -2774,6 +2796,8 @@ void CPlayer::AdjustDamage(_float fDamage)
 {
 	if (!m_bImpossibleDamaged)
 	{
+		static_cast<CBloodFrameUI*>(m_PlayerUI[BLOODFRAME])->Set_Alpha(1.f);
+
 		_float fRealDamage = fDamage - m_fDefence;
 
 		if (fRealDamage < 0)
@@ -2784,6 +2808,10 @@ void CPlayer::AdjustDamage(_float fDamage)
 		if (m_fHp < 0)
 			m_fHp = 0;
 		// 0보다 아래면 죽음
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Hit_Player_Blood.wav" , 1.f, false, SOUND_HITPLAYER);
+		RELEASE_INSTANCE(CGameInstance);
 
 		m_bImpossibleDamaged = true;
 	}
@@ -2793,6 +2821,8 @@ void CPlayer::AdjustSkillDamage(_float fDamage)
 {
 	if (!m_bImpossibleSkillDamaged)
 	{
+		static_cast<CBloodFrameUI*>(m_PlayerUI[BLOODFRAME])->Set_Alpha(1.f);
+
 		_float fRealDamage = fDamage - m_fDefence;
 
 		if (fRealDamage < 0)
@@ -2803,6 +2833,10 @@ void CPlayer::AdjustSkillDamage(_float fDamage)
 		if (m_fHp < 0)
 			m_fHp = 0;
 		// 0보다 아래면 죽음
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Hit_Player_Blood.wav", 1.f, false, SOUND_HITPLAYER);
+		RELEASE_INSTANCE(CGameInstance);
 
 		m_bImpossibleSkillDamaged = true;
 	}
@@ -3094,6 +3128,13 @@ HRESULT CPlayer::SetUp_UI()
 	SkillIconDesc.iPassIndex = 0;
 
 	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_SkillChargingUI"), &SkillIconDesc);
+
+	if (nullptr == pUI)
+		return E_FAIL;
+
+	m_PlayerUI.push_back(pUI);
+
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_BloodFrameUI"));
 
 	if (nullptr == pUI)
 		return E_FAIL;

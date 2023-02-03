@@ -30,7 +30,8 @@ public:
 	
 	HRESULT	Save_CheckPoints();
 	HRESULT	Load_CheckPoints();
-
+	 _bool	Get_Paused() const {return m_bPaused;}
+	
 private:
 	CGameObject*			m_pPlayerCam = nullptr;
 	_bool					m_bCheckPointFinish = false;

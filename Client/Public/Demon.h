@@ -50,6 +50,8 @@ class CDemon final : public CMonster
 		FIRE_SKILL3, SKILLEND
 	};
 
+	enum UI { UI_CONVERSATION, UI_END };
+
 private:
 	CDemon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDemon(const CDemon& rhs);
@@ -61,11 +63,14 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 	void	Imgui_RenderProperty() override;
+	void	Conversation(_double TimeDelta);
 
 private:
 	void	SetUp_FSM() override;
+	void	SetUp_UI();
 
 public:
 	void Adjust_Collision(_double TimeDelta);
@@ -77,6 +82,7 @@ public:
 
 	void	Level_Chap2Tick(_double TimeDelta);
 	_bool	Get_LevelChap2Finished() { return m_bLevel2Finish; }
+	_bool	Get_Conversation() { return m_bConversation; }
 
 private:
 	void AdditiveAnim(_double TimeDelta);
@@ -84,6 +90,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUP_ShadowShaderResources();
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
@@ -111,7 +118,10 @@ private:
 
 	_float	m_fSkill3EffectTime = 0.f;
 	_float	m_fSkill5EffectTime = 0.f;
-	_float test = 1.f;
+
+	_double	TimeConversation = 0.0;
+	wstring		m_strConversation;
+	_float		test = 1.f;
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;
@@ -134,7 +144,10 @@ private:
 private:
 	_uint m_iRandAttack = 0;
 
+	vector<CGameObject*>	m_UI;
 	vector<CGameObject*>	m_Effects;
+
+	_bool m_bConversation = false;
 
 	/* for . Imgui*/
 	_float					m_CX = 1.f, m_CY = 1.f, m_CZ = 1.f;

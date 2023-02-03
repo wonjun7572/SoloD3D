@@ -23,6 +23,7 @@ texture2D		g_SpecularTexture;
 texture2D		g_DiffuseTexture;
 texture2D		g_ShadeTexture;
 texture2D		g_RimTexture;
+texture2D		g_StaticShadowTexture;
 
 sampler LinearSampler = sampler_state
 {
@@ -106,7 +107,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecularDesc = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * 500.f;
 	
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -147,7 +148,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, In.vTexUV);
 	vector		vSpecularDesc = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
 
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * 500.f;
 
 	/* 0 ~ 1 => -1 ~ 1 */
 	vector		vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -199,7 +200,7 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	Out.vColor = (vDiffuse * vShade) + vSpecular + vRimColor;
 
 	vector		vDepthDesc = g_DepthTexture.Sample(DepthSampler, In.vTexUV);
-	float		fViewZ = vDepthDesc.y * 300.f;
+	float		fViewZ = vDepthDesc.y * 500.f;
 	
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / z */
 	vector		vPosition;
@@ -226,8 +227,9 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	vNewUV.y = (vUVPos.y / vUVPos.w) * -0.5f + 0.5f;
 
 	vector	vShadowDesc = g_ShadowTexture.Sample(DepthSampler, vNewUV);
-
-	if (vPosition.z - 0.1f > vShadowDesc.r * 300.f)
+	vector  vStaticShdowDesc = g_StaticShadowTexture.Sample(DepthSampler, vNewUV);
+	
+	if (vPosition.z - 0.5f > (vShadowDesc.r * vStaticShdowDesc.r) * 500.f)
 		Out.vColor *= 0.6f;
 
 	if (Out.vColor.a == 0.0f)

@@ -40,7 +40,7 @@ HRESULT CTorchlight::Init(void * pArg)
 
 	if (pArg != nullptr)
 		memcpy(&vPos, pArg, sizeof(_float4));
-
+	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 
 	return S_OK;
@@ -49,7 +49,6 @@ HRESULT CTorchlight::Init(void * pArg)
 void CTorchlight::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
-
 }
 
 void CTorchlight::Late_Tick(_double TimeDelta)

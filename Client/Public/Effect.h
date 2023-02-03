@@ -35,7 +35,7 @@ public:
 
 protected:
 	CShader*					m_pShaderCom = nullptr;
-	CRenderer*					m_pRendererCom = nullptr;
+	CRenderer*				m_pRendererCom = nullptr;
 
 	_float						m_fAlpha = 1.f;
 	_float						m_fUVSpeed = 1.f;

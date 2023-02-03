@@ -181,6 +181,7 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\BalianBollwerk.h" />
     <ClInclude Include="..\public\Belt.h" />
+    <ClInclude Include="..\public\BloodFrameUI.h" />
     <ClInclude Include="..\public\BoomWave_0.h" />
     <ClInclude Include="..\public\BoomWave_1.h" />
     <ClInclude Include="..\public\Boots.h" />
@@ -189,7 +190,9 @@
     <ClInclude Include="..\public\Chinuwa.h" />
     <ClInclude Include="..\public\Chitata.h" />
     <ClInclude Include="..\Public\Client_Define.h" />
+    <ClInclude Include="..\Public\CMedieval_City_Down.h" />
     <ClInclude Include="..\public\ConversationUI.h" />
+    <ClInclude Include="..\Public\CRainEffect.h" />
     <ClInclude Include="..\public\DamageFontUI.h" />
     <ClInclude Include="..\public\DashParticle.h" />
     <ClInclude Include="..\public\Delilah.h" />
@@ -222,6 +225,8 @@
     <ClInclude Include="..\public\LightCamera.h" />
     <ClInclude Include="..\Public\Line_Aura.h" />
     <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\public\LoadingBG.h" />
+    <ClInclude Include="..\public\LoadingTimerUI.h" />
     <ClInclude Include="..\public\LoadingUI.h" />
     <ClInclude Include="..\public\LogoUI.h" />
     <ClInclude Include="..\public\Lower.h" />
@@ -280,6 +285,7 @@
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\BalianBollwerk.cpp" />
     <ClCompile Include="..\private\Belt.cpp" />
+    <ClCompile Include="..\private\BloodFrameUI.cpp" />
     <ClCompile Include="..\private\BoomWave_0.cpp" />
     <ClCompile Include="..\private\BoomWave_1.cpp" />
     <ClCompile Include="..\private\Boots.cpp" />
@@ -320,6 +326,8 @@
     <ClCompile Include="..\private\LightCamera.cpp" />
     <ClCompile Include="..\Private\Line_Aura.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\private\LoadingBG.cpp" />
+    <ClCompile Include="..\private\LoadingTimerUI.cpp" />
     <ClCompile Include="..\private\LoadingUI.cpp" />
     <ClCompile Include="..\private\LogoUI.cpp" />
     <ClCompile Include="..\private\Lower.cpp" />
@@ -364,6 +372,8 @@
     <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="..\Private\Wing.cpp" />
     <ClCompile Include="..\private\ZombieA.cpp" />
+    <ClCompile Include="..\Public\CMedieval_City_Down.cpp" />
+    <ClCompile Include="..\Public\CRainEffect.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="NorAtk_Trail1.cpp" />
     <ClCompile Include="stdafx.cpp">

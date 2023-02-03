@@ -32,7 +32,8 @@ public:
 private:
 	char			m_szName[MAX_PATH] = "";
 	class CBone*	m_pBone = nullptr;
-
+	class CBone*	m_pTrailBone = nullptr;
+	
 	_uint				m_iNumKeyframes = 0;
 	vector<KEYFRAME>	m_KeyFrames;
 

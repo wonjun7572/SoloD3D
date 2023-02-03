@@ -11,6 +11,7 @@
 #include "Tree.h"
 #include "ProgressBarUI.h"
 #include "EffectManager.h"
+#include "ConversationUI.h"
 #include "DemonSkillCircular.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -53,6 +54,7 @@ HRESULT CDemon::Init(void * pArg)
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
+		SetUp_UI();
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(270.f, 0.f, 280.f , 1.f));
 	}
@@ -95,7 +97,11 @@ HRESULT CDemon::Init(void * pArg)
 	rectDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(m_pTransformCom);
 
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillCircular", L"DEMON_SKILL_CIRCULAR", &rectDesc);
+	if (FAILED(CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillCircular", L"DEMON_SKILL_CIRCULAR", &rectDesc)))
+	{
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+	}
 	
 	pivotMat = XMMatrixScaling(3.f, 3.f, 1.f) *
 		XMMatrixRotationX(XMConvertToRadians(90.f)) *
@@ -106,7 +112,12 @@ HRESULT CDemon::Init(void * pArg)
 	XMStoreFloat4x4(&rectDesc.PivotMatrix, pivotMat);
 	rectDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(m_pTransformCom);
-	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillStraight", L"DEMON_SKILL_Straight", &rectDesc);
+
+	if (FAILED(CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillStraight", L"DEMON_SKILL_Straight", &rectDesc)))
+	{
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+	}
 
 	return S_OK;
 }
@@ -136,6 +147,12 @@ void CDemon::Tick(_double TimeDelta)
 
 		for (auto& pUI : m_MonsterUI)
 			pUI->Tick(TimeDelta);
+
+		if (m_bConversation)
+		{
+			Conversation(TimeDelta);
+			m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+		}
 
 		for (auto& pDamageFont : m_MonsterDamageFontUI)
 			pDamageFont->Tick(TimeDelta);
@@ -215,6 +232,22 @@ HRESULT CDemon::Render()
 	return S_OK;
 }
 
+HRESULT CDemon::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUP_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
+
+	return S_OK;
+}
+
 void CDemon::Imgui_RenderProperty()
 {
 	__super::Imgui_RenderProperty();
@@ -258,6 +291,37 @@ void CDemon::Imgui_RenderProperty()
 	//ImGui::DragFloat("X", &m_X, 0.01f, -10.f, 10.f);
 	//ImGui::DragFloat("Y", &m_Y, 0.01f, -10.f, 10.f);
 	//ImGui::DragFloat("Z", &m_Z, 0.01f, -10.f, 10.f);
+}
+
+void CDemon::Conversation(_double TimeDelta)
+{
+	if (g_LEVEL == LEVEL_CHAP2)
+	{
+		m_UI[UI_CONVERSATION]->Tick(TimeDelta);
+
+		if (TimeConversation < 3.f)
+		{
+			m_strConversation = L"나무는 이제 우리 꺼다!!!";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 3.f && TimeConversation < 6.f)
+		{
+			m_strConversation = L"좋았어! 이제 이 나무의 영혼을 들고 가자 트롤들아!";
+			TimeConversation += TimeDelta;
+		}
+		else if (TimeConversation >= 6.f && TimeConversation < 9.f)
+		{
+			m_strConversation = L"앗 녀석이 우리를 따라온다 도망쳐!!!";
+			TimeConversation += TimeDelta;
+		}
+
+		static_cast<CConversationUI*>(m_UI[UI_CONVERSATION])->SetConversation(m_strConversation);
+
+		if (TimeConversation > 9.f)
+			m_bConversation = false;
+		else
+			static_cast<CPlayer*>(m_pPlayer)->Set_PlayerUI(false);
+	}
 }
 
 void CDemon::Adjust_Collision(_double TimeDelta)
@@ -450,6 +514,15 @@ void CDemon::Level_Chap2Tick(_double TimeDelta)
 {
 	_vector vTreePos = m_pTree->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fTreeToPos = _float4::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vTreePos);
+	
+	if (static_cast<CTree*>(m_pTree)->Get_Hp() <= 0)
+	{
+		// 화면 흔들리면서 다음 씬으로 넘어가기
+		m_bConversation = true;
+		m_pModelCom->Set_AnimationIndex(DEMON_Idle_C);
+		m_pTransformCom->LookAt(vTreePos);
+		return;
+	}
 
 	if (fTreeToPos > 11.f)
 	{
@@ -461,11 +534,6 @@ void CDemon::Level_Chap2Tick(_double TimeDelta)
 		m_bLevel2Finish = true;
 		m_pModelCom->Set_AnimationIndex(DEMON_ATK_02);
 		m_pTransformCom->LookAt(vTreePos);
-	}
-
-	if (static_cast<CTree*>(m_pTree)->Get_Hp() <= 0)
-	{
-		// 화면 흔들리면서 다음 씬으로 넘어가기
 	}
 }
 
@@ -482,7 +550,7 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_F);
 	}
 
-	if (AnimFinishChecker(DEMON_ADD_DMG_F, 0.3))
+	if (AnimFinishChecker(DEMON_ADD_DMG_F, 0.9))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -501,7 +569,7 @@ void CDemon::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(DEMON_ADD_DMG_B);
 	}
 
-	if (AnimFinishChecker(DEMON_ADD_DMG_B, 0.3))
+	if (AnimFinishChecker(DEMON_ADD_DMG_B, 0.9))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -1106,6 +1174,30 @@ void CDemon::SetUp_FSM()
 		.Build();
 }
 
+void CDemon::SetUp_UI()
+{
+	CConversationUI::CONVERSATIONFONT conversationDesc;
+
+	wcscpy_s(conversationDesc.szConversation, MAX_PATH, L"");
+	wcscpy_s(conversationDesc.szFontName, MAX_PATH, L"");
+	conversationDesc.vColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
+
+	conversationDesc.fX = 375.f;
+	conversationDesc.fY = 800.f;
+	conversationDesc.fSizeX = 1.f;
+	conversationDesc.fSizeY = 1.f;
+	conversationDesc.bTextureOn = true;
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameObject* pUI = nullptr;
+	pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ConversationUI"), &conversationDesc);
+
+	if (nullptr != pUI)
+		m_UI.push_back(pUI);
+
+	RELEASE_INSTANCE(CGameInstance);
+}
+
 HRESULT CDemon::SetUp_Components()
 {
 	__super::SetUp_Components();
@@ -1255,6 +1347,26 @@ HRESULT CDemon::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bTRUE, sizeof(_bool))))
 		return E_FAIL;
 
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CDemon::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
 

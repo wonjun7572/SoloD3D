@@ -127,11 +127,11 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 
 	if (g_vRimColor.x >= 0.95f)
-		vDiffuse.r += g_vRimColor.x;
+		vDiffuse.r += g_vRimColor.x * 0.5f;
 		
 	Out.vDiffuse = vDiffuse;
 	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vSpecular = vSpecular;
 	Out.vRimColor = rimColor;
 
@@ -149,6 +149,62 @@ PS_OUT PS_MAIN(PS_IN In)
 				Out.vDiffuse = Out.vDiffuse + float4(10.f, 0.f, 0.f, DissolveMap.x);
 		}
 	}
+
+	return Out;
+}
+
+PS_OUT PS_MAIN_OUTLINE(PS_IN In)
+{
+	PS_OUT         Out = (PS_OUT)0;
+
+	Out.vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+	Out.vDiffuse.a = Out.vDiffuse.a * 0.5f;
+	
+	vector		vSpecular = (vector)0.2f;
+
+	if (g_HasSpecular == true)
+	{
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	}
+	else
+	{
+		vSpecular = (vector)0.2f;
+	}
+
+	float		 Lx = 0;
+	float		 Ly = 0;
+
+	for (int y = -1; y <= 1; ++y)
+	{
+		for (int x = -1; x <= 1; ++x)
+		{
+			float2 offset = float2(x, y) * float2(1 / 1600.f, 1 / 900.f);
+			float3 tex = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV + offset).rgb;
+			float luminance = dot(tex, float3(0.3, 0.59, 0.11));
+
+			Lx += luminance * Kx[y + 1][x + 1];
+			Ly += luminance * Ky[y + 1][x + 1];
+		}
+	}
+	float L = sqrt((Lx*Lx) + (Ly*Ly));
+
+	if (L < 0.3) // 이 값에 따라서 두껍게 외곽선이 생기는가 
+	{
+		Out.vDiffuse = vector(1.f, 1.f, 1.f, 0.f);
+	}
+	else
+	{
+		Out.vDiffuse = vector(1.f, 0.f, 0.f, 1.f);
+	}
+
+	if(Out.vDiffuse.a == 0.f)
+		discard;
+	
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
+	vector rimColor = vector(0.f, 0.f, 0.f, 1.f);
+	Out.vRimColor = rimColor;
 
 	return Out;
 }
@@ -207,7 +263,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 {
 	PS_OUT_SHADOW		Out = (PS_OUT_SHADOW)0;
 
-	Out.vLightDepth.r = In.vProjPos.w / 300.f;
+	Out.vLightDepth.r = In.vProjPos.w / 500.f;
 
 	Out.vLightDepth.a = 1.f;
 
@@ -238,5 +294,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+	}
+
+	pass MotionTrail
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_OUTLINE();
 	}
 }

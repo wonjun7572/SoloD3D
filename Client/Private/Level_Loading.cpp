@@ -34,7 +34,7 @@ HRESULT CLevel_Loading::Init(LEVEL eNextLevelID)
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
-	pGameInstance->Play_Sound(L"Warploading.mp3", 0.3f, true, SOUND_BGM);
+	pGameInstance->Play_Sound(L"Warploading.mp3", 1.f, true, SOUND_BGM);
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -107,10 +107,29 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround(const wstring & pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	if (m_eNextLevelID == LEVEL_CHAP1)
+	{
+		_uint iA = 2;
+
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingBG"), &iA)))
+			return E_FAIL;
+	}
+	else if (m_eNextLevelID == LEVEL_CHAP2)
+	{
+		_uint iA = 3;
+
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingBG"), &iA)))
+			return E_FAIL;
+	}
+
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingUI"))))
+		return E_FAIL;
+	
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingTimer"))))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 

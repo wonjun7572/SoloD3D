@@ -28,6 +28,8 @@ private:
 	HRESULT Ready_Layer_Monster(const wstring& pLayerTag);
 	HRESULT Ready_Layer_MapObject(const wstring& pLayerTag);
 	HRESULT	Ready_Layer_Tree(const wstring& pLayerTag);
+	HRESULT Ready_Layer_TorchLight(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Effect(const wstring& pLayerTag);
 
 	wstring m_pSaveMapObjectFilePath;
 	wstring m_pLoadMapObjectFilePath;

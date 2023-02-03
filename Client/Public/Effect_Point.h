@@ -33,9 +33,9 @@ public:
 protected:
 	CTexture*					m_pTextureCom = nullptr;
 	CVIBuffer_Point_Instancing*	m_pVIBufferCom = nullptr;
-	_float						m_fFrame = 0.f;
+	_float							m_fFrame = 0.f;
 	POINTDESC					m_ParticleDesc;
-	_bool						m_bLinking = false;
+	_bool							m_bLinking = false;
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

@@ -28,7 +28,7 @@ HRESULT CLightCamera::Init(void * pArg)
 
 	if (nullptr != pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
-	else
+	else if(g_LEVEL == LEVEL_CHAP1)
 	{
 		CameraDesc.vEye = _float4(-5.f, 50.f, -5.f, 1.f);
 		CameraDesc.vAt = _float4(60.f, 0.f, 60.f, 1.f);
@@ -39,7 +39,23 @@ HRESULT CLightCamera::Init(void * pArg)
 		CameraDesc.fAspect = static_cast<_float>(g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
 
 		CameraDesc.fNear = 0.2f;
-		CameraDesc.fFar = 300.f;
+		CameraDesc.fFar = 500.f;
+
+		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	}
+	else if(g_LEVEL == LEVEL_CHAP2)
+	{
+		CameraDesc.vEye = _float4(448.828f, 111.951f, 168.571f, 1.f);
+		CameraDesc.vAt = _float4(261.089f, -10.f, 226.346f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+
+		CameraDesc.fFovy = XMConvertToRadians(60.f);
+
+		CameraDesc.fAspect = static_cast<_float>(g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
+
+		CameraDesc.fNear = 0.2f;
+		CameraDesc.fFar = 500.f;
 
 		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
@@ -47,16 +63,16 @@ HRESULT CLightCamera::Init(void * pArg)
 
 	if (FAILED(__super::Init(&CameraDesc)))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
 void CLightCamera::Tick(_double TimeDelta)
 {
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 	pGameInstance->Set_Transform(CPipeLine::D3DTS_LIGHTVIEW, m_pTransformCom->Get_WorldMatrixInverse());
 	//원래의 투영행렬을 던져주면 됨
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 }
 
 void CLightCamera::Late_Tick(_double TimeDelta)

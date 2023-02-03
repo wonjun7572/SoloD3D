@@ -87,9 +87,9 @@ PS_OUT Texture_EFFECT(PS_IN In)
 
 	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
 
-	float		fOldViewZ = vDepthDesc.y * 300.f; // 카메라의 far
+	float		fOldViewZ = vDepthDesc.y * 500.f; // 카메라의 far
 	float		fViewZ = In.vProjPos.w;
-
+	
 	Out.vColor = albedo * g_fAlpha;
 	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
 	
@@ -105,7 +105,17 @@ PS_OUT Texture_EFFECTwithAlphaMask(PS_IN In)
 	float4 albedo = g_AlbedoTexture.Sample(AlbedoSampler, In.vTexUV);
 	float4 alphaMask = g_MaskTexture.Sample(AlphaMaskSampler, In.vTexUV);
 
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthDesc = g_DepthTexture.Sample(LinearSampler, vTexUV);
+
+	float		fOldViewZ = vDepthDesc.y * 500.f; // 카메라의 far
+	float		fViewZ = In.vProjPos.w;
+
 	Out.vColor = albedo * alphaMask.r * g_fAlpha;
+	Out.vColor.a = Out.vColor.a * (saturate(fOldViewZ - fViewZ) * 2.5f);
 
 	return Out;
 }

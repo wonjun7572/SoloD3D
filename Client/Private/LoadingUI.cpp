@@ -38,12 +38,11 @@ HRESULT CLoadingUI::Init(void * pArg)
 	m_fSizeY = (_float)g_iWinSizeY / 8;
 
 	m_fX = m_fSizeX * 0.5f;
-	m_fY = m_fSizeY * 0.5f;
+	m_fY = m_fSizeY * 0.5f + 50.f;
 
 	m_pTransformCom->Set_Scaled(_float3(m_fSizeX, m_fSizeY, 1.f));
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION,
-		XMVectorSet(0, 0, 0.f, 1.f));
-
+	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(0.f, m_fY, 0.f, 1.f));
+	
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH((_float)g_iWinSizeX, (_float)g_iWinSizeY, 0.f, 1.f));
 

@@ -45,7 +45,7 @@ HRESULT CSound_Manager::Load_SoundFile(const char* pFilePath)
 
 	_finddata_t FindData;
 	intptr_t handle = _findfirst(szPath, &FindData);
-	if (handle == -1) 
+	if (handle == -1)  
 		return E_FAIL;
 
 	char szFullPath[MAX_PATH] = "";
@@ -89,19 +89,28 @@ void CSound_Manager::Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool b
 	if (m_iNumManualChannels == MAX_CHANNEL_COUNT)
 		return;
 
+	if (iManualChannelIndex != -1)
+	{
+		FMOD_BOOL bIsPlaying = FALSE;
+		FMOD_Channel_IsPlaying(m_Channels[iManualChannelIndex].first, &bIsPlaying);
+
+		if (bIsPlaying)
+			return;
+	}
+
 	SOUNDS::iterator Pair = find_if(m_Sounds.begin(), m_Sounds.end(), CTag_Finder(pSoundKey));
 	if (Pair == m_Sounds.end())
 		return;
 
-	FMOD_BOOL bPlayFlag = FALSE;	
-	_uint iPlayIndex = 0;
+	FMOD_BOOL bPlayFlag = FALSE;
+	_int iPlayIndex = -1;
 	if (iManualChannelIndex == -1)
 	{
 		for (_uint i = m_iNumManualChannels; i < MAX_CHANNEL_COUNT; i++)
 		{
 			if (FMOD_Channel_IsPlaying(m_Channels[i].first, &bPlayFlag))
 			{
-				iPlayIndex = i;				
+				iPlayIndex = i;
 				break;
 			}
 		}
@@ -111,15 +120,15 @@ void CSound_Manager::Play_Sound(const _tchar *pSoundKey, _float fVolume, _bool b
 
 	if (iPlayIndex >= MAX_CHANNEL_COUNT || iPlayIndex < 0)
 		return;
-	
+
 	FMOD_CHANNEL* pUseChannel;
 	CSound* pUseSound = Pair->second;
-		
+	
 	FMOD_System_PlaySound(m_pSystem, pUseSound->GetSoundPtr(), nullptr, FALSE, &pUseChannel);
-	
-	if(bIsBGM)
+
+	if (bIsBGM)
 		FMOD_Channel_SetMode(pUseChannel, FMOD_LOOP_NORMAL);
-	
+
 	pUseSound->Set_Volume(pUseChannel, fVolume);
 	FMOD_System_Update(m_pSystem);
 

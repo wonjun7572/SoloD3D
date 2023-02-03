@@ -54,6 +54,7 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT RenderShadow() override;
 
 	void	Imgui_RenderProperty() override;
 
@@ -72,6 +73,7 @@ private:
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();
+	HRESULT	SetUP_ShadowShaderResources();
 
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);

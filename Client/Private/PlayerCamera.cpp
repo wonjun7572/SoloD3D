@@ -30,7 +30,7 @@ HRESULT CPlayerCamera::Init(void * pArg)
 
 	if (nullptr != pArg)
 		memcpy(&CameraDesc, pArg, sizeof(CAMERADESC));
-	else
+	else if(g_LEVEL == LEVEL_CHAP2)
 	{
 		CameraDesc.vEye = _float4(0.f, 10.f, -10.f, 1.f);
 		CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
@@ -41,8 +41,20 @@ HRESULT CPlayerCamera::Init(void * pArg)
 		CameraDesc.fAspect = static_cast<_float>(g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
 
 		CameraDesc.fNear = 0.02f;
-		CameraDesc.fFar = 300.f;
+		CameraDesc.fFar = 500.f;
 
+		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
+		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	}
+	else
+	{
+		CameraDesc.vEye = _float4(0.f, 10.f, -10.f, 1.f);
+		CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
+		CameraDesc.fFovy = XMConvertToRadians(60.f);
+		CameraDesc.fAspect = static_cast<_float>(g_iWinSizeX / static_cast<_float>(g_iWinSizeY));
+		CameraDesc.fNear = 0.02f;
+		CameraDesc.fFar = 500.f;
 		CameraDesc.TransformDesc.fSpeedPerSec = 10.f;
 		CameraDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 	}
@@ -185,7 +197,7 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
 			{
 				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 2.f;
+				m_fDistanceToTarget = 3.f;
 			}
 			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
 			{

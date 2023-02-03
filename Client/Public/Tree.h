@@ -29,8 +29,8 @@ private:
 	CGameObject* m_pUI = nullptr;
 	CGameObject* m_pCountDown = nullptr;
 
-	_float	m_fHp = 5000.f;
-	_float	m_fMaxHp = 5000.f;
+	_float	m_fHp = 3000.f;
+	_float	m_fMaxHp = 3000.f;
 
 	wstring		m_strCountDown;
 

@@ -45,8 +45,8 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT ePixe
 	ZeroMemory(&m_ViewPort, sizeof(D3D11_VIEWPORT));
 	m_ViewPort.TopLeftX = 0.f;
 	m_ViewPort.TopLeftY = 0.f;
-	m_ViewPort.Width = iWidth;
-	m_ViewPort.Height = iHeight;
+	m_ViewPort.Width = static_cast<float>(iWidth);
+	m_ViewPort.Height = static_cast<float>(iHeight);
 	m_ViewPort.MinDepth = 0.f;
 	m_ViewPort.MaxDepth = 1.f;
 

@@ -6,6 +6,8 @@
 
 #include "Camera_Dynamic.h"
 #include "LoadingUI.h"
+#include "LoadingBG.h"
+#include "LoadingTimerUI.h"
 #include "VIBuffer_Trail.h"
 
 #include "EffectManager.h"
@@ -184,7 +186,12 @@ HRESULT CMainApp::Ready_Prototype_Component()
 
 	/*For.Prototype_Component_Texture_LoadingUI*/
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingUI"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Loading/Loading_0.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Loading/Loading_%d.png"), 3))))
+		return E_FAIL;
+
+	/*For.Prototype_Component_Texture_LoadingTimer*/
+	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingTimer"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Loading/Loading/HUD_BMI_Loading_%d.png"), 56))))
 		return E_FAIL;
 
 	return S_OK;
@@ -198,7 +205,13 @@ HRESULT CMainApp::Ready_Prototype_GameObject()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingUI"), CLoadingUI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	return S_OK;
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingBG"), CLoadingBG::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LoadingTimer"), CLoadingTimerUI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+		return S_OK;
 }
 
 ///* 내가 만든 네비게이션 대로 움직일수 있도록 하는 툴 제작 들어가야함*/

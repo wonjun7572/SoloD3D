@@ -59,6 +59,7 @@ HRESULT CZombieA::Init(void * pArg)
 
 	m_vRimColor = _float4(0.3f, 0.1f, 0.1f, 1.f);
 
+	m_bBillboardHp = false;
 	return S_OK;
 }
 
@@ -134,6 +135,22 @@ HRESULT CZombieA::Render()
 	return S_OK;
 }
 
+HRESULT CZombieA::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUP_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
+
+	return S_OK;
+}
+
 void CZombieA::Imgui_RenderProperty()
 {
 	if (ImGui::Button("Navi~"))
@@ -162,10 +179,14 @@ void CZombieA::SetUp_FSM()
 		
 		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Spawn);
 	})
+		.OnExit([this]()
+	{
+		m_bBillboardHp = true;
+	})
 		.AddTransition("Spawn to Idle", "Idle")
 		.Predicator([this]()
 	{
-		return AnimFinishChecker(ZOMBIEA_Spawn, 0.9);
+		return AnimFinishChecker(ZOMBIEA_Spawn, 0.9) && m_bSpawn;
 	})
 
 		.AddState("Idle")
@@ -536,7 +557,7 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_F);
 	}
 
-	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_F, 0.3))
+	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_F, 0.9))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -555,7 +576,7 @@ void CZombieA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ADD_DMG_B);
 	}
 
-	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_B, 0.3))
+	if (AnimFinishChecker(ZOMBIEA_ADD_DMG_B, 0.9))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -688,6 +709,26 @@ HRESULT CZombieA::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDeadAnim, sizeof(_bool))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CZombieA::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

@@ -79,26 +79,26 @@ private:
 	_uint									m_iNumMaterials = 0;
 	vector<MODELMATERIAL>					m_Materials;
 
-	_uint									m_iNumBones = 0;
+	_uint												m_iNumBones = 0;
 	vector<class CBone*>					m_Bones;
 
-	_uint									m_iCurrentAnimIndex = 0;
-	_uint									m_iPreAnimIndex = 0;
-	_uint									m_iAdditiveAnimIndex = 0;
+	_uint													m_iCurrentAnimIndex = 0;
+	_uint													m_iPreAnimIndex = 0;
+	_uint													m_iAdditiveAnimIndex = 0;
 
-	_uint									m_iNumAnimations = 0;
+	_uint													m_iNumAnimations = 0;
 	vector<class CAnimation*>				m_Animations;
-	vector<const char*>						m_strAnimationName;
+	vector<const char*>							m_strAnimationName;
 
-	class CBone*							m_pSelectedBone = nullptr;
+	class CBone*								m_pSelectedBone = nullptr;
 
-	_float4x4								m_PivotMatrix;
+	_float4x4										m_PivotMatrix;
 
-	_tchar									m_FilePath[MAX_PATH];
+	_tchar											m_FilePath[MAX_PATH];
 
-	_float									m_fBlendCurTime = 0.2f;
-	_float									m_fBlendDuration = 0.2f;
-
+	_float											m_fBlendCurTime = 0.2f;
+	_float											m_fBlendDuration = 0.2f;
+		
 	//_float4								m_vMovePos = _float4(0.f, 0.f, 0.f, 0.1f);
 
 public:

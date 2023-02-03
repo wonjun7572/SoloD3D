@@ -28,7 +28,7 @@ public:
 #ifdef _DEBUG
 public:
 	HRESULT Ready_Debug(const _tchar* pTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
-	void Render_Debug(const _tchar* pMRTTag);
+	void	Render_Debug(const _tchar* pMRTTag);
 #endif // _DEBUG
 
 private:
@@ -41,14 +41,14 @@ private:
 	typedef map<const _tchar*, list<class CRenderTarget*>>	MRTS;
 
 private:
-	ID3D11RenderTargetView*				m_pBackBufferView = nullptr;
+	ID3D11RenderTargetView*			m_pBackBufferView = nullptr;
 	ID3D11DepthStencilView*				m_pDepthStencilView = nullptr;
 	D3D11_VIEWPORT						m_OriginViewPort;
 
 #ifdef _DEBUG
 private:
-	class CVIBuffer_Rect*				m_pVIBuffer = nullptr;
-	class CShader*						m_pShader = nullptr;
+	class CVIBuffer_Rect*		m_pVIBuffer = nullptr;
+	class CShader*					m_pShader = nullptr;
 	_float4x4							m_ViewMatrix, m_ProjMatrix;
 #endif
 

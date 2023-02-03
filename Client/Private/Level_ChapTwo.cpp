@@ -4,7 +4,6 @@
 #include "Level_Loading.h"
 
 #include "GameInstance.h"
-#include "ImGui_ProtoEditor.h"
 #include "ImGui_PropertyEditor.h"
 
 #include "Ally.h"
@@ -42,7 +41,18 @@ HRESULT Client::CLevel_ChapTwo::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
+	if(FAILED(Ready_Layer_TorchLight(TEXT("Layer_TorchLight"))))
+		return  E_FAIL;
+	if(FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
+		return  E_FAIL;
 
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Stop_Sound(SOUND_BGM);
+	pGameInstance->Play_Sound(L"Stage2_BGM_00.mp3", 0.2f, true, SOUND_BGM);
+	pGameInstance->Stop_Sound(SOUND_ENV);
+	pGameInstance->Play_Sound(L"Stage2_Rain.mp3", 1.f, true, SOUND_ENV);
+	RELEASE_INSTANCE(CGameInstance);
+	
 	return S_OK;
 }
 
@@ -50,14 +60,14 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
 	ImguiRenderTab();
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 	
 	if (pGameInstance->Key_Down(DIK_P))
 	{
 		if (FAILED(pGameInstance->OpenLevel(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_CHAP3))))
 			return;
 		
-		RELEASE_INSTANCE(CGameInstance);
+		RELEASE_INSTANCE(CGameInstance)
 		return;
 	}
 	
@@ -67,7 +77,7 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 
 		if (monlist == nullptr)
 		{
-			RELEASE_INSTANCE(CGameInstance);
+			RELEASE_INSTANCE(CGameInstance)
 			return;
 		}
 
@@ -114,12 +124,11 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 
 			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, L"Layer_Monster", TEXT("Prototype_GameObject_TrollA"), &TrollADesc)))
 				return;
-
 			m_TimeDelta = 0;
 		}
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 }
 
 void Client::CLevel_ChapTwo::Late_Tick(_double TimeDelta)
@@ -139,7 +148,7 @@ HRESULT Client::CLevel_ChapTwo::Render()
 
 void CLevel_ChapTwo::ImguiRenderTab()
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	if (ImGui::Button("SetSaveFilePath"))
@@ -155,7 +164,7 @@ void CLevel_ChapTwo::ImguiRenderTab()
 			//string to wstring
 			m_pSaveMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
 
-			pGameInstance->SaveMapObjectData(LEVEL_CHAP2, TEXT("Layer_MapObject"), m_pSaveMapObjectFilePath);
+			pGameInstance->SaveMapObjectData(LEVEL_CHAP2, TEXT("Layer_TorchLight"), m_pSaveMapObjectFilePath);
 
 		}
 		// close
@@ -173,33 +182,35 @@ void CLevel_ChapTwo::ImguiRenderTab()
 
 			m_pLoadMapObjectFilePath.assign(filePathName.begin(), filePathName.end());
 
-			pGameInstance->LoadMapObjectData(LEVEL_CHAP2, TEXT("Layer_MapObject"), m_pLoadMapObjectFilePath);
+			pGameInstance->LoadMapObjectData(LEVEL_CHAP2, TEXT("Layer_TorchLight"), m_pLoadMapObjectFilePath);
 		}
-
 		// close
 		ImGuiFileDialog::Instance()->Close();
 	}
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 }
 
 HRESULT CLevel_ChapTwo::Ready_Ligths()
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
+	pGameInstance->Clear_Light();
+	
 	LIGHTDESC			LightDesc;
 	ZeroMemory(&LightDesc, sizeof LightDesc);
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vPosition = _float4(0.f, 30.f, -10.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	LightDesc.vDiffuse = _float4(0.5f, 0.5f, 0.7f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -219,7 +230,7 @@ HRESULT CLevel_ChapTwo::Ready_Layer_BackGround(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PlayerCamera"))))
 		return E_FAIL;
@@ -227,19 +238,22 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Camera(const wstring & pLayerTag)
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Camera_Dynamic"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_LightCamera"))))
+		return E_FAIL;
+	
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
 
 HRESULT CLevel_ChapTwo::Ready_Layer_Player(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Player"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -464,24 +478,55 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Monster(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapTwo::Ready_Layer_MapObject(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City"))))
 		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Medieval_City_Down"))))
+		return E_FAIL;
 	
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 	
 	return S_OK;
 }
 
 HRESULT CLevel_ChapTwo::Ready_Layer_Tree(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Tree"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapTwo::Ready_Layer_TorchLight(const wstring& pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
+
+	pGameInstance->LoadMapObjectData(LEVEL_CHAP2, TEXT("Layer_TorchLight"), TEXT("../Bin/MapData/Real/Ch2_TorchLight_First.dat"));
+	
+	RELEASE_INSTANCE(CGameInstance)
+
+	return S_OK;
+}
+
+HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring& pLayerTag)
+{
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_RainParticle"))))
+		return E_FAIL;
+
+	_float4 vPos = _float4(262.5f, 0.f, 252.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_FlameE"), &vPos)))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }

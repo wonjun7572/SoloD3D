@@ -129,6 +129,7 @@ PS_OUT MeshEffectWithAlphaMaskPS(PS_IN In)
 	
 	float4 albedo = g_DiffuseTexture.Sample(AlbedoSampler, texcoord2);
 	float4 maskTex = g_MaskTexture.Sample(AlphaMaskSampler, texcoord2);
+	
 	if (maskTex.r == 0)
 		discard;
 	

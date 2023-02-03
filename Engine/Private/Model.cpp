@@ -194,10 +194,9 @@ HRESULT CModel::Render(class CShader* pShader, _uint iMeshIndex, _uint iPassInde
 			_float4x4		BoneMatrices[256];
 
 			m_Meshes[iMeshIndex]->SetUp_BoneMatrices(BoneMatrices, m_PivotMatrix);
-
+		
 			pShader->Set_MatrixArray(pBoneConstantName, BoneMatrices, 256);
 		}
-
 		pShader->Begin(iPassIndex);
 
 		m_Meshes[iMeshIndex]->Render();

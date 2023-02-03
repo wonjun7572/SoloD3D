@@ -155,6 +155,22 @@ HRESULT CTrollA::Render()
 	return S_OK;
 }
 
+HRESULT CTrollA::RenderShadow()
+{
+	if (FAILED(__super::RenderShadow()))
+		return E_FAIL;
+
+	if (FAILED(SetUP_ShadowShaderResources()))
+		return E_FAIL;
+
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (_uint i = 0; i < iNumMeshes; ++i)
+		m_pModelCom->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
+
+	return S_OK;
+}
+
 void CTrollA::Imgui_RenderProperty()
 {
 	m_MonsterUI[MONSTER_NAME]->Imgui_RenderProperty();
@@ -574,7 +590,7 @@ void CTrollA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(TROLLA_ADD_DMG_F);
 	}
 
-	if (AnimFinishChecker(TROLLA_ADD_DMG_F, 0.3))
+	if (AnimFinishChecker(TROLLA_ADD_DMG_F, 0.9))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -593,7 +609,7 @@ void CTrollA::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(TROLLA_ADD_DMG_B);
 	}
 
-	if (AnimFinishChecker(TROLLA_ADD_DMG_B, 0.3))
+	if (AnimFinishChecker(TROLLA_ADD_DMG_B, 0.9))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -726,6 +742,26 @@ HRESULT CTrollA::SetUp_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &m_bDeadAnim, sizeof(_bool))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CTrollA::SetUP_ShadowShaderResources()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_LIGHTVIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);

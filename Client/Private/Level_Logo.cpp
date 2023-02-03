@@ -30,7 +30,7 @@ HRESULT CLevel_Logo::Init()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
-	pGameInstance->Play_Sound(L"Logo_BGM_00.mp3", 0.3f, true, SOUND_BGM);
+	pGameInstance->Play_Sound(L"Logo_BGM_00.mp3",  1.f,  true,  SOUND_BGM);
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;

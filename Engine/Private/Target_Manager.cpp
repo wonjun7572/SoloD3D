@@ -1,6 +1,5 @@
 #include "..\public\Target_Manager.h"
 #include "RenderTarget.h"
-
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
 
@@ -123,7 +122,7 @@ HRESULT CTarget_Manager::Begin_ShadowMRT(ID3D11DeviceContext * pContext, const _
 	pRenderTarget->Clear();
 	pRTV = pRenderTarget->Get_RTV();
 
-	/* ±âÁ¸¿¡ ¹ÙÀÎµùµÇ¾îÀÖ´ø(¹é¹öÆÛ + ±íÀÌ½ºÅÙ½Ç¹öÆÛ)¸¦ ¾ò¾î¿Â´Ù. */
+	/* ê¸°ì¡´ì— ë°”ì¸ë”©ë˜ì–´ìžˆë˜(ë°±ë²„í¼ + ê¹Šì´ìŠ¤í…ì‹¤ë²„í¼)ë¥¼ ì–»ì–´ì˜¨ë‹¤. */
 	pContext->OMGetRenderTargets(1, &m_pBackBufferView, &m_pDepthStencilView);
 
 	_uint iNumViewports = 1;

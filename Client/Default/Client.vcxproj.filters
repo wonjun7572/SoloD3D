@@ -445,8 +445,25 @@
     <ClInclude Include="..\public\Rock_4.h">
       <Filter>GameObject\Env\Prop</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Torchlight.h" />
-    <ClInclude Include="..\public\TorchFlame.h" />
+    <ClInclude Include="..\public\BloodFrameUI.h">
+      <Filter>GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Torchlight.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TorchFlame.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CMedieval_City_Down.h">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CRainEffect.h">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadingBG.h">
+      <Filter>GameObject\UI\LoadingUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LoadingTimerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -723,8 +740,25 @@
     <ClCompile Include="..\private\Rock_4.cpp">
       <Filter>GameObject\Env\Prop</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Torchlight.cpp" />
-    <ClCompile Include="..\private\TorchFlame.cpp" />
+    <ClCompile Include="..\private\BloodFrameUI.cpp">
+      <Filter>GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TorchFlame.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Torchlight.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\CMedieval_City_Down.cpp">
+      <Filter>GameObject\Env\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\CRainEffect.cpp">
+      <Filter>GameObject\Env\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadingBG.cpp">
+      <Filter>GameObject\UI\LoadingUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LoadingTimerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -62,9 +62,9 @@ void CHitE::Tick(_double TimeDelta)
 	Compute_BillBoard();
 	m_pTransformCom->Set_Scaled(_float3(3.f, 3.f, 1.f));
 
-	m_fFrame += 16.0f * static_cast<float>(TimeDelta);
+	m_fFrame += 17.0f * static_cast<float>(TimeDelta);
 
-	if (m_fFrame >= 16.0f)
+	if (m_fFrame >= 17.0f)
 		m_bDead = true;
 }
 
@@ -111,7 +111,7 @@ HRESULT CHitE::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_Hit"), TEXT("Com_Texture"),
+	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Texture_Blood"), TEXT("Com_Texture"),
 		(CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 

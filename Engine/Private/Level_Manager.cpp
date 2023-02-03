@@ -23,8 +23,10 @@ HRESULT CLevel_Manager::OpenLevel(_uint iLevelIndex, CLevel * pNewLevel)
 	Safe_Release(m_pCurrentLevel);
 
 	m_pCurrentLevel = pNewLevel;
-	m_iLevelIndex = iLevelIndex;
 
+	m_iLevelIndex = iLevelIndex;
+	m_bOpenLevel = true;
+	
 	Safe_Release(pGameInstance);
 
 	return S_OK;

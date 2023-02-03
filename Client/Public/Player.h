@@ -81,7 +81,8 @@ public:
 
 	enum UI	{ SKILL_ICON_1, SKILL_ICON_2, SKILL_ICON_3, 
 		SKILL_ICON_4, SKILL_ICON_5, SKILL_MODELATIME, V_DEF,
-		HP , MP, PORTRAIT, SKILL_ICON_6, SKILL_ICON_7, SKILL_ICON_8, UI_END };
+		HP , MP, PORTRAIT, SKILL_ICON_6, SKILL_ICON_7, SKILL_ICON_8, 
+		BLOODFRAME, UI_END };
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -200,7 +201,7 @@ private:
 
 	_bool					m_bGroggy = false;
 	_bool					m_bHitDown = false;
-	_double					m_HitDownDelayTime = 0.0;
+	_double				m_HitDownDelayTime = 0.0;
 
 	_bool					m_bNormalAttack_1 = false;
 	_bool					m_bNormalAttack_2 = false;
@@ -219,15 +220,12 @@ private:
 	_bool					m_bJump = false;
 	_float					m_fJumpPower = 0.f;
 	_float					m_fKnockBackPower = 0.f;
-	_double					m_HitDownDurationTime = 0.f;
+	_double				m_HitDownDurationTime = 0.f;
 
 	/*******************/
 
 	/*피격을 위한 변수*/
-	_bool					m_bFrontDamagedToMonster = false;
 	_bool					m_bFrontDamage = false;
-
-	_bool					m_bBackDamagedToMonster = false;
 	_bool					m_bBackDamaged = false;
 	/****************/
 
@@ -299,7 +297,12 @@ private:
 	_float					m_fFringeAmount = 0.f;
 
 	_bool					m_bChangeAnimSpeed = false;
-	_double					m_dChangeAnimSpeed = 0.3;
+	_double				m_dChangeAnimSpeed = 0.3;
+
+	list<_float4x4**>	m_TrailMatrixList;
+
+	_double				m_TrailTimeDelta = 0.0;
+	_double				m_TrailPopTime = 0.0;
 
 private:
 	HRESULT SetUp_Parts();
