@@ -231,6 +231,14 @@ _bool CGameInstance::Key_Pressing(_ubyte byKeyID)
 	return m_pInputDev->Key_Pressing(byKeyID);
 }
 
+void CGameInstance::Invalidate_Input_Device()
+{
+	if (m_pInputDev == nullptr)
+		return;
+
+	return m_pInputDev->Invalidate_Input_Device();
+}
+
 HRESULT CGameInstance::OpenLevel(_uint iLevelIndex, CLevel * pNewLevel)
 {
 	if (m_pLevelMgr == nullptr)

@@ -41,6 +41,7 @@ public:		/* For InputDevice */
 	_bool		Key_Down(_ubyte byKeyID, _bool* pData = nullptr);
 	_bool		Key_Up(_ubyte byKeyID, _bool* pData = nullptr);
 	_bool		Key_Pressing(_ubyte byKeyID);
+	void			Invalidate_Input_Device();
 
 public: // Level_Manager
 	HRESULT OpenLevel(_uint iLevelIndex, class CLevel* pNewLevel);

@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "MathUtils.h"
 #include "Player.h"
+#include "PrincePlayer.h"
 #include "FSMComponent.h"
 
 CPlayerCamera::CPlayerCamera(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -67,13 +68,24 @@ HRESULT CPlayerCamera::Init(void * pArg)
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (g_LEVEL == LEVEL_CHAP1)
+	{
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Player"));
+		m_pPrincePlayer = static_cast<CPrincePlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP1, L"Layer_Player", L"Prince"));
+	}
 	else if (g_LEVEL == LEVEL_CHAP2)
+	{
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Player"));
+		m_pPrincePlayer = static_cast<CPrincePlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Prince"));
+	}
 	else if (g_LEVEL == LEVEL_CHAP3)
+	{
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
+		m_pPrincePlayer = static_cast<CPrincePlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Prince"));
+	}
 
 	Safe_AddRef(m_pPlayer);
+
+	m_pPlayer->Set_Move(true);
 
 	RELEASE_INSTANCE(CGameInstance);
 	
@@ -90,6 +102,20 @@ void CPlayerCamera::Tick(_double TimeDelta)
 
 		if (pGameInstance->Key_Down(DIK_F1))
 			m_bFix = !m_bFix;
+
+		if (pGameInstance->Key_Down(DIK_M))
+			m_bLookRealPlayer = !m_bLookRealPlayer;
+
+		if (m_bLookRealPlayer)
+		{
+			m_pPlayer->Set_Move(true);
+			m_pPrincePlayer->Set_Move(false);
+		}
+		else
+		{
+			m_pPlayer->Set_Move(false);
+			m_pPrincePlayer->Set_Move(true);
+		}
 
 		if (m_bFix)
 			Mouse_Fix();
@@ -114,14 +140,17 @@ HRESULT CPlayerCamera::Render()
 
 void CPlayerCamera::ShakeUpdate(_double TimeDelta)
 {
-	if (m_fShakeDuration > 0 && strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
+	if (m_pPlayer != nullptr)
 	{
-		_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 1.f);
-		m_vPlayerPos = m_vPlayerPos + (Randompos * m_fShakeAmount);
-		m_fShakeDuration -=	static_cast<_float>(TimeDelta) * m_fDecreaseFactor;
+		if (m_fShakeDuration > 0 && strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
+		{
+			_float4 Randompos = _float4(CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), CMathUtils::GetRandomFloat(-1.f, 1.f), 1.f);
+			m_vPlayerPos = m_vPlayerPos + (Randompos * m_fShakeAmount);
+			m_fShakeDuration -= static_cast<_float>(TimeDelta) * m_fDecreaseFactor;
+		}
+		else
+			m_fShakeDuration = 0;
 	}
-	else
-		m_fShakeDuration = 0;
 }
 
 void CPlayerCamera::Shake(_float fShakeDuration, _float fShakeAmount, _float fDecreaseFactor)
@@ -184,70 +213,77 @@ void CPlayerCamera::LinkPlayer(_double TimeDelta, CTransform* pTarget, _bool bCa
 	{
 		if (!m_bChange)
 		{
-			if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+			if (m_pPlayer != nullptr)
 			{
-				XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
-				m_fDistanceToTarget = 7.f;
-			}
-			else if(!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
-			{
-				XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 10.f;
-			}
-			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
-			{
-				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 3.f;
-			}
-			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
-			{
-				XMStoreFloat4(&m_vLookAt, XMVector4Transform(pTarget->Get_State(CTransform::STATE_LOOK), XMMatrixRotationZ(XMConvertToRadians(90.f))));
-				m_fDistanceToTarget = 7.f;
-			}
-			else
-			{
-				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 5.f;
-			}
+				if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+				{
+					XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
+					m_fDistanceToTarget = 7.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
+				{
+					XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 10.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
+				{
+					XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 3.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
+				{
+					XMStoreFloat4(&m_vLookAt, XMVector4Transform(pTarget->Get_State(CTransform::STATE_LOOK), XMMatrixRotationZ(XMConvertToRadians(90.f))));
+					m_fDistanceToTarget = 7.f;
+				}
+				else
+				{
+					XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 5.f;
+				}
 
-			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
-			_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
-			_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
+				XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));
+				_float4 vLook = CMathUtils::MulNum_Float4(-m_fDistanceToTarget, m_vLookAt);
+				_vector vCamPos = XMVectorSet(m_vPlayerPos.x, m_vPlayerPos.y, m_vPlayerPos.z, 1.f) + (XMLoadFloat4(&vLook) + XMVectorSet(0.f, 3.f, 0.f, 0.f));
 
-			if (Get_CamDistance() > 0.1f)
-			{
-				_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 5.f);
-				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+				if (Get_CamDistance() > 0.1f)
+				{
+					_float3 vPos = _float3::Lerp(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), vCamPos, static_cast<float>(TimeDelta) * 5.f);
+					m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(vPos.x, vPos.y, vPos.z, 1.f));
+				}
+				else
+					m_bChange = true;
 			}
-			else
-				m_bChange = true;
 		}
 		else
 		{
-			if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+			if (m_pPlayer != nullptr)
 			{
-				XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
-				m_fDistanceToTarget = 7.f;
-			}
-			else if(!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
-			{
-				XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 10.f;
-			}
-			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
-			{
-				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 2.f;
-			}
-			else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
-			{
-				XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_UP));
-				m_fDistanceToTarget = 7.f;
-			}
-			else
-			{
-				XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
-				m_fDistanceToTarget = 5.f;
+
+				if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_1"))
+				{
+					XMStoreFloat4(&m_vLookAt, XMVector4Transform(XMLoadFloat4(&m_vLookAt), XMMatrixRotationY(static_cast<float>(TimeDelta) * XMConvertToRadians(-150.f))));
+					m_fDistanceToTarget = 7.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_2"))
+				{
+					XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 10.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_4_Charging"))
+				{
+					XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 2.f;
+				}
+				else if (!strcmp(m_pPlayer->Get_FSM()->GetCurStateName(), "Skill_8"))
+				{
+					XMStoreFloat4(&m_vLookAt, -pTarget->Get_State(CTransform::STATE_UP));
+					m_fDistanceToTarget = 7.f;
+				}
+				else
+				{
+					XMStoreFloat4(&m_vLookAt, pTarget->Get_State(CTransform::STATE_LOOK));
+					m_fDistanceToTarget = 5.f;
+				}
 			}
 
 			XMStoreFloat4(&m_vPlayerPos, pTarget->Get_State(CTransform::STATE_TRANSLATION));

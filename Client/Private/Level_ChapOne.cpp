@@ -42,6 +42,8 @@ HRESULT Client::CLevel_ChapOne::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
+	if (FAILED(Ready_Layer_Horse(TEXT("Layer_Horse"))))
+		return E_FAIL;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
@@ -185,12 +187,15 @@ HRESULT CLevel_ChapOne::Ready_Layer_Camera(const wstring & pLayerTag)
 
 HRESULT CLevel_ChapOne::Ready_Layer_Player(const wstring & pLayerTag)
 {
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Player"))))
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Player"))))
+			return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_PrinceH"))))
 		return E_FAIL;
 
-	RELEASE_INSTANCE(CGameInstance);
+	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
 }
@@ -480,6 +485,23 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 HRESULT CLevel_ChapOne::Ready_Layer_UI(const wstring & pLayerTag)
 {
 	return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_Horse(const wstring & pLayerTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Horse"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
+
+		return S_OK;
+}
+
+HRESULT CLevel_ChapOne::Ready_Layer_PrincePlayer(const wstring & pLayerTag)
+{
+	return E_NOTIMPL;
 }
 
 CLevel_ChapOne * CLevel_ChapOne::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

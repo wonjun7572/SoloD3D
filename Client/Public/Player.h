@@ -105,50 +105,51 @@ public:
 	CFSMComponent*			Get_FSM() { return m_pFSM; }
 	CCollider*				Get_AABB() { return m_pColliderCom[COLLTYPE_AABB]; }
 
-	void    SetUp_FSM();
-	void	Movement(_double TimeDelta);
-	void	AdditiveAnim(_double TimeDelta);
-	void	LinkObject(_double TimeDelta);
+	void      SetUp_FSM();
+	void		Movement(_double TimeDelta);
+	void		AdditiveAnim(_double TimeDelta);
+	void		LinkObject(_double TimeDelta);
 
 	void	Reset_Anim(ANIMATION eAnim);
 	void	Set_Anim(ANIMATION eAnim);
 
 	void	ChangeModel(MODEL eModelIndex);
 	void	ChangePartsAnimSpeed(_double dTime);
+	void	Set_Move(_bool bSetMove) { m_bSetMove = bSetMove; }
 
 private:
 	void	Imgui_RenderProperty() override;
 
 private:
 	CModel*					m_pModelCom[MODEL_END] = { nullptr };
-
-	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
-	CShader*				m_pShaderCom = nullptr;
+	CCollider*					m_pColliderCom[COLLTYPE_END] = { nullptr };
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CNavigation*			m_pNavigationCom = nullptr;
 
 private:
+	_bool								m_bSetMove = false;
+
 	vector<CGameObject*>	m_PlayerParts;
 	
 	vector<CGameObject*>	m_PlayerUI;
 
-	_uint					m_PartSize = 0;
+	_uint						m_PartSize = 0;
 	_float					m_MouseSensity = 0.1f;
 	_bool					Get_CamTurn() { return m_bCamTurn; }
 
-public:
+private:
 	void					Idle_Tick(_double TimeDelta);
 	void					Walk_Tick(_double TImeDelat);
 	void					Run_Tick(_double TimeDelta);
 
 public:
 	CCollider*				Get_WeaponCollider();
-	CTransform*				Get_WeaponTransform();
+	CTransform*			Get_WeaponTransform();
 
 private:
 	_bool					m_bCamTurn = false;
 	_bool					m_bPlayerTurn = true;
-
 	_float					m_fVelocity = 1.f;
 
 	/* 피격을 위해서 */
@@ -161,19 +162,17 @@ public:
 	/* 타격을 위해서*/
 public:
 	void					MonsterNormalAttack(_bool bAttack);
-	
 	void					MonsterSkill02(_bool bAttack);
 	void					MonsterSkill04(_bool bAttack);
 
 public:
-	void					Reset_Action();
 	class CPlayerCamera*	Get_PlayerCam() { return m_pCam; }
-	void					CamLockOn(CGameObject* pGameObject, OUT _bool& bLock);
+	void								Reset_Action();
+	void								CamLockOn(CGameObject* pGameObject, OUT _bool& bLock);
 	
-	_bool					Get_Conversation() { return m_bConversation; }
-	void					Set_PlayerUI(_bool bTurnOn) { m_bUI = bTurnOn; }
-
-	void					IsActingSkill();
+	_bool							Get_Conversation() { return m_bConversation; }
+	void								Set_PlayerUI(_bool bTurnOn) { m_bUI = bTurnOn; }
+	void								IsActingSkill();
 
 private:
 	CFSMComponent*			m_pFSM = nullptr;
@@ -181,13 +180,13 @@ private:
 	PLAYER_DIRECTION		m_eState = PLAYER_FM;
 	PLAYER_DIRECTION		m_ePreState = PLAYER_END;
 
-	MODEL					m_eModelState = MODEL_NOMAL;
-	MODEL					m_ePreModelState = MODEL_END;
+	MODEL							m_eModelState = MODEL_NOMAL;
+	MODEL							m_ePreModelState = MODEL_END;
 
 	/* 애니메이션 시간 체크를 위한 함수*/
 	_bool					AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool					AnimIntervalChecker(ANIMATION eAnim, _double StartRate,	_double FinishRate);
-	void					AnimEditPlayTime(ANIMATION eAnim, _double PlayTime);
+	void						AnimEditPlayTime(ANIMATION eAnim, _double PlayTime);
 	/*******************************/
 
 	/* FSM을 위한 변수들 */
@@ -259,17 +258,17 @@ private:
 	/* 체력 및 공격력 세팅 값*/
 
 	_float	m_fHp = 0.f;
-	_float  m_fMp = 0.f;
+	_float   m_fMp = 0.f;
 	_float	m_fAttack = 0.f;
 	_float	m_fDefence = 0.f;
 
 	/********************/
 
-	_double m_WingAlpha = 0.0;
-	_float  m_fWingY = 1.f;
+	_double	 m_WingAlpha = 0.0;
+	_float		 m_fWingY = 1.f;
 
-	_bool	m_bUI = true;
-
+	_bool	     m_bUI = true;
+		
 	/* 스킬 쿨타임~! */
 	_double m_Skill_1IconCoolTime = 15.0;
 	_double m_Skill_2IconCoolTime = 20.0;
@@ -290,7 +289,6 @@ private:
 	void	AdjustSkillDamage(_float fDamage);
 
 	_bool					m_bCamLock = false;
-
 	_bool					m_bConversation = false;
 
 	_float					m_fDissolveAmount = 0.f;
@@ -298,11 +296,6 @@ private:
 
 	_bool					m_bChangeAnimSpeed = false;
 	_double				m_dChangeAnimSpeed = 0.3;
-
-	list<_float4x4**>	m_TrailMatrixList;
-
-	_double				m_TrailTimeDelta = 0.0;
-	_double				m_TrailPopTime = 0.0;
 
 private:
 	HRESULT SetUp_Parts();

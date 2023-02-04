@@ -45,10 +45,12 @@ HRESULT Client::CLevel_ChapTwo::Init()
 		return  E_FAIL;
 	if(FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return  E_FAIL;
+	if (FAILED(Ready_Layer_Horse(TEXT("Layer_Horse"))))
+		return E_FAIL;
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
-	pGameInstance->Play_Sound(L"Stage2_BGM_00.mp3", 0.2f, true, SOUND_BGM);
+	pGameInstance->Play_Sound(L"Stage2_BGM_00.mp3", 0.5f, true, SOUND_BGM);
 	pGameInstance->Stop_Sound(SOUND_ENV);
 	pGameInstance->Play_Sound(L"Stage2_Rain.mp3", 1.f, true, SOUND_ENV);
 	RELEASE_INSTANCE(CGameInstance);
@@ -73,6 +75,11 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 	
 	if (!m_bDemonCreate && pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster")->size() == 4)
 	{
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Stop_Sound(SOUND_BGM);
+		pGameInstance->Play_Sound(L"Tutorial_BGM_00.mp3", 1.f, true, SOUND_BGM);
+		RELEASE_INSTANCE(CGameInstance);
+
 		const list<CGameObject*>* monlist = pGameInstance->Find_LayerList(LEVEL_CHAP2, L"Layer_Monster");
 
 		if (monlist == nullptr)
@@ -251,6 +258,9 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Player(const wstring & pLayerTag)
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Player"))))
+		return E_FAIL;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_PrinceH"))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)
@@ -529,6 +539,18 @@ HRESULT CLevel_ChapTwo::Ready_Layer_Effect(const wstring& pLayerTag)
 	RELEASE_INSTANCE(CGameInstance)
 
 	return S_OK;
+}
+
+HRESULT CLevel_ChapTwo::Ready_Layer_Horse(const wstring & pLayerTag)
+{
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, pLayerTag, TEXT("Prototype_GameObject_Horse"))))
+		return E_FAIL;
+
+	RELEASE_INSTANCE(CGameInstance)
+
+		return S_OK;
 }
 
 CLevel_ChapTwo * CLevel_ChapTwo::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

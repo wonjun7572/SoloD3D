@@ -216,6 +216,7 @@
     <ClInclude Include="..\public\Glove.h" />
     <ClInclude Include="..\public\Helmet.h" />
     <ClInclude Include="..\public\HitE.h" />
+    <ClInclude Include="..\public\Horse.h" />
     <ClInclude Include="..\Public\Level_ChapOne.h" />
     <ClInclude Include="..\public\Level_ChapThree.h" />
     <ClInclude Include="..\Public\Level_ChapTwo.h" />
@@ -241,6 +242,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerCamera.h" />
     <ClInclude Include="..\public\PortraitCircleUI.h" />
+    <ClInclude Include="..\public\PrincePlayer.h" />
     <ClInclude Include="..\public\ProgressBarUI.h" />
     <ClInclude Include="..\public\QskillCrackE.h" />
     <ClInclude Include="..\public\Rock_1.h" />
@@ -317,6 +319,7 @@
     <ClCompile Include="..\private\Glove.cpp" />
     <ClCompile Include="..\private\Helmet.cpp" />
     <ClCompile Include="..\private\HitE.cpp" />
+    <ClCompile Include="..\private\Horse.cpp" />
     <ClCompile Include="..\Private\Level_ChapOne.cpp" />
     <ClCompile Include="..\private\Level_ChapThree.cpp" />
     <ClCompile Include="..\Private\Level_ChapTwo.cpp" />
@@ -342,6 +345,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerCamera.cpp" />
     <ClCompile Include="..\private\PortraitCircleUI.cpp" />
+    <ClCompile Include="..\private\PrincePlayer.cpp" />
     <ClCompile Include="..\private\ProgressBarUI.cpp" />
     <ClCompile Include="..\private\QskillCrackE.cpp" />
     <ClCompile Include="..\private\Rock_1.cpp" />

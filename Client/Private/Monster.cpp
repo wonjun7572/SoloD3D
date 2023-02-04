@@ -280,37 +280,40 @@ void CMonster::UI_Switch(_double TimeDelta)
 		m_bUIOn = false;
 		_float fDis = 0.f;
 
-		if (m_pPlayer->Get_PlayerCam() != nullptr && Get_CamDistance() < 30.f)
+		if (m_pPlayer != nullptr)
 		{
-#ifdef _DEBUG
-			if (DirectX::Internal::XMVector3IsUnit(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK)))
-#endif			
+			if (m_pPlayer->Get_PlayerCam() != nullptr && Get_CamDistance() < 30.f)
 			{
-				if (m_pColliderCom[COLLTYPE_AABB]->Collision(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),
-					m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK), fDis))
+#ifdef _DEBUG
+				if (DirectX::Internal::XMVector3IsUnit(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK)))
+#endif			
 				{
-					if (fDis < 20.f)
+					if (m_pColliderCom[COLLTYPE_AABB]->Collision(m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION),
+						m_pPlayer->Get_PlayerCam()->Get_TransformCom()->Get_State(CTransform::STATE_LOOK), fDis))
 					{
-						_bool bUI = false;
-						m_pPlayer->CamLockOn(this, bUI);
-
-						if (bUI)
-							m_bUIOn = true;
-
-						for (auto pMonster : m_Monsters)
+						if (fDis < 20.f)
 						{
-							if (pMonster->Get_UIOn() == true)
+							_bool bUI = false;
+							m_pPlayer->CamLockOn(this, bUI);
+
+							if (bUI)
+								m_bUIOn = true;
+
+							for (auto pMonster : m_Monsters)
 							{
-								m_bUIOn = false;
-								return;
+								if (pMonster->Get_UIOn() == true)
+								{
+									m_bUIOn = false;
+									return;
+								}
 							}
 						}
+						else
+							m_bUIOn = false;
 					}
 					else
 						m_bUIOn = false;
 				}
-				else
-					m_bUIOn = false;
 			}
 		}
 	}
@@ -358,7 +361,7 @@ void CMonster::AdjustSetDamage()
 			damageFontDesc.iVersion = 1;
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
+
 		CGameObject* pUI = nullptr;
 
 		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DamageFontUI"), &damageFontDesc);
@@ -411,7 +414,6 @@ void CMonster::AdjustSetDamageToSkill()
 		damageFontDesc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION) + Randompos;
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Play_Sound(L"Attacked_0.ogg", 0.5f, false);
 
 		CGameObject* pUI = nullptr;
 		pUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DamageFontUI"), &damageFontDesc);
@@ -578,42 +580,50 @@ void CMonster::CollisionToMonster(_double TimeDelta)
 
 void CMonster::CollisionToAABBPlayer(_double TimeDelta)
 {
-	CCollider*	pTargetCollider = static_cast<CPlayer*>(m_pPlayer)->Get_AABB();
+	CCollider* pTargetCollider = nullptr;
+	if (m_pPlayer != nullptr)
+		pTargetCollider = static_cast<CPlayer*>(m_pPlayer)->Get_AABB();
 
-	// sphere -> AttackColCom
-	// AABB -> pTargetCollider
-	
-	// 이 콜라이더는 sphere여야만함
-	_float3 sphereCenter = m_pColliderCom[COLLTYPE_SPHERE]->Get_CollisionCenter();
-	_float sphereRadius = m_pColliderCom[COLLTYPE_SPHERE]->Get_SphereRadius();
-	_float3	p;
-	ClosestPtPointAABB(sphereCenter, pTargetCollider, p);
+	if (pTargetCollider == nullptr)
+		return;
 
-	_vector v = p - sphereCenter;
+		// sphere -> AttackColCom
+		// AABB -> pTargetCollider
 
-	_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+		// 이 콜라이더는 sphere여야만함
+		_float3 sphereCenter = m_pColliderCom[COLLTYPE_SPHERE]->Get_CollisionCenter();
+		_float sphereRadius = m_pColliderCom[COLLTYPE_SPHERE]->Get_SphereRadius();
+		_float3	p;
+		ClosestPtPointAABB(sphereCenter, pTargetCollider, p);
 
-	if (fDistance_Squared <= sphereRadius * sphereRadius)
-	{
-		if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+		_vector v = p - sphereCenter;
+
+		_float fDistance_Squared = XMVectorGetX(XMVector3Dot(v, v));
+
+		if (fDistance_Squared <= sphereRadius * sphereRadius)
 		{
-			v = XMVector3Normalize(v);
-		}
-		_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-		_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			if (false == XMVector3NearEqual(v, _float4::Zero, XMVectorSet(0.001f, 0.001f, 0.001f, 0.001f)))
+			{
+				v = XMVector3Normalize(v);
+			}
+			_vector		vPosition = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			_float4		vOldPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 
-		vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
+			vPosition -= v * (sphereRadius - XMVectorGetX(XMVector3Length(p - sphereCenter)));
 
-		if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
-		{
-			m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			if (true == m_pNavigationCom->isMove_OnNavigation(vPosition, &vOldPos))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPosition);
+			}
 		}
-	}
 }
 
 void CMonster::CollisionToWeapon(_double TimeDelta)
 {
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+	CCollider* pTargetCollider = nullptr;
+
+	if (m_pPlayer != nullptr)
+		pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
 	if (nullptr == pTargetCollider)
 		return;
@@ -635,7 +645,10 @@ void CMonster::CollisionToWeapon(_double TimeDelta)
 
 void CMonster::CollisionToWeaponSkill02(_double TimeDelta)
 {
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+	CCollider* pTargetCollider = nullptr;
+
+	if (m_pPlayer != nullptr)
+		pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
 	if (nullptr == pTargetCollider)
 		return;
@@ -649,7 +662,10 @@ void CMonster::CollisionToWeaponSkill02(_double TimeDelta)
 
 void CMonster::CollisionToWeaponSkill04(_double TimeDelta)
 {
-	CCollider* pTargetCollider = m_pPlayer->Get_WeaponCollider();
+	CCollider* pTargetCollider = nullptr;
+
+	if (m_pPlayer != nullptr)
+		pTargetCollider = m_pPlayer->Get_WeaponCollider();
 
 	if (nullptr == pTargetCollider)
 		return;

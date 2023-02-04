@@ -353,90 +353,91 @@ HRESULT CPlayer::Init(void * pArg)
 
 void CPlayer::Tick(_double TimeDelta)
 {
-	__super::Tick(TimeDelta);
-
-	if (!m_bCamChange)
-		Movement(TimeDelta);
-
-	m_pFSM->Tick(TimeDelta);
-
-	m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
-	for (_uint i = PART_UPPER; i < PART_END; ++i)
+	if (m_bSetMove)
 	{
-		m_PlayerParts[i]->Tick(TimeDelta);
-		static_cast<CParts*>(m_PlayerParts[i])->LinkPlayer(m_pTransformCom);
+		__super::Tick(TimeDelta);
+
+		if (!m_bCamChange)
+			Movement(TimeDelta);
+
+		m_pFSM->Tick(TimeDelta);
+
+		m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
+		for (_uint i = PART_UPPER; i < PART_END; ++i)
+		{
+			m_PlayerParts[i]->Tick(TimeDelta);
+			static_cast<CParts*>(m_PlayerParts[i])->LinkPlayer(m_pTransformCom);
+		}
+
+		for (auto& pUI : m_PlayerUI)
+			pUI->Tick(TimeDelta);
+
+		UI_Tick(TimeDelta);
+
+		m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
+
+		AdditiveAnim(TimeDelta);
+
+		LinkObject(TimeDelta);
 	}
-
-	for (auto& pUI : m_PlayerUI)
-		pUI->Tick(TimeDelta);
-
-	UI_Tick(TimeDelta);
-
-	m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
-
-	AdditiveAnim(TimeDelta);
-
-	LinkObject(TimeDelta);
-
-	m_TrailTimeDelta += TimeDelta;
-	m_TrailPopTime  += TimeDelta;
 }
 
 void CPlayer::Late_Tick(_double TimeDelta)
 {
-	__super::Late_Tick(TimeDelta);
-
-	for (_uint i = 0; i < m_PartSize; ++i)
-		m_PlayerParts[i]->Late_Tick(TimeDelta);
-
-	if (m_bUI)
+	if (m_bSetMove)
 	{
-		for (auto& pUI : m_PlayerUI)
-			pUI->Late_Tick(TimeDelta);
-	}
+		__super::Late_Tick(TimeDelta);
 
-	for (_uint i = 0; i < COLLTYPE_END; ++i)
-		m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+		for (_uint i = 0; i < m_PartSize; ++i)
+			m_PlayerParts[i]->Late_Tick(TimeDelta);
 
-	if (nullptr != m_pRendererCom)
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		if (m_bUI)
+		{
+			for (auto& pUI : m_PlayerUI)
+				pUI->Late_Tick(TimeDelta);
+		}
 
-	if (nullptr != m_pRendererCom)
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+		for (_uint i = 0; i < COLLTYPE_END; ++i)
+			m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
+
+		if (nullptr != m_pRendererCom)
+		{
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 
 #ifdef _DEBUG
-		for (auto& pCollider : m_pColliderCom)
-			m_pRendererCom->Add_DebugRenderGroup(pCollider);
+			for (auto& pCollider : m_pColliderCom)
+				m_pRendererCom->Add_DebugRenderGroup(pCollider);
 
-		m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
+			m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
 #endif
-	}
+		}
 
-	// 모델 원래 상태로 돌아가기
-	if (m_eModelState == MODEL_A)
-		m_dModelATime += TimeDelta;
+		// 모델 원래 상태로 돌아가기
+		if (m_eModelState == MODEL_A)
+			m_dModelATime += TimeDelta;
 
-	if (m_dModelATime > 20.0)
-	{
-		m_dModelATime += TimeDelta;
-		ChangeModel(CPlayer::MODEL_NOMAL);
-		if (m_dModelATime > 10.2)
-			static_cast<CParts*>(m_PlayerParts[PART_BOOTS])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 10.4)
-			static_cast<CParts*>(m_PlayerParts[PART_BELT])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 10.6)
-			static_cast<CParts*>(m_PlayerParts[PART_LOWER])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 10.8)
-			static_cast<CParts*>(m_PlayerParts[PART_GLOVE])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 11.0)
-			static_cast<CParts*>(m_PlayerParts[PART_UPPER])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 11.2)
-			static_cast<CParts*>(m_PlayerParts[PART_SHOULDER])->ChangeModel(CParts::MODEL_NOMAL);
-		if (m_dModelATime > 11.4)
+		if (m_dModelATime > 20.0)
 		{
-			static_cast<CParts*>(m_PlayerParts[PART_HELMET])->ChangeModel(CParts::MODEL_NOMAL);
-			m_dModelATime = 0.0;
+			m_dModelATime += TimeDelta;
+			ChangeModel(CPlayer::MODEL_NOMAL);
+			if (m_dModelATime > 10.2)
+				static_cast<CParts*>(m_PlayerParts[PART_BOOTS])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 10.4)
+				static_cast<CParts*>(m_PlayerParts[PART_BELT])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 10.6)
+				static_cast<CParts*>(m_PlayerParts[PART_LOWER])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 10.8)
+				static_cast<CParts*>(m_PlayerParts[PART_GLOVE])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 11.0)
+				static_cast<CParts*>(m_PlayerParts[PART_UPPER])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 11.2)
+				static_cast<CParts*>(m_PlayerParts[PART_SHOULDER])->ChangeModel(CParts::MODEL_NOMAL);
+			if (m_dModelATime > 11.4)
+			{
+				static_cast<CParts*>(m_PlayerParts[PART_HELMET])->ChangeModel(CParts::MODEL_NOMAL);
+				m_dModelATime = 0.0;
+			}
 		}
 	}
 }
@@ -1071,6 +1072,11 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_SK24);
 		MonsterNormalAttack(true);
 		m_bPlayerTurn = false;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"FireWallFlame.mp3", 1.f);
+		pGameInstance->Play_Sound(L"common_swing_lv10.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1124,8 +1130,8 @@ void CPlayer::SetUp_FSM()
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"PSK_03.ogg", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Power.wav", 1.f); // 으아아아~차~
 		RELEASE_INSTANCE(CGameInstance);
-
 	})
 		.Tick([this](_double TimeDelta)
 	{

@@ -157,6 +157,9 @@
     <Filter Include="GameObject\UI\LoadingUI">
       <UniqueIdentifier>{f0a32ee3-0aa4-44bd-a48b-a928ac3f3f60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Player2">
+      <UniqueIdentifier>{cc3602dd-b902-4da0-a7a9-2dc1bd84cc1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -464,6 +467,12 @@
       <Filter>GameObject\UI\LoadingUI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\LoadingTimerUI.h" />
+    <ClInclude Include="..\public\PrincePlayer.h">
+      <Filter>GameObject\Player2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Horse.h">
+      <Filter>GameObject\Player2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -759,6 +768,12 @@
       <Filter>GameObject\UI\LoadingUI</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LoadingTimerUI.cpp" />
+    <ClCompile Include="..\private\PrincePlayer.cpp">
+      <Filter>GameObject\Player2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Horse.cpp">
+      <Filter>GameObject\Player2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

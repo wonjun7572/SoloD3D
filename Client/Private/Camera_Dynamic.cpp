@@ -76,7 +76,6 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		m_iIndex = 1;
 	}
 	
-
 	return S_OK;
 }
 

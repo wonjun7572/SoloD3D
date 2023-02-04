@@ -416,6 +416,20 @@ void CSkeletonWarrior::SetUp_FSM()
 	{	
 		m_iRandAttack = rand() % 2;
 
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		int iRand = rand() % 5;
+		if(iRand == 0)
+			pGameInstance->Play_Sound(L"008_goblin_01.wav", 1.f, false);
+		else	if (iRand == 1)
+			pGameInstance->Play_Sound(L"008_goblin_02.wav", 1.f, false);
+		else	if (iRand == 2)
+			pGameInstance->Play_Sound(L"008_goblin_03.wav", 1.f, false);
+		else	if (iRand == 3)
+			pGameInstance->Play_Sound(L"008_goblin_04.wav", 1.f, false);
+		else	if (iRand == 4)
+			pGameInstance->Play_Sound(L"008_goblin_05.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
+
 		if (m_iRandAttack == 0)
 		{
 			m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_ATK_01);
@@ -523,6 +537,9 @@ void CSkeletonWarrior::Adjust_Collision(_double TimeDelta)
 
 void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
+
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);

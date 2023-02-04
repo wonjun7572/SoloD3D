@@ -29,6 +29,8 @@ private:
 	HRESULT Ready_Layer_MapObject(const wstring& pLayerTag);
 	HRESULT Ready_Layer_Effect(const wstring& pLayerTag);
 	HRESULT	Ready_Layer_UI(const wstring& pLayerTag);
+	HRESULT Ready_Layer_Horse(const wstring& pLayerTag);
+	HRESULT Ready_Layer_PrincePlayer(const wstring& pLayerTag);
 
 	wstring m_pSaveMapObjectFilePath;
 	wstring m_pLoadMapObjectFilePath;

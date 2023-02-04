@@ -34,7 +34,7 @@ public:
 
 public:
 	HRESULT	Ready_Input_Device(HINSTANCE hInst, HWND hWnd);
-	void		Invalidate_Input_Device(void);
+	void			Invalidate_Input_Device(void);
 
 private:
 	LPDIRECTINPUTDEVICE8		m_pKeyBoard;
@@ -43,7 +43,7 @@ private:
 
 private:
 	_byte							m_byKeyState[256];
-	DIMOUSESTATE					m_MouseState;
+	DIMOUSESTATE			m_MouseState;
 
 	_bool							m_bKeyDown[256];
 	_bool							m_bKeyUp[256];
@@ -51,7 +51,7 @@ private:
 	_bool							m_bMouseDown[DIM_END];
 	_bool							m_bMouseUp[DIM_END];
 
-	_int							m_iClickedCnt = 0;
+	_int								m_iClickedCnt = 0;
 
 public:
 	virtual void		Free(void);

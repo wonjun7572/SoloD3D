@@ -187,49 +187,52 @@ void CBalianBollwerk::Level_Chap1Tick(_double TimeDelta)
 
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
+	if (m_pPlayer != nullptr)
 	{
-		m_vRimColor = _float4(0.f, 0.f, 0.f, 1.f);
-		Conversation(TimeDelta);
-		m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
-	}
-
-	if (!m_bConversation)
-	{
-		m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
-		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-	
-		if (m_CheckPoints.size() <= 1)
+		if (m_bConversation && _float3::Distance(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION), m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION)) < 10.f)
 		{
-			if (DistancePointCheck(vPos, m_CheckPoints[0]))
+			m_vRimColor = _float4(0.f, 0.f, 0.f, 1.f);
+			Conversation(TimeDelta);
+			m_UI[UI_CONVERSATION]->Late_Tick(TimeDelta);
+		}
+
+		if (!m_bConversation)
+		{
+			m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+
+			if (m_CheckPoints.size() <= 1)
 			{
-				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_C);
-				m_pTransformCom->LookAt(m_CheckPoints[0]);
-				if (!m_bChangeBGM)
+				if (DistancePointCheck(vPos, m_CheckPoints[0]))
 				{
-					CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-					pGameInstance->Stop_Sound(SOUND_BGM);
-					pGameInstance->Play_Sound(L"MediumBattleLoop.mp3", 0.7f, true, SOUND_BGM);
-					RELEASE_INSTANCE(CGameInstance);
-					m_bChangeBGM = true;
+					m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_C);
+					m_pTransformCom->LookAt(m_CheckPoints[0]);
+					if (!m_bChangeBGM)
+					{
+						CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+						pGameInstance->Stop_Sound(SOUND_BGM);
+						pGameInstance->Play_Sound(L"MediumBattleLoop.mp3", 0.7f, true, SOUND_BGM);
+						RELEASE_INSTANCE(CGameInstance);
+						m_bChangeBGM = true;
+					}
+				}
+				else
+				{
+					m_pTransformCom->ChaseAndLookAt(m_CheckPoints[0], TimeDelta, 0.1f, m_pNavigationCom);
+					m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
 				}
 			}
+			else if (DistancePointCheck(vPos, m_CheckPoints.back()))
+				m_CheckPoints.pop_back();
 			else
 			{
-				m_pTransformCom->ChaseAndLookAt(m_CheckPoints[0], TimeDelta, 0.1f, m_pNavigationCom);
 				m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
+				m_pTransformCom->ChaseAndLookAt(m_CheckPoints.back(), TimeDelta, 0.1f, m_pNavigationCom);
 			}
 		}
-		else if (DistancePointCheck(vPos, m_CheckPoints.back()))
-			m_CheckPoints.pop_back();
 		else
-		{
-			m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Run_F);
-			m_pTransformCom->ChaseAndLookAt(m_CheckPoints.back(), TimeDelta, 0.1f, m_pNavigationCom);
-		}
-	}	
-	else
-		m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
+			m_pModelCom->Set_AnimationIndex(BALIANBOLLWERK_Idle_P_01);
+	}
 }
 
 void CBalianBollwerk::Level_Chap2Tick(_double TimeDelta)
