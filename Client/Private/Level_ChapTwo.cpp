@@ -131,6 +131,7 @@ void Client::CLevel_ChapTwo::Tick(_double TimeDelta)
 
 			if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP2, L"Layer_Monster", TEXT("Prototype_GameObject_TrollA"), &TrollADesc)))
 				return;
+			
 			m_TimeDelta = 0;
 		}
 	}
@@ -208,8 +209,10 @@ HRESULT CLevel_ChapTwo::Ready_Ligths()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vPosition = _float4(0.f, 30.f, -10.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	LightDesc.vPosition = _float4(448.828f, 111.951f, 168.571f, 1.f);
+	_float4 vDir = _float4(261.089f, -10.f, 226.346f, 1.f) - _float4(448.828f, 111.951f, 168.571f, 1.f);
+	vDir.Normalize();
+	LightDesc.vDirection = vDir;
 	LightDesc.vDiffuse = _float4(0.5f, 0.5f, 0.7f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;

@@ -41,14 +41,14 @@ public:
 	void Set_TargetTrasform(const WEAPONDESC& WeaponDesc);
 
 private:
-	CShader*				m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom =  nullptr;
+	CCollider*					m_pColliderCom = nullptr;
 	
 private:
-	WEAPONDESC				m_WeaponDesc;
-	_float4x4				m_SocketMatrix;
+	WEAPONDESC			m_WeaponDesc;
+	_float4x4					m_SocketMatrix;
 
 	_float m_X = 0.f, m_Y = 0.f, m_Z = 0.f;
 

@@ -29,6 +29,9 @@ HRESULT CSky::Init(void * pArg)
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
+	if(g_LEVEL == LEVEL_CHAP3)
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-110.f));
+
 	return S_OK;
 }
 
@@ -114,7 +117,7 @@ HRESULT CSky::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture",1)))
 			return E_FAIL;
 	}
-	else if(g_LEVEL == LEVEL_CHAP2)
+	else if(g_LEVEL == LEVEL_CHAP3)
 	{
 		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 2)))
 			return E_FAIL;

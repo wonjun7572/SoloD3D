@@ -9,14 +9,17 @@ matrix			g_SocketMatrix;
 
 bool			g_HasSpecular;
 bool			g_HasNormal;
-
 /* ¿Á¡˙ ¡§∫∏ */
 texture2D		g_SpecularTexture;
 texture2D		g_DiffuseTexture;
 texture2D		g_NormalTexture;
+texture2D		g_DissolveTexture;
 
 vector			g_vCamPosition;
 vector			g_vRimColor;
+
+float			fDissolveAmount;
+float			fFringeAmount;
 
 struct VS_IN
 {
@@ -157,6 +160,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
 	if (0.1f > vDiffuse.a)
 		discard;
 
@@ -185,6 +189,54 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	return Out;
 }
+
+PS_OUT PS_MAIN_DISSOLVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexUV);
+
+	if (0.1f > vDiffuse.a)
+		discard;
+
+	// Ω∫∆Â≈ß∑Ø ø¨ªÍ
+	vector		vSpecular = (vector)0.2f;
+
+	if (g_HasSpecular == true)
+		vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexUV);
+	else
+		vSpecular = (vector)0.2f;
+
+	/* ≈∫¡®∆ÆΩ∫∆‰¿ÃΩ∫ */
+	float3	vNormal = In.vNormal.xyz;
+	if (g_HasNormal == true)
+	{
+		vector		vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexUV);
+		vNormal = vNormalDesc.xyz * 2.f - 1.f;
+		float3x3	WorldMatrix = float3x3(In.vTangent.xyz, In.vBinormal, In.vNormal.xyz);
+		vNormal = normalize(mul(vNormal, WorldMatrix));
+	}
+
+	Out.vDiffuse = vDiffuse;
+	Out.vNormal = vector(vNormal * 0.5f + 0.5f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vSpecular = vSpecular;
+
+	float4 DissolveMap = g_DissolveTexture.Sample(LinearSampler, In.vTexUV);
+	float  DissolveValue = DissolveMap.x;
+
+	if (DissolveValue <= fDissolveAmount)
+		discard;
+
+	else if (DissolveValue <= fDissolveAmount + fFringeAmount && fDissolveAmount != 0)
+	{
+		if (Out.vDiffuse.a != 0.0f)
+			Out.vDiffuse = Out.vDiffuse + float4(10.f, 0.f, 0.f, DissolveMap.x);
+	}
+
+	return Out;
+}
+
 
 PS_OUT_WEAPON PS_MAIN_WEAPON(PS_WEAPON_IN In)
 {
@@ -346,5 +398,17 @@ technique11 DefaultTechnique
 		HullShader = NULL;
 		DomainShader = NULL;
 		PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+	}
+
+	pass Dissolve//5
+	{
+		SetRasterizerState(RS_Default);
+		SetDepthStencilState(DS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 1.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = NULL;
+		HullShader = NULL;
+		DomainShader = NULL;
+		PixelShader = compile ps_5_0 PS_MAIN_DISSOLVE();
 	}
 }

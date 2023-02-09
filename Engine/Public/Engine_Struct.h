@@ -1,4 +1,7 @@
 #pragma once
+
+#include <DirectXTK/SimpleMath.h>
+
 namespace Engine
 {
 	enum MOUSEKEYSTATE { DIM_LB, DIM_RB, DIM_MB, DIM_END };
@@ -152,10 +155,10 @@ namespace Engine
 
 	typedef struct tagVertexMatrix
 	{
-		XMFLOAT4			vRight;
-		XMFLOAT4			vUp;
-		XMFLOAT4			vLook;
-		XMFLOAT4			vPosition;
+		SimpleMath::Vector4			vRight;
+		SimpleMath::Vector4			vUp;
+		SimpleMath::Vector4			vLook;
+		SimpleMath::Vector4			vPosition;
 	}VTXMATRIX;
 
 	typedef struct ENGINE_DLL tagVertexRectInstance_Declaration

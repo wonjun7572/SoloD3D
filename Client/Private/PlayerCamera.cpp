@@ -78,10 +78,7 @@ HRESULT CPlayerCamera::Init(void * pArg)
 		m_pPrincePlayer = static_cast<CPrincePlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Prince"));
 	}
 	else if (g_LEVEL == LEVEL_CHAP3)
-	{
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
-		m_pPrincePlayer = static_cast<CPrincePlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Prince"));
-	}
 
 	Safe_AddRef(m_pPlayer);
 
@@ -103,18 +100,21 @@ void CPlayerCamera::Tick(_double TimeDelta)
 		if (pGameInstance->Key_Down(DIK_F1))
 			m_bFix = !m_bFix;
 
-		if (pGameInstance->Key_Down(DIK_M))
-			m_bLookRealPlayer = !m_bLookRealPlayer;
+		if (g_LEVEL != LEVEL_CHAP3)
+		{
+			if (pGameInstance->Key_Down(DIK_M))
+				m_bLookRealPlayer = !m_bLookRealPlayer;
 
-		if (m_bLookRealPlayer)
-		{
-			m_pPlayer->Set_Move(true);
-			m_pPrincePlayer->Set_Move(false);
-		}
-		else
-		{
-			m_pPlayer->Set_Move(false);
-			m_pPrincePlayer->Set_Move(true);
+			if (m_bLookRealPlayer)
+			{
+				m_pPlayer->Set_Move(true);
+				m_pPrincePlayer->Set_Move(false);
+			}
+			else
+			{
+				m_pPlayer->Set_Move(false);
+				m_pPrincePlayer->Set_Move(true);
+			}
 		}
 
 		if (m_bFix)

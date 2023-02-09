@@ -34,6 +34,12 @@ HRESULT Client::CLevel_ChapThree::Init()
 	if (FAILED(Ready_Layer_MapObject(TEXT("Layer_MapObject"))))
 		return E_FAIL;
 
+	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	pGameInstance->Stop_Sound(SOUND_BGM);
+	pGameInstance->Play_Sound(L"BossBattle.mp3", 0.5f, true, SOUND_BGM);
+	pGameInstance->Stop_Sound(SOUND_ENV);
+	RELEASE_INSTANCE(CGameInstance);
+
 	return S_OK;
 }
 
@@ -41,6 +47,19 @@ void Client::CLevel_ChapThree::Tick(_double TimeDelta)
 {
 	CLevel::Tick(TimeDelta);
 	ImguiRenderTab();
+
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+
+		// ¿©±â¼­ »ìÂ¦Äô ²÷±è
+	if (!m_bFlogas && pGameInstance->Find_LayerList(LEVEL_CHAP3, L"Layer_Monster")->empty())
+	{
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, L"Layer_Monster", TEXT("Prototype_GameObject_Flogas"))))
+			return;
+
+		m_bFlogas = true;
+	}
+	
+	RELEASE_INSTANCE(CGameInstance)
 }
 
 void Client::CLevel_ChapThree::Late_Tick(_double TimeDelta)
@@ -112,9 +131,9 @@ HRESULT CLevel_ChapThree::Ready_Ligths()
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.6f, 0.4f, 0.4f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
 
 	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
 		return E_FAIL;
@@ -182,6 +201,43 @@ HRESULT CLevel_ChapThree::Ready_Layer_MapObject(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Anor"))))
 		return E_FAIL;
+
+	_float4 	 vPos = _float4(36.f, 22.f, 115.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(96.794f, 23.842f, 117.466f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_2"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(66.492f, 23.812f, 100.022f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_4"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(82.f, 23.f, 109.f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_3"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(52.346f, 20.584f, 108.912f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_3"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(76.391f, 22.825f, 100.071f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_1"), &vPos)))
+		return E_FAIL;
+
+	vPos = _float4(56.938f, 24.255f, 99.850f, 1.f);
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, pLayerTag, TEXT("Prototype_GameObject_Rock_1"), &vPos)))
+		return E_FAIL;
+
+
 
 	RELEASE_INSTANCE(CGameInstance);
 

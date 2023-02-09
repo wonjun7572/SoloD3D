@@ -58,6 +58,7 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
   VIBuffer_Cell.cpp
   VIBuffer_Cylinder.cpp
   VIBuffer_Instancing.cpp
+  VIBuffer_Point_Cochlea.cpp
   VIBuffer_Point_Instancing.cpp
   VIBuffer_Rect_Instancing.cpp
   VIBuffer_Terrain.cpp
@@ -66,8 +67,8 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
   VIBuffer.cpp
   VIBuffer_Cube.cpp
   VIBuffer_Rect.cpp
-  VIBuffer_Sphere.cpp
   컴파일하고 있습니다...
+  VIBuffer_Sphere.cpp
   VIBuffer_Trail.cpp
   GraphEditor.cpp
   ImCurveEdit.cpp
@@ -84,9 +85,7 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
   ImSequencer.cpp
      ../Bin\Engine.lib 라이브러리 및 ../Bin\Engine.exp 개체를 생성하고 있습니다.
   코드를 생성하고 있습니다.
-  773 of 10666 functions ( 7.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    261 functions had inline decision re-evaluated but remain unchanged
+  All 10693 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
 Effects11.lib(d3dxGlobal.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(d3dxGlobal.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 Effects11.lib(EffectAPI.obj) : warning LNK4099: 'Effects11.pdb' PDB를 'Effects11.lib(EffectAPI.obj)' 또는 'C:\Users\sam51\Desktop\SoloD3D\Engine\Bin\Effects11.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
@@ -177,6 +176,7 @@ DirectXTK.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'D
   .\Engine\Public\VIBuffer_Cube.h
   .\Engine\Public\VIBuffer_Cylinder.h
   .\Engine\Public\VIBuffer_Instancing.h
+  .\Engine\Public\VIBuffer_Point_Cochlea.h
   .\Engine\Public\VIBuffer_Point_Instancing.h
   .\Engine\Public\VIBuffer_Rect.h
   .\Engine\Public\VIBuffer_Rect_Instancing.h
@@ -244,7 +244,7 @@ DirectXTK.lib(WICTextureLoader.obj) : warning LNK4099: 'DirectXTK.pdb' PDB를 'D
   .\Engine\Public\ImGui\imstb_textedit.h
   .\Engine\Public\ImGui\imstb_truetype.h
   .\Engine\Public\ImGui\ImZoomSlider.h
-  126개 파일이 복사되었습니다.
+  127개 파일이 복사되었습니다.
   .\Engine\Bin\ShaderFiles\Shader_Deferred.hlsl
   .\Engine\Bin\ShaderFiles\Shader_Navigation.hlsl
   2개 파일이 복사되었습니다.

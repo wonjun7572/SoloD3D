@@ -114,19 +114,13 @@ void CMonster::Late_Tick(_double TimeDelta)
 	if (m_fHp <= 0)
 		m_bDeadAnim = true;
 
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (nullptr != m_pRendererCom &&
-		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
-	{
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
-		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
-	
 #ifdef _DEBUG
+	if (nullptr != m_pRendererCom)
+	{
 		for (auto& pCollider : m_pColliderCom)
 			m_pRendererCom->Add_DebugRenderGroup(pCollider);
-#endif
 	}
+#endif
 
 	UI_Switch(TimeDelta);
 
@@ -185,8 +179,6 @@ void CMonster::Late_Tick(_double TimeDelta)
 
 	if(!m_bDeadAnim)
 		CollisionToAABBPlayer(TimeDelta);
-
-	RELEASE_INSTANCE(CGameInstance);
 }
 
 HRESULT CMonster::Render()
@@ -243,7 +235,6 @@ HRESULT CMonster::SetUP_UI()
 	wcscpy_s(NameFontDesc.szName, MAX_PATH, m_strObjName.c_str());
 	wcscpy_s(NameFontDesc.szFontName, MAX_PATH, L"");
 	NameFontDesc.vColor = _float4(1.f, 1.f, 0.f, 1.f);
-
 	NameFontDesc.fX = m_vMonsterNamePos.x;
 	NameFontDesc.fY = m_vMonsterNamePos.y;
 	NameFontDesc.fSizeX = m_vMonsterNameScale.x;
@@ -732,7 +723,6 @@ void CMonster::Free()
 		Safe_Release(pUI);
 
 	m_MonsterDamageEffect.clear();
-
 
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);

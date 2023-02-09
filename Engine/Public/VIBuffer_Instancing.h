@@ -18,10 +18,10 @@ public:
 	virtual HRESULT Render();
 
 protected:
-	_uint						m_iNumInstance = 0; /* 몇개의 도형?!*/
+	_uint						m_iNumInstance = 0;				/* 몇개의 도형?!*/
 	_uint						m_iInstanceStride = 0;
 	_uint						m_iIndexCountPerInstance = 0;
-	ID3D11Buffer*				m_pInstanceBuffer = nullptr; /* 행렬 집합. */
+	ID3D11Buffer*		m_pInstanceBuffer = nullptr;   /* 행렬 집합. */
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;

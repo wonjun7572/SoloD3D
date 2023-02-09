@@ -23,7 +23,6 @@ private:
 	HRESULT SetUp_ShaderResources();
 
 	_float m_fFrame = { 0.f };
-	_float m_CSize[3] = { 1.f, 1.f , 1.f};
 
 public:
 	static CFireE_0* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

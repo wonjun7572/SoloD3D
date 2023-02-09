@@ -72,7 +72,7 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
-	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 5)))
+	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 6)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))
@@ -279,12 +279,12 @@ HRESULT CGameInstance::Add_Prototype(const wstring& pPrototypeTag, CGameObject *
 	return m_pObjectMgr->Add_Prototype(pPrototypeTag, pPrototype);
 }
 
-HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void * pArg)
+HRESULT CGameInstance::Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void * pArg, _Out_ CGameObject** pOutGameObject)
 {
 	if (nullptr == m_pObjectMgr)
 		return E_FAIL;
 
-	return m_pObjectMgr->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg);
+	return m_pObjectMgr->Clone_GameObject(iLevelIndex, pLayerTag, pPrototypeTag, pArg, pOutGameObject);
 }
 
 void CGameInstance::Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto)

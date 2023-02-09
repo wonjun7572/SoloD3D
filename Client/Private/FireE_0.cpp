@@ -33,6 +33,9 @@ HRESULT CFireE_0::Init(void * pArg)
 	m_fAlpha = 1.f;
 	m_UVMoveFactor = _float2(0.f, 0.f);
 
+	m_CSize[0] = 10.f;
+	m_CSize[1] = 10.f;
+
 	return S_OK;
 }
 

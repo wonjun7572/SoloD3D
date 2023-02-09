@@ -3,7 +3,7 @@
 #include "VIBuffer_Instancing.h"
 
 BEGIN(Engine)
-// 이것을 트랜스폼처럼 바꿔볼 예정.
+
 class ENGINE_DLL CVIBuffer_Point_Instancing final : public CVIBuffer_Instancing
 {
 public:

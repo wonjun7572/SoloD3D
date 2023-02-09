@@ -24,7 +24,7 @@ public:
 
 public:
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Clone_GameObject(_uint iLevelIndex,const wstring& pLayerTag,const wstring& pPrototypeTag, void* pArg = nullptr);
+	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr, _Out_ CGameObject** pOutGameObject = nullptr);
 	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	
 	HRESULT Delete_GameObject(_uint iLevelIndex, const wstring& pLayerTag, class CGameObject* pGameObject);

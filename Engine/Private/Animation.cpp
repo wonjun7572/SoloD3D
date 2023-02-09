@@ -144,6 +144,9 @@ void CAnimation::Update_Bones_Add(_double TimeDelta, _float fAdditiveRatio)
 		if (!strcmp("Helmet.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 
+		if (!strcmp("AN_NPC_MOB_Flogas_A02_SK.ao", m_Channels[i]->Get_ChannelName()))
+			continue;
+
 		if(!strcmp("SkeletonWarrior_SK_ATR.ao", m_Channels[i]->Get_ChannelName()))
 			continue;
 

@@ -35,11 +35,15 @@ public:
 	void	Imgui_RenderProperty() override;
 	void	Compute_BillBoard();
 
+	void	Set_Size(_float fSize) { m_CSize[0] = fSize; m_CSize[1] = fSize; }
+
 protected:
-	RECTEFFECTDESC					m_RectEffectDesc;
+	RECTEFFECTDESC		m_RectEffectDesc;
 	CTexture*						m_pTextureCom = nullptr;
-	CVIBuffer_Rect*					m_pVIBufferCom = nullptr;
+	CVIBuffer_Rect*			m_pVIBufferCom = nullptr;
 	_bool							m_bLinking = false;
+
+	_float							 m_CSize[3] = { 1.f, 1.f , 1.f };
 
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;

@@ -40,6 +40,12 @@ private:
 	class CShader*							m_pShader = nullptr;
 	_float4x4									m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
 
+	_float										m_vFogColor[4];
+	_float										m_FogStartDist = 3.f;
+	_float										m_vFogHighlightColor[4];
+	_float										m_fFogGlobalDensity = 0.2f;
+	_float										m_fFogHeightFallOff = 0.7f;
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_StaticShadow();
@@ -51,12 +57,10 @@ private:
 	HRESULT Render_AlphaBlend();
 	HRESULT Render_UI();
 
-
 #ifdef _DEBUG
 private:
 	HRESULT Render_DebugObject();
 #endif
-
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

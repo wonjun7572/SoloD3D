@@ -93,21 +93,22 @@ void CTrollA::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (m_bDeadAnim)
-		return;
-
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if (nullptr != m_pRendererCom &&
 		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
 	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
+
 #ifdef _DEBUG
 		m_pRendererCom->Add_DebugRenderGroup(m_pAttackColCom);
 		m_pRendererCom->Add_DebugRenderGroup(m_pSwordColCom);
 #endif
 	}
-
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (m_bDeadAnim)
+		return;
 
 	Adjust_Collision(TimeDelta);
 }

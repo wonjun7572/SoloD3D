@@ -433,6 +433,9 @@
     <ClInclude Include="..\public\VIBuffer_Trail.h">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Point_Cochlea.h">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -654,6 +657,9 @@
     </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Trail.cpp">
       <Filter>Singleton\ComponentManager\Component\VIBuffer\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Point_Cochlea.cpp">
+      <Filter>Singleton\ComponentManager\Component\VIBuffer\Instancing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

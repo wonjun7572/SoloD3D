@@ -86,17 +86,17 @@ protected:
 	_bool					m_bPlayerSkill04Command = false;
 
 protected:
-	CShader*				m_pShaderCom = nullptr;
+	CShader*					m_pShaderCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CModel*					m_pModelCom = nullptr;
-	CCollider*				m_pColliderCom[COLLTYPE_END] = { nullptr };
+	CCollider*					m_pColliderCom[COLLTYPE_END] = { nullptr };
 	CNavigation*			m_pNavigationCom = nullptr;
-	CFSMComponent*			m_pFSM = nullptr;
-	CTexture*				m_pDissolveTexCom = nullptr;
+	CFSMComponent*	m_pFSM = nullptr;
+	CTexture*					m_pDissolveTexCom = nullptr;
 
 	/* 플레이어를 찾기위한 멤버 변수 */
 protected:
-	CPlayer*				m_pPlayer = nullptr;
+	CPlayer*					m_pPlayer = nullptr;
 	
 	CGameObject*			m_pTree = nullptr;
 
@@ -121,11 +121,11 @@ protected:
 	_float2					m_vMonsterNamePos;
 	_float2					m_vMonsterNameScale;
 
-	_bool					m_bUIOn = false;
+	_bool							m_bUIOn = false;
 
 	vector<CMonster*>		m_Monsters;
 
-	_uint					m_iGroup = 0;
+	_uint						m_iGroup = 0;
 	_float					m_fDissolveAmount = -1.f;
 	_float					m_fFringeAmount = 1.f;
 

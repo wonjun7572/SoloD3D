@@ -30,6 +30,8 @@ private:
 	wstring m_pSaveMapObjectFilePath;
 	wstring m_pLoadMapObjectFilePath;
 
+	_bool	m_bFlogas = false;
+
 public:
 	static CLevel_ChapThree* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Free() override;

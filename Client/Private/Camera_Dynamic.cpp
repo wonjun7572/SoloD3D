@@ -53,7 +53,7 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 
 	if (g_LEVEL == LEVEL_CHAP1)
 	{
-		Load_CheckPoints();
+		/*Load_CheckPoints();
 		m_fMultipleTime = 0.7f;
 		m_bDynamicCam = !m_bDynamicCam;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
@@ -61,17 +61,31 @@ HRESULT CCamera_Dynamic::Init(void* pArg)
 		RELEASE_INSTANCE(CGameInstance)
 		static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(false);
 		m_bPaused = false;
-		m_iIndex = 1;
+		m_iIndex = 1;*/
+		m_bPaused = true;
+		m_bDynamicCam = false;
 	}
 	else if (g_LEVEL == LEVEL_CHAP2)
 	{
 		Load_CheckPoints();
-		m_fMultipleTime = 0.7f;
+		m_fMultipleTime = 1.2f;
 		m_bDynamicCam = !m_bDynamicCam;
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 		m_pPlayerCam = static_cast<CPlayerCamera*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Camera", L"PlayerCamera"));
 		RELEASE_INSTANCE(CGameInstance)
 		static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(false);
+		m_bPaused = false;
+		m_iIndex = 1;
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		Load_CheckPoints();
+		m_fMultipleTime = 0.7f;
+		m_bDynamicCam = !m_bDynamicCam;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			m_pPlayerCam = static_cast<CPlayerCamera*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Camera", L"PlayerCamera"));
+		RELEASE_INSTANCE(CGameInstance)
+			static_cast<CPlayerCamera*>(m_pPlayerCam)->Set_CinematicCam(false);
 		m_bPaused = false;
 		m_iIndex = 1;
 	}

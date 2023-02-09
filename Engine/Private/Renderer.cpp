@@ -183,7 +183,6 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 	if(m_pLevel_Manager->Get_bOpenLevel())
 	{
-		// 씬넘어갈떄마다 한번씩만 그려줘야함
 		if (FAILED(Render_StaticShadow()))
 			return E_FAIL;
 	}
@@ -356,6 +355,44 @@ HRESULT CRenderer::Render_LightAcc()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Set_RawValue("g_vCamPosition", &pInst->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+
+	_bool bFog = false;
+
+	if (pInst->GetCurLevelIdx() == 2)
+	{
+		// Fog
+		// 안개 기본 색상 = 조명 vAmbient와 동일하게 가야함
+		_float4 FogColor = pInst->Get_LightDesc(0)->vAmbient;
+		float   FogStartDepth = FogColor.w;
+		// 안개 지점에서 카메라까지의 거리(Range)
+		float   FogStartDist = 3.f;
+
+		// 카메라와 태양을 잇는 벡터와 평행에 가까운 카메라 벡터의 하이라이팅 픽셀 색상
+		_float4 FogHighlightColor = _float4(0.25f, 0.25f, 0.25f, 1.f);
+		// 안개 밀도 계수 (값이 클수록 안개가 짙어진다)
+		float   FogGlobalDensity = 0.2f;
+		// 정규화된 태양 방향
+		_float4 FogSunDir = pInst->Get_LightDesc(0)->vDirection;
+		// 높이 소멸 값(값이 클수록 안개가 사라지는 높이가 낮아진다)
+		float   FogHeightFallOff = 0.7f;
+		// ~Fog
+
+		if (FAILED(m_pShader->Set_RawValue("g_FogColor", &FogColor, sizeof(_float4))))	return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogStartDepth", &FogStartDepth, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogStartDist", &FogStartDist, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogHighlightColor", &FogHighlightColor, sizeof(_float4)))) return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogGlobalDensity", &FogGlobalDensity, sizeof(_float)))) return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogSunDir", &FogSunDir, sizeof(_float4)))) return E_FAIL;
+		if (FAILED(m_pShader->Set_RawValue("g_FogHeightFallOff", &FogHeightFallOff, sizeof(_float)))) return E_FAIL;
+
+		bFog = true;
+	}
+	else
+		bFog = false;
+
+	if (FAILED(m_pShader->Set_RawValue("g_Fog", &bFog, sizeof(_bool))))
 		return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance)

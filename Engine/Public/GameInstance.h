@@ -51,7 +51,7 @@ public: // Level_Manager
 public: /* For.Object_Manager */
 	class	CComponent* Get_ComponentPtr(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
 	HRESULT Add_Prototype(const wstring& pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr);
+	HRESULT Clone_GameObject(_uint iLevelIndex, const wstring& pLayerTag, const wstring& pPrototypeTag, void* pArg = nullptr, _Out_ CGameObject** pOutGameObject = nullptr);
 	void	Imgui_ProtoViewer(_uint iLevel, const _tchar*& szSelectedProto);
 	void	Imgui_ObjectViewer(_uint iLevel, CGameObject*& pSelectedObject);
 	class	CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);

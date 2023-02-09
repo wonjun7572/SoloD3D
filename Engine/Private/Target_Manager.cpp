@@ -1,4 +1,4 @@
-#include "..\public\Target_Manager.h"
+#include "..\Public\Target_Manager.h"
 #include "RenderTarget.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"

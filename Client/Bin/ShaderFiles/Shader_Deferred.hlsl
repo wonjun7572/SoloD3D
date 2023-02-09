@@ -25,6 +25,50 @@ texture2D		g_ShadeTexture;
 texture2D		g_RimTexture;
 texture2D		g_StaticShadowTexture;
 
+
+
+// FOG
+bool		g_Fog;
+vector	g_FogColor;
+float		g_FogStartDepth;
+float		g_FogStartDist;
+
+vector	g_FogHighlightColor;
+float		g_FogGlobalDensity;
+vector	g_FogSunDir;
+float		g_FogHeightFallOff;
+// ~FOG
+
+float3 ApplyFog(float3 originalColor, float eyePosY, float3 eyeToPixel)
+{
+	float  pixelDist = length(eyeToPixel);
+	float3 eyeToPixelNorm = eyeToPixel / pixelDist;
+
+	// 픽셀 거리에 대해 안개 시작 지점 계산 
+	float fogDist = max(pixelDist - g_FogStartDist, 0.0);
+
+	// 안개 세기에 대해 거리 계산
+	float fogHeightDensityAtViewer = exp(-g_FogHeightFallOff * eyePosY);
+	float fogDistInt = fogDist * fogHeightDensityAtViewer;
+
+	// 안개 세기에 대해 높이 계산
+	float eyeToPixelY = eyeToPixel.y * (fogDist / pixelDist);
+	float t = g_FogHeightFallOff * eyeToPixelY;
+	const float thresholdT = 0.01f;
+	float fogHeightInt = abs(t) > thresholdT ? (1.0 - exp(-t)) / t : 1.0;
+
+	// 위 계산 값을 합해 최종 인수 계산
+	float fogFinalFactor = exp(-g_FogGlobalDensity * fogDistInt * fogHeightInt);
+
+	// 태양 하이라이트 계산 및 안개 색상 혼합
+	float sunHighlightFactor = saturate(dot(eyeToPixelNorm, g_FogSunDir.xyz));
+	sunHighlightFactor = pow(sunHighlightFactor, 8.0f);
+
+	float3 fogFinalColor = lerp(g_FogColor.xyz, g_FogHighlightColor.xyz, sunHighlightFactor);
+
+	return lerp(fogFinalColor, originalColor, fogFinalFactor);
+}
+
 sampler LinearSampler = sampler_state
 {
 	filter = min_mag_mip_linear;
@@ -137,6 +181,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (g_vLightSpecular * vSpecularDesc) * pow(saturate(dot(normalize(vLook) * -1.f, normalize(vReflect))), 16.f);
 	Out.vSpecular.a = 0.f;
 
+	if(g_Fog)
+		Out.vSpecular = vector(ApplyFog(Out.vSpecular.xyz, g_vCamPosition.y, vLook.xyz), 1.f);
+	
 	return Out;
 }
 

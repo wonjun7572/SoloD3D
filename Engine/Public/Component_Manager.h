@@ -12,6 +12,7 @@
 #include "VIBuffer_Rect_Instancing.h"
 #include "VIBuffer_Point_Instancing.h"
 #include "VIBuffer_Trail.h"
+#include "VIBuffer_Point_Cochlea.h"
 
 #include "Transform.h"
 

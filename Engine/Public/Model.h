@@ -52,12 +52,13 @@ public:
 
 	void	Set_BlendCurTime(_float BlendCurTime) { m_fBlendCurTime = BlendCurTime; }
 	void	Set_AnimPlaySpeed(_double fPlaySpeed);
+	void  Set_PlayRate(_double playRate);
 	void	Last_AnimLoop(_uint iIndex);
-	void    Reset_AnimPlayTime(_uint iIndex);
+	void  Reset_AnimPlayTime(_uint iIndex);
 
 	_bool	Check_AnimationSet(const _float& fTime);
 	//_float4	Get_MovePos(void) { return m_vMovePos; }
-	void	Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
+	void		Set_BlendDuration(_float fDuration) { m_fBlendDuration = fDuration; }
 
 	/* Model Change */
 	void	Model_Change(_uint iIndex, double playTime);

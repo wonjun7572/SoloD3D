@@ -115,21 +115,21 @@ void CSkeletonWarrior::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (m_bDeadAnim)
-		return;
-	
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
 	if (nullptr != m_pRendererCom &&
 		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
 	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 #ifdef _DEBUG
 		m_pRendererCom->Add_DebugRenderGroup(m_pAttackColCom);
 		m_pRendererCom->Add_DebugRenderGroup(m_pSwordColCom);
 #endif
 	}
-
 	RELEASE_INSTANCE(CGameInstance);
+
+	if (m_bDeadAnim)
+		return;
 
 	Adjust_Collision(TimeDelta);
 }
@@ -416,19 +416,20 @@ void CSkeletonWarrior::SetUp_FSM()
 	{	
 		m_iRandAttack = rand() % 2;
 
-		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-		int iRand = rand() % 5;
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
+	
+		int iRand = rand() % 4;
+
 		if(iRand == 0)
 			pGameInstance->Play_Sound(L"008_goblin_01.wav", 1.f, false);
 		else	if (iRand == 1)
-			pGameInstance->Play_Sound(L"008_goblin_02.wav", 1.f, false);
-		else	if (iRand == 2)
 			pGameInstance->Play_Sound(L"008_goblin_03.wav", 1.f, false);
-		else	if (iRand == 3)
+		else	if (iRand == 2)
 			pGameInstance->Play_Sound(L"008_goblin_04.wav", 1.f, false);
-		else	if (iRand == 4)
+		else	if (iRand == 3)
 			pGameInstance->Play_Sound(L"008_goblin_05.wav", 1.f, false);
-		RELEASE_INSTANCE(CGameInstance);
+
+		RELEASE_INSTANCE(CGameInstance)
 
 		if (m_iRandAttack == 0)
 		{
@@ -487,6 +488,10 @@ void CSkeletonWarrior::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(SKELETON_WARRIOR_Die);
 		m_pModelCom->Set_AnimationIndex(SKELETON_WARRIOR_Die);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"008_goblin_02.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("Dead to DeadBody" , "DeadBody")
 		.Predicator([this]()

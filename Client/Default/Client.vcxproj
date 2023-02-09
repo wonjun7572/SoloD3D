@@ -194,7 +194,6 @@
     <ClInclude Include="..\public\ConversationUI.h" />
     <ClInclude Include="..\Public\CRainEffect.h" />
     <ClInclude Include="..\public\DamageFontUI.h" />
-    <ClInclude Include="..\public\DashParticle.h" />
     <ClInclude Include="..\public\Delilah.h" />
     <ClInclude Include="..\public\Demon.h" />
     <ClInclude Include="..\public\DemonSkillCircular.h" />
@@ -212,6 +211,7 @@
     <ClInclude Include="..\public\FireE_0.h" />
     <ClInclude Include="..\public\FireWave.h" />
     <ClInclude Include="..\public\FlameE.h" />
+    <ClInclude Include="..\public\Flogas.h" />
     <ClInclude Include="..\public\FSkillTrail.h" />
     <ClInclude Include="..\public\Glove.h" />
     <ClInclude Include="..\public\Helmet.h" />
@@ -233,11 +233,13 @@
     <ClInclude Include="..\public\Lower.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\Medieval_City.h" />
+    <ClInclude Include="..\public\Meteor.h" />
     <ClInclude Include="..\public\Monster.h" />
     <ClInclude Include="..\public\MonsterHpUI.h" />
     <ClInclude Include="..\public\MonsterNameUI.h" />
     <ClInclude Include="..\Public\NorAtk_Trail2.h" />
     <ClInclude Include="..\Public\NorAtk_Trail3.h" />
+    <ClInclude Include="..\Public\Particle.h" />
     <ClInclude Include="..\public\Parts.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\PlayerCamera.h" />
@@ -245,6 +247,8 @@
     <ClInclude Include="..\public\PrincePlayer.h" />
     <ClInclude Include="..\public\ProgressBarUI.h" />
     <ClInclude Include="..\public\QskillCrackE.h" />
+    <ClInclude Include="..\public\RockMada.h" />
+    <ClInclude Include="..\public\RockNorm04.h" />
     <ClInclude Include="..\public\Rock_1.h" />
     <ClInclude Include="..\public\Rock_2.h" />
     <ClInclude Include="..\public\Rock_3.h" />
@@ -297,7 +301,6 @@
     <ClCompile Include="..\private\Chitata.cpp" />
     <ClCompile Include="..\private\ConversationUI.cpp" />
     <ClCompile Include="..\private\DamageFontUI.cpp" />
-    <ClCompile Include="..\private\DashParticle.cpp" />
     <ClCompile Include="..\private\Delilah.cpp" />
     <ClCompile Include="..\private\Demon.cpp" />
     <ClCompile Include="..\private\DemonSkillCircular.cpp" />
@@ -315,6 +318,7 @@
     <ClCompile Include="..\private\FireE_0.cpp" />
     <ClCompile Include="..\private\FireWave.cpp" />
     <ClCompile Include="..\private\FlameE.cpp" />
+    <ClCompile Include="..\private\Flogas.cpp" />
     <ClCompile Include="..\private\FSkillTrail.cpp" />
     <ClCompile Include="..\private\Glove.cpp" />
     <ClCompile Include="..\private\Helmet.cpp" />
@@ -336,11 +340,13 @@
     <ClCompile Include="..\private\Lower.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\Medieval_City.cpp" />
+    <ClCompile Include="..\private\Meteor.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\private\MonsterHpUI.cpp" />
     <ClCompile Include="..\private\MonsterNameUI.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail2.cpp" />
     <ClCompile Include="..\Private\NorAtk_Trail3.cpp" />
+    <ClCompile Include="..\Private\Particle.cpp" />
     <ClCompile Include="..\private\Parts.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\PlayerCamera.cpp" />
@@ -348,6 +354,8 @@
     <ClCompile Include="..\private\PrincePlayer.cpp" />
     <ClCompile Include="..\private\ProgressBarUI.cpp" />
     <ClCompile Include="..\private\QskillCrackE.cpp" />
+    <ClCompile Include="..\private\RockMada.cpp" />
+    <ClCompile Include="..\private\RockNorm04.cpp" />
     <ClCompile Include="..\private\Rock_1.cpp" />
     <ClCompile Include="..\private\Rock_2.cpp" />
     <ClCompile Include="..\private\Rock_3.cpp" />
@@ -404,6 +412,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstancing.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPtInst_Cochlea.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstancing.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
   </ItemGroup>

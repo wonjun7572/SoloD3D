@@ -41,7 +41,10 @@ HRESULT CRock_1::Init(void * pArg)
 	if (pArg != nullptr)
 		memcpy(&vPos, pArg, sizeof(_float4));
 
-	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(210.f));
+	if(g_LEVEL == LEVEL_CHAP3)
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(-20.f));
+	else
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(210.f));
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, vPos);
 
 	return S_OK;

@@ -46,8 +46,8 @@ HRESULT CLightCamera::Init(void * pArg)
 	}
 	else if(g_LEVEL == LEVEL_CHAP2)
 	{
-		CameraDesc.vEye = _float4(448.828f, 111.951f, 168.571f, 1.f);
-		CameraDesc.vAt = _float4(261.089f, -10.f, 226.346f, 1.f);
+		CameraDesc.vEye = _float4(448.828f, 111.951f, 168.571f, 1.f); // 위치
+		CameraDesc.vAt = _float4(261.089f, -10.f, 226.346f, 1.f); // 어디를 바라보고
 		CameraDesc.vUp = _float4(0.f, 1.f, 0.f, 0.f);
 
 		CameraDesc.fFovy = XMConvertToRadians(60.f);

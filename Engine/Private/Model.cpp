@@ -541,6 +541,11 @@ void CModel::Set_AnimPlaySpeed(_double fPlaySpeed)
 		pAnimation->Set_MulSecond(fPlaySpeed);
 }
 
+void CModel::Set_PlayRate(_double playRate)
+{
+	m_Animations[m_iCurrentAnimIndex]->Set_PlayRate(playRate);
+}
+
 void CModel::Last_AnimLoop(_uint iIndex)
 {
 	m_Animations[iIndex]->FinishAnimLoop();
@@ -558,7 +563,7 @@ _bool CModel::Check_AnimationSet(const _float & fTime)
 
 void CModel::Model_Change(_uint iIndex, double playTime)
 {
-	m_Animations[iIndex]->Set_PlayTime(playTime);
+	m_Animations[iIndex]->Set_PlayRate(playTime);
 }
 
 void CModel::Model_IndexChange(_uint iCurrent, _uint iPre, _uint iAdditive)

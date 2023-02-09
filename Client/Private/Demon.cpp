@@ -13,6 +13,9 @@
 #include "EffectManager.h"
 #include "ConversationUI.h"
 #include "DemonSkillCircular.h"
+#include "RockMada.h"
+#include "RockNorm04.h"
+#include "Particle.h"
 
 CDemon::CDemon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -47,10 +50,7 @@ HRESULT CDemon::Init(void * pArg)
 		return E_FAIL;
 
 	if (g_LEVEL == LEVEL_CHAP1)
-	{
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, _float4(35.f, 0.f, 60.f, 1.f));
-	}
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
@@ -79,14 +79,15 @@ HRESULT CDemon::Init(void * pArg)
 	m_vMonsterNamePos = _float2(720.f, 40.f);
 	m_vMonsterNameScale = _float2(1.f, 1.f);
 
-	if (FAILED(SetUP_UI()))
+	if (FAILED(__super::SetUP_UI()))
 		return E_FAIL;
 
 	m_vRimColor = _float4(0.3f, 0.1f, 0.1f, 1.f);
+
+	// texture
 	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillFloor", L"DEMON_SKILL_FLOOR");
-
+	CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_FireE_0", L"DEMON_SKILL2_FIRE0");
 	CEffect_Rect::RECTEFFECTDESC rectDesc;
-
 	_matrix pivotMat = XMMatrixScaling(20.f, 20.f, 1.f) *
 		XMMatrixRotationX(XMConvertToRadians(-90.f)) *
 		XMMatrixRotationY(XMConvertToRadians(-110.f)) *
@@ -96,7 +97,6 @@ HRESULT CDemon::Init(void * pArg)
 	XMStoreFloat4x4(&rectDesc.PivotMatrix, pivotMat);
 	rectDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(m_pTransformCom);
-
 	if (FAILED(CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillCircular", L"DEMON_SKILL_CIRCULAR", &rectDesc)))
 	{
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Target(m_pTransformCom);
@@ -112,12 +112,35 @@ HRESULT CDemon::Init(void * pArg)
 	XMStoreFloat4x4(&rectDesc.PivotMatrix, pivotMat);
 	rectDesc.pTargetTransform = m_pTransformCom;
 	Safe_AddRef(m_pTransformCom);
-
 	if (FAILED(CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_DemonSKillStraight", L"DEMON_SKILL_Straight", &rectDesc)))
 	{
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_Target(m_pTransformCom);
 		Safe_AddRef(m_pTransformCom);
 	}
+
+	CEffect_Mesh::EFFECTDESC effectDesc;
+	ZeroMemory(&effectDesc, sizeof(CEffect_Mesh::EFFECTDESC));
+
+	pivotMat = XMMatrixScaling(0.1f, 0.1f, 0.5f) *
+		XMMatrixRotationX(XMConvertToRadians(-140.f)) *
+		XMMatrixRotationY(XMConvertToRadians(0.f)) *
+		XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+		XMMatrixTranslation(0.f, 5.5f, 0.f);
+
+	XMStoreFloat4x4(&effectDesc.PivotMatrix, pivotMat);
+	effectDesc.iPassIndex = 3;
+	effectDesc.iDiffuseTex = 42;
+	effectDesc.iMaskTex = 28;
+	effectDesc.pTargetTransform = m_pTransformCom;
+	Safe_AddRef(m_pTransformCom);
+
+	if (FAILED(CEffectManager::GetInstance()->Add_Effects(L"Prototype_GameObject_Twister_Line", L"DEMON_SKILL3_LINE", &effectDesc)))
+	{
+		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL3_LINE"))->Set_Target(m_pTransformCom);
+		Safe_AddRef(m_pTransformCom);
+	}
+
+	CEffectManager::GetInstance()->SetUp_Effects(L"DEMON_SKILL3_LINE", 1.f, 1.f, _float2(0.f, 0.f));
 
 	return S_OK;
 }
@@ -129,8 +152,6 @@ void CDemon::Tick(_double TimeDelta)
 		__super::Tick(TimeDelta);
 		AdditiveAnim(TimeDelta);
 		Play_Skill(TimeDelta);
-		for (auto& pEffect : m_Effects)
-			pEffect->Tick(TimeDelta);
 	}
 	else if (g_LEVEL == LEVEL_CHAP2)
 	{
@@ -168,17 +189,10 @@ void CDemon::Late_Tick(_double TimeDelta)
 {
 	__super::Late_Tick(TimeDelta);
 
-	if (m_bDeadAnim)
-		return;
-
-	for (auto& pEffect : m_Effects)
-		pEffect->Late_Tick(TimeDelta);
-
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (nullptr != m_pRendererCom &&
-		true == pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), 2.f))
+	if (nullptr != m_pRendererCom)
 	{
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+		m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_NONALPHABLEND, this);
 #ifdef _DEBUG
 		m_pRendererCom->Add_DebugRenderGroup(m_pAttackColCom);
 		m_pRendererCom->Add_DebugRenderGroup(m_pSwordColCom);
@@ -187,7 +201,8 @@ void CDemon::Late_Tick(_double TimeDelta)
 #endif
 	}
 
-	RELEASE_INSTANCE(CGameInstance);
+	if (m_bDeadAnim)
+		return;
 
 	Adjust_Collision(TimeDelta);
 }
@@ -612,10 +627,10 @@ void CDemon::SetUp_FSM()
 	{
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		_vector	vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
-		
+
 		if (!m_bPlayerAttack)
 		{
-			m_pModelCom->Set_AnimationIndex(DEMON_Run_F);
+			m_pModelCom->Set_AnimationIndex(DEMON_Walk_F);
 			m_pTransformCom->ChaseAndLookAt(vPlayerPos, TimeDelta, 0.1f, m_pNavigationCom);
 		}
 		else
@@ -623,8 +638,9 @@ void CDemon::SetUp_FSM()
 			m_pModelCom->Set_AnimationIndex(DEMON_Idle_C);
 			m_pTransformCom->LookAt(vPlayerPos);
 		}
-		m_AttackDelayTime += TimeDelta;
 		RELEASE_INSTANCE(CGameInstance);
+		
+		m_AttackDelayTime += TimeDelta;
 	})
 		.AddTransition("Chase to Idle", "Idle")
 		.Predicator([this]()
@@ -695,6 +711,60 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_01);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_01);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Attack_2.mp3", 1.f, false);
+		
+		CRockMada::DESC rockmadaDesc;
+			ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+			_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 5.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+		
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 10.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 15.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(30.f)));
+
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 10.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 15.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(-60.f)));
+
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 10.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		ZeroMemory(&rockmadaDesc, sizeof(CRockMada::DESC));
+		// 내 앞으로
+		rockmadaDesc.vDestination = vPos + vLook * 15.f;
+		rockmadaDesc.vDestination.y += 0.6f;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockMada"), &rockmadaDesc);
+
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TImeDelta) 
 	{
@@ -735,7 +805,27 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_02);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_02);
-		m_fSkillHitDownRange = 4.f;
+		m_fSkillHitDownRange = 10.f;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_06.mp3", 1.f, false);
+		
+		for (int i = 0; i < 5; ++i)
+		{
+			CRockNorm04::DESC rockmadaDesc;
+			ZeroMemory(&rockmadaDesc, sizeof(CRockNorm04::DESC));
+			_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+			vLook = XMVector3TransformNormal(vLook, XMMatrixRotationY(XMConvertToRadians(-25.f + (i * 12.5f))));
+			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+			// 내 앞으로
+			rockmadaDesc.vDestination = vPos + vLook* 5.f;
+			rockmadaDesc.vDestination.y += 2.5f;
+			rockmadaDesc.vDir = vLook;
+			rockmadaDesc.iProperty = CRockNorm04::DEMON;
+			pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockNorm04"), &rockmadaDesc);
+		}
+	
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -745,6 +835,9 @@ void CDemon::SetUp_FSM()
 		CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL_FLOOR")->Set_Scaled(_float3(m_fSkillHitDownRange * 2.5f, m_fSkillHitDownRange * 2.5f, 1.f));
 		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_FLOOR", TimeDelta);
 		
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL2_FIRE0"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 2.f, vPos.z, 1.f));
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL2_FIRE0", TimeDelta);
+
 		if (AnimIntervalChecker(DEMON_SK_Firing_02, 0.6, 0.8))
 			m_bRealSkill = true;
 		else
@@ -786,35 +879,78 @@ void CDemon::SetUp_FSM()
 		m_fRotationZ = 0.f;
 		m_fSkill3EffectTime = 0.0;
 		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Linking(true);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Skill_07_1.mp3", 1.f, false);
+
+		CParticle::DESC desc;
+		ZeroMemory(&desc, sizeof(CParticle::DESC));
+
+		desc.fShowTime = 2.f;
+		desc.iProperty = CParticle::COCHLEA;
+		desc.fSizeUV_X = 1.f / 6.f;
+		desc.fSizeUV_Y = 1.f / 5.f;
+		desc.iSpriteCount_X = 6;
+		desc.iSpriteCount_Y = 5;
+		desc.pTextureTag = L"FX_fireaura_001_TEX_KJS";
+		desc.ViBufferDesc.fMinSpeed = 0.1f;
+		desc.ViBufferDesc.fMaxSpeed = 1.f;
+		desc.ViBufferDesc.iNumSprite = 30;
+		desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+		desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+		desc.ViBufferDesc.fMinTime = 0.1f;
+		desc.ViBufferDesc.fMaxTime = 0.5f;
+		desc.ViBufferDesc.fRange = 10.f;
+		desc.ViBufferDesc.fRangeOffset = 6.f;
+		desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+		desc.ViBufferDesc.fMaxSpreadSizeOffset = 2.f;
+		desc.ViBufferDesc.iNumInstances = 0;
+		desc.ViBufferDesc.iNumSpreadInstances = 500;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle"), &desc, &m_pSkill3Particle);
+
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta) 
 	{
 		m_bRealSkill = true;
 		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
-
+		_float3 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
 		CGameObject* pSkillEffect = CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR");
-
 		m_fSkill3EffectTime += static_cast<float>(TimeDelta) * 0.25f;
-		
+		static_cast<CDemonSkillCircular*>(pSkillEffect)->Set_Amount(m_fSkill3EffectTime);
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_CIRCULAR", TimeDelta);
 		if (m_fSkill3EffectTime >= 0.4f)
 			m_fSkill3EffectTime = 0.4f;
 
-		/*_matrix pivotMat = XMMatrixScaling(20.f, 20.f, 1.f) *
-			XMMatrixRotationX(XMConvertToRadians(-90.f)) *
-			XMMatrixRotationY(XMConvertToRadians(70.f)) *
-			XMMatrixRotationZ(XMConvertToRadians(-180.f)) *
-			XMMatrixTranslation(0.f, 0.6f, 0.f);*/
-		//static_cast<CEffect_Rect*>(pSkillEffect)->Set_PivotMatrix(pivotMat);
-		static_cast<CDemonSkillCircular*>(pSkillEffect)->Set_Amount(m_fSkill3EffectTime);
-		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_CIRCULAR", TimeDelta);
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Skill_06_1.mp3", 1.f, false, SOUND_BOSS);
+		RELEASE_INSTANCE(CGameInstance)
+
+		vPos += vLook;
+		vPos.y += 5.f;
+		m_pSkill3Particle->Get_TransformCom()->Set_State(CTransform::STATE_TRANSLATION, vPos);
+
 		if (AnimIntervalChecker(DEMON_SK_Firing_03, 0.2, 0.9))
+		{
 			m_fRotationY += static_cast<_float>(TimeDelta) * 1.2f;
+			_mat pivotMat = XMMatrixScaling(0.1f, 0.1f, 0.5f) *
+				XMMatrixRotationX(XMConvertToRadians(-140.f)) *
+				XMMatrixRotationY(XMConvertToRadians(m_fRotationY * 70.f)) *
+				XMMatrixRotationZ(XMConvertToRadians(0.f)) *
+				XMMatrixTranslation(0.f, 5.5f, 0.f);
+			static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL3_LINE"))->Set_PivotMatrix(pivotMat);
+			CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL3_LINE", TimeDelta);
+		}
 
 		if (m_fRotationY >= 1.f)
 			m_fRotationY = 1.f;
 	})
 		.OnExit([this]()
 	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Skill_06_2.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
+
 		m_fOBBX = 0.f;
 		m_fOBBY = 3.f;
 		m_fOBBZ = 0.f;
@@ -829,6 +965,8 @@ void CDemon::SetUp_FSM()
 		m_bRealSkill = false;
 		m_bSkill_3ToPlayer = false;
 		m_SkillDelayTime = 0.0;
+
+		Safe_Release(m_pSkill3Particle);
 	})
 		.AddTransition("Skill_3 to Idle", "Idle")
 		.Predicator([this]()
@@ -847,11 +985,9 @@ void CDemon::SetUp_FSM()
 		m_fOBBX = 0.f;
 		m_fOBBY = 3.f;
 		m_fOBBZ = 0.f;
-
 		m_fOBBCX = 1.f;
 		m_fOBBCY = 1.f;
 		m_fOBBCZ = 0.f;
-
 		m_fRotationX = 0.f;
 		m_fRotationY = 0.f;
 		m_fRotationZ = 0.f;
@@ -859,38 +995,61 @@ void CDemon::SetUp_FSM()
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_04);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_04);
 		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_Linking(true);
+		_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL2_FIRE0"))->LinkObject(0.0, _float4(vPos.x, vPos.y + 4.f, vPos.z, 1.f));
 		m_fSkill5EffectTime = 0.f;
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+		CRockNorm04::DESC rockmadaDesc;
+		ZeroMemory(&rockmadaDesc, sizeof(CRockNorm04::DESC));
+		_float4 vLook = m_pTransformCom->Get_State(CTransform::STATE_LOOK);
+		rockmadaDesc.vDestination = vPos + vLook;
+		rockmadaDesc.vDestination.y += 5.f;
+		rockmadaDesc.vDir = vLook;
+		rockmadaDesc.iProperty = CRockNorm04::DEMON_SKILL4;
+		pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_RockNorm04"), &rockmadaDesc, &m_pSkill4Rock);
+		pGameInstance->Play_Sound(L"Balrog_Skill_07_1.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta) 
 	{
 		m_fSkill5EffectTime += static_cast<float>(TimeDelta) * 10.f;
-
 		if (m_fSkill5EffectTime >= 20.f)
 			m_fSkill5EffectTime = 20.f;
-
-		_matrix pivotMat = XMMatrixScaling(m_fSkill5EffectTime, 4.f, 1.f) *
+		_matrix pivotMat = XMMatrixScaling(m_fSkill5EffectTime * 2.f, 4.f, 1.f) *
 			XMMatrixRotationX(XMConvertToRadians(90.f)) *
 			XMMatrixRotationY(XMConvertToRadians(-90.f)) *
 			XMMatrixRotationZ(XMConvertToRadians(0.f)) *
 			XMMatrixTranslation(0.f, 0.6f, 0.f);
 		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_Straight"))->Set_PivotMatrix(pivotMat);
+		
 		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL_Straight", TimeDelta);
+		CEffectManager::GetInstance()->Render_Effects(L"DEMON_SKILL2_FIRE0", TimeDelta);
+		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL2_FIRE0"))->Set_Size(m_fSkill5EffectTime * 0.7f);
 
 		if (AnimIntervalChecker(DEMON_SK_Firing_04, 0.7, 0.9))
 		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"Balrog_Skill_07_2.mp3", 1.f, false, SOUND_BOSS);
+			RELEASE_INSTANCE(CGameInstance)
+
+			CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL2_FIRE0")->Go_Direction(TimeDelta * 7.f, m_pTransformCom->Get_State(CTransform::STATE_LOOK));
 			m_bRealSkill = true;
-			m_fOBBZ = 5.f;
-			m_fOBBCZ = 5.f;
+			m_fOBBZ = 7.f;
+			m_fOBBCZ = 7.f;
 		}
 		else
+		{
 			m_bRealSkill = false;
+			m_pSkill4Rock->Get_TransformCom()->Set_Scaled(_float3(m_fSkill5EffectTime * 0.2f, m_fSkill5EffectTime* 0.2f, m_fSkill5EffectTime* 0.2f));
+		}
 	})
 		.OnExit([this]()
 	{
-		m_bSkill_4ToPlayer = false;
-		m_SkillDelayTime = 0.0;
 		m_fOBBZ = 0.f;
 		m_fOBBCZ = 0.f;
+		m_SkillDelayTime = 0.0;
+		m_bSkill_4ToPlayer = false;
+		Safe_Release(m_pSkill4Rock);
 	})
 		.AddTransition("Skill_4 to Idle", "Idle")
 		.Predicator([this]()
@@ -908,7 +1067,11 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_05);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_05);
-		m_fSkillHitDownRange = 4.f;
+		m_fSkillHitDownRange = 8.f;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_05_3.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta) 
 	{
@@ -946,12 +1109,16 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_06);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Skill_02_2.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta) 
 	{
 		_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_FLOOR"))->LinkObject(TimeDelta, _float4(vPos.x, vPos.y + 0.6f, vPos.z, 1.f));
-		m_fSkillHitDownRange += static_cast<_float>(TimeDelta) * 2.5f;
+		m_fSkillHitDownRange += static_cast<_float>(TimeDelta) * 5.f;
 		CEffectManager::GetInstance()->Get_Transform(L"DEMON_SKILL_FLOOR")->Set_Scaled(_float3(m_fSkillHitDownRange * 2.5f, m_fSkillHitDownRange * 2.5f, 1.f));
 		m_bImpossibleDamaged = true;
 		m_bImpossibleSkillDamaged = true;
@@ -971,6 +1138,9 @@ void CDemon::SetUp_FSM()
 		m_bImpossibleSkillDamaged = false;
 		m_pModelCom->Reset_AnimPlayTime(DEMON_SK_Firing_06_END);
 		m_pModelCom->Set_AnimationIndex(DEMON_SK_Firing_06_END);
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Skill_02_3.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta) 
 	{
@@ -1097,11 +1267,17 @@ void CDemon::SetUp_FSM()
 		{
 			m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_01);
 			m_pModelCom->Set_AnimationIndex(DEMON_ATK_01);
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"Balrog_Attack_2.mp3", 1.f);
+			RELEASE_INSTANCE(CGameInstance)
 		}
 		else if (m_iRandAttack == 1)
 		{
 			m_pModelCom->Reset_AnimPlayTime(DEMON_ATK_02);
 			m_pModelCom->Set_AnimationIndex(DEMON_ATK_02);
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"Balrog_Attack_1.mp3", 1.f);
+			RELEASE_INSTANCE(CGameInstance)
 		}
 	})
 		.Tick([this](_double TimeDelta)
@@ -1154,6 +1330,11 @@ void CDemon::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(DEMON_Die);
 		m_pModelCom->Set_AnimationIndex(DEMON_Die);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Balrog_Die_1.mp3", 1.f);
+			pGameInstance->Play_Sound(L"Balrog_Die_2.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.AddTransition("Dead to DeadBody", "DeadBody")
 		.Predicator([this]()
@@ -1200,7 +1381,8 @@ void CDemon::SetUp_UI()
 
 HRESULT CDemon::SetUp_Components()
 {
-	__super::SetUp_Components();
+	if (FAILED(__super::SetUp_Components()))
+		return E_FAIL;
 
 	/* For.Com_Renderer */
 	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Renderer"), TEXT("Com_Renderer"),
@@ -1222,7 +1404,7 @@ HRESULT CDemon::SetUp_Components()
 	/* For.Com_AABB */
 	ZeroMemory(&ColliderDesc, sizeof(CCollider::COLLIDERDESC));
 	ColliderDesc.vCenter = _float3(0.f, 2.f, 0.f);
-	ColliderDesc.vSize = _float3(1.f, 2.f, 1.f);
+	ColliderDesc.vSize = _float3(1.f, 4.f, 1.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_CHAP1, TEXT("Prototype_Component_Collider_AABB"), TEXT("Com_AABB"),
 		(CComponent**)&m_pColliderCom[COLLTYPE_AABB], &ColliderDesc)))
@@ -1347,7 +1529,6 @@ HRESULT CDemon::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_bDissolve", &bTRUE, sizeof(_bool))))
 		return E_FAIL;
 
-
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -1416,19 +1597,14 @@ CGameObject * CDemon::Clone(void * pArg)
 void CDemon::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pAttackColCom);
 	Safe_Release(m_pSwordColCom);
 	Safe_Release(m_pSkillHitDownColCom);
 	Safe_Release(m_pSkillKnockBackColCom);
-
 	for (auto pCollider : m_MonsterColliders)
 		Safe_Release(pCollider);
-
 	m_MonsterColliders.clear();
-
-	for (auto pEffect : m_Effects)
-		Safe_Release(pEffect);
-
-	m_Effects.clear();
+	for (auto pUI : m_UI)
+		Safe_Release(pUI);
+	m_UI.clear();
 }

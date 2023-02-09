@@ -24,6 +24,7 @@
 #include "Chitata.h"
 #include "Delilah.h"
 #include "Demon.h"
+#include "Flogas.h"
 
 #include "BloodFrameUI.h"
 
@@ -906,7 +907,6 @@ void CPlayer::SetUp_FSM()
 	})
 		.Tick([this](_double TimeDelta)
 	{
-
 		if(m_pCam != nullptr)
 			m_pCam->Shake(0.1f, 0.01f);
 
@@ -1598,7 +1598,11 @@ void CPlayer::Movement(_double TimeDelta)
 			static _float fGravity = 8.81f;
 			_float4 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 			_float	fJumpPower = yPos + m_fJumpPower;
-			_float fVelocity = sqrtf(fabsf(fJumpPower * 2.f * fGravity));
+			_float  fVelocity = sqrtf(fabsf(fJumpPower * 2.f * fGravity));
+
+			// 왜 chap3에서만 오류가 나는지 모르겠지만.. 일단 이렇게 처리해둠..
+			if (g_LEVEL == LEVEL_CHAP3)
+				fVelocity *= 1.3f;
 
 			if (vPos.y >= fVelocity)
 				fGravity *= -1.f;
@@ -2165,6 +2169,19 @@ void CPlayer::LinkObject(_double TimeDelta)
 			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pDemon->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 100.f)
 			{
 				m_pCam->LinkAlly(TimeDelta, pDemon->Get_TransformCom(), 1.f, 1.5f);
+				RELEASE_INSTANCE(CGameInstance);
+				return;
+			}
+		}
+	}
+	else if (g_LEVEL == LEVEL_CHAP3)
+	{
+		CGameObject* pFlogas = pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Monster", L"FLOGAS");
+		if (pFlogas != nullptr && static_cast<CFlogas*>(pFlogas)->Get_Conversation() == true)
+		{
+			if (_float3::Distance(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION), pFlogas->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION)) < 100.f)
+			{
+				m_pCam->LinkAlly(TimeDelta, pFlogas->Get_TransformCom(), 3.f, 1.5f);
 				RELEASE_INSTANCE(CGameInstance);
 				return;
 			}

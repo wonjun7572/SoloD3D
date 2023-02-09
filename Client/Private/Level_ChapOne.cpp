@@ -9,6 +9,7 @@
 #include "ImGui_PropertyEditor.h"
 #include "EffectManager.h"
 #include "Camera.h"
+#include "Particle.h"
 
 CLevel_ChapOne::CLevel_ChapOne(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CLevel(pDevice, pContext)
@@ -42,9 +43,7 @@ HRESULT Client::CLevel_ChapOne::Init()
 		return E_FAIL;
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
-	if (FAILED(Ready_Layer_Horse(TEXT("Layer_Horse"))))
-		return E_FAIL;
-
+	
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
 	pGameInstance->Play_Sound(L"FogtreeForest.mp3", 0.7f, true, SOUND_BGM);
@@ -137,8 +136,10 @@ HRESULT CLevel_ChapOne::Ready_Lights()
 
 	LightDesc.eType = LIGHTDESC::TYPE_DIRECTIONAL;
 	LightDesc.isEnable = true;
-	LightDesc.vPosition = _float4(0.f, 30.f, -10.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.0f, 0.f);
+	LightDesc.vPosition = _float4(-5.f, 50.f, -5.f, 1.f);
+	_float4 vDir = _float4(60.f, 0.f, 60.f, 1.f) - _float4(-5.f, 50.f, -5.f, 1.f);
+	vDir.Normalize();
+	LightDesc.vDirection =	vDir;
 	LightDesc.vDiffuse = _float4(0.6f, 0.4f, 0.4f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = LightDesc.vDiffuse;
@@ -228,8 +229,8 @@ HRESULT CLevel_ChapOne::Ready_Layer_Monster(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_SkeletonWarrior"), &vPos)))
 		return E_FAIL;
-
-	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Demon"))))
+	
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, L"Layer_Monster", TEXT("Prototype_GameObject_Flogas"))))
 	//	return E_FAIL;
 
 	RELEASE_INSTANCE(CGameInstance);
@@ -477,7 +478,691 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_FlameE"))))
 		return E_FAIL;
+
+	CParticle::DESC desc;
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+/*
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 8.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 8;
+	desc.pTextureTag = L"Texture_FX_fireball_008";
+	desc.ViBufferDesc.iNumSprite = 32;
+	desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_001_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.256f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.256f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
 	
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_003_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_004_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_005_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_006_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_007_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.256f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.256f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_008_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.256f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.256f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_009_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 5.f;
+	desc.fSizeUV_Y = 1.f / 5.f;
+	desc.iSpriteCount_X = 5;
+	desc.iSpriteCount_Y = 5;
+	desc.pTextureTag = L"FX_lightning_010_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 25;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 5.f;
+	desc.fSizeUV_Y = 1.f / 5.f;
+	desc.iSpriteCount_X = 5;
+	desc.iSpriteCount_Y = 5;
+	desc.pTextureTag = L"FX_lightning_011_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 25;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_lightning_012_TEX_KJS";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;*/
+
+	/*ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_fire_sq_Edit5";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 4.f;
+	desc.fSizeUV_Y = 1.f / 4.f;
+	desc.iSpriteCount_X = 4;
+	desc.iSpriteCount_Y = 4;
+	desc.pTextureTag = L"FX_fire_sq_Edit6";
+	desc.ViBufferDesc.iNumSprite = 16;
+	desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;
+
+	ZeroMemory(&desc, sizeof(CParticle::DESC));
+	desc.fShowTime = 0.f;
+	desc.fSizeUV_X = 1.f / 2.f;
+	desc.fSizeUV_Y = 1.f / 2.f;
+	desc.iSpriteCount_X = 2;
+	desc.iSpriteCount_Y = 2;
+	desc.pTextureTag = L"FX_SparkFlip_010_TEX_HKB";
+	desc.ViBufferDesc.iNumSprite = 4;
+	desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	desc.ViBufferDesc.fMinTime = 0.1f;
+	desc.ViBufferDesc.fMaxTime = 0.3f;
+	desc.ViBufferDesc.fRange = 1.2f;
+	desc.ViBufferDesc.fRangeOffset = 1.f;
+	desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	desc.ViBufferDesc.iNumInstances = 150;
+	desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+		return E_FAIL;*/
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 8.f;
+	//desc.fSizeUV_Y = 1.f / 4.f;
+	//desc.iSpriteCount_X = 8;
+	//desc.iSpriteCount_Y = 4;
+	//desc.pTextureTag = L"FX_SmokeDarkFlipBlend";
+	//desc.ViBufferDesc.iNumSprite = 32;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_explosion_002_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fireaura_001_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 4.f;
+	//desc.fSizeUV_Y = 1.f / 8.f;
+	//desc.iSpriteCount_X = 4;
+	//desc.iSpriteCount_Y = 8;
+	//desc.pTextureTag = L"FX_fireball_022_edit_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 32;
+	//desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_firesample_001_TEX_kjs";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_firesample_002_tex_kjs";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 8.f;
+	//desc.fSizeUV_Y = 1.f / 4.f;
+	//desc.iSpriteCount_X = 8;
+	//desc.iSpriteCount_Y = 4;
+	//desc.pTextureTag = L"FX_FlameFlip_007_TEX_HKB";
+	//desc.ViBufferDesc.iNumSprite = 32;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 2.f;
+	//desc.fSizeUV_Y = 1.f / 2.f;
+	//desc.iSpriteCount_X = 2;
+	//desc.iSpriteCount_Y = 2;
+	//desc.pTextureTag = L"FX_FlameFlip_009_TEX_HKB";
+	//desc.ViBufferDesc.iNumSprite = 4;
+	//desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 4.f;
+	//desc.fSizeUV_Y = 1.f / 4.f;
+	//desc.iSpriteCount_X = 4;
+	//desc.iSpriteCount_Y = 4;
+	//desc.pTextureTag = L"FX_FlameFlip_010_TEX_HKB";
+	//desc.ViBufferDesc.iNumSprite = 16;
+	//desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 4.f;
+	//desc.fSizeUV_Y = 1.f / 4.f;
+	//desc.iSpriteCount_X = 4;
+	//desc.iSpriteCount_Y = 4;
+	//desc.pTextureTag = L"FX_FlameFlip_011_TEX_HKB";
+	//desc.ViBufferDesc.iNumSprite = 16;
+	//desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fumefie_005_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fumefire_001_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fumefire_002_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fumefire_003_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 6.f;
+	//desc.fSizeUV_Y = 1.f / 6.f;
+	//desc.iSpriteCount_X = 6;
+	//desc.iSpriteCount_Y = 6;
+	//desc.pTextureTag = L"FX_fumefire_004_TEX_KJS";
+	//desc.ViBufferDesc.iNumSprite = 36;
+	//desc.ViBufferDesc.vMaxSize = _float2(1.024f * 1.2f, 1.024f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(1.024f * 0.7f, 1.024f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
+	//ZeroMemory(&desc, sizeof(CParticle::DESC));
+	//desc.fShowTime = 0.f;
+	//desc.fSizeUV_X = 1.f / 4.f;
+	//desc.fSizeUV_Y = 1.f / 4.f;
+	//desc.iSpriteCount_X = 4;
+	//desc.iSpriteCount_Y = 4;
+	//desc.pTextureTag = L"FX_Word_BG_01_CJS";
+	//desc.ViBufferDesc.iNumSprite = 16;
+	//desc.ViBufferDesc.vMaxSize = _float2(0.512f * 1.2f, 0.512f * 1.2f);
+	//desc.ViBufferDesc.vMinSize = _float2(0.512f * 0.7f, 0.512f * 0.7f);
+	//desc.ViBufferDesc.fMinTime = 0.1f;
+	//desc.ViBufferDesc.fMaxTime = 0.3f;
+	//desc.ViBufferDesc.fRange = 1.2f;
+	//desc.ViBufferDesc.fRangeOffset = 1.f;
+	//desc.ViBufferDesc.fMinSpreadSizeOffset = 0.1f;
+	//desc.ViBufferDesc.fMaxSpreadSizeOffset = 0.3f;
+	//desc.ViBufferDesc.iNumInstances = 150;
+	//desc.ViBufferDesc.iNumSpreadInstances = 100;
+
+	//if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Particle"), &desc)))
+	//	return E_FAIL;
+
 	RELEASE_INSTANCE(CGameInstance)
 	return S_OK;
 }
@@ -485,23 +1170,6 @@ HRESULT CLevel_ChapOne::Ready_Layer_Effect(const wstring & pLayerTag)
 HRESULT CLevel_ChapOne::Ready_Layer_UI(const wstring & pLayerTag)
 {
 	return S_OK;
-}
-
-HRESULT CLevel_ChapOne::Ready_Layer_Horse(const wstring & pLayerTag)
-{
-	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
-
-	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP1, pLayerTag, TEXT("Prototype_GameObject_Horse"))))
-		return E_FAIL;
-
-	RELEASE_INSTANCE(CGameInstance)
-
-		return S_OK;
-}
-
-HRESULT CLevel_ChapOne::Ready_Layer_PrincePlayer(const wstring & pLayerTag)
-{
-	return E_NOTIMPL;
 }
 
 CLevel_ChapOne * CLevel_ChapOne::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
