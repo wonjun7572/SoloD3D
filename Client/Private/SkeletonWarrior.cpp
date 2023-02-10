@@ -551,7 +551,7 @@ void CSkeletonWarrior::CollisionToPlayer(_double TimeDelta)
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
-		if (fabsf(fDistance) < 100.f)
+		if (fabsf(fDistance) < 120.f)
 			m_bPlayerChase = true;
 		else
 			m_bPlayerChase = false;

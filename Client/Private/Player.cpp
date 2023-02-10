@@ -340,15 +340,13 @@ HRESULT CPlayer::Init(void * pArg)
 	m_pNavigationCom->Set_CurreuntIndex(m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
 
 	/* ~~~~ 공격력 체력 수치!!! ~~~~*/
-	m_fHp = 1000;
-	m_fMp = 200;
+	m_fHp = 500;
+	m_fMp = 100;
 	m_fAttack = 20;
 	m_fDefence = 20;
 
 	SetUp_FSM();
-
 	m_vRimColor = _float4(0.1f, 0.1f, 0.3f, 1.f);
-
 	return S_OK;
 }
 
@@ -357,28 +355,20 @@ void CPlayer::Tick(_double TimeDelta)
 	if (m_bSetMove)
 	{
 		__super::Tick(TimeDelta);
-
 		if (!m_bCamChange)
 			Movement(TimeDelta);
-
 		m_pFSM->Tick(TimeDelta);
-
 		m_PlayerParts[PART_WEAPON]->Tick(TimeDelta);
 		for (_uint i = PART_UPPER; i < PART_END; ++i)
 		{
 			m_PlayerParts[i]->Tick(TimeDelta);
 			static_cast<CParts*>(m_PlayerParts[i])->LinkPlayer(m_pTransformCom);
 		}
-
 		for (auto& pUI : m_PlayerUI)
 			pUI->Tick(TimeDelta);
-
 		UI_Tick(TimeDelta);
-
 		m_pModelCom[m_eModelState]->Play_Animation(TimeDelta);
-
 		AdditiveAnim(TimeDelta);
-
 		LinkObject(TimeDelta);
 	}
 }
@@ -388,19 +378,15 @@ void CPlayer::Late_Tick(_double TimeDelta)
 	if (m_bSetMove)
 	{
 		__super::Late_Tick(TimeDelta);
-
 		for (_uint i = 0; i < m_PartSize; ++i)
 			m_PlayerParts[i]->Late_Tick(TimeDelta);
-
 		if (m_bUI)
 		{
 			for (auto& pUI : m_PlayerUI)
 				pUI->Late_Tick(TimeDelta);
 		}
-
 		for (_uint i = 0; i < COLLTYPE_END; ++i)
 			m_pColliderCom[i]->Update(m_pTransformCom->Get_WorldMatrix());
-
 		if (nullptr != m_pRendererCom)
 		{
 			m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
@@ -413,7 +399,6 @@ void CPlayer::Late_Tick(_double TimeDelta)
 			m_pRendererCom->Add_DebugRenderGroup(m_pNavigationCom);
 #endif
 		}
-
 		// 모델 원래 상태로 돌아가기
 		if (m_eModelState == MODEL_A)
 			m_dModelATime += TimeDelta;
@@ -450,33 +435,25 @@ HRESULT CPlayer::Render()
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
 	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
-
 	for (_uint i = 0; i < iNumMeshes; ++i)
 	{
 		/* 이 모델을 그리기위한 셰이더에 머테리얼 텍스쳐를 전달하낟. */
 		m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_DIFFUSE, "g_DiffuseTexture");
-
 		bool HasNormal = false;
 		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_NORMALS, "g_NormalTexture")))
 			HasNormal = false;
 		else
 			HasNormal = true;
-
 		m_pShaderCom->Set_RawValue("g_HasNormal", &HasNormal, sizeof(bool));
-
 		bool HasSpecular = false;
 		if (FAILED(m_pModelCom[m_eModelState]->Bind_Material(m_pShaderCom, i, aiTextureType_SPECULAR, "g_SpecularTexture")))
 			HasSpecular = false;
 		else
 			HasSpecular = true;
-
 		m_pShaderCom->Set_RawValue("g_HasSpecular", &HasSpecular, sizeof(bool));
-
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 0, "g_BoneMatrices");
 	}
-
 	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
 	{
 		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->SetUp_ShaderResources()))
@@ -485,7 +462,6 @@ HRESULT CPlayer::Render()
 		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsRender(0)))
 			return E_FAIL;
 	}
-
 	return S_OK;
 }
 
@@ -493,15 +469,11 @@ HRESULT CPlayer::RenderShadow()
 {
 	if (FAILED(__super::RenderShadow()))
 		return E_FAIL;
-
 	if (FAILED(SetUP_ShadowShaderResources()))
 		return E_FAIL;
-
 	_uint iNumMeshes = m_pModelCom[m_eModelState]->Get_NumMeshes();
-
 	for (_uint i = 0; i < iNumMeshes; ++i)
 		m_pModelCom[m_eModelState]->Render(m_pShaderCom, i, 1, "g_BoneMatrices");
-
 	for (_uint i = CPlayer::PART_UPPER; i < CPlayer::PART_END; ++i)
 	{
 		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->SetUp_ShadowShaderResources()))
@@ -510,7 +482,6 @@ HRESULT CPlayer::RenderShadow()
 		if (FAILED(static_cast<CParts*>(m_PlayerParts[i])->PartsShadowRender(1)))
 			return E_FAIL;
 	}
-
 	return S_OK;
 }
 
@@ -524,19 +495,16 @@ void CPlayer::UI_Tick(_double TimeDelta)
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_6])->Set_Amount(static_cast<_float>(m_Skill_6IconCoolTime / 20.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_7])->Set_Amount(static_cast<_float>(m_Skill_7IconCoolTime / 25.0));
 	static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_ICON_8])->Set_Amount(static_cast<_float>(m_Skill_8IconCoolTime / 12.0));
-	
 	if (m_dModelATime >= 0.001)
 		static_cast<CSkillChargingUI*>(m_PlayerUI[SKILL_MODELATIME])->Set_Amount(static_cast<_float>(1.0 - (m_dModelATime / 20.0)));
 
 	static_cast<CSkillChargingUI*>(m_PlayerUI[V_DEF])->Set_Amount(static_cast<_float>(m_Skill_VDefCoolTime / 3.0));
-
 	static_cast<CProgressBarUI*>(m_PlayerUI[HP])->Set_Amount((1.f + m_fHp / 100.f) - 1.f);
 
 	if (m_fMp >= 100.f)
 		m_fMp = 100.f;
 	else
 		m_fMp += static_cast<_float>(TimeDelta) * 5.f;
-
 	static_cast<CProgressBarUI*>(m_PlayerUI[MP])->Set_Amount((1.f + m_fMp / 100.f) - 1.f);
 }
 
@@ -796,6 +764,11 @@ void CPlayer::SetUp_FSM()
 		m_fJumpPower = 0.5f;
 		Reset_Anim(PLAYER_JUMP_UP);
 		Set_Anim(PLAYER_JUMP_UP);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_0.mp3", 1.f, false);
+		pGameInstance->Play_Sound(L"Attack_Voice_4.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("JumpUp to JumpLand", "JumpLand")
 		.Predicator([this]()
@@ -808,6 +781,10 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_JUMP_LAND);
 		Set_Anim(PLAYER_JUMP_LAND);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_9.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("JumpLand to Move", "Move")
 		.Predicator([this]()
@@ -821,6 +798,11 @@ void CPlayer::SetUp_FSM()
 		m_fJumpPower = 0.5f;
 		Reset_Anim(PLAYER_RUN_JUMP_UP_F);
 		Set_Anim(PLAYER_RUN_JUMP_UP_F);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_0.mp3", 1.f, false);
+		pGameInstance->Play_Sound(L"Attack_Voice_4.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("F_RunJumpUp to F_RunJumpLand", "F_RunJumpLand")
 		.Predicator([this]()
@@ -833,6 +815,10 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_RUN_JUMP_LAND_F);
 		Set_Anim(PLAYER_RUN_JUMP_LAND_F);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_9.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("F_RunJumpLand to Move", "Move")
 		.Predicator([this]()
@@ -846,6 +832,11 @@ void CPlayer::SetUp_FSM()
 		m_fJumpPower = 0.5f;
 		Reset_Anim(PLAYER_RUN_JUMP_UP_B);
 		Set_Anim(PLAYER_RUN_JUMP_UP_B);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_0.mp3", 1.f, false);
+		pGameInstance->Play_Sound(L"Attack_Voice_4.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("B_RunJumpUp to B_RunJumpLand", "B_RunJumpLand")
 		.Predicator([this]()
@@ -858,6 +849,10 @@ void CPlayer::SetUp_FSM()
 	{
 		Reset_Anim(PLAYER_RUN_JUMP_LAND_B);
 		Set_Anim(PLAYER_RUN_JUMP_LAND_B);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_9.mp3", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("B_RunJumpLand to Move", "Move")
 		.Predicator([this]()
@@ -873,6 +868,11 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_V_DEF);
 		m_Skill_VDefCoolTime = 0.0;
 		m_bPlayerTurn = false;
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_0.mp3", 1.f, false);
+		pGameInstance->Play_Sound(L"Attack_Voice_4.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -899,6 +899,7 @@ void CPlayer::SetUp_FSM()
 		Reset_Anim(PLAYER_ATK_01);
 		Set_Anim(PLAYER_ATK_01);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attack_Voice_0.wav", 1.f, false);
 		pGameInstance->Play_Sound(L"common_swing_lv2.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail1"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
@@ -958,6 +959,7 @@ void CPlayer::SetUp_FSM()
 		Set_Anim(PLAYER_ATK_02);
 		MonsterNormalAttack(true);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attack_Voice_1.wav", 1.f, false);
 		pGameInstance->Play_Sound(L"common_swing_lv3.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail2"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
@@ -1013,6 +1015,7 @@ void CPlayer::SetUp_FSM()
 		Reset_Anim(PLAYER_ATK_03);
 		Set_Anim(PLAYER_ATK_03);
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attack_Voice_2.wav", 1.f, false);
 		pGameInstance->Play_Sound(L"common_swing_lv4.wav", 1.f, false);
 		static_cast<CEffect*>(CEffectManager::GetInstance()->Find_Effects(L"NorAtk_Trail3"))->Set_UV(_float2(-1.f, 0.f));
 		RELEASE_INSTANCE(CGameInstance);
@@ -1076,6 +1079,7 @@ void CPlayer::SetUp_FSM()
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		pGameInstance->Play_Sound(L"FireWallFlame.mp3", 1.f);
 		pGameInstance->Play_Sound(L"common_swing_lv10.wav", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Long_Voice_3.wav", 1.f);
 		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
@@ -1246,6 +1250,11 @@ void CPlayer::SetUp_FSM()
 		m_Skill_3IconCoolTime = 0.0;
 		m_fMp -= 20.f;
 		m_bPlayerTurn = false;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Attack_Long_Voice_0.wav", 1.f);
+		pGameInstance->Play_Sound(L"Elf_3.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1388,6 +1397,12 @@ void CPlayer::SetUp_FSM()
 		m_Skill_5IconCoolTime = 0.0;
 		m_fMp -= 50.f;
 		m_bCamTurn = true;
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"ArcaneOrb.mp3", 1.f);
+		pGameInstance->Play_Sound(L"ArcaneBolt_Create.mp3", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Long_Voice_2.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1430,6 +1445,11 @@ void CPlayer::SetUp_FSM()
 		m_fMp -= 10.f;
 		m_Skill_6IconCoolTime = 0.0;
 		MonsterNormalAttack(true);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"Elf_11.mp3", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Voice_6.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1468,6 +1488,11 @@ void CPlayer::SetUp_FSM()
 		MonsterNormalAttack(true);
 		m_fMp -= 15.f;
 		m_Skill_7IconCoolTime = 0.0;
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"FireWall.mp3", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Power.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1511,6 +1536,11 @@ void CPlayer::SetUp_FSM()
 		ChangePartsAnimSpeed(0.5);
 		m_bPlayerTurn = false;
 		m_Skill8EffectTime = 0.0;
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"FireWallFlame.mp3", 1.f);
+		pGameInstance->Play_Sound(L"Attack_Power.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.Tick([this](_double TimeDelta)
 	{
@@ -1522,6 +1552,10 @@ void CPlayer::SetUp_FSM()
 		CEffectManager::GetInstance()->Render_Effects(L"FireWave_1", TimeDelta);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_0"))->Set_Link(true);
 		static_cast<CEffect_Mesh*>(CEffectManager::GetInstance()->Find_Effects(L"FireWave_1"))->Set_Link(true);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"IceLance_Update.mp3", 1.f,false, SOUND_PLAYER);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.OnExit([this]()
 	{
@@ -1600,7 +1634,6 @@ void CPlayer::Movement(_double TimeDelta)
 			_float	fJumpPower = yPos + m_fJumpPower;
 			_float  fVelocity = sqrtf(fabsf(fJumpPower * 2.f * fGravity));
 
-			// 왜 chap3에서만 오류가 나는지 모르겠지만.. 일단 이렇게 처리해둠..
 			if (g_LEVEL == LEVEL_CHAP3)
 				fVelocity *= 1.3f;
 
@@ -2056,6 +2089,10 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 			static_cast<CParts*>(m_PlayerParts[i])->Play_AdditiveAnim(TimeDelta, 1.f);
 		}
 	}
+	else if (!m_bFrontDamage)
+	{
+		m_pModelCom[m_eModelState]->Reset_AnimPlayTime(PLAYER_ADD_DMG_F);
+	}
 
 	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_F))
 	{
@@ -2075,6 +2112,10 @@ void CPlayer::AdditiveAnim(_double TimeDelta)
 			static_cast<CParts*>(m_PlayerParts[i])->Set_AdditiveAnimIndex(PLAYER_ADD_DMG_B);
 			static_cast<CParts*>(m_PlayerParts[i])->Play_AdditiveAnim(TimeDelta, 1.f);
 		}
+	}
+	else if (!m_bBackDamaged)
+	{
+		m_pModelCom[m_eModelState]->Reset_AnimPlayTime(PLAYER_ADD_DMG_B);
 	}
 
 	if (AnimFinishChecker(CPlayer::PLAYER_ADD_DMG_B))
@@ -2186,6 +2227,14 @@ void CPlayer::LinkObject(_double TimeDelta)
 				return;
 			}
 		}
+
+		CGameObject* pArc = pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Effect", L"Effect_Rect_Arcane");
+		if (pArc != nullptr)
+		{
+			m_pCam->LinkAlly(TimeDelta, pArc->Get_TransformCom(), -2.5f, 1.5f);
+			RELEASE_INSTANCE(CGameInstance);
+			return;
+		}
 	}
 
 	if (m_pCam != nullptr && !m_bCamChange)
@@ -2256,8 +2305,6 @@ void CPlayer::ChangePartsAnimSpeed(_double dTime)
 
 void CPlayer::Imgui_RenderProperty()
 {
-	ImGui::DragFloat("Dissolve", &m_fDissolveAmount, 0.01f, -10.f, 10.f);
-	ImGui::DragFloat("Finge", &m_fFringeAmount, 0.01f, -10.f, 10.f);
 }
 
 void CPlayer::Idle_Tick(_double TimeDelta)
@@ -2592,7 +2639,6 @@ void CPlayer::MonsterSkill02(_bool bAttack)
 
 void CPlayer::MonsterSkill04(_bool bAttack)
 {
-
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -2666,7 +2712,6 @@ void CPlayer::MonsterSkill04(_bool bAttack)
 	}
 
 	RELEASE_INSTANCE(CGameInstance);
-
 }
 
 void CPlayer::Reset_Action()
@@ -2830,10 +2875,25 @@ void CPlayer::AdjustDamage(_float fDamage)
 
 		if (m_fHp < 0)
 			m_fHp = 0;
-		// 0보다 아래면 죽음
 
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Play_Sound(L"Hit_Player_Blood.wav" , 1.f, false, SOUND_HITPLAYER);
+		int iRand = rand() % 6;
+
+		if (iRand == 0)
+			pGameInstance->Play_Sound(L"Attacked_0.mp3", 1.f);
+		else if (iRand == 1)
+			pGameInstance->Play_Sound(L"Attacked_1.mp3", 1.f);
+		else if (iRand == 2)
+			pGameInstance->Play_Sound(L"Attacked_2.mp3", 1.f);
+		else if (iRand == 3)
+			pGameInstance->Play_Sound(L"Attacked_3.mp3", 1.f);
+		else if (iRand == 4)
+			pGameInstance->Play_Sound(L"Attacked_4.mp3", 1.f);
+		else if (iRand == 5)
+			pGameInstance->Play_Sound(L"Attacked_5.mp3", 1.f);
+		else if (iRand == 6)
+			pGameInstance->Play_Sound(L"Attacked_6.mp3", 1.f);
+
 		RELEASE_INSTANCE(CGameInstance);
 
 		m_bImpossibleDamaged = true;
@@ -2858,7 +2918,22 @@ void CPlayer::AdjustSkillDamage(_float fDamage)
 		// 0보다 아래면 죽음
 
 		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
-		pGameInstance->Play_Sound(L"Hit_Player_Blood.wav", 1.f, false, SOUND_HITPLAYER);
+		
+		int iRand = rand() % 6;
+
+		if(iRand == 0)
+			pGameInstance->Play_Sound(L"Attacked_0.mp3", 1.f);
+		else	if (iRand == 1)
+			pGameInstance->Play_Sound(L"Attacked_1.mp3", 1.f);
+		else if (iRand == 2)
+			pGameInstance->Play_Sound(L"Attacked_2.mp3", 1.f);
+		else if (iRand == 3)
+			pGameInstance->Play_Sound(L"Attacked_3.mp3", 1.f);
+		else if (iRand == 4)
+			pGameInstance->Play_Sound(L"Attacked_4.mp3", 1.f);
+		else if (iRand == 5)
+			pGameInstance->Play_Sound(L"Attacked_5.mp3", 1.f);
+
 		RELEASE_INSTANCE(CGameInstance);
 
 		m_bImpossibleSkillDamaged = true;

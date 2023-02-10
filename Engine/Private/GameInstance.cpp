@@ -72,7 +72,7 @@ HRESULT CGameInstance::Init_Engine(_uint iNumLevels, const GRAPHIC_DESC & Graphi
 	if (FAILED(m_pComponetMgr->Reserve_Manager(iNumLevels + 1)))
 		return E_FAIL;
 
-	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 6)))
+	if (FAILED(m_pSoundMgr->Reserve_Manager("../Bin/Resources/Sounds/", 7)))
 		return E_FAIL;
 
 	if (FAILED(m_pComponetMgr->Add_Prototype(m_iStaticLevelIndex, m_pPrototypeTransformTag, CTransform::Create(*ppDeviceOut, *ppContextOut))))

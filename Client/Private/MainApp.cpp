@@ -47,6 +47,8 @@ HRESULT CMainApp::Init()
 	if (FAILED(Start_Level(LEVEL_LOGO)))
 		return E_FAIL;
 
+	ShowCursor(false);
+
 	return S_OK;
 }
 
@@ -63,13 +65,13 @@ HRESULT CMainApp::Render()
 	if (m_pGameInstance == nullptr)
 		return E_FAIL;
 
-	m_pGameInstance->Render_ImGui();
+	//m_pGameInstance->Render_ImGui();
 
 	m_pGameInstance->Clear_Graphic_Device(&_float4(0.5f, 0.5f, 0.5f, 1.f));
 
 	m_pRenderer->Draw_RenderGroup();
 
-	m_pGameInstance->Render_Update_ImGui();
+	//m_pGameInstance->Render_Update_ImGui();
 
 	m_pGameInstance->RenderLevel();
 
@@ -191,7 +193,7 @@ HRESULT CMainApp::Ready_Prototype_Component()
 
 	/*For.Prototype_Component_Texture_LoadingUI*/
 	if (FAILED(m_pGameInstance->Add_Prototype(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Texture_LoadingUI"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Loading/Loading_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Bless/UI/Loading/Loading_%d.png"), 4))))
 		return E_FAIL;
 
 	/*For.Prototype_Component_Texture_LoadingTimer*/

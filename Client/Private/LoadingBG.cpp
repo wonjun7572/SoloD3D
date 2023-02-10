@@ -129,6 +129,11 @@ HRESULT CLoadingBG::SetUp_ShaderResources()
 		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 2)))
 			return E_FAIL;
 	}
+	else if (m_iIndex == LEVEL_CHAP3)
+	{
+		if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 3)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

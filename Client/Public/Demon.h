@@ -121,7 +121,10 @@ private:
 
 	_double	TimeConversation = 0.0;
 	wstring		m_strConversation;
-	_float		test = 1.f;
+	
+	_int		m_iSkillOrder = 0;
+	_bool	m_bSkillOrderFinish = false;
+
 private:
 	CCollider* m_pAttackColCom = nullptr;
 	CCollider* m_pSwordColCom = nullptr;

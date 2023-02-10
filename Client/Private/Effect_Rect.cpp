@@ -91,8 +91,9 @@ void CEffect_Rect::Free()
 {
 	__super::Free();
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
 
 	if(m_bClone)
 		Safe_Release(m_RectEffectDesc.pTargetTransform);
+	
+	Safe_Release(m_pVIBufferCom);
 }

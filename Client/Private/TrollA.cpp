@@ -388,6 +388,21 @@ void CTrollA::SetUp_FSM()
 	{
 		m_iRandAttack = rand() % 3;
 
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
+
+			int iRand = rand() % 4;
+
+		if (iRand == 0)
+			pGameInstance->Play_Sound(L"008_goblin_01.wav", 1.f, false);
+		else	if (iRand == 1)
+			pGameInstance->Play_Sound(L"008_goblin_03.wav", 1.f, false);
+		else	if (iRand == 2)
+			pGameInstance->Play_Sound(L"008_goblin_04.wav", 1.f, false);
+		else	if (iRand == 3)
+			pGameInstance->Play_Sound(L"008_goblin_05.wav", 1.f, false);
+
+		RELEASE_INSTANCE(CGameInstance)
+
 		if (m_iRandAttack == 0)
 		{
 			m_pModelCom->Reset_AnimPlayTime(TROLLA_ATK_01);
@@ -462,6 +477,10 @@ void CTrollA::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(TROLLA_Die);
 		m_pModelCom->Set_AnimationIndex(TROLLA_Die);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"008_goblin_02.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 		.AddTransition("Dead to DeadBody", "DeadBody")
 		.Predicator([this]()
@@ -516,7 +535,6 @@ void CTrollA::Adjust_Collision(_double TimeDelta)
 
 void CTrollA::CollisionToPlayer(_double TimeDelta)
 {
-	// 이 부분 충돌을 해야할 이유가 없는 것 같다
 	_float3 vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
 	_float3 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 	_float fDistance = CMathUtils::Distance(vPos, vPlayerPos);

@@ -69,8 +69,8 @@ HRESULT CRockNorm04::Init(void * pArg)
 
 	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 	m_pParticle = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Particle"), &desc);
+	pGameInstance->Play_Sound(L"RockNorm4Init.mp3", 1.f, false,SOUND_ROCKNORM04);
 	RELEASE_INSTANCE(CGameInstance);
-
 	
 	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, m_Desc.vDestination);
 

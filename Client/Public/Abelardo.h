@@ -55,13 +55,13 @@ public:
 	virtual void Late_Tick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT RenderShadow() override;
-
 	void	Imgui_RenderProperty() override;
 
-	void	Level_Chap2Tick(_double TimeDelta);
 	void	Conversation(_double TimeDelta);
-	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
+	void	Level_Chap2Tick(_double TimeDelta);
+
 	_bool	Get_Conversation() { return m_bConversation; }
+	_bool	DistancePointCheck(_float4 vTargetPos, _float4 vPos);
 
 private:
 	void	SetUp_FSM() override;
@@ -78,14 +78,16 @@ private:
 	_bool	AnimFinishChecker(ANIMATION eAnim, _double FinishRate = 0.95);
 	_bool   AnimIntervalChecker(ANIMATION eAnim, _double StartRate, _double FinishRate);
 
-	_double m_AttackDelayTime = 0.0;
-
 	vector<CGameObject*> m_UI;
 
+	_double m_AttackDelayTime = 0.0;
 	_double TimeConversation = 0.0;
+
 	_bool	m_bConversation = true;
 	_bool	m_bSecondStageCheck = false;
+
 	vector<_float4> m_CheckPoints;
+
 	wstring	m_strConversation;
 
 public:

@@ -176,9 +176,6 @@ void CMonster::Late_Tick(_double TimeDelta)
 	}
 
 	m_Monsters.clear();
-
-	if(!m_bDeadAnim)
-		CollisionToAABBPlayer(TimeDelta);
 }
 
 HRESULT CMonster::Render()
@@ -368,9 +365,9 @@ void CMonster::AdjustSetDamage()
 		int iA = rand() % 2;
 
 		if (iA == 0)
-			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f, false, SOUND_HITMONSTER);
+			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f);
 		else
-			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f, false, SOUND_HITMONSTER);
+			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f);
 
 		RELEASE_INSTANCE(CGameInstance);
 
@@ -417,13 +414,13 @@ void CMonster::AdjustSetDamageToSkill()
 		if (nullptr != pUI)
 			m_MonsterDamageEffect.push_back(pUI);
 
-		int iA = rand() % 2;
+		int iRand = rand() %2;
 
-		if (iA == 0)
-			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f, false, SOUND_HITMONSTER);
-		else
-			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f, false, SOUND_HITMONSTER);
-
+		if (iRand == 0)
+			pGameInstance->Play_Sound(L"Hit_Flesh_Slash_adult.wav", 1.f);
+		else	if (iRand == 1)
+			pGameInstance->Play_Sound(L"Hit_Metal_Slash.wav", 1.f);
+		
 		RELEASE_INSTANCE(CGameInstance);
 
 		m_fHp -= fRealDamage;

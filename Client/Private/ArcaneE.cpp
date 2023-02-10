@@ -1,14 +1,16 @@
 #include "stdafx.h"
 #include "..\Public\ArcaneE.h"
 #include "GameInstance.h"
+#include "ConversationUI.h"
+#include "Player.h"
 
 CArcaneE::CArcaneE(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	:CEffect_Rect(pDevice, pContext)
+	:CGameObject(pDevice, pContext)
 {
 }
 
-CArcaneE::CArcaneE(const CEffect_Rect & rhs)
-	: CEffect_Rect(rhs)
+CArcaneE::CArcaneE(const CArcaneE & rhs)
+	: CGameObject(rhs)
 {
 }
 
@@ -22,7 +24,13 @@ HRESULT CArcaneE::Init_Prototype()
 
 HRESULT CArcaneE::Init(void * pArg)
 {
-	if (FAILED(__super::Init(pArg)))
+	CGameObject::GAMEOBJECTDESC GameObjectDesc;
+	ZeroMemory(&GameObjectDesc, sizeof(GameObjectDesc));
+
+	GameObjectDesc.TransformDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	GameObjectDesc.TransformDesc.fSpeedPerSec = 3.0f;
+
+	if (FAILED(__super::Init(&GameObjectDesc)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Components()))
@@ -30,26 +38,29 @@ HRESULT CArcaneE::Init(void * pArg)
 
 	m_strObjName = L"Effect_Rect_Arcane";
 
-	m_fAlpha = 1.f;
-	m_UVMoveFactor = _float2(0.f, 0.f);
+	DESC desc;
 
-	m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, XMVectorSet(39.f, 0.f, 65.f, 1.f));
+	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	if (pArg != nullptr)
+	{
+		memcpy(&desc, pArg, sizeof(DESC));
+		m_pTransformCom->Set_State(CTransform::STATE_TRANSLATION, desc.vPos);
+	}
 
-	LIGHTDESC			LightDesc;
-	ZeroMemory(&LightDesc, sizeof LightDesc);
-	LightDesc.eType = LIGHTDESC::TYPE_POINT;
-	LightDesc.isEnable = true;
-	XMStoreFloat4(&LightDesc.vPosition, m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION));
-	LightDesc.fRange = 10.0f;
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 0.2f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
+	CConversationUI::CONVERSATIONFONT conversationDesc;
 
-	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+	wcscpy_s(conversationDesc.szConversation, MAX_PATH, L"");
+	wcscpy_s(conversationDesc.szFontName, MAX_PATH, L"");
+	conversationDesc.vColor = _float4(0.1f, 0.1f, 0.1f, 1.f);
 
-	if (FAILED(pGameInstance->Add_Light(m_pDevice, m_pContext, LightDesc)))
-		return E_FAIL;
+	conversationDesc.fX = 375.f;
+	conversationDesc.fY = 800.f;
+	conversationDesc.fSizeX = 1.f;
+	conversationDesc.fSizeY = 1.f;
+	conversationDesc.bTextureOn = true;
 
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	m_pConversationUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ConversationUI"), &conversationDesc);
 	RELEASE_INSTANCE(CGameInstance);
 
 	return S_OK;
@@ -59,7 +70,13 @@ void CArcaneE::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
-	Compute_BillBoard();
+	m_pTransformCom->Go_Up(TimeDelta);
+
+	if (m_bConversation)
+	{
+		Conversation(TimeDelta);
+		m_pConversationUI->Late_Tick(TimeDelta);
+	}
 
 	m_fFrame += 42.0f * static_cast<_float>(TimeDelta);
 
@@ -85,11 +102,45 @@ HRESULT CArcaneE::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(1);
 
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CArcaneE::Conversation(_double TimeDelta)
+{
+	m_pConversationUI->Tick(TimeDelta);
+
+	if (TimeConversation < 2.f)
+	{
+		m_strConversation = L"저를 살려줘서 고마워요";
+		TimeConversation += TimeDelta;
+		if (!m_bFinished)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+				pGameInstance->Play_Sound(L"FINISH.mp3", 1.f);
+			RELEASE_INSTANCE(CGameInstance);
+			m_bFinished = true;
+		}
+	}
+	else if (TimeConversation >= 2.f && TimeConversation < 4.f)
+	{
+		m_strConversation = L"정말 수고 많으셨어요";
+		TimeConversation += TimeDelta;
+	}
+	else if (TimeConversation >= 4.f && TimeConversation < 6.f)
+	{
+		m_strConversation = L"앞으로 모든 일이 잘되길 기도할께요";
+		TimeConversation += TimeDelta;
+	}
+
+	static_cast<CConversationUI*>(m_pConversationUI)->SetConversation(m_strConversation);
+	CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
+	CPlayer* pPlayer =	static_cast<CPlayer*>(pGameInstance->Find_GameObject(g_LEVEL, L"Layer_Player", L"Player"));
+	RELEASE_INSTANCE(CGameInstance);
+	static_cast<CPlayer*>(pPlayer)->Set_PlayerUI(false);
 }
 
 HRESULT CArcaneE::SetUp_Components()
@@ -100,7 +151,7 @@ HRESULT CArcaneE::SetUp_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_TextureEffect"), TEXT("Com_Shader"),
+	if (FAILED(__super::Add_Component(CGameInstance::Get_StaticLevelIndex(), TEXT("Prototype_Component_Shader_VtxTex"), TEXT("Com_Shader"),
 		(CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -132,18 +183,9 @@ HRESULT CArcaneE::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &pGameInstance->Get_TransformFloat4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_ShaderResourceView("g_DepthTexture", pGameInstance->Get_DepthTargetSRV())))
-		return E_FAIL;
-
 	RELEASE_INSTANCE(CGameInstance);
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_AlbedoTexture", (_uint)m_fFrame)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_UVMoveFactor", &m_UVMoveFactor, sizeof(_float2))))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
 		return E_FAIL;
 
 	return S_OK;
@@ -176,4 +218,10 @@ CGameObject * CArcaneE::Clone(void * pArg)
 void CArcaneE::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pConversationUI);
 }

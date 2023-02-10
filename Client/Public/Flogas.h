@@ -60,15 +60,14 @@ private:
 
 public:
 	void Adjust_Collision(_double TimeDelta);
-
 	void CollisionToPlayer(_double TimeDelta);
-	void CollisionToAttack(_double TimeDelta);
-	void CollisionToSkill(_double TimeDelta);
 	void Play_Skill(_double TimeDelta);
 	_bool	Get_Conversation() { return m_bConversation; }
 
 private:
 	void AdditiveAnim(_double TimeDelta);
+	_int m_iSkillOrder = 0;
+	_bool m_bSkillOrderFinish = false;
 
 private:
 	HRESULT SetUp_Components();
@@ -90,20 +89,16 @@ private:
 	_bool  m_bSkill_2ToPlayer = false;
 	_bool  m_bSkill_5ToPlayer = false;
 	 
-	_double	m_SkillDelayTime = 0.0;
-
 	_double	m_Skill5Time = 0.0;
+	_double	m_SkillDelayTime = 0.0;
 	_double	TimeConversation = 0.0;
 	wstring		m_strConversation;
-
+	_bool		m_bArcane = false;
 private:
 	_uint m_iRandAttack = 0;
-
 	vector<CGameObject*>	m_UI;
-
 	_bool m_bConversation = false;
 	_bool m_bSpawnToIdle = false;
-
 public:
 	static CFlogas* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;

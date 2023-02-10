@@ -8,6 +8,7 @@
 #include "PlayerCamera.h"
 #include "RockNorm04.h"
 #include "RockMada.h"
+#include "ArcaneE.h"
 
 CFlogas::CFlogas(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	:CMonster(pDevice, pContext)
@@ -45,7 +46,7 @@ HRESULT CFlogas::Init(void * pArg)
 
 	m_fHp = 500.f;
 	m_fMaxHp = 500.f;
-	m_fAttack = 10;
+	m_fAttack = 30;
 	m_fDefence = 5;
 
 	if (g_LEVEL == LEVEL_CHAP1)
@@ -76,10 +77,12 @@ void CFlogas::Tick(_double TimeDelta)
 	__super::Tick(TimeDelta);
 	AdditiveAnim(TimeDelta);
 	Play_Skill(TimeDelta);
-
-	if(!m_bDeadAnim)
-		m_pTransformCom->LookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
 	
+	if (!m_bDeadAnim)
+	{
+		m_pTransformCom->LookAt(m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION));
+	}
+		
 	if (m_bConversation)
 	{
 		Conversation(TimeDelta);
@@ -229,13 +232,19 @@ void CFlogas::SetUp_FSM()
 
 		m_pModelCom->Set_AnimationIndex(FLOGAS_Idle_C);
 	})
+		.OnExit([this]()
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Hanuman_Breath_Voice.wav", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
+	})
 		.AddTransition("Spawn to Idle" , "Idle")
 		.Predicator([this]() 
 	{
 		return !m_bConversation && m_bSpawnToIdle;
 	})
-
 		.AddState("Idle")
+	
 		.Tick([this](_double TimeDelta) 
 	{
 		m_pModelCom->Set_AnimationIndex(FLOGAS_Idle_C);
@@ -268,6 +277,7 @@ void CFlogas::SetUp_FSM()
 		m_pModelCom->Set_AnimationIndex(FLOGAS_SK_Firing_01);
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_01.mp3", 1.f);
 
 		for (int i = 0; i < 9; i++)
 		{
@@ -334,6 +344,7 @@ void CFlogas::SetUp_FSM()
 		m_pModelCom->Set_AnimationIndex(FLOGAS_SK_Firing_02);
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_02.mp3", 1.f);
 
 			for (int i = 0; i < 18; ++i)
 			{
@@ -358,6 +369,10 @@ void CFlogas::SetUp_FSM()
 	})
 		.OnExit([this]()
 	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_02_2.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
+
 		m_bSkill_2ToPlayer = false;
 		m_SkillDelayTime = 0.0;
 	})
@@ -372,12 +387,18 @@ void CFlogas::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(FLOGAS_SK_Firing_05);
 		m_pModelCom->Set_AnimationIndex(FLOGAS_SK_Firing_05);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_05_1.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.Tick([this](_double TimeDelta)
 	{
 		_float4 vPlayerPos = m_pPlayer->Get_TransformCom()->Get_State(CTransform::STATE_TRANSLATION);
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance);
 		CMeteor::DESC meteorDesc;
+
+		pGameInstance->Play_Sound(L"Flogas_Skill_05_2.mp3", 1.f,false,SOUND_BOSS);
 
 		if (AnimIntervalChecker(FLOGAS_SK_Firing_05, 0.2, 0.3))
 		{
@@ -415,6 +436,10 @@ void CFlogas::SetUp_FSM()
 	{
 		m_bSkill_5ToPlayer = false;
 		m_SkillDelayTime = 0.0;
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Skill_05_3.mp3", 1.f, false, SOUND_BOSS);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.AddTransition("Skill_5 to Idle", "Idle")
 		.Predicator([this]()
@@ -429,6 +454,10 @@ void CFlogas::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(FLOGAS_Die);
 		m_pModelCom->Set_AnimationIndex(FLOGAS_Die);
+
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Die_1.mp3", 1.f);
+		RELEASE_INSTANCE(CGameInstance)
 	})
 		.AddTransition("Dead to DeadBody", "DeadBody")
 			.Predicator([this]()
@@ -436,6 +465,14 @@ void CFlogas::SetUp_FSM()
 			return AnimFinishChecker(FLOGAS_Die, 0.9);
 		})
 		.AddState("DeadBody")
+			.OnStart([this]()
+	{
+		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+			pGameInstance->Play_Sound(L"Flogas_Die_3.mp3", 1.f);
+		pGameInstance->Stop_Sound(SOUND_BGM);
+		pGameInstance->Play_Sound(L"Logo_BGM.ogg", 1.f, true, SOUND_BGM);
+		RELEASE_INSTANCE(CGameInstance)
+	})
 		.Tick([this](_double TimeDelta)
 	{
 		m_pModelCom->Set_AnimationIndex(FLOGAS_DeadBody);
@@ -443,7 +480,18 @@ void CFlogas::SetUp_FSM()
 		m_fDissolveAmount += static_cast<_float>(TimeDelta);
 
 		if (m_dDeadTime > 3.0)
+		{
 			m_bDead = true;
+			if (!m_bArcane)
+			{
+				CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+					CArcaneE::DESC desc;
+				desc.vPos = m_pTransformCom->Get_State(CTransform::STATE_TRANSLATION);
+				pGameInstance->Clone_GameObject(g_LEVEL, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_ArcaneE"), &desc);
+				RELEASE_INSTANCE(CGameInstance)
+					m_bArcane = true;
+			}
+		}
 	})
 
 			.Build();
@@ -478,18 +526,6 @@ void CFlogas::Adjust_Collision(_double TimeDelta)
 	CollisionToPlayer(TimeDelta);
 	CollisionToMonster(TimeDelta);
 
-	// 플레이어와 어느 정도거리가 되었을 때
-	// 즉 chase 상태로 가는 것이 가능한 조건 일때임
-	if (m_bPlayerChase)
-		CollisionToAttack(TimeDelta);
-
-	// 플레이어 상태 이상 스킬
-	if (m_bSkill_1ToPlayer
-		|| m_bSkill_2ToPlayer
-		|| m_bSkill_5ToPlayer)
-		CollisionToSkill(TimeDelta);
-
-	// 밑은 플레이어의 데미지 입었을 때 이벤트
 	if (m_bPlayerAttackCommand)
 		CollisionToWeapon(TimeDelta);
 
@@ -515,19 +551,28 @@ void CFlogas::CollisionToPlayer(_double TimeDelta)
 		m_bPlayerChase = false;
 }
 
-void CFlogas::CollisionToAttack(_double TimeDelta)
-{
-}
-
-void CFlogas::CollisionToSkill(_double TimeDelta)
-{
-}
-
 void CFlogas::Play_Skill(_double TimeDelta)
 {
 	m_SkillDelayTime += TimeDelta;
 
 	if (m_SkillDelayTime > 7.0 &&
+		!m_bSkill_1ToPlayer &&
+		!m_bSkill_2ToPlayer &&
+		!m_bSkill_5ToPlayer &&
+		!m_bSkillOrderFinish)
+	{
+		if (m_iSkillOrder == 0)
+			m_bSkill_1ToPlayer = true;
+		if (m_iSkillOrder == 1)
+			m_bSkill_5ToPlayer = true;
+		if (m_iSkillOrder == 2)
+		{
+			m_bSkill_2ToPlayer = true;
+			m_bSkillOrderFinish = true;
+		}
+		m_iSkillOrder++;
+	}
+	else if (m_SkillDelayTime > 7.0 &&
 		!m_bSkill_1ToPlayer &&
 		!m_bSkill_2ToPlayer &&
 		!m_bSkill_5ToPlayer)
@@ -556,7 +601,7 @@ void CFlogas::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(FLOGAS_ADD_DMG_F);
 	}
 
-	if (AnimFinishChecker(FLOGAS_ADD_DMG_F, 0.9))
+	if (AnimFinishChecker(FLOGAS_ADD_DMG_F))
 	{
 		m_bFrontDamaged = false;
 		m_bImpossibleDamaged = false;
@@ -575,7 +620,7 @@ void CFlogas::AdditiveAnim(_double TimeDelta)
 		m_pModelCom->Reset_AnimPlayTime(FLOGAS_ADD_DMG_B);
 	}
 
-	if (AnimFinishChecker(FLOGAS_ADD_DMG_B, 0.9))
+	if (AnimFinishChecker(FLOGAS_ADD_DMG_B))
 	{
 		m_bBackDamaged = false;
 		m_bImpossibleDamaged = false;

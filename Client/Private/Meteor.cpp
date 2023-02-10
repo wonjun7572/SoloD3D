@@ -97,6 +97,8 @@ HRESULT CMeteor::Init(void * pArg)
 	if (FAILED(pGameInstance->Clone_GameObject(pGameInstance->GetCurLevelIdx(), TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle"), &desc, &m_pAfterParticle)))
 		return E_FAIL;
 
+	pGameInstance->Play_Sound(L"MeteorFlame.mp3", 1.f, false, SOUND_METEOR);
+
 	m_pTargetUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DemonSKillFloor"));
 	m_pTargetUI->Get_TransformCom()->Set_Scaled(_float3(5.f, 5.f, 1.f));
 	RELEASE_INSTANCE(CGameInstance);
@@ -114,6 +116,7 @@ HRESULT CMeteor::Init(void * pArg)
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP2, L"Layer_Player", L"Player"));
 	else if (g_LEVEL == LEVEL_CHAP3)
 		m_pPlayer = static_cast<CPlayer*>(pGameInstance->Find_GameObject(LEVEL_CHAP3, L"Layer_Player", L"Player"));
+
 
 	return S_OK;
 }
@@ -146,8 +149,19 @@ void CMeteor::Tick(_double TimeDelta)
 
 	m_pTransformCom->Chase(m_Desc.vDestination, TimeDelta, 0.2f);
 	
-	if(	_float4::Distance(vPos, m_Desc.vDestination) < 0.5f)
+	if (_float4::Distance(vPos, m_Desc.vDestination) < 0.5f)
+	{
 		m_fDissolveAmount += static_cast<_float>(TimeDelta);
+
+		if (!m_bDestination)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"MeteorExplosion.mp3", 1.f, false, SOUND_METEOR);
+			RELEASE_INSTANCE(CGameInstance)
+
+			m_bDestination = true;
+		}
+	}
 	else
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(CTransform::STATE_RIGHT), TimeDelta);
 

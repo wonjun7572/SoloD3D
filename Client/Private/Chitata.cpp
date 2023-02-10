@@ -57,7 +57,7 @@ HRESULT CChitata::Init(void * pArg)
 
 	if (g_LEVEL == LEVEL_CHAP2)
 	{
-		m_CheckPoints.push_back(_float4(269.f, 0.f, 225.f, 1.f) + _float4(CMathUtils::GetRandomFloat(0.f, 20.f), 0.f, CMathUtils::GetRandomFloat(0.f, 20.f), 0.f));
+		m_CheckPoints.push_back(_float4(269.f, 0.f, 225.f, 1.f));
 		m_CheckPoints.push_back(_float4(299.f, 0.f, 213.f, 1.f));
 		m_CheckPoints.push_back(_float4(295.f, 0.f, 200.f, 1.f));
 		m_CheckPoints.push_back(_float4(300.f, 0.f, 163.f, 1.f));

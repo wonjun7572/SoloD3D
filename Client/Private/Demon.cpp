@@ -69,9 +69,9 @@ HRESULT CDemon::Init(void * pArg)
 
 	m_strObjName = L"DEMON";
 
-	m_fHp = 500.f;
-	m_fMaxHp = 500.f;
-	m_fAttack = 10;
+	m_fHp = 2000.f;
+	m_fMaxHp = 2000.f;
+	m_fAttack = 30;
 	m_fDefence = 5;
 
 	XMStoreFloat4x4(&m_Mat, m_pTransformCom->Get_WorldMatrix());
@@ -205,6 +205,9 @@ void CDemon::Late_Tick(_double TimeDelta)
 		return;
 
 	Adjust_Collision(TimeDelta);
+
+	if (!m_bDeadAnim)
+		CollisionToAABBPlayer(TimeDelta);
 }
 
 HRESULT CDemon::Render()
@@ -275,8 +278,6 @@ void CDemon::Imgui_RenderProperty()
 	ImGui::DragFloat("Dissolve", &m_fDissolveAmount, 0.01f, -10.f, 10.f);
 	ImGui::DragFloat("Finge", &m_fFringeAmount, 0.01f, -10.f, 10.f);
 	
-	ImGui::DragFloat("test", &test, 0.01f, 0.f, 10.f);
-
 	if (ImGui::Button("Skill1"))
 		m_bSkill_1ToPlayer = true;
 
@@ -500,7 +501,36 @@ void CDemon::Play_Skill(_double TimeDelta)
 {
 	m_SkillDelayTime += TimeDelta;
 
+	// 어떻게 순서대로 넣지?
+	// 2 -> 3 -> 5 -> 1 -> 6 -> 4 그 이후에는 또 랜덤
+
 	if (m_SkillDelayTime > 10.0 &&
+		!m_bSkill_1ToPlayer &&
+		!m_bSkill_2ToPlayer &&
+		!m_bSkill_3ToPlayer &&
+		!m_bSkill_4ToPlayer &&
+		!m_bSkill_5ToPlayer &&
+		!m_bSkill_6ToPlayer &&
+		!m_bSkillOrderFinish)
+	{
+		if (m_iSkillOrder == 0)
+			m_bSkill_2ToPlayer = true;
+		if (m_iSkillOrder == 1)
+			m_bSkill_3ToPlayer = true;
+		if (m_iSkillOrder == 2)
+			m_bSkill_5ToPlayer = true;
+		if (m_iSkillOrder == 3)
+			m_bSkill_1ToPlayer = true;
+		if (m_iSkillOrder == 4)
+			m_bSkill_6ToPlayer = true;
+		if (m_iSkillOrder == 5)
+		{
+			m_bSkill_4ToPlayer = true;
+			m_bSkillOrderFinish = true;
+		}
+			m_iSkillOrder++;
+	}
+	else	if (m_SkillDelayTime > 10.0 &&
 		!m_bSkill_1ToPlayer &&
 		!m_bSkill_2ToPlayer &&
 		!m_bSkill_3ToPlayer &&
@@ -878,7 +908,7 @@ void CDemon::SetUp_FSM()
 		m_fRotationY = -1.f;
 		m_fRotationZ = 0.f;
 		m_fSkill3EffectTime = 0.0;
-		static_cast<CEffect_Rect*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Linking(true);
+		static_cast<CDemonSkillCircular*>(CEffectManager::GetInstance()->Find_Effects(L"DEMON_SKILL_CIRCULAR"))->Set_Linking(true);
 
 		CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
 			pGameInstance->Play_Sound(L"Balrog_Skill_07_1.mp3", 1.f, false);

@@ -53,6 +53,8 @@ private:
 	_float							m_fDissolveAmount = -1.f;
 	_float							m_fFringeAmount = 1.f;
 
+	_bool							m_bDestination = false;
+
 private:
 	HRESULT SetUp_Components();
 	HRESULT SetUp_ShaderResources();

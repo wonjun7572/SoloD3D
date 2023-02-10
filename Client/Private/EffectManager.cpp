@@ -23,8 +23,6 @@ HRESULT CEffectManager::Add_Effects(const wstring& pPrototypeEffectTag, const ws
 	if (pGameObject == nullptr)
 		return E_FAIL;
 
-	// 😊이거 없애고 아래에서 safe release 하니까 되는 거 같아~
-	//Safe_AddRef(pGameObject);
 	m_Effects.insert({ pEffectTag, pGameObject });
 
 	return S_OK;

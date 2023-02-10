@@ -359,6 +359,21 @@ void CZombieA::SetUp_FSM()
 	{
 		m_iRandAttack = rand() % 3;
 
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance)
+
+			int iRand = rand() % 4;
+
+		if (iRand == 0)
+			pGameInstance->Play_Sound(L"008_goblin_01.wav", 1.f, false);
+		else	if (iRand == 1)
+			pGameInstance->Play_Sound(L"008_goblin_03.wav", 1.f, false);
+		else	if (iRand == 2)
+			pGameInstance->Play_Sound(L"008_goblin_04.wav", 1.f, false);
+		else	if (iRand == 3)
+			pGameInstance->Play_Sound(L"008_goblin_05.wav", 1.f, false);
+
+		RELEASE_INSTANCE(CGameInstance)
+
 		if (m_iRandAttack == 0)
 		{
 			m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_ATK_01);
@@ -432,6 +447,10 @@ void CZombieA::SetUp_FSM()
 	{
 		m_pModelCom->Reset_AnimPlayTime(ZOMBIEA_Die);
 		m_pModelCom->Set_AnimationIndex(ZOMBIEA_Die);
+
+		CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
+		pGameInstance->Play_Sound(L"008_goblin_02.wav", 1.f, false);
+		RELEASE_INSTANCE(CGameInstance);
 	})
 
 		.AddTransition("Dead to DeadBody", "DeadBody")

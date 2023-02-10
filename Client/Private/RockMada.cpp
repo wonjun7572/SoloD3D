@@ -99,7 +99,8 @@ HRESULT CRockMada::Init(void * pArg)
 
 	m_pTargetUI = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_DemonSKillFloor"));
 	m_pTargetUI->Get_TransformCom()->Set_Scaled(_float3(5.f, 5.f, 1.f));
-	
+	pGameInstance->Play_Sound(L"RockMadaInit.mp3", 1.f,false, SOUND_ROCKMADA);
+	pGameInstance->Play_Sound(L"RockMadaInit2.mp3", 1.f, false, SOUND_ROCKMADA);
 	RELEASE_INSTANCE(CGameInstance);
 
 	_float4 vPos = m_Desc.vDestination;
@@ -117,6 +118,7 @@ HRESULT CRockMada::Init(void * pArg)
 
 	m_fRandY = CMathUtils::GetRandomFloat(0.6f, 5.f);
 	m_fRandTime = CMathUtils::GetRandomFloat(0.8f, 1.2f);
+
 	return S_OK;
 }
 
@@ -155,7 +157,15 @@ void CRockMada::Tick(_double TimeDelta)
 		m_fDissolveAmount += static_cast<_float>(TimeDelta) * 0.5f;
 
 	if (m_fDissolveAmount >= 2.f)
+	{
+		if (!m_bDead)
+		{
+			CGameInstance* pGameInstance = GET_INSTANCE(CGameInstance)
+				pGameInstance->Play_Sound(L"RockMadaDie.mp3", 1.f, false, SOUND_ROCKMADA);
+			RELEASE_INSTANCE(CGameInstance)
+		}
 		m_bDead = true;
+	}
 }
 
 void CRockMada::Late_Tick(_double TimeDelta)

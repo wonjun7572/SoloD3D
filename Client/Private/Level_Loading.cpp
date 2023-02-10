@@ -121,7 +121,13 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround(const wstring & pLayerTag)
 		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingBG"), &iA)))
 			return E_FAIL;
 	}
+	else if (m_eNextLevelID == LEVEL_CHAP3)
+	{
+		_uint iA = 4;
 
+		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingBG"), &iA)))
+			return E_FAIL;
+	}
 	if (FAILED(pGameInstance->Clone_GameObject(LEVEL_LOADING, pLayerTag, TEXT("Prototype_GameObject_LoadingUI"))))
 		return E_FAIL;
 	

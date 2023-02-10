@@ -36,7 +36,7 @@ HRESULT Client::CLevel_ChapThree::Init()
 
 	CGameInstance*		pGameInstance = GET_INSTANCE(CGameInstance);
 	pGameInstance->Stop_Sound(SOUND_BGM);
-	pGameInstance->Play_Sound(L"BossBattle.mp3", 0.5f, true, SOUND_BGM);
+	pGameInstance->Play_Sound(L"BossBattle.mp3", 1.f, true, SOUND_BGM);
 	pGameInstance->Stop_Sound(SOUND_ENV);
 	RELEASE_INSTANCE(CGameInstance);
 
@@ -53,6 +53,9 @@ void Client::CLevel_ChapThree::Tick(_double TimeDelta)
 		// ¿©±â¼­ »ìÂ¦Äô ²÷±è
 	if (!m_bFlogas && pGameInstance->Find_LayerList(LEVEL_CHAP3, L"Layer_Monster")->empty())
 	{
+		pGameInstance->Stop_Sound(SOUND_BGM);
+		pGameInstance->Play_Sound(L"MediumBattleLoop.mp3", 1.f, true, SOUND_BGM);
+
 		if (FAILED(pGameInstance->Clone_GameObject(LEVEL_CHAP3, L"Layer_Monster", TEXT("Prototype_GameObject_Flogas"))))
 			return;
 
